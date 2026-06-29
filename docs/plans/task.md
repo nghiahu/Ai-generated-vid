@@ -24,6 +24,6 @@
 | **Task 20** | Setup test script & Parse frames in render.js | Phase 7: Render Progress Fixes | `[x]` | `backend/services/render.js`, `backend/test_log_parser.js` |
 | **Task 21** | Expose frames in render status API | Phase 7: Render Progress Fixes | `[x]` | `backend/server.js` |
 | **Task 22** | UI Progress & Frame Counter Sync | Phase 7: Render Progress Fixes | `[x]` | `src/App.jsx`, `src/components/MasterPlayer.jsx` |
-| **Task 23** | Move frontend files to frontend/ subdirectory | Phase 8: Reorganize Frontend | `[/]` | Root files, `frontend/` |
-| **Task 24** | Update relative import path in MasterPlayer.jsx | Phase 8: Reorganize Frontend | `[ ]` | `frontend/src/components/MasterPlayer.jsx` |
-| **Task 25** | Update root README.md & .gitignore | Phase 8: Reorganize Frontend | `[ ]` | `README.md`, `.gitignore` |
+| **Task 23** | Move frontend files to frontend/ subdirectory | Phase 8: Reorganize Frontend | `[x]` | Root files, `frontend/` |
+| **Task 24** | Update relative import path in MasterPlayer.jsx | Phase 8: Reorganize Frontend | `[x]` | `frontend/src/components/MasterPlayer.jsx` |
+| **Task 25** | Update root README.md & .gitignore | Phase 8: Reorganize Frontend | `[x]` | `README.md`, `.gitignore` |
