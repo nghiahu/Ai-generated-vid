@@ -34,4 +34,9 @@
 | **Task 30** | Tích hợp hiệu ứng hạt và phụ đề động vào MainComposition | Phase 9: Dynamic Visual Themes | `[x]` | `my-video/src/compositions/MainComposition.tsx` |
 | **Task 31** | Cải tạo giao diện cảnh IntroProfile thành Glassmorphic | Phase 9: Dynamic Visual Themes | `[x]` | `my-video/src/compositions/IntroProfile.tsx` |
 | **Task 32** | Xác minh và hoàn tất | Phase 9: Dynamic Visual Themes | `[x]` | Remotion Preview / Render |
+| **Task 33** | Xây dựng các component nền nghệ thuật mới trong Remotion | Phase 10: Modular Layouts | `[x]` | `my-video/src/components/overlays/EmberSparksOverlay.tsx`, `my-video/src/components/overlays/LightLeaksOverlay.tsx` |
+| **Task 34** | Tích hợp nền nghệ thuật mới vào MainComposition | Phase 10: Modular Layouts | `[x]` | `my-video/src/compositions/MainComposition.tsx` |
+| **Task 35** | Cải tạo IntroProfile thành Bộ Phân Tích Bố Cục Mô-đun | Phase 10: Modular Layouts | `[x]` | `my-video/src/compositions/IntroProfile.tsx` |
+| **Task 36** | Chạy xác minh và kiểm thử | Phase 10: Modular Layouts | `[x]` | Remotion lint & typecheck |
+
 
