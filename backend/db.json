@@ -1,0 +1,28 @@
+{
+  "projects": [
+    {
+      "id": "proj_st7ou4y7u",
+      "title": "Test Proj",
+      "status": "DRAFT",
+      "createdAt": "2026-06-26T09:37:16.536Z",
+      "config": {
+        "length": "Short (~60s)",
+        "language": "Vietnamese",
+        "voice": "rachel",
+        "watermark": {
+          "enabled": true,
+          "text": "yupclip.com",
+          "position": "top-right",
+          "color": "#000000"
+        },
+        "ending": {
+          "enabled": true,
+          "logoText": "YupVid",
+          "website": "yupvid.com"
+        },
+        "backgroundMusic": "Chill Lofi Beats"
+      },
+      "scenes": []
+    }
+  ]
+}
