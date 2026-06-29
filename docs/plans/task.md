@@ -27,3 +27,11 @@
 | **Task 23** | Move frontend files to frontend/ subdirectory | Phase 8: Reorganize Frontend | `[x]` | Root files, `frontend/` |
 | **Task 24** | Update relative import path in MasterPlayer.jsx | Phase 8: Reorganize Frontend | `[x]` | `frontend/src/components/MasterPlayer.jsx` |
 | **Task 25** | Update root README.md & .gitignore | Phase 8: Reorganize Frontend | `[x]` | `README.md`, `.gitignore` |
+| **Task 26** | Cập nhật API Backend sinh Storyboard | Phase 9: Dynamic Visual Themes | `[x]` | `backend/services/ai.js`, `backend/server.js` |
+| **Task 27** | Cập nhật giao diện cài đặt chủ đề trên Frontend Web UI | Phase 9: Dynamic Visual Themes | `[x]` | `frontend/src/components/SidebarConfig.jsx`, `frontend/src/components/StoryboardEditor.jsx` |
+| **Task 28** | Xây dựng các component hiệu ứng hạt trong Remotion | Phase 9: Dynamic Visual Themes | `[x]` | `my-video/src/components/overlays/*` |
+| **Task 29** | Xây dựng Component Phụ đề động đồng bộ | Phase 9: Dynamic Visual Themes | `[x]` | `my-video/src/components/DynamicSubtitle.tsx` |
+| **Task 30** | Tích hợp hiệu ứng hạt và phụ đề động vào MainComposition | Phase 9: Dynamic Visual Themes | `[x]` | `my-video/src/compositions/MainComposition.tsx` |
+| **Task 31** | Cải tạo giao diện cảnh IntroProfile thành Glassmorphic | Phase 9: Dynamic Visual Themes | `[x]` | `my-video/src/compositions/IntroProfile.tsx` |
+| **Task 32** | Xác minh và hoàn tất | Phase 9: Dynamic Visual Themes | `[x]` | Remotion Preview / Render |
+

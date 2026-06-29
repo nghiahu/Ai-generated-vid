@@ -343,6 +343,43 @@ export const StoryboardEditor = ({
                     />
                   </div>
 
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                    <div>
+                      <label className="form-label-mono" style={{ fontSize: "11px" }}>Hiệu ứng hạt (Theme)</label>
+                      <select 
+                        className="form-input-mono"
+                        value={scene.theme || "default"} 
+                        onChange={(e) => handleFieldChange(scene.id, "theme", e.target.value)}
+                        style={{ padding: "8px", fontSize: "12px" }}
+                      >
+                        <option value="default">Mặc định (Bokeh)</option>
+                        <option value="japan">Nhật Bản (Sakura)</option>
+                        <option value="tech">Công nghệ (Digital)</option>
+                        <option value="finance">Tài chính (Gold)</option>
+                        <option value="nature">Thiên nhiên (Lá rụng)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="form-label-mono" style={{ fontSize: "11px" }}>Màu nhấn (Accent HEX)</label>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <input 
+                          className="form-input-mono"
+                          type="color" 
+                          value={scene.accentColor || "#FFB7C5"} 
+                          onChange={(e) => handleFieldChange(scene.id, "accentColor", e.target.value)}
+                          style={{ width: "35px", height: "35px", padding: 0, cursor: "pointer", border: "2px solid #000" }}
+                        />
+                        <input 
+                          className="form-input-mono"
+                          type="text" 
+                          value={scene.accentColor || "#FFB7C5"} 
+                          onChange={(e) => handleFieldChange(scene.id, "accentColor", e.target.value)}
+                          style={{ padding: "8px", fontSize: "12px", flex: 1 }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="form-label-mono" style={{ fontSize: "11px" }}>Points (One per line)</label>
                     <textarea 

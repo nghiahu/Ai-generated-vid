@@ -16,7 +16,7 @@ async function generateStoryboard(scriptText) {
 
     const prompt = `
       You are an expert AI video producer. Parse the following raw script text into a structured storyboard (scenes).
-      For each scene, determine the layout and estimate duration (assume 3 Vietnamese words per second).
+      For each scene, determine the layout, theme, accent color, and estimate duration (assume 3 Vietnamese words per second).
       
       Raw Script:
       "${scriptText}"
@@ -31,7 +31,9 @@ async function generateStoryboard(scriptText) {
           "voiceover": "The subset of the script text read in this scene, in Vietnamese",
           "duration": estimated duration in seconds (number, e.g. 7.5),
           "placement": "Full" | "Split",
-          "keywords": "1-3 English keywords for Unsplash photo search based on visual context, e.g., 'coding laptop'"
+          "keywords": "1-3 English keywords for Unsplash photo search based on visual context, e.g., 'coding laptop'",
+          "theme": "japan" | "tech" | "finance" | "nature" | "default",
+          "accentColor": "A vibrant HEX color matching the theme, e.g., '#FFB7C5' for japan, '#00E5FF' for tech, '#FFD700' for finance"
         }
       ]
       
@@ -60,7 +62,9 @@ async function generateStoryboard(scriptText) {
       points: Array.isArray(scene.points) ? scene.points : [],
       voiceover: scene.voiceover || "",
       placement: scene.placement || "Full",
-      keywords: scene.keywords || "technology"
+      keywords: scene.keywords || "technology",
+      theme: scene.theme || "default",
+      accentColor: scene.accentColor || "#FFB7C5"
     }));
 
   } catch (error) {

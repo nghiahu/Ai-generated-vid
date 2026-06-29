@@ -192,7 +192,9 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
         voiceoverAudioUrl,
         placement: scene.placement,
         mediaList,
-        selectedMediaIndex: 0
+        selectedMediaIndex: 0,
+        theme: scene.theme || "default",
+        accentColor: scene.accentColor || "#FFB7C5"
       });
     }
 
