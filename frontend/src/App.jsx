@@ -209,26 +209,40 @@ function App() {
 
   // Full Storyboard Editor Workspace (Setup or Editor mode)
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", backgroundColor: "#ffffff" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", backgroundColor: "var(--bg-secondary)" }}>
       {/* TopNavBar */}
-      <header className="border-b-strict" style={{
+      <header style={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "16px 24px",
-        backgroundColor: "#ffffff",
-        height: "64px",
-        zIndex: 50
+        padding: "16px 40px",
+        backgroundColor: "rgba(255, 255, 255, 0.75)",
+        backdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(15, 23, 42, 0.06)",
+        height: "70px",
+        zIndex: 100
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "30px" }}>
-          <span style={{ fontSize: "20px", fontFamily: "Space Grotesk", fontWeight: "900", tracking: "-0.05em", cursor: "pointer" }} onClick={() => { setSelectedProjectId(null); setView("DASHBOARD"); }}>
+          <span
+            style={{
+              fontSize: "20px",
+              fontFamily: "var(--font-heading)",
+              fontWeight: "900",
+              letterSpacing: "-0.04em",
+              cursor: "pointer",
+              background: "linear-gradient(135deg, var(--color-primary), var(--color-accent))",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent"
+            }}
+            onClick={() => { setSelectedProjectId(null); setView("DASHBOARD"); }}
+          >
             HYPERFRAMES
           </span>
           
           <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
             <button 
               className="secondary" 
-              style={{ padding: "6px 12px", fontSize: "12px", boxShadow: "none", border: "1px solid #000", height: "auto" }} 
+              style={{ padding: "6px 14px", fontSize: "11px", borderRadius: "20px" }} 
               onClick={() => { setSelectedProjectId(null); setView("DASHBOARD"); }}
             >
               &larr; Projects
@@ -253,8 +267,8 @@ function App() {
         
         <div>
           <button 
-            className="btn-mono btn-mono-primary" 
-            style={{ fontSize: "12px", padding: "8px 16px" }}
+            className="primary" 
+            style={{ fontSize: "12px", padding: "8px 18px", borderRadius: "var(--radius-pill)" }}
             onClick={handleRenderVideo}
             disabled={rendering}
           >
@@ -268,7 +282,7 @@ function App() {
         {view === "WORKSPACE_SETUP" ? (
           <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
             {/* Left Column: Script input & Generation */}
-            <div style={{ flex: "0 0 58.33%", borderRight: "2px solid #000000", overflowY: "auto", display: "flex" }}>
+            <div style={{ flex: "0 0 58.33%", borderRight: "1px solid rgba(15, 23, 42, 0.08)", overflowY: "auto", display: "flex" }}>
               <StoryboardEditor
                 mode="setup"
                 scenes={currentProject?.scenes || []}
@@ -293,50 +307,50 @@ function App() {
         ) : (
           <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
             {/* Left Column: SideNavBar */}
-            <nav className="border-r-strict" style={{ width: "256px", backgroundColor: "#ffffff", height: "100%", display: "flex", flexDirection: "column", padding: "20px", flexShrink: 0 }}>
-              <div style={{ paddingBottom: "15px", borderBottom: "1px solid #000", marginBottom: "15px" }}>
-                <span style={{ fontSize: "14px", fontFamily: "Space Grotesk", fontWeight: "bold", display: "block" }}>{currentProject?.title || "Dự án hiện tại"}</span>
-                <span style={{ fontSize: "11px", color: "#666666" }}>v1.0.4-alpha</span>
+            <nav style={{ width: "256px", backgroundColor: "rgba(255, 255, 255, 0.65)", backdropFilter: "blur(16px)", height: "100%", display: "flex", flexDirection: "column", padding: "24px 20px", flexShrink: 0, borderRight: "1px solid rgba(15, 23, 42, 0.08)" }}>
+              <div style={{ paddingBottom: "15px", borderBottom: "1px solid rgba(15, 23, 42, 0.08)", marginBottom: "15px" }}>
+                <span style={{ fontSize: "14px", fontFamily: "var(--font-heading)", fontWeight: "800", display: "block", color: "var(--text-primary)" }}>{currentProject?.title || "Dự án hiện tại"}</span>
+                <span style={{ fontSize: "11px", color: "var(--text-secondary)", fontWeight: 500 }}>v1.0.4-alpha</span>
               </div>
               <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", flex: 1 }}>
                 <li>
-                  <a href="#" style={{ textDecoration: "none", color: "#000", fontWeight: "bold", display: "flex", gap: "8px", alignItems: "center" }}>
+                  <a href="#" style={{ textDecoration: "none", color: "var(--text-primary)", fontWeight: "600", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", padding: "8px 12px" }}>
                     📂 Projects
                   </a>
                 </li>
                 <li>
-                  <a href="#" style={{ textDecoration: "none", color: "#666", display: "flex", gap: "8px", alignItems: "center" }}>
+                  <a href="#" style={{ textDecoration: "none", color: "var(--text-secondary)", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", padding: "8px 12px" }}>
                     🎥 Media
                   </a>
                 </li>
                 <li>
-                  <a href="#" style={{ textDecoration: "none", color: "#000", backgroundColor: "#f0f0f0", padding: "6px 10px", borderRadius: "4px", display: "flex", gap: "8px", alignItems: "center" }}>
+                  <a href="#" style={{ textDecoration: "none", color: "var(--color-primary)", backgroundColor: "rgba(37, 99, 235, 0.08)", padding: "8px 12px", borderRadius: "8px", fontWeight: "700", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center" }}>
                     📈 Timeline
                   </a>
                 </li>
                 <li>
-                  <a href="#" style={{ textDecoration: "none", color: "#666", display: "flex", gap: "8px", alignItems: "center" }}>
+                  <a href="#" style={{ textDecoration: "none", color: "var(--text-secondary)", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", padding: "8px 12px" }}>
                     ✨ Effects
                   </a>
                 </li>
                 <li>
-                  <a href="#" style={{ textDecoration: "none", color: "#666", display: "flex", gap: "8px", alignItems: "center" }}>
+                  <a href="#" style={{ textDecoration: "none", color: "var(--text-secondary)", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", padding: "8px 12px" }}>
                     🔊 Audio
                   </a>
                 </li>
               </ul>
-              <div style={{ borderTop: "1px solid #000", paddingTop: "15px" }}>
-                <a href="#" style={{ textDecoration: "none", color: "#666", display: "flex", gap: "8px", alignItems: "center", marginBottom: "10px" }}>
+              <div style={{ borderTop: "1px solid rgba(15, 23, 42, 0.08)", paddingTop: "15px" }}>
+                <a href="#" style={{ textDecoration: "none", color: "var(--text-secondary)", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", marginBottom: "10px", padding: "4px 12px" }}>
                   ❓ Help
                 </a>
-                <a href="#" onClick={() => { setSelectedProjectId(null); setView("DASHBOARD"); }} style={{ textDecoration: "none", color: "#666", display: "flex", gap: "8px", alignItems: "center" }}>
+                <a href="#" onClick={() => { setSelectedProjectId(null); setView("DASHBOARD"); }} style={{ textDecoration: "none", color: "var(--text-secondary)", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", padding: "4px 12px" }}>
                   🚪 Logout
                 </a>
               </div>
             </nav>
 
             {/* Middle Column: Storyboard cards list */}
-            <div style={{ flex: 1, overflowY: "auto", borderRight: "2px solid #000000" }}>
+            <div style={{ flex: 1, overflowY: "auto", borderRight: "1px solid rgba(15, 23, 42, 0.08)" }}>
               <StoryboardEditor
                 mode="editor"
                 scenes={currentProject?.scenes || []}

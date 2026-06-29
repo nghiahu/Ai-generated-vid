@@ -38,5 +38,10 @@
 | **Task 34** | Tích hợp nền nghệ thuật mới vào MainComposition | Phase 10: Modular Layouts | `[x]` | `my-video/src/compositions/MainComposition.tsx` |
 | **Task 35** | Cải tạo IntroProfile thành Bộ Phân Tích Bố Cục Mô-đun | Phase 10: Modular Layouts | `[x]` | `my-video/src/compositions/IntroProfile.tsx` |
 | **Task 36** | Chạy xác minh và kiểm thử | Phase 10: Modular Layouts | `[x]` | Remotion lint & typecheck |
+| **Task 37** | Cập nhật CSS theme.css với các token kính mờ sáng | Phase 11: Light Glassmorphism | `[x]` | `frontend/src/styles/theme.css` |
+| **Task 38** | Cập nhật Dashboard.jsx sang giao diện thẻ kính mờ sáng | Phase 11: Light Glassmorphism | `[x]` | `frontend/src/components/Dashboard.jsx` |
+| **Task 39** | Cập nhật MasterPlayer.jsx và App.jsx | Phase 11: Light Glassmorphism | `[x]` | `frontend/src/components/MasterPlayer.jsx`, `frontend/src/App.jsx` |
+| **Task 40** | Chạy xác minh và kiểm thử | Phase 11: Light Glassmorphism | `[x]` | Frontend preview & verification |
+
 
 

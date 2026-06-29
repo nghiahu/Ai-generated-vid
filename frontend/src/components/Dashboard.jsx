@@ -13,74 +13,123 @@ export const Dashboard = ({ projects = [], onCreateProject, onSelectProject, onD
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#fafafa", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative" }}>
+      {/* Background Pastel Blobs for Glassmorphism depth */}
+      <div style={{ position: "absolute", top: "10%", left: "5%", width: "350px", height: "350px", borderRadius: "50%", background: "rgba(37, 99, 235, 0.06)", filter: "blur(70px)", zIndex: 0, pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: "15%", right: "8%", width: "400px", height: "400px", borderRadius: "50%", background: "rgba(168, 85, 247, 0.05)", filter: "blur(80px)", zIndex: 0, pointerEvents: "none" }} />
+
       {/* TopNavBar */}
-      <nav className="border-b-strict" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", backgroundColor: "#ffffff", height: "64px", shrink: 0, zIndex: 10 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "30px" }}>
-          <span style={{ fontSize: "20px", fontFamily: "Space Grotesk", fontWeight: "900", tracking: "-0.05em", color: "#000000" }}>
+      <nav
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "16px 40px",
+          backgroundColor: "rgba(255, 255, 255, 0.75)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(15, 23, 42, 0.06)",
+          height: "70px",
+          position: "sticky",
+          top: 0,
+          zIndex: 100,
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.01)"
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "40px" }}>
+          <span
+            style={{
+              fontSize: "22px",
+              fontFamily: "var(--font-heading)",
+              fontWeight: "900",
+              letterSpacing: "-0.04em",
+              color: "var(--text-primary)",
+              background: "linear-gradient(135deg, var(--color-primary), var(--color-accent))",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent"
+            }}
+          >
             HYPERFRAMES
           </span>
-          <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
             <span className="tab-active" style={{ fontSize: "14px", cursor: "pointer", paddingBottom: "4px" }}>Projects</span>
             <span className="tab-inactive" style={{ fontSize: "14px", cursor: "pointer", paddingBottom: "4px" }}>Assets</span>
             <span className="tab-inactive" style={{ fontSize: "14px", cursor: "pointer", paddingBottom: "4px" }}>Team</span>
             <span className="tab-inactive" style={{ fontSize: "14px", cursor: "pointer", paddingBottom: "4px" }}>Settings</span>
           </div>
         </div>
-        <button className="btn-mono btn-mono-primary" style={{ fontSize: "12px", padding: "8px 16px" }} onClick={() => setShowModal(true)}>
+        <button className="primary" style={{ padding: "10px 22px", borderRadius: "var(--radius-pill)" }} onClick={() => setShowModal(true)}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           Tạo Video Mới
         </button>
       </nav>
 
       {/* Main Content Area */}
-      <div style={{ padding: "40px 24px", maxWidth: "1200px", width: "100%", margin: "0 auto", flex: 1 }}>
-        <h2 style={{ fontSize: "28px", fontFamily: "Space Grotesk", textTransform: "uppercase", marginBottom: "30px", tracking: "-0.02em", borderBottom: "2px solid #000000", paddingBottom: "10px" }}>
-          Dự án của tôi
-        </h2>
+      <div style={{ padding: "50px 40px", maxWidth: "1280px", width: "100%", margin: "0 auto", flex: 1, zIndex: 10 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "36px" }}>
+          <h2 style={{ fontSize: "30px", fontFamily: "var(--font-heading)", fontWeight: "800", letterSpacing: "-0.02em" }}>
+            Dự án của tôi
+          </h2>
+          <span style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: 600 }}>{projects.length} Video</span>
+        </div>
 
         {/* Project grid list */}
         {projects.length === 0 ? (
-          <div style={{ border: "2px dashed #000000", padding: "80px 20px", textAlign: "center", borderRadius: "4px", backgroundColor: "#ffffff", boxShadow: "4px 4px 0px 0px #000000" }}>
-            <p style={{ color: "#555555", fontSize: "16px", marginBottom: "20px", fontFamily: "Space Grotesk", fontWeight: "bold" }}>
+          <div
+            style={{
+              border: "2.5px dashed rgba(15, 23, 42, 0.12)",
+              padding: "100px 20px",
+              textAlign: "center",
+              borderRadius: "var(--radius-lg)",
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              backdropFilter: "blur(12px)",
+              boxShadow: "var(--shadow)"
+            }}
+          >
+            <p style={{ color: "var(--text-secondary)", fontSize: "16px", marginBottom: "24px", fontWeight: "600" }}>
               Chưa có dự án nào được tạo. Hãy khởi tạo dự án đầu tiên của bạn!
             </p>
-            <button className="btn-mono btn-mono-primary" onClick={() => setShowModal(true)}>Tạo Dự Án Mới</button>
+            <button className="primary" style={{ borderRadius: "var(--radius-pill)" }} onClick={() => setShowModal(true)}>
+              Khởi Tạo Ngay
+            </button>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "30px" }}>
             {projects.map((project) => (
               <div
                 key={project.id}
                 onClick={() => onSelectProject(project.id)}
                 style={{
-                  backgroundColor: "#ffffff",
-                  border: "2px solid #000000",
-                  borderRadius: "4px",
-                  padding: "24px",
+                  backgroundColor: "var(--bg-primary)",
+                  backdropFilter: "blur(16px)",
+                  border: "1px solid rgba(255, 255, 255, 0.6)",
+                  borderRadius: "var(--radius-lg)",
+                  padding: "26px",
                   cursor: "pointer",
-                  boxShadow: "4px 4px 0px 0px #000000",
-                  transition: "transform 0.1s ease, box-shadow 0.1s ease",
+                  boxShadow: "var(--shadow)",
+                  transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  minHeight: "160px"
+                  minHeight: "180px"
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translate(-2px, -2px)";
-                  e.currentTarget.style.boxShadow = "6px 6px 0px 0px #000000";
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow = "var(--shadow-hover)";
+                  e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.2)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "none";
-                  e.currentTarget.style.boxShadow = "4px 4px 0px 0px #000000";
+                  e.currentTarget.style.boxShadow = "var(--shadow)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.6)";
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div>
-                    <h3 style={{ fontSize: "17px", fontFamily: "Space Grotesk", marginBottom: "8px", fontWeight: "bold", textTransform: "uppercase", paddingRight: "10px" }}>
+                    <h3 style={{ fontSize: "18px", fontFamily: "var(--font-heading)", marginBottom: "8px", fontWeight: "800", color: "var(--text-primary)" }}>
                       {project.title}
                     </h3>
-                    <span style={{ fontSize: "12px", color: "#555555" }}>
-                      Tạo ngày: {new Date(project.createdAt).toLocaleDateString("vi-VN")}
+                    <span style={{ fontSize: "13px", color: "var(--text-secondary)", fontWeight: 500 }}>
+                      Cập nhật: {new Date(project.createdAt).toLocaleDateString("vi-VN")}
                     </span>
                   </div>
                   
@@ -92,15 +141,17 @@ export const Dashboard = ({ projects = [], onCreateProject, onSelectProject, onD
                       }
                     }}
                     style={{
-                      background: "none",
-                      border: "1px solid #000000",
-                      borderRadius: "4px",
-                      padding: "2px 6px",
+                      background: "rgba(255, 51, 51, 0.06)",
+                      border: "none",
+                      borderRadius: "6px",
+                      padding: "6px 12px",
                       fontSize: "11px",
                       cursor: "pointer",
-                      color: "#ff3333",
-                      fontWeight: "bold",
-                      fontFamily: "Space Grotesk"
+                      color: "#ef4444",
+                      fontWeight: "700",
+                      textTransform: "none",
+                      boxShadow: "none",
+                      letterSpacing: "0px"
                     }}
                     title="Xóa dự án"
                   >
@@ -108,20 +159,28 @@ export const Dashboard = ({ projects = [], onCreateProject, onSelectProject, onD
                   </button>
                 </div>
                 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "24px" }}>
                   <span style={{
-                    fontSize: "11px",
-                    fontWeight: "700",
-                    border: "1px solid #000000",
-                    padding: "3px 8px",
-                    borderRadius: "4px",
-                    backgroundColor: project.status === "DRAFT" ? "#ffffff" : "#000000",
-                    color: project.status === "DRAFT" ? "#000000" : "#ffffff",
-                    letterSpacing: "0.05em"
+                    fontSize: "12px",
+                    fontWeight: "800",
+                    padding: "4px 12px",
+                    borderRadius: "20px",
+                    backgroundColor: project.status === "DRAFT" ? "rgba(37, 99, 235, 0.08)" : "rgba(16, 185, 129, 0.08)",
+                    color: project.status === "DRAFT" ? "var(--color-primary)" : "#10b981",
+                    letterSpacing: "0.02em"
                   }}>
-                    {project.status}
+                    {project.status === "DRAFT" ? "Bản thảo" : "Đã xuất"}
                   </span>
-                  <span style={{ fontWeight: "900", fontSize: "18px" }}>&rarr;</span>
+                  <span
+                    style={{
+                      fontWeight: "900",
+                      fontSize: "20px",
+                      color: "var(--color-primary)",
+                      transition: "transform 0.2s ease"
+                    }}
+                  >
+                    &rarr;
+                  </span>
                 </div>
               </div>
             ))}
@@ -131,34 +190,38 @@ export const Dashboard = ({ projects = [], onCreateProject, onSelectProject, onD
 
       {/* Create Project Modal */}
       {showModal && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0,0,0,0.4)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 1000
-        }}>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(15, 23, 42, 0.2)",
+            backdropFilter: "blur(8px)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000
+          }}
+        >
           <form
             onSubmit={handleSubmit}
             style={{
-              backgroundColor: "#ffffff",
-              border: "3px solid #000000",
-              borderRadius: "4px",
-              padding: "30px",
-              width: "450px",
-              boxShadow: "8px 8px 0px 0px #000000"
+              backgroundColor: "rgba(255, 255, 255, 0.85)",
+              backdropFilter: "blur(20px)",
+              border: "1px solid rgba(255, 255, 255, 0.6)",
+              borderRadius: "var(--radius-lg)",
+              padding: "36px",
+              width: "480px",
+              boxShadow: "0 25px 60px rgba(0, 0, 0, 0.08)"
             }}
           >
-            <h2 style={{ fontFamily: "Space Grotesk", fontSize: "22px", fontWeight: "bold", textTransform: "uppercase", marginBottom: "20px" }}>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "24px", fontWeight: "800", marginBottom: "20px" }}>
               Tạo Video Mới
             </h2>
-            <div style={{ marginBottom: "24px" }}>
-              <label className="form-label-mono">
+            <div style={{ marginBottom: "28px" }}>
+              <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-secondary)" }}>
                 Tiêu đề dự án
               </label>
               <input
@@ -171,11 +234,11 @@ export const Dashboard = ({ projects = [], onCreateProject, onSelectProject, onD
                 required
               />
             </div>
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
-              <button type="button" className="btn-mono btn-mono-secondary" onClick={() => setShowModal(false)}>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "14px" }}>
+              <button type="button" className="secondary" style={{ textTransform: "uppercase" }} onClick={() => setShowModal(false)}>
                 Hủy bỏ
               </button>
-              <button type="submit" className="btn-mono btn-mono-primary">
+              <button type="submit" className="primary" style={{ textTransform: "uppercase" }}>
                 Khởi tạo
               </button>
             </div>
