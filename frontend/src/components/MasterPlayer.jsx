@@ -1,6 +1,6 @@
 import React from "react";
 import { Player } from "@remotion/player";
-import { MainComposition } from "../../my-video/src/compositions/MainComposition";
+import { MainComposition } from "../../../my-video/src/compositions/MainComposition";
 
 export const MasterPlayer = ({ 
   scenes = [], 
