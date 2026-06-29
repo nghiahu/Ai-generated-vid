@@ -19,7 +19,7 @@ function App() {
   const [rendering, setRendering] = useState(false);
   const [renderProgress, setRenderProgress] = useState(0);
   const [renderedFrames, setRenderedFrames] = useState(0);
-  const [totalFrames, setTotalFrames] = useState(0);
+  const [renderTotalFrames, setRenderTotalFrames] = useState(0);
   const [videoUrl, setVideoUrl] = useState(null);
 
   // Load projects list on mount
@@ -155,7 +155,7 @@ function App() {
     setRendering(true);
     setRenderProgress(0);
     setRenderedFrames(0);
-    setTotalFrames(0);
+    setRenderTotalFrames(0);
     setVideoUrl(null);
 
     try {
@@ -170,7 +170,7 @@ function App() {
           const progressPercent = Math.round((statusRes.progress || 0) * 100);
           setRenderProgress(progressPercent);
           setRenderedFrames(statusRes.renderedFrames || 0);
-          setTotalFrames(statusRes.totalFrames || 0);
+          setRenderTotalFrames(statusRes.totalFrames || 0);
 
           if (statusRes.status === "completed") {
             setVideoUrl(statusRes.videoUrl);
@@ -359,7 +359,7 @@ function App() {
                 rendering={rendering}
                 renderProgress={renderProgress}
                 renderedFrames={renderedFrames}
-                totalFrames={totalFrames}
+                renderTotalFrames={renderTotalFrames}
                 videoUrl={videoUrl}
               />
             </div>

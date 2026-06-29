@@ -9,7 +9,7 @@ export const MasterPlayer = ({
   rendering, 
   renderProgress, 
   renderedFrames,
-  totalFrames,
+  renderTotalFrames,
   videoUrl 
 }) => {
   const fps = 30;
@@ -168,8 +168,8 @@ export const MasterPlayer = ({
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontFamily: "Space Grotesk", fontWeight: "bold", marginBottom: "8px" }}>
               <span>
-                {renderedFrames > 0 && totalFrames > 0 
-                  ? `Đang kết xuất (Frame ${renderedFrames}/${totalFrames})` 
+                {renderedFrames > 0 && renderTotalFrames > 0 
+                  ? `Đang kết xuất (Frame ${renderedFrames}/${renderTotalFrames})` 
                   : "Đang kết xuất MP4..."}
               </span>
               <span>{renderProgress}%</span>
