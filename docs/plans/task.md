@@ -66,5 +66,5 @@
 | **Task 62** | Update UI Block Styles | Phase 16: Rescaling UI Components | `[x]` | `my-video/src/components/layout/UIBlocks.tsx` |
 | **Task 63** | Update Height Estimates in Layout Resolver | Phase 16: Rescaling UI Components | `[x]` | `my-video/src/utils/layoutResolver.ts` |
 | **Task 64** | Update Layout Container Spacing | Phase 16: Rescaling UI Components | `[x]` | `my-video/src/compositions/DynamicLayout.tsx` |
-| **Task 65** | Verify and test rescaled video layouts | Phase 16: Rescaling UI Components | `[/]` | Remotion Preview / build verification |
+| **Task 65** | Verify and test rescaled video layouts | Phase 16: Rescaling UI Components | `[x]` | Remotion Preview / build verification |
 
