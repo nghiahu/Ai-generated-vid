@@ -58,3 +58,8 @@
 | **Task 54** | Hiện thực các Layout Renderers đặc thù trong Remotion | Phase 14: Dynamic Layout Overhaul | `[x]` | `my-video/src/compositions/DynamicLayout.tsx` |
 | **Task 55** | Đồng bộ hóa hiển thị Preview trên Editor | Phase 14: Dynamic Layout Overhaul | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
 | **Task 56** | Chạy xác minh và kiểm thử | Phase 14: Dynamic Layout Overhaul | `[x]` | Remotion lint & typecheck & UI |
+| **Task 57** | Cấu hình biến môi trường Backend | Phase 15: Cloudinary Image Upload | `[x]` | `backend/.env` |
+| **Task 58** | Cài đặt thư viện `cloudinary` ở Backend | Phase 15: Cloudinary Image Upload | `[x]` | npm install cloudinary |
+| **Task 59** | Xây dựng Endpoint API `POST /api/upload` | Phase 15: Cloudinary Image Upload | `[x]` | `backend/server.js` |
+| **Task 60** | Hiện thực chọn tệp và Upload ở Frontend | Phase 15: Cloudinary Image Upload | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
+| **Task 61** | Chạy xác minh và kiểm thử | Phase 15: Cloudinary Image Upload | `[x]` | Verify uploading & build |

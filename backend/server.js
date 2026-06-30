@@ -7,6 +7,13 @@ const ai = require('./services/ai');
 const tts = require('./services/tts');
 const media = require('./services/media');
 const render = require('./services/render');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -14,9 +21,9 @@ const PORT = process.env.PORT || 5000;
 // Enable CORS for frontend requests
 app.use(cors());
 
-// Parse JSON request bodies
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Parse JSON request bodies with increased limit for base64 images
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Serve static assets (voiceover audio, downloads, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -108,6 +115,26 @@ app.get('/api/media/search', async (req, res) => {
     res.json(images);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// 5b. POST /api/upload: Upload base64 image to Cloudinary
+app.post('/api/upload', async (req, res) => {
+  try {
+    const { file } = req.body;
+    if (!file) {
+      return res.status(400).json({ error: 'Data URL image string is required' });
+    }
+
+    const result = await cloudinary.uploader.upload(file, {
+      folder: 'ai-video-storyboards',
+      resource_type: 'auto'
+    });
+
+    res.json({ url: result.secure_url });
+  } catch (error) {
+    console.error('Cloudinary upload failure:', error);
+    res.status(500).json({ error: `Cloudinary upload failed: ${error.message}` });
   }
 });
 

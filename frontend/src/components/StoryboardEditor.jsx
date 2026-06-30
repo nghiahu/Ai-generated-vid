@@ -62,6 +62,56 @@ export const StoryboardEditor = ({
 }) => {
   const [topicText, setTopicText] = useState("");
   const [scriptText, setScriptText] = useState("");
+  const [uploadingScenes, setUploadingScenes] = useState({});
+
+  const handleImageUploadClick = (sceneId) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    
+    fileInput.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      setUploadingScenes(prev => ({ ...prev, [sceneId]: true }));
+      
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        try {
+          const base64data = reader.result;
+          // Gửi lên API Backend
+          const response = await axios.post("http://localhost:5000/api/upload", {
+            file: base64data
+          });
+          
+          const newImageUrl = response.data.url;
+          
+          // Thêm vào mediaList của Scene hiện tại
+          const scene = scenes.find(s => s.id === sceneId);
+          if (!scene) return;
+          const currentMediaList = scene.mediaList || [];
+          const updatedMediaList = [...currentMediaList, newImageUrl];
+          const newIndex = updatedMediaList.length - 1;
+
+          // Cập nhật lên CSDL bằng API có sẵn
+          onUpdateScene(sceneId, {
+            ...scene,
+            mediaList: updatedMediaList,
+            selectedMediaIndex: newIndex
+          });
+          
+        } catch (err) {
+          console.error("Lỗi tải ảnh:", err);
+          alert(`Không thể upload ảnh: ${err.response?.data?.error || err.message}`);
+        } finally {
+          setUploadingScenes(prev => ({ ...prev, [sceneId]: false }));
+        }
+      };
+    };
+    
+    fileInput.click();
+  };
   
   const [searchQueries, setSearchQueries] = useState({});
   const [searchingImages, setSearchingImages] = useState({});
@@ -602,8 +652,13 @@ export const StoryboardEditor = ({
                   <div style={{ borderTop: "1px solid #000000", paddingTop: "15px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
                       <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Background Media</label>
-                      <button style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}>
-                        📁 Upload
+                      <button 
+                        type="button"
+                        onClick={() => handleImageUploadClick(scene.id)}
+                        disabled={uploadingScenes[scene.id]}
+                        style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
+                      >
+                        {uploadingScenes[scene.id] ? "⏳ Uploading..." : "📁 Upload"}
                       </button>
                     </div>
 
