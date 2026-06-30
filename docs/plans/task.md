@@ -47,6 +47,12 @@
 | **Task 43** | Tích hợp vào các Layouts trong Remotion | Phase 12: Default Accent HEX Background | `[x]` | `my-video/src/compositions/*`, `my-video/src/components/*` |
 | **Task 44** | Cập nhật giao diện `StoryboardEditor.jsx` ở Frontend | Phase 12: Default Accent HEX Background | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
 | **Task 45** | Chạy xác minh và kiểm thử | Phase 12: Default Accent HEX Background | `[x]` | Remotion lint & typecheck & UI |
+| **Task 46** | Xây dựng tệp phân tích ràng buộc `layoutResolver.ts` | Phase 13: Constraint Layout Engine | `[x]` | `my-video/src/utils/layoutResolver.ts` |
+| **Task 47** | Xây dựng các UI Block Components động theo Theme | Phase 13: Constraint Layout Engine | `[x]` | `my-video/src/components/layout/UIBlocks.tsx` |
+| **Task 48** | Xây dựng Bộ bố cục động `DynamicLayout.tsx` | Phase 13: Constraint Layout Engine | `[x]` | `my-video/src/compositions/DynamicLayout.tsx` |
+| **Task 49** | Tích hợp `DynamicLayout` vào `MainComposition.tsx` | Phase 13: Constraint Layout Engine | `[x]` | `my-video/src/compositions/MainComposition.tsx` |
+| **Task 50** | Đồng bộ WYSIWYG lên Frontend Web UI (`StoryboardEditor.jsx`) | Phase 13: Constraint Layout Engine | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
+| **Task 51** | Chạy xác minh và kiểm thử | Phase 13: Constraint Layout Engine | `[x]` | Remotion lint & typecheck & UI |
 
 
 

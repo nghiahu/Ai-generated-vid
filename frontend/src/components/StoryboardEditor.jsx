@@ -1,6 +1,54 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const resolveEditorComponents = (scene, currentImg, layoutType) => {
+  const list = [
+    { type: 'title', height: 180, priority: 100, data: { text: scene.heading || "Untitled" } }
+  ];
+
+  if (scene.points) {
+    scene.points.forEach((pt, idx) => {
+      const p = pt.trim();
+      if (!p) return;
+
+      const isCommandLine = p.startsWith("$") || p.includes("curl ") || p.includes("npm install") || p.includes("pip install") || p.includes("git clone");
+      if (isCommandLine) {
+        list.push({ type: 'terminal', height: 140, priority: 85, data: { code: p } });
+        return;
+      }
+
+      const isBadges = p.includes(",") && (p.includes("⭐") || p.includes("🔥") || p.includes("sao") || p.includes("MIT") || p.length < 60);
+      if (isBadges) {
+        list.push({ type: 'badge_row', height: 80, priority: 50, data: { badges: p.split(",").map(b => b.trim()).filter(b => b.length > 0) } });
+        return;
+      }
+
+      const isHeroMetric = p.startsWith("-") || p.startsWith("+") || p.match(/^[+-]?\d+%/i);
+      if (isHeroMetric) {
+        list.push({ type: 'hero_metric', height: 180, priority: 90, data: { text: p } });
+        return;
+      }
+
+      list.push({ type: 'feature_card', height: 100, priority: 70, data: { text: p } });
+    });
+  }
+
+  // Filter based on 1600px budget (scaled down on editor layout but logically same)
+  let active = [...list];
+  while (active.length > 0) {
+    const totalHeight = active.reduce((sum, item) => sum + item.height, 0) + (active.length - 1) * 30;
+    if (totalHeight <= 1550) break;
+    
+    let lowestIdx = 0;
+    for (let i = 1; i < active.length; i++) {
+      if (active[i].priority < active[lowestIdx].priority) lowestIdx = i;
+    }
+    active.splice(lowestIdx, 1);
+  }
+
+  return active;
+};
+
 export const StoryboardEditor = ({ 
   scenes = [], 
   projectId, 
@@ -260,40 +308,100 @@ export const StoryboardEditor = ({
                     {currentImg ? (
                       <img 
                         src={currentImg} 
-                        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0, filter: "grayscale(100%) opacity(40%)" }} 
+                        style={{ 
+                          position: "absolute", 
+                          top: 0,
+                          bottom: 0,
+                          left: 0,
+                          width: scene.visualLayout === "Split Screen" ? "45%" : "100%",
+                          height: "100%", 
+                          objectFit: "cover", 
+                          zIndex: 0, 
+                          filter: "grayscale(100%) opacity(40%)",
+                          borderRight: scene.visualLayout === "Split Screen" ? "2px solid #000000" : "none"
+                        }} 
                         alt="bg preview" 
                       />
                     ) : (
                       <div 
                         style={{ 
                           position: "absolute", 
-                          inset: 0, 
+                          top: 0,
+                          bottom: 0,
+                          left: 0,
+                          width: scene.visualLayout === "Split Screen" ? "45%" : "100%",
+                          height: "100%", 
                           zIndex: 0,
-                          background: `radial-gradient(circle at center, ${(scene.accentColor || "#FFB7C5")}33 0%, #090d1a 100%)`
+                          background: `radial-gradient(circle at center, ${(scene.accentColor || "#FFB7C5")}33 0%, #090d1a 100%)`,
+                          borderRight: scene.visualLayout === "Split Screen" ? "2px solid #000000" : "none"
                         }} 
                       />
                     )}
 
-                    {/* Headline Card */}
-                    <div className="border-strict" style={{ borderWidth: "2px", backgroundColor: "#ffffff", padding: "6px", width: "100%", marginBottom: "12px", zIndex: 1, boxShadow: "2px 2px 0px 0px #000" }}>
-                      <h3 style={{ fontSize: "13px", fontFamily: "Space Grotesk", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0 }}>
-                        {scene.heading || "Untitled"}
-                      </h3>
-                    </div>
-
-                    {/* Bullet Points */}
-                    <ul style={{ listStyle: "none", textAlign: "left", width: "100%", padding: 0, margin: 0, zIndex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
-                      {scene.points && scene.points.map((pt, pIdx) => (
-                        <li key={pIdx} style={{ fontSize: "10px", fontWeight: "700", display: "flex", alignItems: "flex-start", gap: "4px", textTransform: "uppercase", fontFamily: "Inter" }}>
-                          <span style={{ width: "5px", height: "5px", backgroundColor: "#000000", marginTop: "4px", flexShrink: 0 }}></span>
-                          {pt}
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Subtitle Caption voiceover */}
-                    <div style={{ marginTop: "auto", backgroundColor: "#000000", color: "#ffffff", padding: "6px", fontSize: "9px", fontFamily: "Inter", width: "100%", textAlign: "left", zIndex: 1, lineHeight: "1.3" }}>
-                      {scene.voiceover ? (scene.voiceover.length > 50 ? scene.voiceover.substring(0, 50) + "..." : scene.voiceover) : ""}
+                    {/* Component-based Dynamic Preview Area */}
+                    <div style={{
+                      position: "absolute",
+                      top: 0,
+                      bottom: 0,
+                      left: scene.visualLayout === "Split Screen" ? "45%" : 0,
+                      right: 0,
+                      zIndex: 1,
+                      padding: "12px 8px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "stretch",
+                      gap: "8px",
+                      boxSizing: "border-box"
+                    }}>
+                      {resolveEditorComponents(scene, currentImg, scene.visualLayout).map((comp, idx) => {
+                        if (comp.type === "title") {
+                          return (
+                            <div key={idx} className="border-strict" style={{ borderWidth: "1px", backgroundColor: "#ffffff", padding: "4px", width: "100%", boxShadow: "1.5px 1.5px 0px 0px #000" }}>
+                              <h3 style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0 }}>
+                                {comp.data.text}
+                              </h3>
+                            </div>
+                          );
+                        }
+                        if (comp.type === "terminal") {
+                          return (
+                            <div key={idx} style={{ backgroundColor: "#000000", color: "#00FF66", fontFamily: "monospace", padding: "4px", fontSize: "7.5px", borderRadius: "2px", textAlign: "left", wordBreak: "break-all" }}>
+                              $ {comp.data.code}
+                            </div>
+                          );
+                        }
+                        if (comp.type === "hero_metric") {
+                          return (
+                            <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "2px", backgroundColor: "#ffffff", border: "1px solid #000", padding: "3px", boxShadow: "1px 1px 0px 0px #000" }}>
+                              <span style={{ fontSize: "11px", fontWeight: "900", color: scene.accentColor || "#FFB7C5", fontFamily: "Space Grotesk", lineHeight: "1" }}>{comp.data.text.split("—")[0]}</span>
+                              {comp.data.text.includes("—") && (
+                                <span style={{ fontSize: "7px", color: "#666", lineHeight: "1" }}>{comp.data.text.split("—")[1]}</span>
+                              )}
+                            </div>
+                          );
+                        }
+                        if (comp.type === "feature_card") {
+                          return (
+                            <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "3px", fontSize: "7.5px", fontWeight: "700", textAlign: "left", textTransform: "uppercase", fontFamily: "Inter" }}>
+                              <span style={{ width: "3.5px", height: "3.5px", backgroundColor: "#000000", marginTop: "3px", flexShrink: 0 }}></span>
+                              <span style={{ flex: 1 }}>{comp.data.text}</span>
+                            </div>
+                          );
+                        }
+                        if (comp.type === "badge_row") {
+                          return (
+                            <div key={idx} style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
+                              {comp.data.badges.map((bg, bIdx) => (
+                                <span key={bIdx} style={{ fontSize: "6.5px", fontWeight: "bold", padding: "2px 4px", border: "1px solid #000000", backgroundColor: "#ffffff", color: "#000" }}>
+                                  {bg}
+                                </span>
+                              ))}
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
                     </div>
                   </div>
                 </div>
