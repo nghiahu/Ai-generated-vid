@@ -25,9 +25,9 @@ async function generateStoryboard(scriptText) {
       [
         {
           "layoutFamily": "Opening / Headline" | "Points / List" | "Quote / Text",
-          "visualLayout": "Intro Profile" | "Github Status Hook" | "Split Grid",
+          "visualLayout": "Hero" | "Split Screen" | "Dashboard" | "Feature Grid" | "Timeline" | "Comparison" | "Terminal" | "Gallery",
           "heading": "Scene title/heading in Vietnamese",
-          "points": ["Up to 3 bullet points summarizing this scene, in Vietnamese"],
+          "points": ["Up to 5 bullet points summarizing this scene, in Vietnamese. Keep points simple and descriptive."],
           "voiceover": "The subset of the script text read in this scene, in Vietnamese",
           "duration": estimated duration in seconds (number, e.g. 7.5),
           "placement": "Full" | "Split",
@@ -36,6 +36,16 @@ async function generateStoryboard(scriptText) {
           "accentColor": "A vibrant HEX color matching the theme, e.g., '#FFB7C5' for japan, '#00E5FF' for tech, '#FFD700' for finance"
         }
       ]
+      
+      Layout selection guide for "visualLayout":
+      - Use "Hero" for introduction scenes with big title.
+      - Use "Split Screen" if there is an image illustration and description side-by-side.
+      - Use "Dashboard" if there are 2 or more statistics / key metric lines (e.g., lines containing "+85% speed", "95K stars").
+      - Use "Feature Grid" if there are 4 or more clean bullet points listing features.
+      - Use "Timeline" if the scene shows step-by-step instructions or sequential events (e.g., "Bước 1", "Bước 2", "Tiến trình").
+      - Use "Comparison" if the scene contrasts two systems or has Pros vs Cons.
+      - Use "Terminal" if there are terminal installation commands (e.g. starting with "$" or "npm install").
+      - Use "Gallery" for multiple screenshots.
       
       Return ONLY the raw JSON array. Do not include markdown formatting or wrapping.
     `;
@@ -57,7 +67,7 @@ async function generateStoryboard(scriptText) {
       sceneIndex: index,
       duration: Number(scene.duration) || 6.0,
       layoutFamily: scene.layoutFamily || "Opening / Headline",
-      visualLayout: scene.visualLayout || "Intro Profile",
+      visualLayout: scene.visualLayout || "Hero",
       heading: scene.heading || `Phân cảnh ${index + 1}`,
       points: Array.isArray(scene.points) ? scene.points : [],
       voiceover: scene.voiceover || "",

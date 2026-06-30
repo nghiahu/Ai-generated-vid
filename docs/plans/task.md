@@ -53,7 +53,8 @@
 | **Task 49** | Tích hợp `DynamicLayout` vào `MainComposition.tsx` | Phase 13: Constraint Layout Engine | `[x]` | `my-video/src/compositions/MainComposition.tsx` |
 | **Task 50** | Đồng bộ WYSIWYG lên Frontend Web UI (`StoryboardEditor.jsx`) | Phase 13: Constraint Layout Engine | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
 | **Task 51** | Chạy xác minh và kiểm thử | Phase 13: Constraint Layout Engine | `[x]` | Remotion lint & typecheck & UI |
-
-
-
-
+| **Task 52** | Cập nhật Prompt AI ở Backend | Phase 14: Dynamic Layout Overhaul | `[x]` | `backend/services/ai.js` |
+| **Task 53** | Cập nhật Dropdown chọn Layout ở Frontend | Phase 14: Dynamic Layout Overhaul | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
+| **Task 54** | Hiện thực các Layout Renderers đặc thù trong Remotion | Phase 14: Dynamic Layout Overhaul | `[x]` | `my-video/src/compositions/DynamicLayout.tsx` |
+| **Task 55** | Đồng bộ hóa hiển thị Preview trên Editor | Phase 14: Dynamic Layout Overhaul | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
+| **Task 56** | Chạy xác minh và kiểm thử | Phase 14: Dynamic Layout Overhaul | `[x]` | Remotion lint & typecheck & UI |

@@ -354,54 +354,132 @@ export const StoryboardEditor = ({
                       gap: "8px",
                       boxSizing: "border-box"
                     }}>
-                      {resolveEditorComponents(scene, currentImg, scene.visualLayout).map((comp, idx) => {
-                        if (comp.type === "title") {
-                          return (
-                            <div key={idx} className="border-strict" style={{ borderWidth: "1px", backgroundColor: "#ffffff", padding: "4px", width: "100%", boxShadow: "1.5px 1.5px 0px 0px #000" }}>
-                              <h3 style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0 }}>
-                                {comp.data.text}
-                              </h3>
-                            </div>
-                          );
-                        }
-                        if (comp.type === "terminal") {
-                          return (
-                            <div key={idx} style={{ backgroundColor: "#000000", color: "#00FF66", fontFamily: "monospace", padding: "4px", fontSize: "7.5px", borderRadius: "2px", textAlign: "left", wordBreak: "break-all" }}>
-                              $ {comp.data.code}
-                            </div>
-                          );
-                        }
-                        if (comp.type === "hero_metric") {
-                          return (
-                            <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "2px", backgroundColor: "#ffffff", border: "1px solid #000", padding: "3px", boxShadow: "1px 1px 0px 0px #000" }}>
-                              <span style={{ fontSize: "11px", fontWeight: "900", color: scene.accentColor || "#FFB7C5", fontFamily: "Space Grotesk", lineHeight: "1" }}>{comp.data.text.split("—")[0]}</span>
-                              {comp.data.text.includes("—") && (
-                                <span style={{ fontSize: "7px", color: "#666", lineHeight: "1" }}>{comp.data.text.split("—")[1]}</span>
-                              )}
-                            </div>
-                          );
-                        }
-                        if (comp.type === "feature_card") {
-                          return (
-                            <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "3px", fontSize: "7.5px", fontWeight: "700", textAlign: "left", textTransform: "uppercase", fontFamily: "Inter" }}>
-                              <span style={{ width: "3.5px", height: "3.5px", backgroundColor: "#000000", marginTop: "3px", flexShrink: 0 }}></span>
-                              <span style={{ flex: 1 }}>{comp.data.text}</span>
-                            </div>
-                          );
-                        }
-                        if (comp.type === "badge_row") {
-                          return (
-                            <div key={idx} style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
-                              {comp.data.badges.map((bg, bIdx) => (
-                                <span key={bIdx} style={{ fontSize: "6.5px", fontWeight: "bold", padding: "2px 4px", border: "1px solid #000000", backgroundColor: "#ffffff", color: "#000" }}>
-                                  {bg}
-                                </span>
-                              ))}
-                            </div>
-                          );
-                        }
-                        return null;
-                      })}
+                      {(() => {
+                        const resolved = resolveEditorComponents(scene, currentImg, scene.visualLayout);
+                        const titleComp = resolved.find(c => c.type === "title");
+                        const otherComps = resolved.filter(c => c.type !== "title");
+
+                        const renderEditorComp = (comp, idx) => {
+                          if (comp.type === "terminal") {
+                            return (
+                              <div key={idx} style={{ backgroundColor: "#000000", color: "#00FF66", fontFamily: "monospace", padding: "4px", fontSize: "7.5px", borderRadius: "2px", textAlign: "left", wordBreak: "break-all" }}>
+                                $ {comp.data.code}
+                              </div>
+                            );
+                          }
+                          if (comp.type === "hero_metric") {
+                            return (
+                              <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "2px", backgroundColor: "#ffffff", border: "1px solid #000", padding: "3px", boxShadow: "1px 1px 0px 0px #000" }}>
+                                <span style={{ fontSize: "11px", fontWeight: "900", color: scene.accentColor || "#FFB7C5", fontFamily: "Space Grotesk", lineHeight: "1" }}>{comp.data.text.split("—")[0]}</span>
+                                {comp.data.text.includes("—") && (
+                                  <span style={{ fontSize: "7px", color: "#666", lineHeight: "1" }}>{comp.data.text.split("—")[1]}</span>
+                                )}
+                              </div>
+                            );
+                          }
+                          if (comp.type === "feature_card") {
+                            return (
+                              <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "3px", fontSize: "7.5px", fontWeight: "700", textAlign: "left", textTransform: "uppercase", fontFamily: "Inter" }}>
+                                <span style={{ width: "3.5px", height: "3.5px", backgroundColor: "#000000", marginTop: "3px", flexShrink: 0 }}></span>
+                                <span style={{ flex: 1 }}>{comp.data.text}</span>
+                              </div>
+                            );
+                          }
+                          if (comp.type === "badge_row") {
+                            return (
+                              <div key={idx} style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
+                                {comp.data.badges.map((bg, bIdx) => (
+                                  <span key={bIdx} style={{ fontSize: "6.5px", fontWeight: "bold", padding: "2px 4px", border: "1px solid #000000", backgroundColor: "#ffffff", color: "#000" }}>
+                                    {bg}
+                                  </span>
+                                ))}
+                              </div>
+                            );
+                          }
+                          return null;
+                        };
+
+                        return (
+                          <>
+                            {titleComp && (
+                              <div className="border-strict" style={{ borderWidth: "1px", backgroundColor: "#ffffff", padding: "4px", width: "100%", boxShadow: "1.5px 1.5px 0px 0px #000" }}>
+                                <h3 style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0 }}>
+                                  {titleComp.data.text}
+                                </h3>
+                              </div>
+                            )}
+
+                            {/* Render rest based on layoutType */}
+                            {scene.visualLayout === "Timeline" ? (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "12px", borderLeft: `1.5px dashed ${(scene.accentColor || "#FFB7C5")}66`, position: "relative", marginLeft: "6px", textAlign: "left" }}>
+                                {otherComps.filter(c => c.type !== "badge_row").map((comp, idx) => (
+                                  <div key={idx} style={{ display: "flex", alignItems: "center", gap: "6px", position: "relative", width: "100%" }}>
+                                    <div style={{
+                                      position: "absolute",
+                                      left: "-18px",
+                                      width: "11px",
+                                      height: "11px",
+                                      borderRadius: "50%",
+                                      backgroundColor: "#060813",
+                                      border: `1.5px solid ${scene.accentColor || "#FFB7C5"}`,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      fontSize: "6px",
+                                      fontWeight: "bold",
+                                      color: "#ffffff"
+                                    }}>
+                                      {idx + 1}
+                                    </div>
+                                    {renderEditorComp(comp, idx)}
+                                  </div>
+                                ))}
+                                {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
+                              </div>
+                            ) : scene.visualLayout === "Comparison" ? (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                <div style={{ display: "flex", gap: "6px", width: "100%" }}>
+                                  <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                    <div style={{ fontSize: "6px", fontWeight: "bold", color: scene.accentColor || "#FFB7C5", textTransform: "uppercase", textAlign: "left" }}>Ưu điểm</div>
+                                    {otherComps.filter(c => c.type !== "badge_row").slice(0, Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
+                                  </div>
+                                  <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                    <div style={{ fontSize: "6px", fontWeight: "bold", color: "#888888", textTransform: "uppercase", textAlign: "left" }}>Nhược điểm</div>
+                                    {otherComps.filter(c => c.type !== "badge_row").slice(Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
+                                  </div>
+                                </div>
+                                {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
+                              </div>
+                            ) : scene.visualLayout === "Dashboard" ? (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", width: "100%" }}>
+                                  {otherComps.filter(c => c.type === "hero_metric").map(renderEditorComp)}
+                                </div>
+                                {otherComps.filter(c => c.type !== "hero_metric").map(renderEditorComp)}
+                              </div>
+                            ) : scene.visualLayout === "Gallery" ? (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                <div style={{
+                                  width: "100%",
+                                  height: "60px",
+                                  backgroundColor: "#1e1e24",
+                                  border: "1px solid rgba(255,255,255,0.1)",
+                                  borderRadius: "4px",
+                                  position: "relative",
+                                  overflow: "hidden"
+                                }}>
+                                  {currentImg && (
+                                    <img src={currentImg} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="gallery spec" />
+                                  )}
+                                </div>
+                                {otherComps.map(renderEditorComp)}
+                              </div>
+                            ) : (
+                              otherComps.map(renderEditorComp)
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -430,9 +508,14 @@ export const StoryboardEditor = ({
                         onChange={(e) => handleFieldChange(scene.id, "visualLayout", e.target.value)}
                         style={{ padding: "8px", fontSize: "12px" }}
                       >
-                        <option value="Intro Profile">Intro Profile</option>
-                        <option value="Github Status Hook">Github Status Hook</option>
-                        <option value="Split Grid">Split Grid</option>
+                        <option value="Hero">Hero (Intro / Headline)</option>
+                        <option value="Split Screen">Split Screen (Media + Info)</option>
+                        <option value="Dashboard">Dashboard (Statistics)</option>
+                        <option value="Feature Grid">Feature Grid (Bento Box)</option>
+                        <option value="Timeline">Timeline (Steps)</option>
+                        <option value="Comparison">Comparison (VS / Pros-Cons)</option>
+                        <option value="Terminal">Terminal (Code Console)</option>
+                        <option value="Gallery">Gallery (Screenshots)</option>
                       </select>
                     </div>
                     <div>
