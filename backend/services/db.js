@@ -58,12 +58,17 @@ async function initDb() {
       voiceover_audio_url VARCHAR(500),
       placement VARCHAR(50),
       media_list JSONB DEFAULT '[]'::jsonb,
-      selected_media_index INTEGER DEFAULT 0
+      selected_media_index INTEGER DEFAULT 0,
+      theme VARCHAR(100) DEFAULT 'default',
+      accent_color VARCHAR(50) DEFAULT '#FFB7C5'
     );
   `;
 
   try {
     await pool.query(createTablesQuery);
+    // Alter existing tables if they don't have the columns
+    await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS theme VARCHAR(100) DEFAULT 'default'`);
+    await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS accent_color VARCHAR(50) DEFAULT '#FFB7C5'`);
     console.log("PostgreSQL tables checked/created successfully.");
   } catch (err) {
     console.error("Error initializing database tables:", err);
@@ -107,7 +112,9 @@ module.exports = {
         voiceoverAudioUrl: s.voiceover_audio_url,
         placement: s.placement,
         mediaList: s.media_list,
-        selectedMediaIndex: s.selected_media_index
+        selectedMediaIndex: s.selected_media_index,
+        theme: s.theme || 'default',
+        accentColor: s.accent_color || '#FFB7C5'
       }))
     };
   },
@@ -165,8 +172,9 @@ module.exports = {
       const insertSceneQuery = `
         INSERT INTO scenes (
           id, project_id, scene_index, duration, layout_family, visual_layout, 
-          heading, points, voiceover, voiceover_audio_url, placement, media_list, selected_media_index
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+          heading, points, voiceover, voiceover_audio_url, placement, media_list, selected_media_index,
+          theme, accent_color
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       `;
 
       for (const scene of scenes) {
@@ -183,7 +191,9 @@ module.exports = {
           scene.voiceoverAudioUrl,
           scene.placement,
           JSON.stringify(scene.mediaList),
-          scene.selectedMediaIndex
+          scene.selectedMediaIndex,
+          scene.theme || 'default',
+          scene.accentColor || '#FFB7C5'
         ]);
       }
 
@@ -218,7 +228,9 @@ module.exports = {
       voiceoverAudioUrl: 'voiceover_audio_url',
       placement: 'placement',
       mediaList: 'media_list',
-      selectedMediaIndex: 'selected_media_index'
+      selectedMediaIndex: 'selected_media_index',
+      theme: 'theme',
+      accentColor: 'accent_color'
     };
 
     for (const [key, dbCol] of Object.entries(columnMapping)) {
@@ -265,7 +277,9 @@ module.exports = {
       voiceoverAudioUrl: s.voiceover_audio_url,
       placement: s.placement,
       mediaList: s.media_list,
-      selectedMediaIndex: s.selected_media_index
+      selectedMediaIndex: s.selected_media_index,
+      theme: s.theme || 'default',
+      accentColor: s.accent_color || '#FFB7C5'
     };
   },
   createScene: async (projectId, sceneData) => {
@@ -280,8 +294,9 @@ module.exports = {
     const insertQuery = `
       INSERT INTO scenes (
         id, project_id, scene_index, duration, layout_family, visual_layout, 
-        heading, points, voiceover, voiceover_audio_url, placement, media_list, selected_media_index
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        heading, points, voiceover, voiceover_audio_url, placement, media_list, selected_media_index,
+        theme, accent_color
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING *
     `;
     
@@ -298,7 +313,9 @@ module.exports = {
       sceneData.voiceoverAudioUrl || "",
       sceneData.placement || "Full",
       JSON.stringify(sceneData.mediaList || []),
-      sceneData.selectedMediaIndex || 0
+      sceneData.selectedMediaIndex || 0,
+      sceneData.theme || "default",
+      sceneData.accentColor || "#FFB7C5"
     ]);
     
     const s = res.rows[0];
@@ -314,7 +331,9 @@ module.exports = {
       voiceoverAudioUrl: s.voiceover_audio_url,
       placement: s.placement,
       mediaList: s.media_list,
-      selectedMediaIndex: s.selected_media_index
+      selectedMediaIndex: s.selected_media_index,
+      theme: s.theme || 'default',
+      accentColor: s.accent_color || '#FFB7C5'
     };
   },
   deleteScene: async (projectId, sceneId) => {

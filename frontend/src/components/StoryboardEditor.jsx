@@ -178,7 +178,7 @@ export const StoryboardEditor = ({
         <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
           {scenes.map((scene, index) => {
             const isSelected = selectedSceneId === scene.id;
-            const currentImg = scene.mediaList && scene.mediaList.length > 0 
+            const currentImg = scene.mediaList && scene.mediaList.length > 0 && scene.selectedMediaIndex !== -1
               ? scene.mediaList[scene.selectedMediaIndex || 0] 
               : "";
 
@@ -264,7 +264,14 @@ export const StoryboardEditor = ({
                         alt="bg preview" 
                       />
                     ) : (
-                      <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: "repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 1px, transparent 8px)" }} />
+                      <div 
+                        style={{ 
+                          position: "absolute", 
+                          inset: 0, 
+                          zIndex: 0,
+                          background: `radial-gradient(circle at center, ${(scene.accentColor || "#FFB7C5")}33 0%, #090d1a 100%)`
+                        }} 
+                      />
                     )}
 
                     {/* Headline Card */}
@@ -436,6 +443,35 @@ export const StoryboardEditor = ({
 
                     {/* Image Suggestions Grid */}
                     <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
+                      {/* Default Accent HEX Gradient choice */}
+                      <div
+                        onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", -1)}
+                        style={{
+                          width: "48px",
+                          height: "48px",
+                          flexShrink: 0,
+                          borderRadius: "4px",
+                          border: scene.selectedMediaIndex === -1 ? "3px solid #000000" : "1px solid #cccccc",
+                          background: `linear-gradient(135deg, ${scene.accentColor || "#FFB7C5"}aa 0%, #060813 100%)`,
+                          cursor: "pointer",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "8px",
+                          fontWeight: "bold",
+                          color: "#ffffff",
+                          textAlign: "center",
+                          padding: "2px",
+                          fontFamily: "Space Grotesk, sans-serif",
+                          lineHeight: "1.1",
+                          boxSizing: "border-box",
+                          textTransform: "uppercase"
+                        }}
+                      >
+                        Nền màu nhấn
+                      </div>
+
                       {scene.mediaList && scene.mediaList.map((imgUrl, imgIdx) => (
                         <div
                           key={imgIdx}

@@ -42,6 +42,12 @@
 | **Task 38** | Cập nhật Dashboard.jsx sang giao diện thẻ kính mờ sáng | Phase 11: Light Glassmorphism | `[x]` | `frontend/src/components/Dashboard.jsx` |
 | **Task 39** | Cập nhật MasterPlayer.jsx và App.jsx | Phase 11: Light Glassmorphism | `[x]` | `frontend/src/components/MasterPlayer.jsx`, `frontend/src/App.jsx` |
 | **Task 40** | Chạy xác minh và kiểm thử | Phase 11: Light Glassmorphism | `[x]` | Frontend preview & verification |
+| **Task 41** | Cập nhật CSDL Backend (`db.js`) | Phase 12: Default Accent HEX Background | `[x]` | `backend/services/db.js` |
+| **Task 42** | Tạo component quầng sáng `AccentGlowBackground.tsx` trong Remotion | Phase 12: Default Accent HEX Background | `[x]` | `my-video/src/components/overlays/AccentGlowBackground.tsx` |
+| **Task 43** | Tích hợp vào các Layouts trong Remotion | Phase 12: Default Accent HEX Background | `[x]` | `my-video/src/compositions/*`, `my-video/src/components/*` |
+| **Task 44** | Cập nhật giao diện `StoryboardEditor.jsx` ở Frontend | Phase 12: Default Accent HEX Background | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
+| **Task 45** | Chạy xác minh và kiểm thử | Phase 12: Default Accent HEX Background | `[x]` | Remotion lint & typecheck & UI |
+
 
 
 
