@@ -63,3 +63,8 @@
 | **Task 59** | Xây dựng Endpoint API `POST /api/upload` | Phase 15: Cloudinary Image Upload | `[x]` | `backend/server.js` |
 | **Task 60** | Hiện thực chọn tệp và Upload ở Frontend | Phase 15: Cloudinary Image Upload | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
 | **Task 61** | Chạy xác minh và kiểm thử | Phase 15: Cloudinary Image Upload | `[x]` | Verify uploading & build |
+| **Task 62** | Update UI Block Styles | Phase 16: Rescaling UI Components | `[x]` | `my-video/src/components/layout/UIBlocks.tsx` |
+| **Task 63** | Update Height Estimates in Layout Resolver | Phase 16: Rescaling UI Components | `[x]` | `my-video/src/utils/layoutResolver.ts` |
+| **Task 64** | Update Layout Container Spacing | Phase 16: Rescaling UI Components | `[x]` | `my-video/src/compositions/DynamicLayout.tsx` |
+| **Task 65** | Verify and test rescaled video layouts | Phase 16: Rescaling UI Components | `[/]` | Remotion Preview / build verification |
+
