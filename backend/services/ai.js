@@ -27,7 +27,13 @@ async function generateStoryboard(scriptText) {
           "layoutFamily": "Opening / Headline" | "Points / List" | "Quote / Text",
           "visualLayout": "Hero" | "Split Screen" | "Dashboard" | "Feature Grid" | "Timeline" | "Comparison" | "Terminal" | "Gallery",
           "heading": "Scene title/heading in Vietnamese",
-          "points": ["Up to 5 bullet points summarizing this scene, in Vietnamese. Keep points simple and descriptive."],
+          "points": [
+            {
+              "text": "Up to 5 bullet points summarizing this scene, in Vietnamese. Keep points simple and descriptive.",
+              "animation": "slide-up" | "scale-in" | "fade-in" | "blur-in" | "slide-left" | "slide-right",
+              "delay": estimated offset in seconds from the start of this scene (number, e.g. 1.8) indicating when the voice speaks this point. Delays should be spaced out (e.g., 0.5, 2.0, 3.5) and strictly less than the scene duration. Ensure the first point starts around 0.5s."
+            }
+          ],
           "voiceover": "The subset of the script text read in this scene, in Vietnamese",
           "duration": estimated duration in seconds (number, e.g. 7.5),
           "placement": "Full" | "Split",
@@ -69,7 +75,16 @@ async function generateStoryboard(scriptText) {
       layoutFamily: scene.layoutFamily || "Opening / Headline",
       visualLayout: scene.visualLayout || "Hero",
       heading: scene.heading || `Phân cảnh ${index + 1}`,
-      points: Array.isArray(scene.points) ? scene.points : [],
+      points: Array.isArray(scene.points) ? scene.points.map((pt, idx) => {
+        if (typeof pt === 'string') {
+          return { text: pt, animation: 'slide-up', delay: Number((idx * 1.5).toFixed(1)) };
+        }
+        return {
+          text: pt.text || '',
+          animation: pt.animation || 'slide-up',
+          delay: typeof pt.delay === 'number' ? pt.delay : Number((idx * 1.5).toFixed(1))
+        };
+      }) : [],
       voiceover: scene.voiceover || "",
       placement: scene.placement || "Full",
       keywords: scene.keywords || "technology",
