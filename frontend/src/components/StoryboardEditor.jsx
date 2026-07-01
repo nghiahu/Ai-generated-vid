@@ -22,7 +22,13 @@ const resolveEditorComponents = (scene, currentImg, layoutType) => {
         return;
       }
 
-      const isBadges = p.includes(",") && (p.includes("⭐") || p.includes("🔥") || p.includes("sao") || p.includes("MIT") || p.length < 60);
+      const isBadges = p.includes(",") && (
+        p.includes("⭐") || 
+        p.includes("🔥") || 
+        p.includes("sao") || 
+        p.includes("MIT") || 
+        p.split(",").every(part => part.trim().length > 0 && part.trim().length < 15)
+      );
       if (isBadges) {
         list.push({ type: 'badge_row', height: 80, priority: 50, data: { badges: p.split(",").map(b => b.trim()).filter(b => b.length > 0) } });
         return;
@@ -441,7 +447,7 @@ export const StoryboardEditor = ({
                         const titleComp = resolved.find(c => c.type === "title");
                         const otherComps = resolved.filter(c => c.type !== "title");
 
-                        const renderEditorComp = (comp, idx) => {
+                        const renderEditorComp = (comp, idx, overrides = {}) => {
                           if (comp.type === "terminal") {
                             return (
                               <div key={idx} style={{ backgroundColor: "#000000", color: "#00FF66", fontFamily: "monospace", padding: "4px", fontSize: "7.5px", borderRadius: "2px", textAlign: "left", wordBreak: "break-all" }}>
@@ -462,7 +468,7 @@ export const StoryboardEditor = ({
                           if (comp.type === "feature_card") {
                             return (
                               <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "3px", fontSize: "7.5px", fontWeight: "700", textAlign: "left", textTransform: "uppercase", fontFamily: "Inter" }}>
-                                <span style={{ width: "3.5px", height: "3.5px", backgroundColor: "#000000", marginTop: "3px", flexShrink: 0 }}></span>
+                                {!overrides.hideDot && <span style={{ width: "3.5px", height: "3.5px", backgroundColor: "#000000", marginTop: "3px", flexShrink: 0 }}></span>}
                                 <span style={{ flex: 1 }}>{comp.data.text}</span>
                               </div>
                             );
@@ -513,7 +519,7 @@ export const StoryboardEditor = ({
                                     }}>
                                       {idx + 1}
                                     </div>
-                                    {renderEditorComp(comp, idx)}
+                                    {renderEditorComp(comp, idx, { hideDot: true })}
                                   </div>
                                 ))}
                                 {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
