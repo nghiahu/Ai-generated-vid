@@ -130,9 +130,36 @@ export const StoryboardEditor = ({
     });
   };
 
-  const handlePointsChangeTextarea = (sceneId, textValue) => {
-    const lines = textValue.split("\n").filter(line => line.trim() !== "");
-    handleFieldChange(sceneId, "points", lines);
+
+  const getNormalizedPoints = (points) => {
+    return (points || []).map((pt, idx) => {
+      if (typeof pt === "string") {
+        return { text: pt, animation: "slide-up", delay: Number((idx * 1.5).toFixed(1)) };
+      }
+      return {
+        text: pt.text || "",
+        animation: pt.animation || "slide-up",
+        delay: typeof pt.delay === "number" ? pt.delay : Number((idx * 1.5).toFixed(1))
+      };
+    });
+  };
+
+  const handlePointChange = (sceneId, points, index, field, value) => {
+    const norm = getNormalizedPoints(points);
+    norm[index] = { ...norm[index], [field]: value };
+    handleFieldChange(sceneId, "points", norm);
+  };
+
+  const handleAddPoint = (sceneId, points) => {
+    const norm = getNormalizedPoints(points);
+    norm.push({ text: "Ý chính mới", animation: "slide-up", delay: Number((norm.length * 1.2).toFixed(1)) });
+    handleFieldChange(sceneId, "points", norm);
+  };
+
+  const handleRemovePoint = (sceneId, points, index) => {
+    const norm = getNormalizedPoints(points);
+    norm.splice(index, 1);
+    handleFieldChange(sceneId, "points", norm);
   };
 
   // Search images via backend Unsplash search API
@@ -628,14 +655,118 @@ export const StoryboardEditor = ({
                     </div>
                   </div>
 
-                  <div>
-                    <label className="form-label-mono" style={{ fontSize: "11px" }}>Points (One per line)</label>
-                    <textarea 
-                      className="form-input-mono"
-                      value={scene.points ? scene.points.join("\n") : ""} 
-                      onChange={(e) => handlePointsChangeTextarea(scene.id, e.target.value)}
-                      style={{ height: "70px", fontSize: "13px", resize: "none" }}
-                    />
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Các Khối Nội Dung (Points & Hiệu ứng)</label>
+                      <button
+                        type="button"
+                        onClick={() => handleAddPoint(scene.id, scene.points)}
+                        style={{
+                          padding: "3px 8px",
+                          fontFamily: "Space Grotesk",
+                          fontWeight: "bold",
+                          fontSize: "10px",
+                          backgroundColor: "#00E5FF",
+                          color: "#000000",
+                          border: "none",
+                          borderRadius: "4px",
+                          cursor: "pointer"
+                        }}
+                      >
+                        + Thêm ý chính
+                      </button>
+                    </div>
+                    
+                    <div style={{ 
+                      display: "flex", 
+                      flexDirection: "column", 
+                      gap: "10px", 
+                      maxHeight: "260px", 
+                      overflowY: "auto", 
+                      paddingRight: "6px",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      borderRadius: "6px",
+                      padding: "8px",
+                      backgroundColor: "rgba(0, 0, 0, 0.15)"
+                    }}>
+                      {getNormalizedPoints(scene.points).length === 0 ? (
+                        <div style={{ textAlign: "center", padding: "15px", fontSize: "12px", opacity: 0.4 }}>Chưa có ý chính nào. Bấm "+ Thêm ý chính" để tạo mới.</div>
+                      ) : (
+                        getNormalizedPoints(scene.points).map((pt, idx) => (
+                          <div key={idx} style={{ 
+                            display: "flex", 
+                            flexDirection: "column", 
+                            gap: "8px", 
+                            padding: "8px", 
+                            borderRadius: "6px", 
+                            backgroundColor: "rgba(255, 255, 255, 0.02)", 
+                            border: "1px solid rgba(255, 255, 255, 0.05)" 
+                          }}>
+                            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                              <span style={{ fontSize: "11px", opacity: 0.4, fontFamily: "monospace" }}>#{idx + 1}</span>
+                              <input
+                                type="text"
+                                className="form-input-mono"
+                                value={pt.text}
+                                onChange={(e) => handlePointChange(scene.id, scene.points, idx, "text", e.target.value)}
+                                placeholder="Nhập nội dung hiển thị..."
+                                style={{ padding: "6px 8px", fontSize: "12px", flex: 1 }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleRemovePoint(scene.id, scene.points, idx)}
+                                style={{ 
+                                  background: "none", 
+                                  border: "none", 
+                                  color: "#ff4d4d", 
+                                  cursor: "pointer", 
+                                  fontSize: "14px",
+                                  padding: "0 4px"
+                                }}
+                                title="Xóa ý này"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                              {/* Animation Select */}
+                              <div style={{ display: "flex", flexDirection: "column", gap: "2px", flex: 1 }}>
+                                <span style={{ fontSize: "9px", opacity: 0.4, fontFamily: "Space Grotesk" }}>Hiệu ứng</span>
+                                <select
+                                  className="form-input-mono"
+                                  value={pt.animation}
+                                  onChange={(e) => handlePointChange(scene.id, scene.points, idx, "animation", e.target.value)}
+                                  style={{ padding: "4px 6px", fontSize: "11px", height: "auto" }}
+                                >
+                                  <option value="slide-up">Slide Up (Trượt lên)</option>
+                                  <option value="scale-in">Scale In (Phóng to nảy)</option>
+                                  <option value="fade-in">Fade In (Mờ dần)</option>
+                                  <option value="blur-in">Blur In (Làm nét)</option>
+                                  <option value="slide-left">Slide Left (Trượt trái)</option>
+                                  <option value="slide-right">Slide Right (Trượt phải)</option>
+                                </select>
+                              </div>
+                              {/* Delay Range Slider */}
+                              <div style={{ display: "flex", flexDirection: "column", gap: "2px", flex: 1 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9px" }}>
+                                  <span style={{ opacity: 0.4, fontFamily: "Space Grotesk" }}>Độ trễ xuất hiện</span>
+                                  <span style={{ color: "#00E5FF", fontWeight: "bold" }}>{pt.delay}s</span>
+                                </div>
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max={scene.duration || 10}
+                                  step="0.1"
+                                  value={pt.delay}
+                                  onChange={(e) => handlePointChange(scene.id, scene.points, idx, "delay", parseFloat(e.target.value))}
+                                  style={{ width: "100%", height: "4px", accentColor: "#00E5FF", cursor: "pointer" }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
 
                   <div>
