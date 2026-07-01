@@ -63,8 +63,12 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       console.log(`Successfully saved Local OmniVoice TTS file: ${fileName}`);
       return `/tts/${fileName}`;
     } catch (error) {
-      console.error("Local OmniVoice TTS failed:", error);
-      throw new Error(`Lỗi Local OmniVoice TTS: ${error.message}`);
+      console.warn(`Local OmniVoice TTS failed (server might be offline), falling back to Microsoft Edge TTS: ${error.message}`);
+      // Nếu giọng OmniVoice là nam, dùng Edge Nam Minh, ngược lại dùng Edge Hoài My
+      const fallbackVoice = voiceKey.toLowerCase().includes("male") 
+        ? "microsoft_namminh" 
+        : "microsoft_hoaimy";
+      return generateTTS(text, projectId, sceneId, fallbackVoice);
     }
   }
 
