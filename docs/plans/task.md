@@ -67,4 +67,12 @@
 | **Task 63** | Update Height Estimates in Layout Resolver | Phase 16: Rescaling UI Components | `[x]` | `my-video/src/utils/layoutResolver.ts` |
 | **Task 64** | Update Layout Container Spacing | Phase 16: Rescaling UI Components | `[x]` | `my-video/src/compositions/DynamicLayout.tsx` |
 | **Task 65** | Verify and test rescaled video layouts | Phase 16: Rescaling UI Components | `[x]` | Remotion Preview / build verification |
+| **Task 66** | Backend Storyboard AI Prompt & Normalization | Phase 17: PowerPoint-Style Transitions | `[x]` | `backend/services/ai.js` |
+| **Task 67** | Create AnimatedBlock in Remotion | Phase 17: PowerPoint-Style Transitions | `[x]` | `my-video/src/components/layout/AnimatedBlock.tsx` |
+| **Task 68** | Integrate AnimatedBlock in DynamicLayout Rendering | Phase 17: PowerPoint-Style Transitions | `[x]` | `my-video/src/compositions/DynamicLayout.tsx`, `my-video/src/utils/layoutResolver.ts` |
+| **Task 69** | Upgrade Frontend StoryboardEditor UI | Phase 17: PowerPoint-Style Transitions | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
+
+
+
+
 
