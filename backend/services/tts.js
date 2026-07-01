@@ -21,50 +21,48 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  // Nhánh xử lý OmniVoice (Chạy offline cục bộ qua OpenAI-compatible API)
+  // Nhánh xử lý OmniVoice (Chạy offline cục bộ qua omnivoice-infer CLI)
   if (voiceKey.toLowerCase().startsWith("omnivoice_")) {
     try {
-      const omniVoiceUrl = process.env.OMNIVOICE_API_URL || "http://localhost:8000/v1/audio/speech";
-      
-      // Ánh xạ voiceKey của hệ thống sang thuộc tính mô tả giọng đọc (instruct) cho OmniVoice
-      let mappedVoice = "female"; // Mặc định
+      const { execFile } = require("child_process");
+      const { promisify } = require("util");
+      const execFileAsync = promisify(execFile);
+
+      // Đường dẫn đến omnivoice-infer.exe trong thư mục Scripts của Python
+      const omnivoiceExe = process.env.OMNIVOICE_INFER_PATH || 
+        "C:\\Users\\nghia\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\omnivoice-infer.exe";
+
+      // Ánh xạ voiceKey sang instruct string cho OmniVoice
+      let instruct = "female"; // Mặc định
       if (voiceKey.toLowerCase() === "omnivoice_male") {
-        mappedVoice = "male";
+        instruct = "male";
       } else if (voiceKey.toLowerCase() === "omnivoice_whisper") {
-        mappedVoice = "female, whisper";
+        instruct = "female, whisper";
       } else if (voiceKey.toLowerCase() === "omnivoice_british") {
-        mappedVoice = "female, british accent";
+        instruct = "female, british accent";
       }
 
-      console.log(`Calling Local OmniVoice TTS for scene ${sceneId} using voice: ${mappedVoice}...`);
-      
-      const response = await fetch(omniVoiceUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          input: text,
-          model: "omnivoice",
-          voice: mappedVoice,
-          response_format: "mp3"
-        })
-      });
+      // OmniVoice xuất WAV, nên lưu file .wav riêng
+      const wavFileName = `tts_${projectId}_${sceneId}.wav`;
+      const wavOutputPath = path.join(outputDir, wavFileName);
 
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`OmniVoice API trả về lỗi ${response.status}: ${errText}`);
+      console.log(`Calling Local OmniVoice CLI for scene ${sceneId} with instruct: "${instruct}"...`);
+      
+      await execFileAsync(omnivoiceExe, [
+        "--text", text,
+        "--output", wavOutputPath,
+        "--instruct", instruct,
+        "--language", "Vietnamese"
+      ], { timeout: 120000 }); // 2 phút timeout
+
+      if (!fs.existsSync(wavOutputPath)) {
+        throw new Error("omnivoice-infer không tạo được file đầu ra");
       }
 
-      const arrayBuffer = await response.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      fs.writeFileSync(outputPath, buffer);
-      
-      console.log(`Successfully saved Local OmniVoice TTS file: ${fileName}`);
-      return `/tts/${fileName}`;
+      console.log(`Successfully saved Local OmniVoice WAV file: ${wavFileName}`);
+      return `/tts/${wavFileName}`;
     } catch (error) {
-      console.warn(`Local OmniVoice TTS failed (server might be offline), falling back to Microsoft Edge TTS: ${error.message}`);
-      // Nếu giọng OmniVoice là nam, dùng Edge Nam Minh, ngược lại dùng Edge Hoài My
+      console.warn(`Local OmniVoice CLI failed, falling back to Microsoft Edge TTS: ${error.message}`);
       const fallbackVoice = voiceKey.toLowerCase().includes("male") 
         ? "microsoft_namminh" 
         : "microsoft_hoaimy";
