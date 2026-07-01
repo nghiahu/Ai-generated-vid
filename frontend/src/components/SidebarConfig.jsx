@@ -147,6 +147,10 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
               onChange={(e) => handleConfigChange("voice", e.target.value)}
               style={{ cursor: "pointer" }}
             >
+              <option value="omnivoice_female">OmniVoice Nữ (Local Offline)</option>
+              <option value="omnivoice_male">OmniVoice Nam (Local Offline)</option>
+              <option value="omnivoice_whisper">OmniVoice Thì thầm (Local Offline)</option>
+              <option value="omnivoice_british">OmniVoice Giọng Anh-Anh (Local Offline)</option>
               <option value="microsoft_hoaimy">Microsoft Hoài My (Free, Fluent Female)</option>
               <option value="microsoft_namminh">Microsoft Nam Minh (Free, Fluent Male)</option>
               <option value="rachel">Hoai My (Rachel - English Accent)</option>

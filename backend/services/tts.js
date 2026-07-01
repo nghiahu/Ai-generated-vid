@@ -21,6 +21,53 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
+  // Nhánh xử lý OmniVoice (Chạy offline cục bộ qua OpenAI-compatible API)
+  if (voiceKey.toLowerCase().startsWith("omnivoice_")) {
+    try {
+      const omniVoiceUrl = process.env.OMNIVOICE_API_URL || "http://localhost:8000/v1/audio/speech";
+      
+      // Ánh xạ voiceKey của hệ thống sang thuộc tính mô tả giọng đọc (instruct) cho OmniVoice
+      let mappedVoice = "female"; // Mặc định
+      if (voiceKey.toLowerCase() === "omnivoice_male") {
+        mappedVoice = "male";
+      } else if (voiceKey.toLowerCase() === "omnivoice_whisper") {
+        mappedVoice = "female, whisper";
+      } else if (voiceKey.toLowerCase() === "omnivoice_british") {
+        mappedVoice = "female, british accent";
+      }
+
+      console.log(`Calling Local OmniVoice TTS for scene ${sceneId} using voice: ${mappedVoice}...`);
+      
+      const response = await fetch(omniVoiceUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          input: text,
+          model: "omnivoice",
+          voice: mappedVoice,
+          response_format: "mp3"
+        })
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`OmniVoice API trả về lỗi ${response.status}: ${errText}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      fs.writeFileSync(outputPath, buffer);
+      
+      console.log(`Successfully saved Local OmniVoice TTS file: ${fileName}`);
+      return `/tts/${fileName}`;
+    } catch (error) {
+      console.error("Local OmniVoice TTS failed:", error);
+      throw new Error(`Lỗi Local OmniVoice TTS: ${error.message}`);
+    }
+  }
+
   // Nhánh xử lý Microsoft Edge TTS (Miễn phí, giọng đọc tiếng Việt siêu tự nhiên)
   if (voiceKey.toLowerCase().startsWith("microsoft_")) {
     try {
