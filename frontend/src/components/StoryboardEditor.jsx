@@ -8,7 +8,12 @@ const resolveEditorComponents = (scene, currentImg, layoutType) => {
 
   if (scene.points) {
     scene.points.forEach((pt, idx) => {
-      const p = pt.trim();
+      let p = "";
+      if (typeof pt === "string") {
+        p = pt.trim();
+      } else if (pt && typeof pt === "object") {
+        p = (pt.text || "").trim();
+      }
       if (!p) return;
 
       const isCommandLine = p.startsWith("$") || p.includes("curl ") || p.includes("npm install") || p.includes("pip install") || p.includes("git clone");
