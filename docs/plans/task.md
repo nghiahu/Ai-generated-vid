@@ -71,8 +71,10 @@
 | **Task 67** | Create AnimatedBlock in Remotion | Phase 17: PowerPoint-Style Transitions | `[x]` | `my-video/src/components/layout/AnimatedBlock.tsx` |
 | **Task 68** | Integrate AnimatedBlock in DynamicLayout Rendering | Phase 17: PowerPoint-Style Transitions | `[x]` | `my-video/src/compositions/DynamicLayout.tsx`, `my-video/src/utils/layoutResolver.ts` |
 | **Task 69** | Upgrade Frontend StoryboardEditor UI | Phase 17: PowerPoint-Style Transitions | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
-
-
-
-
-
+| **Task 70** | Clean up V2 residue and verify pre-V2 application | Revert & Clean up | `[x]` | `backend/pipeline/`, `backend/templates/`, `docs/plans/` |
+| **Task 71** | Redesign TerminalBlock (VS Code Mockup) | Phase 18: SaaS Widgets UI | `[x]` | `my-video/src/components/layout/UIBlocks.tsx` |
+| **Task 72** | Redesign FeatureCardBlock (Smart SVG Icons) | Phase 18: SaaS Widgets UI | `[x]` | `my-video/src/components/layout/UIBlocks.tsx` |
+| **Task 73** | Redesign HeroMetricBlock (Animated SVG Sparkline) | Phase 18: SaaS Widgets UI | `[x]` | `my-video/src/components/layout/UIBlocks.tsx` |
+| **Task 74** | Add Browser Mockup, Image Ken Burns Effect, and Spring Physics | Phase 18: SaaS Widgets UI | `[x]` | `my-video/src/compositions/DynamicLayout.tsx` |
+| **Task 75** | Add Animated Coordinates and Scrolling Grid to AccentGlowBackground | Phase 18: SaaS Widgets UI | `[x]` | `my-video/src/components/overlays/AccentGlowBackground.tsx` |
+| **Task 76** | Implement Scene Transitions (Blur-Sweep) | Phase 18: SaaS Widgets UI | `[x]` | `my-video/src/compositions/MainComposition.tsx` |
