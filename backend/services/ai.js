@@ -9,8 +9,8 @@ async function generateStoryboard(scriptText) {
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash",
+    const model = genAI.getGenerativeModel({
+      model: "gemini-3.5-flash",
       generationConfig: { responseMimeType: "application/json" }
     });
 
@@ -63,9 +63,9 @@ async function generateStoryboard(scriptText) {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text().trim();
-    
+
     console.log("Gemini raw response:", text);
-    
+
     let scenes = JSON.parse(text);
     if (!Array.isArray(scenes)) {
       throw new Error("Dữ liệu Gemini trả về không phải là một mảng JSON.");
