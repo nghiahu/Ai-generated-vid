@@ -39,6 +39,28 @@ function normalizeTextForTTS(text) {
   return normalized;
 }
 
+// Khóa Mutex để đảm bảo chỉ có tối đa 1 tiến trình OmniVoice chạy tại một thời điểm
+// Tránh xung đột tài nguyên GPU/VRAM khi chạy song song hoặc tuần tự quá nhanh
+let omnivoiceMutex = Promise.resolve();
+
+async function runOmniVoiceSequentially(fn) {
+  const resultPromise = omnivoiceMutex.then(async () => {
+    try {
+      const res = await fn();
+      // Chờ 3.5 giây sau khi tiến trình kết thúc để driver CUDA của GPU giải phóng hoàn toàn VRAM
+      // trước khi cho phép tiến trình tiếp theo khởi chạy
+      await new Promise(resolve => setTimeout(resolve, 3500));
+      return res;
+    } catch (err) {
+      await new Promise(resolve => setTimeout(resolve, 3500));
+      throw err;
+    }
+  });
+  
+  omnivoiceMutex = resultPromise.catch(() => {});
+  return resultPromise;
+}
+
 async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
   const apiKey = process.env.ELEVENLABS_API_KEY;
   const fileName = `tts_${projectId}_${sceneId}.mp3`;
@@ -126,13 +148,16 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         args.push("--instruct", instruct);
       }
       
-      await execFileAsync(omnivoiceExe, args, {
-        timeout: 120000,
-        env: {
-          ...process.env,
-          PYTHONUTF8: "1",
-          PYTHONIOENCODING: "utf-8"
-        }
+      await runOmniVoiceSequentially(async () => {
+        await execFileAsync(omnivoiceExe, args, {
+          timeout: 120000,
+          maxBuffer: 10 * 1024 * 1024, // 10MB để tránh tràn buffer do progress bars
+          env: {
+            ...process.env,
+            PYTHONUTF8: "1",
+            PYTHONIOENCODING: "utf-8"
+          }
+        });
       });
 
       if (!fs.existsSync(wavOutputPath)) {
