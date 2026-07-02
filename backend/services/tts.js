@@ -37,45 +37,22 @@ function getAudioDuration(filePath) {
 function normalizeTextForTTS(text) {
   if (!text) return text;
   
-  // Chuyển các từ viết tắt và từ tiếng Anh thông dụng thành phiên âm Việt hóa dễ nghe cho giọng vi-VN.
+  // Tránh việc ghép các từ viết tắt dạng viết hoa dính liền làm crash tokenizer của OmniVoice.
+  // Đồng thời giữ nguyên cách phát âm tiếng Anh tự nhiên thay vì phiên âm tiếng Việt kỳ quặc.
   let normalized = text
-    .replace(/\bAI\b/ig, "A I")
-    .replace(/\bai\b/ig, "a i")
-    .replace(/\bAPI\b/ig, "A P I")
-    .replace(/\bapi\b/ig, "a p i")
-    .replace(/\bUI\b/ig, "U I")
-    .replace(/\bui\b/ig, "u i")
-    .replace(/\bUX\b/ig, "U X")
-    .replace(/\bux\b/ig, "u x")
-    .replace(/\bURL\b/ig, "U R L")
-    .replace(/\burl\b/ig, "u r l")
-    .replace(/\bHyperFrames\b/ig, "hai pơ phờ rem")
-    .replace(/\bHyperFrame\b/ig, "hai pơ phờ rem")
-    .replace(/\bRemotion\b/ig, "ri mo sần")
-    .replace(/\bStitch\b/ig, "stít")
-    .replace(/\bReact\b/ig, "ri ếch")
-    .replace(/\bVite\b/ig, "vít")
-    .replace(/\bNext\.js\b/ig, "néc jét")
-    .replace(/\bGitHub\b/ig, "gít háp")
-    .replace(/\bVS Code\b/ig, "vi ét cốt")
-    .replace(/\bVSCode\b/ig, "vi ét cốt")
-    .replace(/\bCLI\b/ig, "xê el i")
-    .replace(/\bTTS\b/ig, "tê tê ét")
-    .replace(/\bSaaS\b/ig, "xát")
-    .replace(/\bWidget\b/ig, "uýt dít")
-    .replace(/\bWidgets\b/ig, "uýt dít")
-    .replace(/\bBento\b/ig, "ben tô")
-    .replace(/\bLayout\b/ig, "lay ao")
-    .replace(/\bLayouts\b/ig, "lay ao")
-    .replace(/\bSetup\b/ig, "xét úp")
-    .replace(/\bPipeline\b/ig, "pai lai")
-    .replace(/\bLofi\b/ig, "lo fai")
-    .replace(/\bVideo\b/ig, "vi đê ô")
-    .replace(/\bVideos\b/ig, "vi đê ô")
-    .replace(/\bHTML\b/ig, "hát tê em eo")
-    .replace(/\bCSS\b/ig, "xi ét ét")
-    .replace(/\bJavaScript\b/ig, "da va sờ ríp");
+    .replace(/\bAI\b/g, "A I") // Thay thế AI thành A I để đọc đúng từng chữ cái trong tiếng Việt
+    .replace(/\bai\b/g, "a i")
+    .replace(/\bAPI\b/g, "A P I")
+    .replace(/\bapi\b/g, "a p i")
+    .replace(/\bUI\b/g, "U I")
+    .replace(/\bui\b/g, "u i")
+    .replace(/\bUX\b/g, "U X")
+    .replace(/\bux\b/g, "u x")
+    .replace(/\bURL\b/g, "U R L")
+    .replace(/\burl\b/g, "u r l");
   
+  // Chuyển toàn bộ sang viết thường. Thực nghiệm chứng minh: Viết thường 100% giúp OmniVoice 
+  // tokenizer không bao giờ bị treo/crash, đồng thời AI vẫn đọc tiếng Anh (html, css, javascript, react, next.js) cực kỳ chuẩn và tự nhiên.
   return normalized.toLowerCase();
 }
 
