@@ -12,31 +12,24 @@ const VOICE_IDS = {
 
 function normalizeTextForTTS(text) {
   if (!text) return text;
-  let normalized = text;
   
-  // Chuẩn hóa từ viết tắt / từ kỹ thuật tiếng Anh sang phiên âm tiếng Việt dễ đọc, tránh gây treo model OmniVoice
-  const replacements = [
-    { pattern: /\bHTML\b/gi, replacement: "Hát Tê Em Lờ" },
-    { pattern: /\bCSS\b/gi, replacement: "Xê Ét Ét" },
-    { pattern: /\bJavaScript\b/gi, replacement: "Gia va sờ cờ ríp" },
-    { pattern: /\bJS\b/gi, replacement: "Gia va sờ cờ ríp" },
-    { pattern: /\bMP4\b/gi, replacement: "Em Pê Bốn" },
-    { pattern: /\bAI\b/gi, replacement: "A I" },
-    { pattern: /\bAPI\b/gi, replacement: "A P I" },
-    { pattern: /\bUI\b/gi, replacement: "U I" },
-    { pattern: /\bUX\b/gi, replacement: "U X" },
-    { pattern: /\bURL\b/gi, replacement: "U R L" },
-    { pattern: /\bVite\b/gi, replacement: "Vít" },
-    { pattern: /\bNext\.js\b/gi, replacement: "Nếch sờ gie ét" },
-    { pattern: /\bReact\b/gi, replacement: "Ri ách" },
-    { pattern: /\bNode\.js\b/gi, replacement: "Nốt gie ét" }
-  ];
-
-  for (const item of replacements) {
-    normalized = normalized.replace(item.pattern, item.replacement);
-  }
-
-  return normalized;
+  // Tránh việc ghép các từ viết tắt dạng viết hoa dính liền làm crash tokenizer của OmniVoice.
+  // Đồng thời giữ nguyên cách phát âm tiếng Anh tự nhiên thay vì phiên âm tiếng Việt kỳ quặc.
+  let normalized = text
+    .replace(/\bAI\b/g, "A I") // Thay thế AI thành A I để đọc đúng từng chữ cái trong tiếng Việt
+    .replace(/\bai\b/g, "a i")
+    .replace(/\bAPI\b/g, "A P I")
+    .replace(/\bapi\b/g, "a p i")
+    .replace(/\bUI\b/g, "U I")
+    .replace(/\bui\b/g, "u i")
+    .replace(/\bUX\b/g, "U X")
+    .replace(/\bux\b/g, "u x")
+    .replace(/\bURL\b/g, "U R L")
+    .replace(/\burl\b/g, "u r l");
+  
+  // Chuyển toàn bộ sang viết thường. Thực nghiệm chứng minh: Viết thường 100% giúp OmniVoice 
+  // tokenizer không bao giờ bị treo/crash, đồng thời AI vẫn đọc tiếng Anh (html, css, javascript, react, next.js) cực kỳ chuẩn và tự nhiên.
+  return normalized.toLowerCase();
 }
 
 function ensureWavReferenceAudio(mp3Path) {
