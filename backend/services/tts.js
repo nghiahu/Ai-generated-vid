@@ -10,6 +10,35 @@ const VOICE_IDS = {
   domic: "AZnzlk1XvdvUeBnXmlld"
 };
 
+function normalizeTextForTTS(text) {
+  if (!text) return text;
+  let normalized = text;
+  
+  // Chuẩn hóa từ viết tắt / từ kỹ thuật tiếng Anh sang phiên âm tiếng Việt dễ đọc, tránh gây treo model OmniVoice
+  const replacements = [
+    { pattern: /\bHTML\b/gi, replacement: "Hát Tê Em Lờ" },
+    { pattern: /\bCSS\b/gi, replacement: "Xê Ét Ét" },
+    { pattern: /\bJavaScript\b/gi, replacement: "Gia va sờ cờ ríp" },
+    { pattern: /\bJS\b/gi, replacement: "Gia va sờ cờ ríp" },
+    { pattern: /\bMP4\b/gi, replacement: "Em Pê Bốn" },
+    { pattern: /\bAI\b/gi, replacement: "A I" },
+    { pattern: /\bAPI\b/gi, replacement: "A P I" },
+    { pattern: /\bUI\b/gi, replacement: "U I" },
+    { pattern: /\bUX\b/gi, replacement: "U X" },
+    { pattern: /\bURL\b/gi, replacement: "U R L" },
+    { pattern: /\bVite\b/gi, replacement: "Vít" },
+    { pattern: /\bNext\.js\b/gi, replacement: "Nếch sờ gie ét" },
+    { pattern: /\bReact\b/gi, replacement: "Ri ách" },
+    { pattern: /\bNode\.js\b/gi, replacement: "Nốt gie ét" }
+  ];
+
+  for (const item of replacements) {
+    normalized = normalized.replace(item.pattern, item.replacement);
+  }
+
+  return normalized;
+}
+
 async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
   const apiKey = process.env.ELEVENLABS_API_KEY;
   const fileName = `tts_${projectId}_${sceneId}.mp3`;
@@ -75,10 +104,12 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const wavFileName = `tts_${projectId}_${sceneId}.wav`;
       const wavOutputPath = path.join(outputDir, wavFileName);
 
-      console.log(`Calling Local OmniVoice CLI for scene ${sceneId} (Cloning reference voice)...`);
+      const cleanText = normalizeTextForTTS(text);
+
+      console.log(`Calling Local OmniVoice CLI for scene ${sceneId} (Cloning reference voice)... Normalized text: "${cleanText}"`);
       
       const args = [
-        "--text", text,
+        "--text", cleanText,
         "--output", wavOutputPath,
         "--language", "Vietnamese"
       ];
