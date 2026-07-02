@@ -32,6 +32,31 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const omnivoiceExe = process.env.OMNIVOICE_INFER_PATH || 
         "C:\\Users\\nghia\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\omnivoice-infer.exe";
 
+      // Đảm bảo thư mục tài nguyên giọng tham chiếu tồn tại
+      const refsDir = path.join(__dirname, '../resources/ref_voices');
+      if (!fs.existsSync(refsDir)) {
+        fs.mkdirSync(refsDir, { recursive: true });
+      }
+
+      // Xác định file giọng tham chiếu (Nữ hoặc Nam) để clone
+      const isMale = voiceKey.toLowerCase() === "omnivoice_male";
+      const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
+      const refAudioPath = path.join(refsDir, refFileName);
+      const refText = "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
+
+      // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại
+      if (!fs.existsSync(refAudioPath)) {
+        console.log(`Creating OmniVoice reference voice file: ${refFileName}...`);
+        const msVoice = isMale ? "vi-VN-NamMinhNeural" : "vi-VN-HoaiMyNeural";
+        const ttsInstance = new EdgeTTS(refText, msVoice);
+        const result = await ttsInstance.synthesize();
+        if (result && result.audio) {
+          const ab = await result.audio.arrayBuffer();
+          fs.writeFileSync(refAudioPath, Buffer.from(ab));
+          console.log(`OmniVoice reference voice created successfully.`);
+        }
+      }
+
       // Ánh xạ voiceKey sang instruct string cho OmniVoice
       let instruct = "female"; // Mặc định
       if (voiceKey.toLowerCase() === "omnivoice_male") {
@@ -46,14 +71,22 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const wavFileName = `tts_${projectId}_${sceneId}.wav`;
       const wavOutputPath = path.join(outputDir, wavFileName);
 
-      console.log(`Calling Local OmniVoice CLI for scene ${sceneId} with instruct: "${instruct}"...`);
+      console.log(`Calling Local OmniVoice CLI for scene ${sceneId} (Cloning reference voice)...`);
       
-      await execFileAsync(omnivoiceExe, [
+      const args = [
         "--text", text,
         "--output", wavOutputPath,
         "--instruct", instruct,
         "--language", "Vietnamese"
-      ], { timeout: 120000 }); // 2 phút timeout
+      ];
+
+      // Nếu có file giọng tham chiếu, truyền vào để khóa giọng
+      if (fs.existsSync(refAudioPath)) {
+        args.push("--ref_audio", refAudioPath);
+        args.push("--ref_text", refText);
+      }
+      
+      await execFileAsync(omnivoiceExe, args, { timeout: 120000 }); // 2 phút timeout
 
       if (!fs.existsSync(wavOutputPath)) {
         throw new Error("omnivoice-infer không tạo được file đầu ra");

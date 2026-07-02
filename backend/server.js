@@ -97,10 +97,52 @@ app.delete('/api/projects/:id', async (req, res) => {
 // 4. PUT /api/projects/:id/config: Update project configuration
 app.put('/api/projects/:id/config', async (req, res) => {
   try {
-    const updatedProject = await db.updateProjectConfig(req.params.id, req.body);
-    if (!updatedProject) {
+    const projectId = req.params.id;
+    const oldProject = await db.getProjectById(projectId);
+    if (!oldProject) {
       return res.status(404).json({ error: 'Project not found' });
     }
+
+    const updatedProject = await db.updateProjectConfig(projectId, req.body);
+    
+    // Check if voice config has changed
+    const oldVoice = oldProject.config?.voice || 'rachel';
+    const oldCustomId = oldProject.config?.customVoiceId || '';
+    const newVoice = updatedProject.config?.voice || 'rachel';
+    const newCustomId = updatedProject.config?.customVoiceId || '';
+
+    if (oldVoice !== newVoice || oldCustomId !== newCustomId) {
+      console.log(`Voice configuration changed from "${oldVoice}" to "${newVoice}". Regenerating TTS for all scenes...`);
+      
+      const voiceKey = newVoice === 'custom' && newCustomId ? newCustomId : newVoice;
+      
+      // Regenerate TTS for all scenes in background to prevent blocking response
+      (async () => {
+        try {
+          const project = await db.getProjectById(projectId);
+          if (project && project.scenes) {
+            const updatedScenes = [];
+            for (const scene of project.scenes) {
+              if (scene.voiceover) {
+                console.log(`Regenerating TTS for project ${projectId} scene ${scene.id} with new voice ${voiceKey}...`);
+                const voiceoverAudioUrl = await tts.generateTTS(scene.voiceover, projectId, scene.id, voiceKey);
+                updatedScenes.push({
+                  ...scene,
+                  voiceoverAudioUrl
+                });
+              } else {
+                updatedScenes.push(scene);
+              }
+            }
+            await db.updateProjectScenes(projectId, updatedScenes);
+            console.log(`TTS regeneration completed successfully for project ${projectId}`);
+          }
+        } catch (bgError) {
+          console.error(`Background TTS regeneration failed: ${bgError.message}`);
+        }
+      })();
+    }
+
     res.json(updatedProject.config);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -157,9 +199,11 @@ app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
     const sceneData = req.body;
     let voiceoverAudioUrl = oldScene.voiceoverAudioUrl;
 
-    // If voiceover text or voice configuration has changed, regenerate TTS
+    // If voiceover text has changed, regenerate TTS using currently configured voice
     if (sceneData.voiceover && sceneData.voiceover !== oldScene.voiceover) {
-      const voiceKey = project.config.voice || 'rachel';
+      const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
+        ? project.config.customVoiceId 
+        : (project.config.voice || 'rachel');
       voiceoverAudioUrl = await tts.generateTTS(sceneData.voiceover, projectId, sceneId, voiceKey);
     }
 
