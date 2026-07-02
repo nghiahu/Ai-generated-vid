@@ -39,6 +39,33 @@ function normalizeTextForTTS(text) {
   return normalized;
 }
 
+function ensureWavReferenceAudio(mp3Path) {
+  const { execSync } = require('child_process');
+  
+  if (!fs.existsSync(mp3Path)) {
+    throw new Error(`Không tìm thấy file giọng mẫu tại: ${mp3Path}`);
+  }
+  
+  if (mp3Path.toLowerCase().endsWith('.wav')) {
+    return mp3Path;
+  }
+  
+  const wavPath = mp3Path.slice(0, -path.extname(mp3Path).length) + '.wav';
+  
+  if (!fs.existsSync(wavPath)) {
+    console.log(`Converting reference audio to 16kHz mono WAV: ${mp3Path} -> ${wavPath}...`);
+    try {
+      execSync(`ffmpeg -y -i "${mp3Path}" -acodec pcm_s16le -ac 1 -ar 16000 "${wavPath}"`, { stdio: 'ignore' });
+      console.log(`Reference audio converted successfully.`);
+    } catch (err) {
+      console.error(`Lỗi chuyển đổi giọng mẫu bằng ffmpeg: ${err.message}`);
+      return mp3Path;
+    }
+  }
+  
+  return wavPath;
+}
+
 // Khóa Mutex để đảm bảo chỉ có tối đa 1 tiến trình OmniVoice chạy tại một thời điểm
 // Tránh xung đột tài nguyên GPU/VRAM khi chạy song song hoặc tuần tự quá nhanh
 let omnivoiceMutex = Promise.resolve();
@@ -94,7 +121,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy;
       
       const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
-      const refAudioPath = isAnhQuy 
+      let refAudioPath = isAnhQuy 
         ? path.join(__dirname, '../../mp3/voiceanhquy.mp3')
         : path.join(refsDir, refFileName);
       const refText = isAnhQuy ? "" : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
@@ -110,6 +137,11 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
           fs.writeFileSync(refAudioPath, Buffer.from(ab));
           console.log(`OmniVoice reference voice created successfully.`);
         }
+      }
+
+      // Đảm bảo file giọng tham chiếu luôn ở dạng WAV 16kHz Mono sạch để tránh lỗi giải mã gây tiếng xì xồ
+      if (fs.existsSync(refAudioPath)) {
+        refAudioPath = ensureWavReferenceAudio(refAudioPath);
       }
 
       // Ánh xạ voiceKey sang instruct string cho OmniVoice
