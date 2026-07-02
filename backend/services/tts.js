@@ -92,7 +92,14 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         }
       }
       
-      await execFileAsync(omnivoiceExe, args, { timeout: 120000 }); // 2 phút timeout
+      await execFileAsync(omnivoiceExe, args, {
+        timeout: 120000,
+        env: {
+          ...process.env,
+          PYTHONUTF8: "1",
+          PYTHONIOENCODING: "utf-8"
+        }
+      });
 
       if (!fs.existsSync(wavOutputPath)) {
         throw new Error("omnivoice-infer không tạo được file đầu ra");
