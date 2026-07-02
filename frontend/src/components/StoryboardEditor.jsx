@@ -604,6 +604,10 @@ export const StoryboardEditor = ({
                         <option value="Comparison">Comparison (VS / Pros-Cons)</option>
                         <option value="Terminal">Terminal (Code Console)</option>
                         <option value="Gallery">Gallery (Screenshots)</option>
+                        <option value="Laptop Mockup">Laptop Mockup (Double Device)</option>
+                        <option value="Stats Banner">Stats Banner (Dashboard View)</option>
+                        <option value="Three Columns">Three Columns (Pricing / Cards)</option>
+                        <option value="Integration Cloud">Integration Cloud (API Graph)</option>
                       </select>
                     </div>
                     <div>

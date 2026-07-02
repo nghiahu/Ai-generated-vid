@@ -25,7 +25,7 @@ async function generateStoryboard(scriptText) {
       [
         {
           "layoutFamily": "Opening / Headline" | "Points / List" | "Quote / Text",
-          "visualLayout": "Hero" | "Split Screen" | "Dashboard" | "Feature Grid" | "Timeline" | "Comparison" | "Terminal" | "Gallery",
+          "visualLayout": "Hero" | "Split Screen" | "Dashboard" | "Feature Grid" | "Timeline" | "Comparison" | "Terminal" | "Gallery" | "Laptop Mockup" | "Stats Banner" | "Three Columns" | "Integration Cloud",
           "heading": "Scene title/heading in Vietnamese",
           "points": [
             {
@@ -52,6 +52,10 @@ async function generateStoryboard(scriptText) {
       - Use "Comparison" if the scene contrasts two systems or has Pros vs Cons.
       - Use "Terminal" if there are terminal installation commands (e.g. starting with "$" or "npm install").
       - Use "Gallery" for multiple screenshots.
+      - Use "Laptop Mockup" for responsive showcase, cross-platform apps, or product features.
+      - Use "Stats Banner" for detailed analytics dashboard panels with line charts and live metric widgets.
+      - Use "Three Columns" for subscription plans, pricing tiers, or 3-step feature lists.
+      - Use "Integration Cloud" for API connections, integrations, or automated workflow diagrams.
       
       Return ONLY the raw JSON array. Do not include markdown formatting or wrapping.
     `;
