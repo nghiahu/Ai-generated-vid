@@ -62,11 +62,8 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       console.log(`Successfully saved Local OmniVoice WAV file: ${wavFileName}`);
       return `/tts/${wavFileName}`;
     } catch (error) {
-      console.warn(`Local OmniVoice CLI failed, falling back to Microsoft Edge TTS: ${error.message}`);
-      const fallbackVoice = voiceKey.toLowerCase().includes("male") 
-        ? "microsoft_namminh" 
-        : "microsoft_hoaimy";
-      return generateTTS(text, projectId, sceneId, fallbackVoice);
+      console.error(`Local OmniVoice CLI failed for scene ${sceneId}: ${error.message}`);
+      throw new Error(`Lỗi OmniVoice TTS: ${error.message}`);
     }
   }
 
