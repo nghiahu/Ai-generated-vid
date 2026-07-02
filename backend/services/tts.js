@@ -38,14 +38,18 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         fs.mkdirSync(refsDir, { recursive: true });
       }
 
-      // Xác định file giọng tham chiếu (Nữ hoặc Nam) để clone
-      const isMale = voiceKey.toLowerCase() === "omnivoice_male";
+      // Xác định file giọng tham chiếu (Nữ, Nam, hoặc tùy chỉnh Anh Quý) để clone
+      const isAnhQuy = voiceKey.toLowerCase() === "omnivoice_anhquy";
+      const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy;
+      
       const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
-      const refAudioPath = path.join(refsDir, refFileName);
-      const refText = "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
+      const refAudioPath = isAnhQuy 
+        ? path.join(__dirname, '../../mp3/voiceanhquy.mp3')
+        : path.join(refsDir, refFileName);
+      const refText = isAnhQuy ? "" : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
 
-      // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại
-      if (!fs.existsSync(refAudioPath)) {
+      // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại (chỉ cho các giọng mặc định)
+      if (!isAnhQuy && !fs.existsSync(refAudioPath)) {
         console.log(`Creating OmniVoice reference voice file: ${refFileName}...`);
         const msVoice = isMale ? "vi-VN-NamMinhNeural" : "vi-VN-HoaiMyNeural";
         const ttsInstance = new EdgeTTS(refText, msVoice);
@@ -59,7 +63,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
 
       // Ánh xạ voiceKey sang instruct string cho OmniVoice
       let instruct = "female"; // Mặc định
-      if (voiceKey.toLowerCase() === "omnivoice_male") {
+      if (voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy) {
         instruct = "male";
       } else if (voiceKey.toLowerCase() === "omnivoice_whisper") {
         instruct = "female, whisper";
@@ -83,7 +87,9 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       // Nếu có file giọng tham chiếu, truyền vào để khóa giọng
       if (fs.existsSync(refAudioPath)) {
         args.push("--ref_audio", refAudioPath);
-        args.push("--ref_text", refText);
+        if (refText) {
+          args.push("--ref_text", refText);
+        }
       }
       
       await execFileAsync(omnivoiceExe, args, { timeout: 120000 }); // 2 phút timeout
