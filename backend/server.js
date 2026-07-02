@@ -125,10 +125,11 @@ app.put('/api/projects/:id/config', async (req, res) => {
             for (const scene of project.scenes) {
               if (scene.voiceover) {
                 console.log(`Regenerating TTS for project ${projectId} scene ${scene.id} with new voice ${voiceKey}...`);
-                const voiceoverAudioUrl = await tts.generateTTS(scene.voiceover, projectId, scene.id, voiceKey);
+                const ttsResult = await tts.generateTTS(scene.voiceover, projectId, scene.id, voiceKey);
                 updatedScenes.push({
                   ...scene,
-                  voiceoverAudioUrl
+                  voiceoverAudioUrl: ttsResult.url,
+                  voiceoverDuration: ttsResult.duration
                 });
               } else {
                 updatedScenes.push(scene);
@@ -198,18 +199,22 @@ app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
 
     const sceneData = req.body;
     let voiceoverAudioUrl = oldScene.voiceoverAudioUrl;
+    let voiceoverDuration = oldScene.voiceoverDuration || 0;
 
     // If voiceover text has changed, regenerate TTS using currently configured voice
     if (sceneData.voiceover && sceneData.voiceover !== oldScene.voiceover) {
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
         : (project.config.voice || 'rachel');
-      voiceoverAudioUrl = await tts.generateTTS(sceneData.voiceover, projectId, sceneId, voiceKey);
+      const ttsResult = await tts.generateTTS(sceneData.voiceover, projectId, sceneId, voiceKey);
+      voiceoverAudioUrl = ttsResult.url;
+      voiceoverDuration = ttsResult.duration;
     }
 
     const updatedScene = await db.updateScene(projectId, sceneId, {
       ...sceneData,
-      voiceoverAudioUrl
+      voiceoverAudioUrl,
+      voiceoverDuration
     });
 
     res.json(updatedScene);
@@ -249,7 +254,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
         : (project.config.voice || 'rachel');
-      const voiceoverAudioUrl = await tts.generateTTS(scene.voiceover, projectId, sceneId, voiceKey);
+      const ttsResult = await tts.generateTTS(scene.voiceover, projectId, sceneId, voiceKey);
 
       scenes.push({
         id: sceneId,
@@ -260,7 +265,8 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
         heading: scene.heading,
         points: scene.points,
         voiceover: scene.voiceover,
-        voiceoverAudioUrl,
+        voiceoverAudioUrl: ttsResult.url,
+        voiceoverDuration: ttsResult.duration,
         placement: scene.placement,
         mediaList,
         selectedMediaIndex: 0,

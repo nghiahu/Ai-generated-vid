@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { EdgeTTS } = require('edge-tts-universal');
+const { execSync } = require('child_process');
 
 // Voice mapping for ElevenLabs
 const VOICE_IDS = {
@@ -10,27 +11,74 @@ const VOICE_IDS = {
   domic: "AZnzlk1XvdvUeBnXmlld"
 };
 
+function getAudioDuration(filePath) {
+  try {
+    const output = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`, { encoding: 'utf8' });
+    const duration = parseFloat(output.trim());
+    if (!isNaN(duration)) return duration;
+  } catch (e) {
+    try {
+      const output = execSync(`ffmpeg -i "${filePath}" 2>&1`, { encoding: 'utf8' });
+      const match = output.match(/Duration:\s*(\d{2}):(\d{2}):(\d{2})\.(\d{2})/);
+      if (match) {
+        const hours = parseInt(match[1], 10);
+        const minutes = parseInt(match[2], 10);
+        const seconds = parseInt(match[3], 10);
+        const hundredths = parseInt(match[4], 10);
+        return hours * 3600 + minutes * 60 + seconds + hundredths / 100;
+      }
+    } catch (e2) {
+      console.error("Lỗi khi đọc độ dài file audio:", e2.message);
+    }
+  }
+  return 0;
+}
+
 function normalizeTextForTTS(text) {
   if (!text) return text;
   
-  // Tránh việc ghép các từ viết tắt dạng viết hoa dính liền làm crash tokenizer của OmniVoice.
-  // Đồng thời giữ nguyên cách phát âm tiếng Anh tự nhiên thay vì phiên âm tiếng Việt kỳ quặc.
+  // Chuyển các từ viết tắt và từ tiếng Anh thông dụng thành phiên âm Việt hóa dễ nghe cho giọng vi-VN.
   let normalized = text
-    .replace(/\bAI\b/g, "A I") // Thay thế AI thành A I để đọc đúng từng chữ cái trong tiếng Việt
-    .replace(/\bai\b/g, "a i")
-    .replace(/\bAPI\b/g, "A P I")
-    .replace(/\bapi\b/g, "a p i")
-    .replace(/\bUI\b/g, "U I")
-    .replace(/\bui\b/g, "u i")
-    .replace(/\bUX\b/g, "U X")
-    .replace(/\bux\b/g, "u x")
-    .replace(/\bURL\b/g, "U R L")
-    .replace(/\burl\b/g, "u r l");
+    .replace(/\bAI\b/ig, "A I")
+    .replace(/\bai\b/ig, "a i")
+    .replace(/\bAPI\b/ig, "A P I")
+    .replace(/\bapi\b/ig, "a p i")
+    .replace(/\bUI\b/ig, "U I")
+    .replace(/\bui\b/ig, "u i")
+    .replace(/\bUX\b/ig, "U X")
+    .replace(/\bux\b/ig, "u x")
+    .replace(/\bURL\b/ig, "U R L")
+    .replace(/\burl\b/ig, "u r l")
+    .replace(/\bHyperFrames\b/ig, "hai pơ phờ rem")
+    .replace(/\bHyperFrame\b/ig, "hai pơ phờ rem")
+    .replace(/\bRemotion\b/ig, "ri mo sần")
+    .replace(/\bStitch\b/ig, "stít")
+    .replace(/\bReact\b/ig, "ri ếch")
+    .replace(/\bVite\b/ig, "vít")
+    .replace(/\bNext\.js\b/ig, "néc jét")
+    .replace(/\bGitHub\b/ig, "gít háp")
+    .replace(/\bVS Code\b/ig, "vi ét cốt")
+    .replace(/\bVSCode\b/ig, "vi ét cốt")
+    .replace(/\bCLI\b/ig, "xê el i")
+    .replace(/\bTTS\b/ig, "tê tê ét")
+    .replace(/\bSaaS\b/ig, "xát")
+    .replace(/\bWidget\b/ig, "uýt dít")
+    .replace(/\bWidgets\b/ig, "uýt dít")
+    .replace(/\bBento\b/ig, "ben tô")
+    .replace(/\bLayout\b/ig, "lay ao")
+    .replace(/\bLayouts\b/ig, "lay ao")
+    .replace(/\bSetup\b/ig, "xét úp")
+    .replace(/\bPipeline\b/ig, "pai lai")
+    .replace(/\bLofi\b/ig, "lo fai")
+    .replace(/\bVideo\b/ig, "vi đê ô")
+    .replace(/\bVideos\b/ig, "vi đê ô")
+    .replace(/\bHTML\b/ig, "hát tê em eo")
+    .replace(/\bCSS\b/ig, "xi ét ét")
+    .replace(/\bJavaScript\b/ig, "da va sờ ríp");
   
-  // Chuyển toàn bộ sang viết thường. Thực nghiệm chứng minh: Viết thường 100% giúp OmniVoice 
-  // tokenizer không bao giờ bị treo/crash, đồng thời AI vẫn đọc tiếng Anh (html, css, javascript, react, next.js) cực kỳ chuẩn và tự nhiên.
   return normalized.toLowerCase();
 }
+
 
 function ensureWavReferenceAudio(mp3Path) {
   const { execSync } = require('child_process');
@@ -190,7 +238,8 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       }
 
       console.log(`Successfully saved Local OmniVoice WAV file: ${wavFileName}`);
-      return `/tts/${wavFileName}`;
+      const duration = getAudioDuration(wavOutputPath);
+      return { url: `/tts/${wavFileName}`, duration };
     } catch (error) {
       console.error(`Local OmniVoice CLI failed for scene ${sceneId}: ${error.message}`);
       
@@ -218,7 +267,8 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         ? "vi-VN-NamMinhNeural" 
         : "vi-VN-HoaiMyNeural";
       console.log(`Calling Microsoft Edge TTS for scene ${sceneId} using voice ${msVoice}...`);
-      const tts = new EdgeTTS(text, msVoice);
+      const cleanText = normalizeTextForTTS(text);
+      const tts = new EdgeTTS(cleanText, msVoice);
       const result = await tts.synthesize();
       if (!result || !result.audio) {
         throw new Error("Không nhận được dữ liệu âm thanh từ Edge TTS");
@@ -227,7 +277,8 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const buffer = Buffer.from(arrayBuffer);
       fs.writeFileSync(outputPath, buffer);
       console.log(`Successfully saved Microsoft Edge TTS file: ${fileName}`);
-      return `/tts/${fileName}`;
+      const duration = getAudioDuration(outputPath);
+      return { url: `/tts/${fileName}`, duration };
     } catch (error) {
       console.error("Microsoft Edge TTS failed:", error);
       throw new Error(`Lỗi Microsoft Edge TTS: ${error.message}`);
@@ -269,7 +320,8 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
     const buffer = Buffer.from(arrayBuffer);
     fs.writeFileSync(outputPath, buffer);
     console.log(`Successfully saved TTS file: ${fileName}`);
-    return `/tts/${fileName}`;
+    const duration = getAudioDuration(outputPath);
+    return { url: `/tts/${fileName}`, duration };
 
   } catch (error) {
     console.error("Error generating ElevenLabs TTS:", error);
