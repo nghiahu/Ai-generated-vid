@@ -150,7 +150,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       
       await runOmniVoiceSequentially(async () => {
         await execFileAsync(omnivoiceExe, args, {
-          timeout: 120000,
+          timeout: 300000,
           maxBuffer: 10 * 1024 * 1024, // 10MB để tránh tràn buffer do progress bars
           env: {
             ...process.env,
