@@ -203,16 +203,19 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
 
       console.log(`Calling Local OmniVoice CLI for scene ${sceneId} (Cloning reference voice)... Normalized text: "${cleanText}"`);
       
+      const relativeWavOutputPath = path.relative(process.cwd(), wavOutputPath);
+      const relativeRefAudioPath = path.relative(process.cwd(), refAudioPath);
+
       const args = [
         "--text", cleanText,
-        "--output", wavOutputPath,
+        "--output", relativeWavOutputPath,
         "--language", "Vietnamese"
       ];
 
       // Nếu có file giọng tham chiếu, truyền vào để khóa giọng (Cloning mode)
       // Không được truyền --instruct khi đã dùng --ref_audio vì sẽ gây crash mô hình
       if (fs.existsSync(refAudioPath)) {
-        args.push("--ref_audio", refAudioPath);
+        args.push("--ref_audio", relativeRefAudioPath);
         if (refText) {
           args.push("--ref_text", refText);
         }
