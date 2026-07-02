@@ -80,16 +80,19 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const args = [
         "--text", text,
         "--output", wavOutputPath,
-        "--instruct", instruct,
         "--language", "Vietnamese"
       ];
 
-      // Nếu có file giọng tham chiếu, truyền vào để khóa giọng
+      // Nếu có file giọng tham chiếu, truyền vào để khóa giọng (Cloning mode)
+      // Không được truyền --instruct khi đã dùng --ref_audio vì sẽ gây crash mô hình
       if (fs.existsSync(refAudioPath)) {
         args.push("--ref_audio", refAudioPath);
         if (refText) {
           args.push("--ref_text", refText);
         }
+      } else {
+        // Chỉ dùng Voice Design mode khi không có file giọng mẫu
+        args.push("--instruct", instruct);
       }
       
       await execFileAsync(omnivoiceExe, args, {
@@ -109,6 +112,20 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       return `/tts/${wavFileName}`;
     } catch (error) {
       console.error(`Local OmniVoice CLI failed for scene ${sceneId}: ${error.message}`);
+      
+      // Ghi log chi tiết lỗi ra file error.log để debug
+      try {
+        const logPath = path.join(__dirname, '../error.log');
+        const logContent = `\n\n--- [${new Date().toISOString()}] ERROR TTS SCENE ${sceneId} ---\n` +
+          `Message: ${error.message}\n` +
+          `Stdout: ${error.stdout || 'None'}\n` +
+          `Stderr: ${error.stderr || 'None'}\n` +
+          `Stack: ${error.stack}\n`;
+        fs.appendFileSync(logPath, logContent, 'utf8');
+      } catch (logErr) {
+        console.error("Không thể ghi file log lỗi:", logErr);
+      }
+
       throw new Error(`Lỗi OmniVoice TTS: ${error.message}`);
     }
   }
