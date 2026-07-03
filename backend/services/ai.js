@@ -66,7 +66,39 @@ async function generateStoryboard(scriptText) {
       Return ONLY the raw JSON array. Do not include markdown formatting or wrapping.
     `;
 
-    const result = await model.generateContent(prompt);
+    let result;
+    const maxRetries = 4;
+    let retryDelay = 3000; // Start with 3 seconds delay
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        result = await model.generateContent(prompt);
+        break; // Success, exit retry loop
+      } catch (err) {
+        const isRateLimit = 
+          err.message.includes("429") || 
+          err.message.toLowerCase().includes("quota") || 
+          err.message.toLowerCase().includes("too many requests");
+
+        if (isRateLimit && attempt < maxRetries) {
+          console.warn(`[Gemini API] Bị giới hạn quota (429). Đang thử lại lần ${attempt}/${maxRetries} sau ${retryDelay / 1000}s...`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          retryDelay *= 2; // Double the wait time
+        } else {
+          // If it's another error, or we ran out of retries, throw detailed message
+          if (isRateLimit) {
+            throw new Error(
+              "Tài khoản Gemini API của bạn đã hết Quota (Rate Limit 429). \n\n" +
+              "👉 Hướng dẫn khắc phục:\n" +
+              "1. Đợi khoảng 1 phút rồi nhấn nút tạo lại.\n" +
+              "2. Hoặc truy cập Google AI Studio, vào mục Billing, nhấn 'Upgrade to Pay-as-you-go' (vẫn được miễn phí hạn mức cơ bản nhưng tăng giới hạn request từ 15 RPM lên 2000 RPM)."
+            );
+          }
+          throw err;
+        }
+      }
+    }
+
     const response = await result.response;
     const text = response.text().trim();
 
