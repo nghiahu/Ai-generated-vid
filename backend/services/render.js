@@ -30,18 +30,19 @@ async function renderVideo(projectId, projectData) {
   const tempPropsFile = path.join(__dirname, `../public/temp_${projectId}.json`);
   fs.writeFileSync(tempPropsFile, JSON.stringify(projectData, null, 2));
 
-  // Output paths relative to my-video/ (the working directory)
-  const relativeProps = `../backend/public/temp_${projectId}.json`;
-  const relativeOutput = `../backend/public/downloads/output_${projectId}.mp4`;
+  // Output paths - use absolute paths to prevent Windows shell resolution issues
+  const absoluteProps = tempPropsFile;
+  const absoluteOutput = path.join(downloadsDir, `output_${projectId}.mp4`);
 
   console.log(`Starting npx remotion render for project ${projectId}...`);
   console.log(`Temp props location: ${tempPropsFile}`);
+  console.log(`Output video location: ${absoluteOutput}`);
 
   // Spawn remotion render process
   const remotionProcess = spawn('npx', [
     'remotion', 'render', 'src/index.ts', 'MainComposition',
-    relativeOutput,
-    `--input-props=${relativeProps}`,
+    absoluteOutput,
+    `--props=${absoluteProps}`,
     '--overwrite'
   ], {
     cwd: path.join(__dirname, '../../my-video'),
