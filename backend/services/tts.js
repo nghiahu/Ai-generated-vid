@@ -50,11 +50,34 @@ function normalizeTextForTTS(text) {
     .replace(/\bux\b/g, "u x")
     .replace(/\bURL\b/g, "U R L")
     .replace(/\burl\b/g, "u r l");
-  
+
+  // Safety net: reverse-map common phonetic Vietnamese back to lowercase English.
+  // Prevents OmniVoice tokenizer crash when Gemini slips and phonetically translates tech terms.
+  // Confirmed crash patterns from error.log (2026-07-02): HTML→"Hát Tê Em Lờ", CSS→"Xê Ét Ét",
+  // JavaScript→"Gia va sờ cờ ríp", MP4→"Em Pê Bốn"
+  normalized = normalized
+    .replace(/hát tê em lờ/gi, "html")
+    .replace(/xê ét ét/gi, "css")
+    .replace(/gia va sờ cờ ríp/gi, "javascript")
+    .replace(/gia va xờ cờ ríp/gi, "javascript")
+    .replace(/ri ắc/gi, "react")
+    .replace(/nốt đề ếch es/gi, "node.js")
+    .replace(/nốt đề ếch ét/gi, "node.js")
+    .replace(/nếch t chấm gi ét/gi, "next.js")
+    .replace(/em pê bốn/gi, "mp4")
+    .replace(/em pê 4/gi, "mp4")
+    .replace(/em pê ba/gi, "mp3")
+    .replace(/em pê 3/gi, "mp3")
+    .replace(/tai pi xờ cờ ríp/gi, "typescript")
+    .replace(/ét qu i/gi, "sql")
+    .replace(/đốc cờ ro/gi, "docker")
+    .replace(/gít hớp/gi, "github");
+
   // Chuyển toàn bộ sang viết thường. Thực nghiệm chứng minh: Viết thường 100% giúp OmniVoice 
   // tokenizer không bao giờ bị treo/crash, đồng thời AI vẫn đọc tiếng Anh (html, css, javascript, react, next.js) cực kỳ chuẩn và tự nhiên.
   return normalized.toLowerCase();
 }
+
 
 
 function ensureWavReferenceAudio(mp3Path) {
