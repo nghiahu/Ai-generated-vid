@@ -165,7 +165,9 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       let refAudioPath = isAnhQuy 
         ? path.join(__dirname, '../../mp3/voiceanhquy.mp3')
         : path.join(refsDir, refFileName);
-      const refText = isAnhQuy ? "" : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
+      const refText = isAnhQuy 
+        ? "Chúng ta ấy xem được hình ảnh của nó thì mình cần phải có một cái thuộc tính là gì các em hight 300 đúng chưa dúng là hight chưa ảnh này"
+        : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
 
       // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại (chỉ cho các giọng mặc định)
       if (!isAnhQuy && !fs.existsSync(refAudioPath)) {
