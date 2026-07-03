@@ -34,7 +34,7 @@ async function generateStoryboard(scriptText) {
               "delay": estimated offset in seconds from the start of this scene (number, e.g. 1.8) indicating when the voice speaks this point. Delays should be spaced out (e.g., 0.5, 2.0, 3.5) and strictly less than the scene duration. Ensure the first point starts around 0.5s."
             }
           ],
-          "voiceover": "The subset of the script text read in this scene, in Vietnamese",
+          "voiceover": "The subset of the script text read aloud in this scene, in Vietnamese. CRITICAL: Keep ALL technical/English terms (HTML, CSS, JavaScript, React, Node.js, Next.js, API, MP4, MP3, npm, JSON, SQL, etc.) in their ORIGINAL LOWERCASE ENGLISH form (e.g., write 'html', 'css', 'javascript'). NEVER phonetically translate them into Vietnamese pronunciation (e.g., NEVER write 'Hát Tê Em Lờ' for HTML, or 'Xê Ét Ét' for CSS).",
           "duration": estimated duration in seconds (number, e.g. 7.5),
           "placement": "Full" | "Split",
           "keywords": "1-3 English keywords for Unsplash photo search based on visual context, e.g., 'coding laptop'",
@@ -56,6 +56,12 @@ async function generateStoryboard(scriptText) {
       - Use "Stats Banner" for detailed analytics dashboard panels with line charts and live metric widgets.
       - Use "Three Columns" for subscription plans, pricing tiers, or 3-step feature lists.
       - Use "Integration Cloud" for API connections, integrations, or automated workflow diagrams.
+      
+      GLOBAL CRITICAL RULE FOR VOICEOVER TEXT:
+      Technical and English terms in the "voiceover" field MUST remain as lowercase English words.
+      Examples of CORRECT voiceover text: "html, css, và javascript là nền tảng của web."
+      Examples of WRONG voiceover text: "Hát Tê Em Lờ, Xê Ét Ét, và Gia va sờ cờ ríp là nền tảng của web."
+      Apply this rule to: html, css, javascript, react, node.js, next.js, api, mp4, mp3, npm, json, sql, typescript, python, github, docker, aws, gpt.
       
       Return ONLY the raw JSON array. Do not include markdown formatting or wrapping.
     `;
