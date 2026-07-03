@@ -1,6 +1,65 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const resolveEditorComponents = (scene, currentImg, layoutType) => {
+  const list = [
+    { type: 'title', height: 180, priority: 100, data: { text: scene.heading || "Untitled" } }
+  ];
+
+  if (scene.points) {
+    scene.points.forEach((pt, idx) => {
+      let p = "";
+      if (typeof pt === "string") {
+        p = pt.trim();
+      } else if (pt && typeof pt === "object") {
+        p = (pt.text || "").trim();
+      }
+      if (!p) return;
+
+      const isCommandLine = p.startsWith("$") || p.includes("curl ") || p.includes("npm install") || p.includes("pip install") || p.includes("git clone");
+      if (isCommandLine) {
+        list.push({ type: 'terminal', height: 140, priority: 85, data: { code: p } });
+        return;
+      }
+
+      const isBadges = p.includes(",") && (
+        p.includes("⭐") || 
+        p.includes("🔥") || 
+        p.includes("sao") || 
+        p.includes("MIT") || 
+        p.split(",").every(part => part.trim().length > 0 && part.trim().length < 15)
+      );
+      if (isBadges) {
+        list.push({ type: 'badge_row', height: 80, priority: 50, data: { badges: p.split(",").map(b => b.trim()).filter(b => b.length > 0) } });
+        return;
+      }
+
+      const isHeroMetric = p.startsWith("-") || p.startsWith("+") || p.match(/^[+-]?\d+%/i);
+      if (isHeroMetric) {
+        list.push({ type: 'hero_metric', height: 180, priority: 90, data: { text: p } });
+        return;
+      }
+
+      list.push({ type: 'feature_card', height: 100, priority: 70, data: { text: p } });
+    });
+  }
+
+  // Filter based on 1600px budget (scaled down on editor layout but logically same)
+  let active = [...list];
+  while (active.length > 0) {
+    const totalHeight = active.reduce((sum, item) => sum + item.height, 0) + (active.length - 1) * 30;
+    if (totalHeight <= 1550) break;
+    
+    let lowestIdx = 0;
+    for (let i = 1; i < active.length; i++) {
+      if (active[i].priority < active[lowestIdx].priority) lowestIdx = i;
+    }
+    active.splice(lowestIdx, 1);
+  }
+
+  return active;
+};
+
 export const StoryboardEditor = ({ 
   scenes = [], 
   projectId, 
@@ -14,6 +73,56 @@ export const StoryboardEditor = ({
 }) => {
   const [topicText, setTopicText] = useState("");
   const [scriptText, setScriptText] = useState("");
+  const [uploadingScenes, setUploadingScenes] = useState({});
+
+  const handleImageUploadClick = (sceneId) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    
+    fileInput.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      setUploadingScenes(prev => ({ ...prev, [sceneId]: true }));
+      
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        try {
+          const base64data = reader.result;
+          // Gửi lên API Backend
+          const response = await axios.post("http://localhost:5000/api/upload", {
+            file: base64data
+          });
+          
+          const newImageUrl = response.data.url;
+          
+          // Thêm vào mediaList của Scene hiện tại
+          const scene = scenes.find(s => s.id === sceneId);
+          if (!scene) return;
+          const currentMediaList = scene.mediaList || [];
+          const updatedMediaList = [...currentMediaList, newImageUrl];
+          const newIndex = updatedMediaList.length - 1;
+
+          // Cập nhật lên CSDL bằng API có sẵn
+          onUpdateScene(sceneId, {
+            ...scene,
+            mediaList: updatedMediaList,
+            selectedMediaIndex: newIndex
+          });
+          
+        } catch (err) {
+          console.error("Lỗi tải ảnh:", err);
+          alert(`Không thể upload ảnh: ${err.response?.data?.error || err.message}`);
+        } finally {
+          setUploadingScenes(prev => ({ ...prev, [sceneId]: false }));
+        }
+      };
+    };
+    
+    fileInput.click();
+  };
   
   const [searchQueries, setSearchQueries] = useState({});
   const [searchingImages, setSearchingImages] = useState({});
@@ -32,9 +141,36 @@ export const StoryboardEditor = ({
     });
   };
 
-  const handlePointsChangeTextarea = (sceneId, textValue) => {
-    const lines = textValue.split("\n").filter(line => line.trim() !== "");
-    handleFieldChange(sceneId, "points", lines);
+
+  const getNormalizedPoints = (points) => {
+    return (points || []).map((pt, idx) => {
+      if (typeof pt === "string") {
+        return { text: pt, animation: "slide-up", delay: Number((idx * 1.5).toFixed(1)) };
+      }
+      return {
+        text: pt.text || "",
+        animation: pt.animation || "slide-up",
+        delay: typeof pt.delay === "number" ? pt.delay : Number((idx * 1.5).toFixed(1))
+      };
+    });
+  };
+
+  const handlePointChange = (sceneId, points, index, field, value) => {
+    const norm = getNormalizedPoints(points);
+    norm[index] = { ...norm[index], [field]: value };
+    handleFieldChange(sceneId, "points", norm);
+  };
+
+  const handleAddPoint = (sceneId, points) => {
+    const norm = getNormalizedPoints(points);
+    norm.push({ text: "Ý chính mới", animation: "slide-up", delay: Number((norm.length * 1.2).toFixed(1)) });
+    handleFieldChange(sceneId, "points", norm);
+  };
+
+  const handleRemovePoint = (sceneId, points, index) => {
+    const norm = getNormalizedPoints(points);
+    norm.splice(index, 1);
+    handleFieldChange(sceneId, "points", norm);
   };
 
   // Search images via backend Unsplash search API
@@ -178,7 +314,7 @@ export const StoryboardEditor = ({
         <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
           {scenes.map((scene, index) => {
             const isSelected = selectedSceneId === scene.id;
-            const currentImg = scene.mediaList && scene.mediaList.length > 0 
+            const currentImg = scene.mediaList && scene.mediaList.length > 0 && scene.selectedMediaIndex !== -1
               ? scene.mediaList[scene.selectedMediaIndex || 0] 
               : "";
 
@@ -260,33 +396,178 @@ export const StoryboardEditor = ({
                     {currentImg ? (
                       <img 
                         src={currentImg} 
-                        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0, filter: "grayscale(100%) opacity(40%)" }} 
+                        style={{ 
+                          position: "absolute", 
+                          top: 0,
+                          bottom: 0,
+                          left: 0,
+                          width: scene.visualLayout === "Split Screen" ? "45%" : "100%",
+                          height: "100%", 
+                          objectFit: "cover", 
+                          zIndex: 0, 
+                          filter: "grayscale(100%) opacity(40%)",
+                          borderRight: scene.visualLayout === "Split Screen" ? "2px solid #000000" : "none"
+                        }} 
                         alt="bg preview" 
                       />
                     ) : (
-                      <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: "repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 1px, transparent 8px)" }} />
+                      <div 
+                        style={{ 
+                          position: "absolute", 
+                          top: 0,
+                          bottom: 0,
+                          left: 0,
+                          width: scene.visualLayout === "Split Screen" ? "45%" : "100%",
+                          height: "100%", 
+                          zIndex: 0,
+                          background: `radial-gradient(circle at center, ${(scene.accentColor || "#FFB7C5")}33 0%, #090d1a 100%)`,
+                          borderRight: scene.visualLayout === "Split Screen" ? "2px solid #000000" : "none"
+                        }} 
+                      />
                     )}
 
-                    {/* Headline Card */}
-                    <div className="border-strict" style={{ borderWidth: "2px", backgroundColor: "#ffffff", padding: "6px", width: "100%", marginBottom: "12px", zIndex: 1, boxShadow: "2px 2px 0px 0px #000" }}>
-                      <h3 style={{ fontSize: "13px", fontFamily: "Space Grotesk", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0 }}>
-                        {scene.heading || "Untitled"}
-                      </h3>
-                    </div>
+                    {/* Component-based Dynamic Preview Area */}
+                    <div style={{
+                      position: "absolute",
+                      top: 0,
+                      bottom: 0,
+                      left: scene.visualLayout === "Split Screen" ? "45%" : 0,
+                      right: 0,
+                      zIndex: 1,
+                      padding: "12px 8px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "stretch",
+                      gap: "8px",
+                      boxSizing: "border-box"
+                    }}>
+                      {(() => {
+                        const resolved = resolveEditorComponents(scene, currentImg, scene.visualLayout);
+                        const titleComp = resolved.find(c => c.type === "title");
+                        const otherComps = resolved.filter(c => c.type !== "title");
 
-                    {/* Bullet Points */}
-                    <ul style={{ listStyle: "none", textAlign: "left", width: "100%", padding: 0, margin: 0, zIndex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
-                      {scene.points && scene.points.map((pt, pIdx) => (
-                        <li key={pIdx} style={{ fontSize: "10px", fontWeight: "700", display: "flex", alignItems: "flex-start", gap: "4px", textTransform: "uppercase", fontFamily: "Inter" }}>
-                          <span style={{ width: "5px", height: "5px", backgroundColor: "#000000", marginTop: "4px", flexShrink: 0 }}></span>
-                          {pt}
-                        </li>
-                      ))}
-                    </ul>
+                        const renderEditorComp = (comp, idx, overrides = {}) => {
+                          if (comp.type === "terminal") {
+                            return (
+                              <div key={idx} style={{ backgroundColor: "#000000", color: "#00FF66", fontFamily: "monospace", padding: "4px", fontSize: "7.5px", borderRadius: "2px", textAlign: "left", wordBreak: "break-all" }}>
+                                $ {comp.data.code}
+                              </div>
+                            );
+                          }
+                          if (comp.type === "hero_metric") {
+                            return (
+                              <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "2px", backgroundColor: "#ffffff", border: "1px solid #000", padding: "3px", boxShadow: "1px 1px 0px 0px #000" }}>
+                                <span style={{ fontSize: "11px", fontWeight: "900", color: scene.accentColor || "#FFB7C5", fontFamily: "Space Grotesk", lineHeight: "1" }}>{comp.data.text.split("—")[0]}</span>
+                                {comp.data.text.includes("—") && (
+                                  <span style={{ fontSize: "7px", color: "#666", lineHeight: "1" }}>{comp.data.text.split("—")[1]}</span>
+                                )}
+                              </div>
+                            );
+                          }
+                          if (comp.type === "feature_card") {
+                            return (
+                              <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "3px", fontSize: "7.5px", fontWeight: "700", textAlign: "left", textTransform: "uppercase", fontFamily: "Inter" }}>
+                                {!overrides.hideDot && <span style={{ width: "3.5px", height: "3.5px", backgroundColor: "#000000", marginTop: "3px", flexShrink: 0 }}></span>}
+                                <span style={{ flex: 1 }}>{comp.data.text}</span>
+                              </div>
+                            );
+                          }
+                          if (comp.type === "badge_row") {
+                            return (
+                              <div key={idx} style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
+                                {comp.data.badges.map((bg, bIdx) => (
+                                  <span key={bIdx} style={{ fontSize: "6.5px", fontWeight: "bold", padding: "2px 4px", border: "1px solid #000000", backgroundColor: "#ffffff", color: "#000" }}>
+                                    {bg}
+                                  </span>
+                                ))}
+                              </div>
+                            );
+                          }
+                          return null;
+                        };
 
-                    {/* Subtitle Caption voiceover */}
-                    <div style={{ marginTop: "auto", backgroundColor: "#000000", color: "#ffffff", padding: "6px", fontSize: "9px", fontFamily: "Inter", width: "100%", textAlign: "left", zIndex: 1, lineHeight: "1.3" }}>
-                      {scene.voiceover ? (scene.voiceover.length > 50 ? scene.voiceover.substring(0, 50) + "..." : scene.voiceover) : ""}
+                        return (
+                          <>
+                            {titleComp && (
+                              <div className="border-strict" style={{ borderWidth: "1px", backgroundColor: "#ffffff", padding: "4px", width: "100%", boxShadow: "1.5px 1.5px 0px 0px #000" }}>
+                                <h3 style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0 }}>
+                                  {titleComp.data.text}
+                                </h3>
+                              </div>
+                            )}
+
+                            {/* Render rest based on layoutType */}
+                            {scene.visualLayout === "Timeline" ? (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "12px", borderLeft: `1.5px dashed ${(scene.accentColor || "#FFB7C5")}66`, position: "relative", marginLeft: "6px", textAlign: "left" }}>
+                                {otherComps.filter(c => c.type !== "badge_row").map((comp, idx) => (
+                                  <div key={idx} style={{ display: "flex", alignItems: "center", gap: "6px", position: "relative", width: "100%" }}>
+                                    <div style={{
+                                      position: "absolute",
+                                      left: "-18px",
+                                      width: "11px",
+                                      height: "11px",
+                                      borderRadius: "50%",
+                                      backgroundColor: "#060813",
+                                      border: `1.5px solid ${scene.accentColor || "#FFB7C5"}`,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      fontSize: "6px",
+                                      fontWeight: "bold",
+                                      color: "#ffffff"
+                                    }}>
+                                      {idx + 1}
+                                    </div>
+                                    {renderEditorComp(comp, idx, { hideDot: true })}
+                                  </div>
+                                ))}
+                                {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
+                              </div>
+                            ) : scene.visualLayout === "Comparison" ? (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                <div style={{ display: "flex", gap: "6px", width: "100%" }}>
+                                  <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                    <div style={{ fontSize: "6px", fontWeight: "bold", color: scene.accentColor || "#FFB7C5", textTransform: "uppercase", textAlign: "left" }}>Ưu điểm</div>
+                                    {otherComps.filter(c => c.type !== "badge_row").slice(0, Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
+                                  </div>
+                                  <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                    <div style={{ fontSize: "6px", fontWeight: "bold", color: "#888888", textTransform: "uppercase", textAlign: "left" }}>Nhược điểm</div>
+                                    {otherComps.filter(c => c.type !== "badge_row").slice(Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
+                                  </div>
+                                </div>
+                                {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
+                              </div>
+                            ) : scene.visualLayout === "Dashboard" ? (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", width: "100%" }}>
+                                  {otherComps.filter(c => c.type === "hero_metric").map(renderEditorComp)}
+                                </div>
+                                {otherComps.filter(c => c.type !== "hero_metric").map(renderEditorComp)}
+                              </div>
+                            ) : scene.visualLayout === "Gallery" ? (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                <div style={{
+                                  width: "100%",
+                                  height: "60px",
+                                  backgroundColor: "#1e1e24",
+                                  border: "1px solid rgba(255,255,255,0.1)",
+                                  borderRadius: "4px",
+                                  position: "relative",
+                                  overflow: "hidden"
+                                }}>
+                                  {currentImg && (
+                                    <img src={currentImg} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="gallery spec" />
+                                  )}
+                                </div>
+                                {otherComps.map(renderEditorComp)}
+                              </div>
+                            ) : (
+                              otherComps.map(renderEditorComp)
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -315,9 +596,18 @@ export const StoryboardEditor = ({
                         onChange={(e) => handleFieldChange(scene.id, "visualLayout", e.target.value)}
                         style={{ padding: "8px", fontSize: "12px" }}
                       >
-                        <option value="Intro Profile">Intro Profile</option>
-                        <option value="Github Status Hook">Github Status Hook</option>
-                        <option value="Split Grid">Split Grid</option>
+                        <option value="Hero">Hero (Intro / Headline)</option>
+                        <option value="Split Screen">Split Screen (Media + Info)</option>
+                        <option value="Dashboard">Dashboard (Statistics)</option>
+                        <option value="Feature Grid">Feature Grid (Bento Box)</option>
+                        <option value="Timeline">Timeline (Steps)</option>
+                        <option value="Comparison">Comparison (VS / Pros-Cons)</option>
+                        <option value="Terminal">Terminal (Code Console)</option>
+                        <option value="Gallery">Gallery (Screenshots)</option>
+                        <option value="Laptop Mockup">Laptop Mockup (Double Device)</option>
+                        <option value="Stats Banner">Stats Banner (Dashboard View)</option>
+                        <option value="Three Columns">Three Columns (Pricing / Cards)</option>
+                        <option value="Integration Cloud">Integration Cloud (API Graph)</option>
                       </select>
                     </div>
                     <div>
@@ -343,14 +633,155 @@ export const StoryboardEditor = ({
                     />
                   </div>
 
-                  <div>
-                    <label className="form-label-mono" style={{ fontSize: "11px" }}>Points (One per line)</label>
-                    <textarea 
-                      className="form-input-mono"
-                      value={scene.points ? scene.points.join("\n") : ""} 
-                      onChange={(e) => handlePointsChangeTextarea(scene.id, e.target.value)}
-                      style={{ height: "70px", fontSize: "13px", resize: "none" }}
-                    />
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                    <div>
+                      <label className="form-label-mono" style={{ fontSize: "11px" }}>Hiệu ứng hạt (Theme)</label>
+                      <select 
+                        className="form-input-mono"
+                        value={scene.theme || "default"} 
+                        onChange={(e) => handleFieldChange(scene.id, "theme", e.target.value)}
+                        style={{ padding: "8px", fontSize: "12px" }}
+                      >
+                        <option value="default">Mặc định (Bokeh)</option>
+                        <option value="japan">Nhật Bản (Sakura)</option>
+                        <option value="tech">Công nghệ (Digital)</option>
+                        <option value="finance">Tài chính (Gold)</option>
+                        <option value="nature">Thiên nhiên (Lá rụng)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="form-label-mono" style={{ fontSize: "11px" }}>Màu nhấn (Accent HEX)</label>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <input 
+                          className="form-input-mono"
+                          type="color" 
+                          value={scene.accentColor || "#FFB7C5"} 
+                          onChange={(e) => handleFieldChange(scene.id, "accentColor", e.target.value)}
+                          style={{ width: "35px", height: "35px", padding: 0, cursor: "pointer", border: "2px solid #000" }}
+                        />
+                        <input 
+                          className="form-input-mono"
+                          type="text" 
+                          value={scene.accentColor || "#FFB7C5"} 
+                          onChange={(e) => handleFieldChange(scene.id, "accentColor", e.target.value)}
+                          style={{ padding: "8px", fontSize: "12px", flex: 1 }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Các Khối Nội Dung (Points & Hiệu ứng)</label>
+                      <button
+                        type="button"
+                        onClick={() => handleAddPoint(scene.id, scene.points)}
+                        style={{
+                          padding: "3px 8px",
+                          fontFamily: "Space Grotesk",
+                          fontWeight: "bold",
+                          fontSize: "10px",
+                          backgroundColor: "#00E5FF",
+                          color: "#000000",
+                          border: "none",
+                          borderRadius: "4px",
+                          cursor: "pointer"
+                        }}
+                      >
+                        + Thêm ý chính
+                      </button>
+                    </div>
+                    
+                    <div style={{ 
+                      display: "flex", 
+                      flexDirection: "column", 
+                      gap: "10px", 
+                      maxHeight: "260px", 
+                      overflowY: "auto", 
+                      paddingRight: "6px",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      borderRadius: "6px",
+                      padding: "8px",
+                      backgroundColor: "rgba(0, 0, 0, 0.15)"
+                    }}>
+                      {getNormalizedPoints(scene.points).length === 0 ? (
+                        <div style={{ textAlign: "center", padding: "15px", fontSize: "12px", opacity: 0.4 }}>Chưa có ý chính nào. Bấm "+ Thêm ý chính" để tạo mới.</div>
+                      ) : (
+                        getNormalizedPoints(scene.points).map((pt, idx) => (
+                          <div key={idx} style={{ 
+                            display: "flex", 
+                            flexDirection: "column", 
+                            gap: "8px", 
+                            padding: "8px", 
+                            borderRadius: "6px", 
+                            backgroundColor: "rgba(255, 255, 255, 0.02)", 
+                            border: "1px solid rgba(255, 255, 255, 0.05)" 
+                          }}>
+                            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                              <span style={{ fontSize: "11px", opacity: 0.4, fontFamily: "monospace" }}>#{idx + 1}</span>
+                              <input
+                                type="text"
+                                className="form-input-mono"
+                                value={pt.text}
+                                onChange={(e) => handlePointChange(scene.id, scene.points, idx, "text", e.target.value)}
+                                placeholder="Nhập nội dung hiển thị..."
+                                style={{ padding: "6px 8px", fontSize: "12px", flex: 1 }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleRemovePoint(scene.id, scene.points, idx)}
+                                style={{ 
+                                  background: "none", 
+                                  border: "none", 
+                                  color: "#ff4d4d", 
+                                  cursor: "pointer", 
+                                  fontSize: "14px",
+                                  padding: "0 4px"
+                                }}
+                                title="Xóa ý này"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                              {/* Animation Select */}
+                              <div style={{ display: "flex", flexDirection: "column", gap: "2px", flex: 1 }}>
+                                <span style={{ fontSize: "9px", opacity: 0.4, fontFamily: "Space Grotesk" }}>Hiệu ứng</span>
+                                <select
+                                  className="form-input-mono"
+                                  value={pt.animation}
+                                  onChange={(e) => handlePointChange(scene.id, scene.points, idx, "animation", e.target.value)}
+                                  style={{ padding: "4px 6px", fontSize: "11px", height: "auto" }}
+                                >
+                                  <option value="slide-up">Slide Up (Trượt lên)</option>
+                                  <option value="scale-in">Scale In (Phóng to nảy)</option>
+                                  <option value="fade-in">Fade In (Mờ dần)</option>
+                                  <option value="blur-in">Blur In (Làm nét)</option>
+                                  <option value="slide-left">Slide Left (Trượt trái)</option>
+                                  <option value="slide-right">Slide Right (Trượt phải)</option>
+                                </select>
+                              </div>
+                              {/* Delay Range Slider */}
+                              <div style={{ display: "flex", flexDirection: "column", gap: "2px", flex: 1 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9px" }}>
+                                  <span style={{ opacity: 0.4, fontFamily: "Space Grotesk" }}>Độ trễ xuất hiện</span>
+                                  <span style={{ color: "#00E5FF", fontWeight: "bold" }}>{pt.delay}s</span>
+                                </div>
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max={scene.duration || 10}
+                                  step="0.1"
+                                  value={pt.delay}
+                                  onChange={(e) => handlePointChange(scene.id, scene.points, idx, "delay", parseFloat(e.target.value))}
+                                  style={{ width: "100%", height: "4px", accentColor: "#00E5FF", cursor: "pointer" }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
 
                   <div>
@@ -367,8 +798,13 @@ export const StoryboardEditor = ({
                   <div style={{ borderTop: "1px solid #000000", paddingTop: "15px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
                       <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Background Media</label>
-                      <button style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}>
-                        📁 Upload
+                      <button 
+                        type="button"
+                        onClick={() => handleImageUploadClick(scene.id)}
+                        disabled={uploadingScenes[scene.id]}
+                        style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
+                      >
+                        {uploadingScenes[scene.id] ? "⏳ Uploading..." : "📁 Upload"}
                       </button>
                     </div>
 
@@ -399,6 +835,35 @@ export const StoryboardEditor = ({
 
                     {/* Image Suggestions Grid */}
                     <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
+                      {/* Default Accent HEX Gradient choice */}
+                      <div
+                        onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", -1)}
+                        style={{
+                          width: "48px",
+                          height: "48px",
+                          flexShrink: 0,
+                          borderRadius: "4px",
+                          border: scene.selectedMediaIndex === -1 ? "3px solid #000000" : "1px solid #cccccc",
+                          background: `linear-gradient(135deg, ${scene.accentColor || "#FFB7C5"}aa 0%, #060813 100%)`,
+                          cursor: "pointer",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "8px",
+                          fontWeight: "bold",
+                          color: "#ffffff",
+                          textAlign: "center",
+                          padding: "2px",
+                          fontFamily: "Space Grotesk, sans-serif",
+                          lineHeight: "1.1",
+                          boxSizing: "border-box",
+                          textTransform: "uppercase"
+                        }}
+                      >
+                        Nền màu nhấn
+                      </div>
+
                       {scene.mediaList && scene.mediaList.map((imgUrl, imgIdx) => (
                         <div
                           key={imgIdx}

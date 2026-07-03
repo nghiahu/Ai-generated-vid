@@ -7,6 +7,13 @@ const ai = require('./services/ai');
 const tts = require('./services/tts');
 const media = require('./services/media');
 const render = require('./services/render');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -14,9 +21,9 @@ const PORT = process.env.PORT || 5000;
 // Enable CORS for frontend requests
 app.use(cors());
 
-// Parse JSON request bodies
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Parse JSON request bodies with increased limit for base64 images
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Serve static assets (voiceover audio, downloads, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -90,10 +97,53 @@ app.delete('/api/projects/:id', async (req, res) => {
 // 4. PUT /api/projects/:id/config: Update project configuration
 app.put('/api/projects/:id/config', async (req, res) => {
   try {
-    const updatedProject = await db.updateProjectConfig(req.params.id, req.body);
-    if (!updatedProject) {
+    const projectId = req.params.id;
+    const oldProject = await db.getProjectById(projectId);
+    if (!oldProject) {
       return res.status(404).json({ error: 'Project not found' });
     }
+
+    const updatedProject = await db.updateProjectConfig(projectId, req.body);
+    
+    // Check if voice config has changed
+    const oldVoice = oldProject.config?.voice || 'rachel';
+    const oldCustomId = oldProject.config?.customVoiceId || '';
+    const newVoice = updatedProject.config?.voice || 'rachel';
+    const newCustomId = updatedProject.config?.customVoiceId || '';
+
+    if (oldVoice !== newVoice || oldCustomId !== newCustomId) {
+      console.log(`Voice configuration changed from "${oldVoice}" to "${newVoice}". Regenerating TTS for all scenes...`);
+      
+      const voiceKey = newVoice === 'custom' && newCustomId ? newCustomId : newVoice;
+      
+      // Regenerate TTS for all scenes in background to prevent blocking response
+      (async () => {
+        try {
+          const project = await db.getProjectById(projectId);
+          if (project && project.scenes) {
+            const updatedScenes = [];
+            for (const scene of project.scenes) {
+              if (scene.voiceover) {
+                console.log(`Regenerating TTS for project ${projectId} scene ${scene.id} with new voice ${voiceKey}...`);
+                const ttsResult = await tts.generateTTS(scene.voiceover, projectId, scene.id, voiceKey);
+                updatedScenes.push({
+                  ...scene,
+                  voiceoverAudioUrl: ttsResult.url,
+                  voiceoverDuration: ttsResult.duration
+                });
+              } else {
+                updatedScenes.push(scene);
+              }
+            }
+            await db.updateProjectScenes(projectId, updatedScenes);
+            console.log(`TTS regeneration completed successfully for project ${projectId}`);
+          }
+        } catch (bgError) {
+          console.error(`Background TTS regeneration failed: ${bgError.message}`);
+        }
+      })();
+    }
+
     res.json(updatedProject.config);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -108,6 +158,26 @@ app.get('/api/media/search', async (req, res) => {
     res.json(images);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// 5b. POST /api/upload: Upload base64 image to Cloudinary
+app.post('/api/upload', async (req, res) => {
+  try {
+    const { file } = req.body;
+    if (!file) {
+      return res.status(400).json({ error: 'Data URL image string is required' });
+    }
+
+    const result = await cloudinary.uploader.upload(file, {
+      folder: 'ai-video-storyboards',
+      resource_type: 'auto'
+    });
+
+    res.json({ url: result.secure_url });
+  } catch (error) {
+    console.error('Cloudinary upload failure:', error);
+    res.status(500).json({ error: `Cloudinary upload failed: ${error.message}` });
   }
 });
 
@@ -129,16 +199,22 @@ app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
 
     const sceneData = req.body;
     let voiceoverAudioUrl = oldScene.voiceoverAudioUrl;
+    let voiceoverDuration = oldScene.voiceoverDuration || 0;
 
-    // If voiceover text or voice configuration has changed, regenerate TTS
+    // If voiceover text has changed, regenerate TTS using currently configured voice
     if (sceneData.voiceover && sceneData.voiceover !== oldScene.voiceover) {
-      const voiceKey = project.config.voice || 'rachel';
-      voiceoverAudioUrl = await tts.generateTTS(sceneData.voiceover, projectId, sceneId, voiceKey);
+      const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
+        ? project.config.customVoiceId 
+        : (project.config.voice || 'rachel');
+      const ttsResult = await tts.generateTTS(sceneData.voiceover, projectId, sceneId, voiceKey);
+      voiceoverAudioUrl = ttsResult.url;
+      voiceoverDuration = ttsResult.duration;
     }
 
     const updatedScene = await db.updateScene(projectId, sceneId, {
       ...sceneData,
-      voiceoverAudioUrl
+      voiceoverAudioUrl,
+      voiceoverDuration
     });
 
     res.json(updatedScene);
@@ -178,7 +254,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
         : (project.config.voice || 'rachel');
-      const voiceoverAudioUrl = await tts.generateTTS(scene.voiceover, projectId, sceneId, voiceKey);
+      const ttsResult = await tts.generateTTS(scene.voiceover, projectId, sceneId, voiceKey);
 
       scenes.push({
         id: sceneId,
@@ -189,10 +265,13 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
         heading: scene.heading,
         points: scene.points,
         voiceover: scene.voiceover,
-        voiceoverAudioUrl,
+        voiceoverAudioUrl: ttsResult.url,
+        voiceoverDuration: ttsResult.duration,
         placement: scene.placement,
         mediaList,
-        selectedMediaIndex: 0
+        selectedMediaIndex: 0,
+        theme: scene.theme || "default",
+        accentColor: scene.accentColor || "#FFB7C5"
       });
     }
 
@@ -269,6 +348,8 @@ app.get('/api/projects/:id/render/status/:renderId', (req, res) => {
 });
 
 // Boot server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Express Backend Server is running on port ${PORT}`);
 });
+server.timeout = 600000; // 10 phút timeout để hỗ trợ các tác vụ AI và render video nặng
+

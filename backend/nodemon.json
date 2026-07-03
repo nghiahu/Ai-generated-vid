@@ -1,0 +1,14 @@
+{
+  "watch": ["server.js", "services/**/*.js"],
+  "ext": "js",
+  "ignore": [
+    "node_modules",
+    "public/**/*",
+    "resources/**/*",
+    "error.log",
+    "*.wav",
+    "*.mp3",
+    "test_*.js"
+  ],
+  "delay": "1000"
+}
