@@ -17,12 +17,12 @@ async function searchImages(query) {
     const cleanWord = getSingleCleanKeyword(searchTerm);
     console.log(`No UNSPLASH_ACCESS_KEY found. Using Lorem Flickr clean tag: "${cleanWord}" (from "${searchTerm}")`);
     return [
-      `https://loremflickr.com/800/1422/${encodeURIComponent(cleanWord)}?random=1`,
-      `https://loremflickr.com/800/1422/${encodeURIComponent(cleanWord)}?random=2`,
-      `https://loremflickr.com/800/1422/${encodeURIComponent(cleanWord)}?random=3`,
-      `https://loremflickr.com/800/1422/${encodeURIComponent(cleanWord)}?random=4`,
-      `https://loremflickr.com/800/1422/${encodeURIComponent(cleanWord)}?random=5`,
-      `https://loremflickr.com/800/1422/${encodeURIComponent(cleanWord)}?random=6`
+      `https://picsum.photos/seed/${encodeURIComponent(cleanWord)}_1/800/1422`,
+      `https://picsum.photos/seed/${encodeURIComponent(cleanWord)}_2/800/1422`,
+      `https://picsum.photos/seed/${encodeURIComponent(cleanWord)}_3/800/1422`,
+      `https://picsum.photos/seed/${encodeURIComponent(cleanWord)}_4/800/1422`,
+      `https://picsum.photos/seed/${encodeURIComponent(cleanWord)}_5/800/1422`,
+      `https://picsum.photos/seed/${encodeURIComponent(cleanWord)}_6/800/1422`
     ];
   }
 
