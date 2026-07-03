@@ -41,8 +41,8 @@ async function renderVideo(projectId, projectData) {
   // Spawn remotion render process
   const remotionProcess = spawn('npx', [
     'remotion', 'render', 'src/index.ts', 'MainComposition',
-    absoluteOutput,
-    `--props=${absoluteProps}`,
+    `"${absoluteOutput}"`,
+    `--props="${absoluteProps}"`,
     '--overwrite'
   ], {
     cwd: path.join(__dirname, '../../my-video'),
