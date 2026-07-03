@@ -25,7 +25,16 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// Serve static assets (voiceover audio, downloads, etc.)
+// Serve downloads directory with attachment header to force browser download
+app.use('/downloads', express.static(path.join(__dirname, 'public/downloads'), {
+  setHeaders: function (res, filePath) {
+    if (filePath.endsWith('.mp4')) {
+      res.set('Content-Disposition', 'attachment');
+    }
+  }
+}));
+
+// Serve other static assets (voiceover audio, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/tts', express.static(path.join(__dirname, 'public/tts')));
 
