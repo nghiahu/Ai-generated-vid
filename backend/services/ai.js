@@ -7,11 +7,19 @@ async function generateStoryboard(scriptText) {
     throw new Error("GEMINI_API_KEY chưa được cấu hình trong tệp .env. Vui lòng kiểm tra lại cấu hình Backend.");
   }
 
+  let modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  
+  // Safe fallback: Gemini 3.5 doesn't exist on Google AI Studio API yet.
+  // Fallback to gemini-1.5-flash which is free, fast, and has higher rate limits.
+  if (modelName.includes("3.5")) {
+    console.warn(`[Gemini API] Model "${modelName}" không tồn tại. Tự động chuyển về "gemini-1.5-flash" để chạy ổn định.`);
+    modelName = "gemini-1.5-flash";
+  }
+
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
     console.log(`[Gemini API] Khởi tạo model: ${modelName}`);
-    const model = genAI.getGenerativeModel({ 
+    let model = genAI.getGenerativeModel({ 
       model: modelName,
       generationConfig: { responseMimeType: "application/json" }
     });
@@ -77,6 +85,24 @@ async function generateStoryboard(scriptText) {
         result = await model.generateContent(prompt);
         break; // Success, exit retry loop
       } catch (err) {
+        const isModelError = 
+          err.message.toLowerCase().includes("not found") || 
+          err.message.toLowerCase().includes("not_found") ||
+          err.message.includes("404") ||
+          err.message.toLowerCase().includes("invalid model");
+
+        // If the model name is incorrect/deprecated, dynamically swap to gemini-1.5-flash
+        if (isModelError && modelName !== "gemini-1.5-flash") {
+          console.warn(`[Gemini API] Lỗi khởi tạo model "${modelName}": ${err.message}. Tự động chuyển về "gemini-1.5-flash" và thử lại ngay lập tức.`);
+          modelName = "gemini-1.5-flash";
+          model = genAI.getGenerativeModel({ 
+            model: modelName,
+            generationConfig: { responseMimeType: "application/json" }
+          });
+          attempt--; // Do not count this as a rate limit attempt
+          continue;
+        }
+
         const isRateLimit = 
           err.message.includes("429") || 
           err.message.toLowerCase().includes("quota") || 
