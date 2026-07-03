@@ -10,10 +10,10 @@ async function generateStoryboard(scriptText) {
   let modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
   
   // Safe fallback: Gemini 3.5 doesn't exist on Google AI Studio API yet.
-  // Fallback to gemini-1.5-flash which is free, fast, and has higher rate limits.
+  // Fallback to gemini-2.5-flash which is free, fast, and has higher rate limits.
   if (modelName.includes("3.5")) {
-    console.warn(`[Gemini API] Model "${modelName}" không tồn tại. Tự động chuyển về "gemini-1.5-flash" để chạy ổn định.`);
-    modelName = "gemini-1.5-flash";
+    console.warn(`[Gemini API] Model "${modelName}" không tồn tại. Tự động chuyển về "gemini-2.5-flash" để chạy ổn định.`);
+    modelName = "gemini-2.5-flash";
   }
 
   try {
@@ -91,10 +91,10 @@ async function generateStoryboard(scriptText) {
           err.message.includes("404") ||
           err.message.toLowerCase().includes("invalid model");
 
-        // If the model name is incorrect/deprecated, dynamically swap to gemini-1.5-flash
-        if (isModelError && modelName !== "gemini-1.5-flash") {
-          console.warn(`[Gemini API] Lỗi khởi tạo model "${modelName}": ${err.message}. Tự động chuyển về "gemini-1.5-flash" và thử lại ngay lập tức.`);
-          modelName = "gemini-1.5-flash";
+        // If the model name is incorrect/deprecated, dynamically swap to gemini-2.5-flash
+        if (isModelError && modelName !== "gemini-2.5-flash") {
+          console.warn(`[Gemini API] Lỗi khởi tạo model "${modelName}": ${err.message}. Tự động chuyển về "gemini-2.5-flash" và thử lại ngay lập tức.`);
+          modelName = "gemini-2.5-flash";
           model = genAI.getGenerativeModel({ 
             model: modelName,
             generationConfig: { responseMimeType: "application/json" }
