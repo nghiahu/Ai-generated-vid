@@ -91,10 +91,14 @@ async function generateStoryboard(scriptText) {
           err.message.includes("404") ||
           err.message.toLowerCase().includes("invalid model");
 
-        // If the model name is incorrect/deprecated, dynamically swap to gemini-2.5-flash
-        if (isModelError && modelName !== "gemini-2.5-flash") {
-          console.warn(`[Gemini API] Lỗi khởi tạo model "${modelName}": ${err.message}. Tự động chuyển về "gemini-2.5-flash" và thử lại ngay lập tức.`);
-          modelName = "gemini-2.5-flash";
+        if (isModelError) {
+          // Cascading fallback: custom -> 2.5-flash -> 1.5-flash-latest -> gemini-pro
+          let nextFallback = "gemini-2.5-flash";
+          if (modelName === "gemini-2.5-flash") nextFallback = "gemini-1.5-flash-latest";
+          else if (modelName === "gemini-1.5-flash-latest") nextFallback = "gemini-pro";
+
+          console.warn(`[Gemini API] Lỗi khởi tạo model "${modelName}": ${err.message}. Tự động chuyển về "${nextFallback}" và thử lại ngay lập tức.`);
+          modelName = nextFallback;
           model = genAI.getGenerativeModel({ 
             model: modelName,
             generationConfig: { responseMimeType: "application/json" }
