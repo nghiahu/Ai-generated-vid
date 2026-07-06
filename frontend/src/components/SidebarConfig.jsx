@@ -153,6 +153,7 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
               <option value="omnivoice_british">OmniVoice Nữ - Giọng Anh-Anh (Local Offline)</option>
               <option value="omnivoice_anhquy">OmniVoice - Giọng Anh Quý (Offline Clone)</option>
               <option value="omnivoice_dotrinh">OmniVoice - Giọng Đô Trịnh (Offline Clone)</option>
+              <option value="omnivoice_beatvn">OmniVoice - Giọng BeatVN (Offline Clone)</option>
               <option value="microsoft_hoaimy">Microsoft Hoài My (Free, Fluent Female)</option>
               <option value="microsoft_namminh">Microsoft Nam Minh (Free, Fluent Male)</option>
               <option value="rachel">Hoai My (Rachel - English Accent)</option>
