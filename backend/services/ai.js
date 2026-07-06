@@ -91,19 +91,27 @@ async function generateStoryboard(scriptText) {
           err.message.includes("404") ||
           err.message.toLowerCase().includes("invalid model");
 
-        if (isModelError) {
+        const isServerError =
+          err.message.includes("503") ||
+          err.message.includes("500") ||
+          err.message.toLowerCase().includes("experiencing high demand") ||
+          err.message.toLowerCase().includes("service unavailable") ||
+          err.message.toLowerCase().includes("overloaded") ||
+          err.message.toLowerCase().includes("temporary");
+
+        if (isModelError || (isServerError && attempt > 1)) {
           // Cascading fallback: custom -> 2.5-flash -> 1.5-flash-latest -> gemini-pro
           let nextFallback = "gemini-2.5-flash";
           if (modelName === "gemini-2.5-flash") nextFallback = "gemini-1.5-flash-latest";
           else if (modelName === "gemini-1.5-flash-latest") nextFallback = "gemini-pro";
 
-          console.warn(`[Gemini API] Lỗi khởi tạo model "${modelName}": ${err.message}. Tự động chuyển về "${nextFallback}" và thử lại ngay lập tức.`);
+          console.warn(`[Gemini API] Lỗi model "${modelName}" (${err.message}). Tự động chuyển đổi sang model dự phòng "${nextFallback}" để tiếp tục.`);
           modelName = nextFallback;
           model = genAI.getGenerativeModel({ 
             model: modelName,
             generationConfig: { responseMimeType: "application/json" }
           });
-          attempt--; // Do not count this as a rate limit attempt
+          attempt--; // Reset attempt index to retry with the fallback model
           continue;
         }
 
@@ -112,8 +120,9 @@ async function generateStoryboard(scriptText) {
           err.message.toLowerCase().includes("quota") || 
           err.message.toLowerCase().includes("too many requests");
 
-        if (isRateLimit && attempt < maxRetries) {
-          console.warn(`[Gemini API] Bị giới hạn quota (429). Đang thử lại lần ${attempt}/${maxRetries} sau ${retryDelay / 1000}s...`);
+        if ((isRateLimit || isServerError) && attempt < maxRetries) {
+          const errType = isRateLimit ? "Rate Limit (429)" : "Server Overloaded (503/500)";
+          console.warn(`[Gemini API] Gặp lỗi ${errType}. Đang thử lại lần ${attempt}/${maxRetries} sau ${retryDelay / 1000}s...`);
           await new Promise(resolve => setTimeout(resolve, retryDelay));
           retryDelay *= 2; // Double the wait time
         } else {
@@ -124,6 +133,13 @@ async function generateStoryboard(scriptText) {
               "👉 Hướng dẫn khắc phục:\n" +
               "1. Đợi khoảng 1 phút rồi nhấn nút tạo lại.\n" +
               "2. Hoặc truy cập Google AI Studio, vào mục Billing, nhấn 'Upgrade to Pay-as-you-go' (vẫn được miễn phí hạn mức cơ bản nhưng tăng giới hạn request từ 15 RPM lên 2000 RPM)."
+            );
+          }
+          if (isServerError) {
+            throw new Error(
+              `Gemini API Server gặp sự cố quá tải liên tục (503/500).\n` +
+              `Chi tiết lỗi: ${err.message}\n` +
+              `👉 Vui lòng thử lại sau vài giây hoặc kiểm tra trạng thái dịch vụ của Google.`
             );
           }
           throw err;
