@@ -3,7 +3,7 @@ import axios from "axios";
 import { Player } from "@remotion/player";
 import { MainComposition, safeParseFloat, getThemeBgStyle } from "../../../my-video/src/compositions/MainComposition";
 
-const InlineScenePlayer = ({ playerRef, scene, config, onEnded }) => {
+const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => {
   const localPlayerRef = useRef(null);
 
   // Forward the local ref to the parent-provided callback/ref object
@@ -22,7 +22,26 @@ const InlineScenePlayer = ({ playerRef, scene, config, onEnded }) => {
     };
   }, [playerRef]);
 
+  // Handle play/pause sync when state changes
   useEffect(() => {
+    const { current } = localPlayerRef;
+    if (!current) return;
+
+    if (!isPlaying) {
+      try {
+        if (current.isPlaying()) {
+          current.pause();
+        }
+        current.seekTo(0);
+      } catch (err) {
+        console.warn("Pause and seek failed: ", err);
+      }
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+
     const { current } = localPlayerRef;
     if (!current) return;
 
@@ -57,7 +76,7 @@ const InlineScenePlayer = ({ playerRef, scene, config, onEnded }) => {
       timers.forEach(clearTimeout);
       current.removeEventListener("ended", handleEnded);
     };
-  }, [onEnded]);
+  }, [isPlaying, onEnded]);
 
   const sceneDurationFrames = Math.round(safeParseFloat(scene.duration) * 30);
 
@@ -75,7 +94,7 @@ const InlineScenePlayer = ({ playerRef, scene, config, onEnded }) => {
         height: "100%",
       }}
       controls={false}
-      autoPlay={true}
+      autoPlay={isPlaying}
       acknowledgeRemotionLicense
     />
   );
@@ -494,6 +513,7 @@ export const StoryboardEditor = ({
                         }}
                         scene={scene} 
                         config={{ ...config, ending: { enabled: false } }} 
+                        isPlaying={playingSceneId === scene.id}
                         onEnded={() => setPlayingSceneId(null)} 
                       />
                     </div>
