@@ -157,20 +157,25 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         fs.mkdirSync(refsDir, { recursive: true });
       }
 
-      // Xác định file giọng tham chiếu (Nữ, Nam, hoặc tùy chỉnh Anh Quý) để clone
+      // Xác định file giọng tham chiếu (Nữ, Nam, hoặc tùy chỉnh Anh Quý / Đô Trịnh) để clone
       const isAnhQuy = voiceKey.toLowerCase() === "omnivoice_anhquy";
-      const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy;
+      const isDoTrinh = voiceKey.toLowerCase() === "omnivoice_dotrinh";
+      const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh;
       
       const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
       let refAudioPath = isAnhQuy 
         ? path.join(__dirname, '../../mp3/voiceanhquy.mp3')
+        : isDoTrinh
+        ? path.join(__dirname, '../../mp3/elevenlab/do_trinh/voice_preview_đô trịnh - giọng hay.mp3')
         : path.join(refsDir, refFileName);
       const refText = isAnhQuy 
         ? "Chúng ta ấy xem được hình ảnh của nó thì mình cần phải có một cái thuộc tính là gì các em hight 300 đúng chưa dúng là hight chưa ảnh này"
+        : isDoTrinh
+        ? "Giọng trầm ấm, rõ chữ, mang phong cách chuyên nghiệp, hiện đại, phù hợp cho các nội dung công nghệ, AI, kinh doanh, giáo dục và phát triển bản thân"
         : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
 
       // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại (chỉ cho các giọng mặc định)
-      if (!isAnhQuy && !fs.existsSync(refAudioPath)) {
+      if (!isAnhQuy && !isDoTrinh && !fs.existsSync(refAudioPath)) {
         console.log(`Creating OmniVoice reference voice file: ${refFileName}...`);
         const msVoice = isMale ? "vi-VN-NamMinhNeural" : "vi-VN-HoaiMyNeural";
         const ttsInstance = new EdgeTTS(refText, msVoice);
@@ -189,7 +194,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
 
       // Ánh xạ voiceKey sang instruct string cho OmniVoice
       let instruct = "female"; // Mặc định
-      if (voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy) {
+      if (voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh) {
         instruct = "male";
       } else if (voiceKey.toLowerCase() === "omnivoice_whisper") {
         instruct = "female, whisper";
