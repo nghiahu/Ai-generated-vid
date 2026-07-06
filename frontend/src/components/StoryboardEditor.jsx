@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { Player } from "@remotion/player";
-import { MainComposition } from "../../../my-video/src/compositions/MainComposition";
+import { MainComposition, safeParseFloat } from "../../../my-video/src/compositions/MainComposition";
 
 const InlineScenePlayer = ({ scene, config, onEnded }) => {
   const playerRef = useRef(null);
@@ -9,6 +9,11 @@ const InlineScenePlayer = ({ scene, config, onEnded }) => {
   useEffect(() => {
     const { current } = playerRef;
     if (!current) return;
+
+    // Programmatically play to satisfy browser user interaction restrictions
+    current.play().catch((err) => {
+      console.warn("Programmatic playback failed: ", err);
+    });
 
     const handleEnded = () => {
       onEnded();
@@ -20,7 +25,7 @@ const InlineScenePlayer = ({ scene, config, onEnded }) => {
     };
   }, [onEnded]);
 
-  const sceneDurationFrames = Math.round((scene.duration || 6.0) * 30);
+  const sceneDurationFrames = Math.round(safeParseFloat(scene.duration) * 30);
 
   return (
     <Player
@@ -429,8 +434,8 @@ export const StoryboardEditor = ({
                       overflow: "hidden", 
                       display: "flex", 
                       flexDirection: "column", 
-                      alignItems: "center", 
-                      justifyContent: "center",
+                      alignItems: playingSceneId === scene.id ? "stretch" : "center", 
+                      justifyContent: playingSceneId === scene.id ? "stretch" : "center",
                       padding: playingSceneId === scene.id ? "0" : "16px",
                       textAlign: "center"
                     }}
@@ -630,8 +635,8 @@ export const StoryboardEditor = ({
                           }}
                           style={{
                             position: "absolute",
-                            bottom: "12px",
-                            left: "12px",
+                            bottom: "16px",
+                            left: "16px",
                             width: "32px",
                             height: "32px",
                             borderRadius: "50%",

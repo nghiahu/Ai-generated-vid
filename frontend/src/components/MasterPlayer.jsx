@@ -1,6 +1,6 @@
 import React from "react";
 import { Player } from "@remotion/player";
-import { MainComposition } from "../../../my-video/src/compositions/MainComposition";
+import { MainComposition, safeParseFloat } from "../../../my-video/src/compositions/MainComposition";
 
 export const MasterPlayer = ({ 
   scenes = [], 
@@ -14,7 +14,7 @@ export const MasterPlayer = ({
 }) => {
   const fps = 30;
   const endingEnabled = config?.ending?.enabled;
-  const totalSeconds = scenes.reduce((sum, scene) => sum + (scene.duration || 6.0), 0);
+  const totalSeconds = scenes.reduce((sum, scene) => sum + safeParseFloat(scene.duration), 0);
   const totalFrames = Math.max(
     30,
     Math.round((totalSeconds + (endingEnabled ? 4.0 : 0)) * fps)
