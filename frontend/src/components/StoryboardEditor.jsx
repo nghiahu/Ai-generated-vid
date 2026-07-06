@@ -1,5 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { Player } from "@remotion/player";
+import { MainComposition } from "../../../my-video/src/compositions/MainComposition";
+
+const InlineScenePlayer = ({ scene, config, onEnded }) => {
+  const playerRef = useRef(null);
+
+  useEffect(() => {
+    const { current } = playerRef;
+    if (!current) return;
+
+    const handleEnded = () => {
+      onEnded();
+    };
+
+    current.addEventListener("ended", handleEnded);
+    return () => {
+      current.removeEventListener("ended", handleEnded);
+    };
+  }, [onEnded]);
+
+  const sceneDurationFrames = Math.round((scene.duration || 6.0) * 30);
+
+  return (
+    <Player
+      ref={playerRef}
+      component={MainComposition}
+      inputProps={{ scenes: [scene], config }}
+      durationInFrames={sceneDurationFrames}
+      fps={30}
+      compositionWidth={1080}
+      compositionHeight={1920}
+      style={{
+        width: "100%",
+        height: "100%",
+      }}
+      controls={false}
+      autoPlay={true}
+    />
+  );
+};
+
 
 const resolveEditorComponents = (scene, currentImg, layoutType) => {
   const list = [
@@ -62,6 +103,7 @@ const resolveEditorComponents = (scene, currentImg, layoutType) => {
 
 export const StoryboardEditor = ({ 
   scenes = [], 
+  config = {},
   projectId, 
   onGenerateStoryboard, 
   onUpdateScene, 
@@ -74,6 +116,7 @@ export const StoryboardEditor = ({
   const [topicText, setTopicText] = useState("");
   const [scriptText, setScriptText] = useState("");
   const [uploadingScenes, setUploadingScenes] = useState({});
+  const [playingSceneId, setPlayingSceneId] = useState(null);
 
   const handleImageUploadClick = (sceneId) => {
     const fileInput = document.createElement("input");
@@ -388,187 +431,239 @@ export const StoryboardEditor = ({
                       flexDirection: "column", 
                       alignItems: "center", 
                       justifyContent: "center",
-                      padding: "16px",
+                      padding: playingSceneId === scene.id ? "0" : "16px",
                       textAlign: "center"
                     }}
                   >
-                    {/* Background media if selected */}
-                    {currentImg ? (
-                      <img 
-                        src={currentImg} 
-                        style={{ 
-                          position: "absolute", 
-                          top: 0,
-                          bottom: 0,
-                          left: 0,
-                          width: scene.visualLayout === "Split Screen" ? "45%" : "100%",
-                          height: "100%", 
-                          objectFit: "cover", 
-                          zIndex: 0, 
-                          filter: "grayscale(100%) opacity(40%)",
-                          borderRight: scene.visualLayout === "Split Screen" ? "2px solid #000000" : "none"
-                        }} 
-                        alt="bg preview" 
+                    {playingSceneId === scene.id ? (
+                      <InlineScenePlayer 
+                        scene={scene} 
+                        config={{ ...config, ending: { enabled: false } }} 
+                        onEnded={() => setPlayingSceneId(null)} 
                       />
                     ) : (
-                      <div 
-                        style={{ 
-                          position: "absolute", 
+                      <>
+                        {/* Background media if selected */}
+                        {currentImg ? (
+                          <img 
+                            src={currentImg} 
+                            style={{ 
+                              position: "absolute", 
+                              top: 0,
+                              bottom: 0,
+                              left: 0,
+                              width: scene.visualLayout === "Split Screen" ? "45%" : "100%",
+                              height: "100%", 
+                              objectFit: "cover", 
+                              zIndex: 0, 
+                              filter: "grayscale(100%) opacity(40%)",
+                              borderRight: scene.visualLayout === "Split Screen" ? "2px solid #000000" : "none"
+                            }} 
+                            alt="bg preview" 
+                          />
+                        ) : (
+                          <div 
+                            style={{ 
+                              position: "absolute", 
+                              top: 0,
+                              bottom: 0,
+                              left: 0,
+                              width: scene.visualLayout === "Split Screen" ? "45%" : "100%",
+                              height: "100%", 
+                              zIndex: 0,
+                              background: `radial-gradient(circle at center, ${(scene.accentColor || "#FFB7C5")}33 0%, #090d1a 100%)`,
+                              borderRight: scene.visualLayout === "Split Screen" ? "2px solid #000000" : "none"
+                            }} 
+                          />
+                        )}
+
+                        {/* Component-based Dynamic Preview Area */}
+                        <div style={{
+                          position: "absolute",
                           top: 0,
                           bottom: 0,
-                          left: 0,
-                          width: scene.visualLayout === "Split Screen" ? "45%" : "100%",
-                          height: "100%", 
-                          zIndex: 0,
-                          background: `radial-gradient(circle at center, ${(scene.accentColor || "#FFB7C5")}33 0%, #090d1a 100%)`,
-                          borderRight: scene.visualLayout === "Split Screen" ? "2px solid #000000" : "none"
-                        }} 
-                      />
-                    )}
+                          left: scene.visualLayout === "Split Screen" ? "45%" : 0,
+                          right: 0,
+                          zIndex: 1,
+                          padding: "12px 8px",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "stretch",
+                          gap: "8px",
+                          boxSizing: "border-box"
+                        }}>
+                          {(() => {
+                            const resolved = resolveEditorComponents(scene, currentImg, scene.visualLayout);
+                            const titleComp = resolved.find(c => c.type === "title");
+                            const otherComps = resolved.filter(c => c.type !== "title");
 
-                    {/* Component-based Dynamic Preview Area */}
-                    <div style={{
-                      position: "absolute",
-                      top: 0,
-                      bottom: 0,
-                      left: scene.visualLayout === "Split Screen" ? "45%" : 0,
-                      right: 0,
-                      zIndex: 1,
-                      padding: "12px 8px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "stretch",
-                      gap: "8px",
-                      boxSizing: "border-box"
-                    }}>
-                      {(() => {
-                        const resolved = resolveEditorComponents(scene, currentImg, scene.visualLayout);
-                        const titleComp = resolved.find(c => c.type === "title");
-                        const otherComps = resolved.filter(c => c.type !== "title");
+                            const renderEditorComp = (comp, idx, overrides = {}) => {
+                              if (comp.type === "terminal") {
+                                return (
+                                  <div key={idx} style={{ backgroundColor: "#000000", color: "#00FF66", fontFamily: "monospace", padding: "4px", fontSize: "7.5px", borderRadius: "2px", textAlign: "left", wordBreak: "break-all" }}>
+                                    $ {comp.data.code}
+                                  </div>
+                                );
+                              }
+                              if (comp.type === "hero_metric") {
+                                return (
+                                  <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "2px", backgroundColor: "#ffffff", border: "1px solid #000", padding: "3px", boxShadow: "1px 1px 0px 0px #000" }}>
+                                    <span style={{ fontSize: "11px", fontWeight: "900", color: scene.accentColor || "#FFB7C5", fontFamily: "Space Grotesk", lineHeight: "1" }}>{comp.data.text.split("—")[0]}</span>
+                                    {comp.data.text.includes("—") && (
+                                      <span style={{ fontSize: "7px", color: "#666", lineHeight: "1" }}>{comp.data.text.split("—")[1]}</span>
+                                    )}
+                                  </div>
+                                );
+                              }
+                              if (comp.type === "feature_card") {
+                                return (
+                                  <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "3px", fontSize: "7.5px", fontWeight: "700", textAlign: "left", textTransform: "uppercase", fontFamily: "Inter" }}>
+                                    {!overrides.hideDot && <span style={{ width: "3.5px", height: "3.5px", backgroundColor: "#000000", marginTop: "3px", flexShrink: 0 }}></span>}
+                                    <span style={{ flex: 1 }}>{comp.data.text}</span>
+                                  </div>
+                                );
+                              }
+                              if (comp.type === "badge_row") {
+                                return (
+                                  <div key={idx} style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
+                                    {comp.data.badges.map((bg, bIdx) => (
+                                      <span key={bIdx} style={{ fontSize: "6.5px", fontWeight: "bold", padding: "2px 4px", border: "1px solid #000000", backgroundColor: "#ffffff", color: "#00" }}>
+                                        {bg}
+                                      </span>
+                                    ))}
+                                  </div>
+                                );
+                              }
+                              return null;
+                            };
 
-                        const renderEditorComp = (comp, idx, overrides = {}) => {
-                          if (comp.type === "terminal") {
                             return (
-                              <div key={idx} style={{ backgroundColor: "#000000", color: "#00FF66", fontFamily: "monospace", padding: "4px", fontSize: "7.5px", borderRadius: "2px", textAlign: "left", wordBreak: "break-all" }}>
-                                $ {comp.data.code}
-                              </div>
-                            );
-                          }
-                          if (comp.type === "hero_metric") {
-                            return (
-                              <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "2px", backgroundColor: "#ffffff", border: "1px solid #000", padding: "3px", boxShadow: "1px 1px 0px 0px #000" }}>
-                                <span style={{ fontSize: "11px", fontWeight: "900", color: scene.accentColor || "#FFB7C5", fontFamily: "Space Grotesk", lineHeight: "1" }}>{comp.data.text.split("—")[0]}</span>
-                                {comp.data.text.includes("—") && (
-                                  <span style={{ fontSize: "7px", color: "#666", lineHeight: "1" }}>{comp.data.text.split("—")[1]}</span>
+                              <>
+                                {titleComp && (
+                                  <div className="border-strict" style={{ borderWidth: "1px", backgroundColor: "#ffffff", padding: "4px", width: "100%", boxShadow: "1.5px 1.5px 0px 0px #000" }}>
+                                    <h3 style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0 }}>
+                                      {titleComp.data.text}
+                                    </h3>
+                                  </div>
                                 )}
-                              </div>
-                            );
-                          }
-                          if (comp.type === "feature_card") {
-                            return (
-                              <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "3px", fontSize: "7.5px", fontWeight: "700", textAlign: "left", textTransform: "uppercase", fontFamily: "Inter" }}>
-                                {!overrides.hideDot && <span style={{ width: "3.5px", height: "3.5px", backgroundColor: "#000000", marginTop: "3px", flexShrink: 0 }}></span>}
-                                <span style={{ flex: 1 }}>{comp.data.text}</span>
-                              </div>
-                            );
-                          }
-                          if (comp.type === "badge_row") {
-                            return (
-                              <div key={idx} style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
-                                {comp.data.badges.map((bg, bIdx) => (
-                                  <span key={bIdx} style={{ fontSize: "6.5px", fontWeight: "bold", padding: "2px 4px", border: "1px solid #000000", backgroundColor: "#ffffff", color: "#000" }}>
-                                    {bg}
-                                  </span>
-                                ))}
-                              </div>
-                            );
-                          }
-                          return null;
-                        };
 
-                        return (
-                          <>
-                            {titleComp && (
-                              <div className="border-strict" style={{ borderWidth: "1px", backgroundColor: "#ffffff", padding: "4px", width: "100%", boxShadow: "1.5px 1.5px 0px 0px #000" }}>
-                                <h3 style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0 }}>
-                                  {titleComp.data.text}
-                                </h3>
-                              </div>
-                            )}
-
-                            {/* Render rest based on layoutType */}
-                            {scene.visualLayout === "Timeline" ? (
-                              <div style={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "12px", borderLeft: `1.5px dashed ${(scene.accentColor || "#FFB7C5")}66`, position: "relative", marginLeft: "6px", textAlign: "left" }}>
-                                {otherComps.filter(c => c.type !== "badge_row").map((comp, idx) => (
-                                  <div key={idx} style={{ display: "flex", alignItems: "center", gap: "6px", position: "relative", width: "100%" }}>
-                                    <div style={{
-                                      position: "absolute",
-                                      left: "-18px",
-                                      width: "11px",
-                                      height: "11px",
-                                      borderRadius: "50%",
-                                      backgroundColor: "#060813",
-                                      border: `1.5px solid ${scene.accentColor || "#FFB7C5"}`,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      fontSize: "6px",
-                                      fontWeight: "bold",
-                                      color: "#ffffff"
-                                    }}>
-                                      {idx + 1}
+                                {/* Render rest based on layoutType */}
+                                {scene.visualLayout === "Timeline" ? (
+                                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "12px", borderLeft: `1.5px dashed ${(scene.accentColor || "#FFB7C5")}66`, position: "relative", marginLeft: "6px", textAlign: "left" }}>
+                                    {otherComps.filter(c => c.type !== "badge_row").map((comp, idx) => (
+                                      <div key={idx} style={{ display: "flex", alignItems: "center", gap: "6px", position: "relative", width: "100%" }}>
+                                        <div style={{
+                                          position: "absolute",
+                                          left: "-18px",
+                                          width: "11px",
+                                          height: "11px",
+                                          borderRadius: "50%",
+                                          backgroundColor: "#060813",
+                                          border: `1.5px solid ${scene.accentColor || "#FFB7C5"}`,
+                                          display: "flex",
+                                          alignItems: "center",
+                                          justifyContent: "center",
+                                          fontSize: "6px",
+                                          fontWeight: "bold",
+                                          color: "#ffffff"
+                                        }}>
+                                          {idx + 1}
+                                        </div>
+                                        {renderEditorComp(comp, idx, { hideDot: true })}
+                                      </div>
+                                    ))}
+                                    {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
+                                  </div>
+                                ) : scene.visualLayout === "Comparison" ? (
+                                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                    <div style={{ display: "flex", gap: "6px", width: "100%" }}>
+                                      <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                        <div style={{ fontSize: "6px", fontWeight: "bold", color: scene.accentColor || "#FFB7C5", textTransform: "uppercase", textAlign: "left" }}>Ưu điểm</div>
+                                        {otherComps.filter(c => c.type !== "badge_row").slice(0, Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
+                                      </div>
+                                      <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                        <div style={{ fontSize: "6px", fontWeight: "bold", color: "#888888", textTransform: "uppercase", textAlign: "left" }}>Nhược điểm</div>
+                                        {otherComps.filter(c => c.type !== "badge_row").slice(Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
+                                      </div>
                                     </div>
-                                    {renderEditorComp(comp, idx, { hideDot: true })}
+                                    {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
                                   </div>
-                                ))}
-                                {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
-                              </div>
-                            ) : scene.visualLayout === "Comparison" ? (
-                              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                                <div style={{ display: "flex", gap: "6px", width: "100%" }}>
-                                  <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
-                                    <div style={{ fontSize: "6px", fontWeight: "bold", color: scene.accentColor || "#FFB7C5", textTransform: "uppercase", textAlign: "left" }}>Ưu điểm</div>
-                                    {otherComps.filter(c => c.type !== "badge_row").slice(0, Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
+                                ) : scene.visualLayout === "Dashboard" ? (
+                                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", width: "100%" }}>
+                                      {otherComps.filter(c => c.type === "hero_metric").map(renderEditorComp)}
+                                    </div>
+                                    {otherComps.filter(c => c.type !== "hero_metric").map(renderEditorComp)}
                                   </div>
-                                  <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
-                                    <div style={{ fontSize: "6px", fontWeight: "bold", color: "#888888", textTransform: "uppercase", textAlign: "left" }}>Nhược điểm</div>
-                                    {otherComps.filter(c => c.type !== "badge_row").slice(Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
+                                ) : scene.visualLayout === "Gallery" ? (
+                                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                    <div style={{
+                                      width: "100%",
+                                      height: "60px",
+                                      backgroundColor: "#1e1e24",
+                                      border: "1px solid rgba(255,255,255,0.1)",
+                                      borderRadius: "4px",
+                                      position: "relative",
+                                      overflow: "hidden"
+                                    }}>
+                                      {currentImg && (
+                                        <img src={currentImg} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="gallery spec" />
+                                      )}
+                                    </div>
+                                    {otherComps.map(renderEditorComp)}
                                   </div>
-                                </div>
-                                {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
-                              </div>
-                            ) : scene.visualLayout === "Dashboard" ? (
-                              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", width: "100%" }}>
-                                  {otherComps.filter(c => c.type === "hero_metric").map(renderEditorComp)}
-                                </div>
-                                {otherComps.filter(c => c.type !== "hero_metric").map(renderEditorComp)}
-                              </div>
-                            ) : scene.visualLayout === "Gallery" ? (
-                              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                                <div style={{
-                                  width: "100%",
-                                  height: "60px",
-                                  backgroundColor: "#1e1e24",
-                                  border: "1px solid rgba(255,255,255,0.1)",
-                                  borderRadius: "4px",
-                                  position: "relative",
-                                  overflow: "hidden"
-                                }}>
-                                  {currentImg && (
-                                    <img src={currentImg} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="gallery spec" />
-                                  )}
-                                </div>
-                                {otherComps.map(renderEditorComp)}
-                              </div>
-                            ) : (
-                              otherComps.map(renderEditorComp)
-                            )}
-                          </>
-                        );
-                      })()}
-                    </div>
+                                ) : (
+                                  otherComps.map(renderEditorComp)
+                                )}
+                              </>
+                            );
+                          })()}
+                        </div>
+
+                        {/* Play button overlay */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPlayingSceneId(scene.id);
+                          }}
+                          style={{
+                            position: "absolute",
+                            bottom: "12px",
+                            left: "12px",
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "50%",
+                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                            border: "1px solid rgba(0, 0, 0, 0.2)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            cursor: "pointer",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                            zIndex: 10,
+                            fontSize: "12px",
+                            color: "#000000",
+                            transition: "all 0.15s ease-in-out",
+                            fontWeight: "bold",
+                            boxSizing: "border-box",
+                            paddingLeft: "2px"
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform = "scale(1.1)";
+                            e.currentTarget.style.backgroundColor = "#ffffff";
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = "scale(1)";
+                            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+                          }}
+                          title="Phát preview phân cảnh này"
+                        >
+                          ▶
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
 
