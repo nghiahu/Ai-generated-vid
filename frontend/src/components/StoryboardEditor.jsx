@@ -563,27 +563,33 @@ export const StoryboardEditor = ({
                         borderRadius: "50%",
                         backgroundColor: playingSceneId === scene.id
                           ? "rgba(220, 38, 38, 0.9)"
-                          : "rgba(255, 255, 255, 0.92)",
+                          : "rgba(255, 255, 255, 0.95)",
                         border: "none",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
-                        boxShadow: "0 4px 14px rgba(0,0,0,0.5)",
+                        boxShadow: "0 4px 14px rgba(0,0,0,0.45)",
                         zIndex: 20,
-                        fontSize: playingSceneId === scene.id ? "11px" : "13px",
                         color: playingSceneId === scene.id ? "#ffffff" : "#111111",
                         transition: "transform 0.15s ease, background-color 0.15s ease",
-                        fontWeight: "bold",
-                        boxSizing: "border-box",
-                        paddingLeft: playingSceneId === scene.id ? "0" : "2px",
-                        lineHeight: "1"
+                        boxSizing: "border-box"
                       }}
                       onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.12)"; }}
                       onMouseOut={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
                       title={playingSceneId === scene.id ? "Dừng preview" : "Phát preview phân cảnh này"}
                     >
-                      {playingSceneId === scene.id ? "■" : "▶"}
+                      {playingSceneId === scene.id ? (
+                        // Stop square SVG
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                          <rect x="5" y="5" width="14" height="14" rx="1.5" />
+                        </svg>
+                      ) : (
+                        // Play triangle SVG - optically offset by 1.5px margin to the right to look perfectly centered
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" style={{ marginLeft: "1.5px" }}>
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      )}
                     </button>
                   </div>
                 </div>
