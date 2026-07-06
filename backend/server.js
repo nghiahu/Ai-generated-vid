@@ -7,7 +7,11 @@ const ai = require('./services/ai');
 const tts = require('./services/tts');
 const media = require('./services/media');
 const render = require('./services/render');
+const vde = require('./services/vde');
 const cloudinary = require('cloudinary').v2;
+
+// Initialize VDE directory structure and templates
+vde.initializeVDESubdirs();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -247,8 +251,14 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       return res.status(400).json({ error: 'Script text is required' });
     }
 
-    // Step 1: Call Gemini to parse and split script text
-    const rawScenes = await ai.generateStoryboard(scriptText);
+    // Persist the selected visual style in the project configuration database
+    if (visualStyle) {
+      project.config.visualStyle = visualStyle;
+      await db.updateProjectConfig(projectId, { visualStyle });
+    }
+
+    // Step 1: Call Gemini to parse and split script text using VDE rules
+    const rawScenes = await ai.generateStoryboard(scriptText, visualStyle || project.config.visualStyle || "minimal");
 
     // Step 2: For each scene, fetch images and generate voiceover TTS
     const scenes = [];

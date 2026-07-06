@@ -1,6 +1,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const vde = require("./vde");
 
-async function generateStoryboard(scriptText) {
+async function generateStoryboard(scriptText, visualStyle = "minimal") {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -16,9 +17,12 @@ async function generateStoryboard(scriptText) {
     modelName = "gemini-2.5-flash";
   }
 
+  // Retrieve Design DNA and guidelines for the selected visual style
+  const stylePrompt = vde.getStylePrompt(visualStyle);
+
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    console.log(`[Gemini API] Khởi tạo model: ${modelName}`);
+    console.log(`[Gemini API] Khởi tạo model: ${modelName} cho phong cách thiết kế VDE: ${visualStyle}`);
     let model = genAI.getGenerativeModel({ 
       model: modelName,
       generationConfig: { responseMimeType: "application/json" }
@@ -26,6 +30,13 @@ async function generateStoryboard(scriptText) {
 
     const prompt = `
       You are an expert AI video producer. Parse the following raw script text into a structured storyboard (scenes).
+      CRITICAL: You must follow the visual design rules of the chosen style "${visualStyle}" described in the Visual Design Engine rulebook below:
+
+      =========================================
+      [VISUAL DESIGN ENGINE RULEBOOK - ${visualStyle.toUpperCase()}]
+      ${stylePrompt}
+      =========================================
+
       For each scene, determine the layout, theme, accent color, and estimate duration (assume 3 Vietnamese words per second).
       
       Raw Script:
