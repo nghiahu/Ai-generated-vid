@@ -276,6 +276,7 @@ function App() {
               <StoryboardEditor
                 mode="setup"
                 scenes={currentProject?.scenes || []}
+                config={currentProject?.config || {}}
                 projectId={currentProject?.id}
                 onGenerateStoryboard={handleGenerateStoryboard}
                 onUpdateScene={handleUpdateScene}
@@ -344,6 +345,7 @@ function App() {
               <StoryboardEditor
                 mode="editor"
                 scenes={currentProject?.scenes || []}
+                config={currentProject?.config || {}}
                 projectId={currentProject?.id}
                 onGenerateStoryboard={handleGenerateStoryboard}
                 onUpdateScene={handleUpdateScene}
