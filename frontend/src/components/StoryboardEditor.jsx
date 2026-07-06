@@ -489,20 +489,12 @@ export const StoryboardEditor = ({
                       overflow: "hidden", 
                       display: "flex", 
                       flexDirection: "column", 
-                      alignItems: playingSceneId === scene.id ? "stretch" : "center", 
-                      justifyContent: playingSceneId === scene.id ? "stretch" : "center",
-                      padding: playingSceneId === scene.id ? "0" : "16px",
-                      textAlign: "center"
+                      alignItems: "stretch", 
+                      justifyContent: "stretch",
                     }}
                   >
-                    {/* Always mount the InlineScenePlayer but hide it when not playing */}
-                    <div 
-                      style={{ 
-                        width: "100%", 
-                        height: "100%", 
-                        display: playingSceneId === scene.id ? "block" : "none" 
-                      }}
-                    >
+                    {/* Always-visible Remotion Player - shows frame 0 when paused, plays on click */}
+                    <div style={{ position: "relative", width: "100%", height: "100%" }}>
                       <InlineScenePlayer 
                         playerRef={(el) => {
                           if (el) {
@@ -516,242 +508,61 @@ export const StoryboardEditor = ({
                         isPlaying={playingSceneId === scene.id}
                         onEnded={() => setPlayingSceneId(null)} 
                       />
-                    </div>
 
-                    {/* Show the static preview overlay when not playing */}
-                    {playingSceneId !== scene.id && (
-                      <>
-                        {/* Background media if selected */}
-                        {currentImg ? (
-                          <img 
-                            src={currentImg} 
-                            style={{ 
-                              position: "absolute", 
-                              top: 0,
-                              bottom: 0,
-                              left: 0,
-                              width: scene.visualLayout === "Split Screen" ? "45%" : "100%",
-                              height: "100%", 
-                              objectFit: "cover", 
-                              zIndex: 0, 
-                              opacity: 0.35,
-                              borderRight: scene.visualLayout === "Split Screen" ? "2px solid rgba(255,255,255,0.1)" : "none"
-                            }} 
-                            alt="bg preview" 
-                          />
-                        ) : (
-                          <div 
-                            style={{ 
-                              position: "absolute", 
-                              top: 0,
-                              bottom: 0,
-                              left: 0,
-                              width: scene.visualLayout === "Split Screen" ? "45%" : "100%",
-                              height: "100%", 
-                              zIndex: 0,
-                              background: `radial-gradient(circle at center, ${(scene.accentColor || "#FFB7C5")}33 0%, #090d1a 100%)`,
-                              borderRight: scene.visualLayout === "Split Screen" ? "2px solid rgba(255,255,255,0.1)" : "none"
-                            }} 
-                          />
-                        )}
-
-                        {/* Component-based Dynamic Preview Area */}
-                        <div style={{
-                          position: "absolute",
-                          top: 0,
-                          bottom: 0,
-                          left: scene.visualLayout === "Split Screen" ? "45%" : 0,
-                          right: 0,
-                          zIndex: 1,
-                          padding: "12px 8px",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "center",
-                          alignItems: "stretch",
-                          gap: "8px",
-                          boxSizing: "border-box",
-                          color: "#ffffff"
-                        }}>
-                          {(() => {
-                            const resolved = resolveEditorComponents(scene, currentImg, scene.visualLayout);
-                            const titleComp = resolved.find(c => c.type === "title");
-                            const otherComps = resolved.filter(c => c.type !== "title");
-
-                            const renderEditorComp = (comp, idx, overrides = {}) => {
-                              if (comp.type === "terminal") {
-                                return (
-                                  <div key={idx} style={{ backgroundColor: "#000000", color: "#00FF66", fontFamily: "monospace", padding: "4px", fontSize: "7.5px", borderRadius: "2px", textAlign: "left", wordBreak: "break-all" }}>
-                                    $ {comp.data.code}
-                                  </div>
-                                );
-                              }
-                              if (comp.type === "hero_metric") {
-                                return (
-                                  <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "2px", backgroundColor: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.15)", padding: "3px", boxShadow: "1px 1px 0px 0px rgba(0,0,0,0.2)" }}>
-                                    <span style={{ fontSize: "11px", fontWeight: "900", color: scene.accentColor || "#FFB7C5", fontFamily: "Space Grotesk", lineHeight: "1" }}>{comp.data.text.split("—")[0]}</span>
-                                    {comp.data.text.includes("—") && (
-                                      <span style={{ fontSize: "7px", color: "rgba(255,255,255,0.6)", lineHeight: "1" }}>{comp.data.text.split("—")[1]}</span>
-                                    )}
-                                  </div>
-                                );
-                              }
-                              if (comp.type === "feature_card") {
-                                return (
-                                  <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "3px", fontSize: "7.5px", fontWeight: "700", textAlign: "left", textTransform: "uppercase", fontFamily: "Inter", color: "#ffffff" }}>
-                                    {!overrides.hideDot && <span style={{ width: "3.5px", height: "3.5px", backgroundColor: scene.accentColor || "#FFB7C5", marginTop: "3px", flexShrink: 0 }}></span>}
-                                    <span style={{ flex: 1 }}>{comp.data.text}</span>
-                                  </div>
-                                );
-                              }
-                              if (comp.type === "badge_row") {
-                                return (
-                                  <div key={idx} style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
-                                    {comp.data.badges.map((bg, bIdx) => (
-                                      <span key={bIdx} style={{ fontSize: "6.5px", fontWeight: "bold", padding: "2px 4px", border: "1px solid rgba(255, 255, 255, 0.2)", backgroundColor: "rgba(255, 255, 255, 0.1)", color: "#ffffff" }}>
-                                        {bg}
-                                      </span>
-                                    ))}
-                                  </div>
-                                );
-                              }
-                              return null;
-                            };
-
-                            return (
-                              <>
-                                {titleComp && (
-                                  <div className="border-strict" style={{ borderWidth: "1px", borderColor: "rgba(255,255,255,0.15)", backgroundColor: "rgba(255, 255, 255, 0.08)", padding: "4px", width: "100%", boxShadow: "1.5px 1.5px 0px 0px rgba(0,0,0,0.2)" }}>
-                                    <h3 style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0, color: "#ffffff" }}>
-                                      {titleComp.data.text}
-                                    </h3>
-                                  </div>
-                                )}
-
-                                {/* Render rest based on layoutType */}
-                                {scene.visualLayout === "Timeline" ? (
-                                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "12px", borderLeft: `1.5px dashed ${(scene.accentColor || "#FFB7C5")}66`, position: "relative", marginLeft: "6px", textAlign: "left" }}>
-                                    {otherComps.filter(c => c.type !== "badge_row").map((comp, idx) => (
-                                      <div key={idx} style={{ display: "flex", alignItems: "center", gap: "6px", position: "relative", width: "100%" }}>
-                                        <div style={{
-                                          position: "absolute",
-                                          left: "-18px",
-                                          width: "11px",
-                                          height: "11px",
-                                          borderRadius: "50%",
-                                          backgroundColor: "#060813",
-                                          border: `1.5px solid ${scene.accentColor || "#FFB7C5"}`,
-                                          display: "flex",
-                                          alignItems: "center",
-                                          justifyContent: "center",
-                                          fontSize: "6px",
-                                          fontWeight: "bold",
-                                          color: "#ffffff"
-                                        }}>
-                                          {idx + 1}
-                                        </div>
-                                        {renderEditorComp(comp, idx, { hideDot: true })}
-                                      </div>
-                                    ))}
-                                    {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
-                                  </div>
-                                ) : scene.visualLayout === "Comparison" ? (
-                                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                                    <div style={{ display: "flex", gap: "6px", width: "100%" }}>
-                                      <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
-                                        <div style={{ fontSize: "6px", fontWeight: "bold", color: scene.accentColor || "#FFB7C5", textTransform: "uppercase", textAlign: "left" }}>Ưu điểm</div>
-                                        {otherComps.filter(c => c.type !== "badge_row").slice(0, Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
-                                      </div>
-                                      <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
-                                        <div style={{ fontSize: "6px", fontWeight: "bold", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", textAlign: "left" }}>Nhược điểm</div>
-                                        {otherComps.filter(c => c.type !== "badge_row").slice(Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
-                                      </div>
-                                    </div>
-                                    {otherComps.filter(c => c.type === "badge_row").map(renderEditorComp)}
-                                  </div>
-                                ) : scene.visualLayout === "Dashboard" ? (
-                                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", width: "100%" }}>
-                                      {otherComps.filter(c => c.type === "hero_metric").map(renderEditorComp)}
-                                    </div>
-                                    {otherComps.filter(c => c.type !== "hero_metric").map(renderEditorComp)}
-                                  </div>
-                                ) : scene.visualLayout === "Gallery" ? (
-                                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                                    <div style={{
-                                      width: "100%",
-                                      height: "60px",
-                                      backgroundColor: "#1e1e24",
-                                      border: "1px solid rgba(255,255,255,0.1)",
-                                      borderRadius: "4px",
-                                      position: "relative",
-                                      overflow: "hidden"
-                                    }}>
-                                      {currentImg && (
-                                        <img src={currentImg} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="gallery spec" />
-                                      )}
-                                    </div>
-                                    {otherComps.map(renderEditorComp)}
-                                  </div>
-                                ) : (
-                                  otherComps.map(renderEditorComp)
-                                )}
-                              </>
-                            );
-                          })()}
-                        </div>
-
-                        {/* Play button overlay */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Direct synchronous play gesture
+                      {/* Play / Pause overlay button */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (playingSceneId === scene.id) {
+                            // Pause: stop and reset
                             const player = playerRefs.current[scene.id];
                             if (player) {
-                              try {
-                                player.play(e); // Pass the click event directly!
-                              } catch (err) {
+                              try { player.pause(); } catch (_) {}
+                            }
+                            setPlayingSceneId(null);
+                          } else {
+                            // Play: pass user gesture event directly to bypass autoplay policy
+                            const player = playerRefs.current[scene.id];
+                            if (player) {
+                              try { player.play(e); } catch (err) {
                                 console.warn("Sync gesture play failed:", err);
                               }
                             }
                             setPlayingSceneId(scene.id);
-                          }}
-                          style={{
-                            position: "absolute",
-                            bottom: "16px",
-                            left: "16px",
-                            width: "32px",
-                            height: "32px",
-                            borderRadius: "50%",
-                            backgroundColor: "rgba(255, 255, 255, 0.9)",
-                            border: "1px solid rgba(0, 0, 0, 0.2)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            cursor: "pointer",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                            zIndex: 10,
-                            fontSize: "12px",
-                            color: "#000000",
-                            transition: "all 0.15s ease-in-out",
-                            fontWeight: "bold",
-                            boxSizing: "border-box",
-                            paddingLeft: "2px"
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.transform = "scale(1.1)";
-                            e.currentTarget.style.backgroundColor = "#ffffff";
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.transform = "scale(1)";
-                            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-                          }}
-                          title="Phát preview phân cảnh này"
-                        >
-                          ▶
-                        </button>
-                      </>
-                    )}
+                          }
+                        }}
+                        style={{
+                          position: "absolute",
+                          bottom: "16px",
+                          left: "16px",
+                          width: "36px",
+                          height: "36px",
+                          borderRadius: "50%",
+                          backgroundColor: playingSceneId === scene.id 
+                            ? "rgba(255, 50, 50, 0.85)" 
+                            : "rgba(255, 255, 255, 0.92)",
+                          border: "none",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                          zIndex: 10,
+                          fontSize: playingSceneId === scene.id ? "11px" : "13px",
+                          color: playingSceneId === scene.id ? "#ffffff" : "#000000",
+                          transition: "all 0.15s ease-in-out",
+                          fontWeight: "bold",
+                          boxSizing: "border-box",
+                          paddingLeft: playingSceneId === scene.id ? "0" : "2px"
+                        }}
+                        onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.1)"; }}
+                        onMouseOut={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+                        title={playingSceneId === scene.id ? "Dừng preview" : "Phát preview phân cảnh này"}
+                      >
+                        {playingSceneId === scene.id ? "■" : "▶"}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
