@@ -581,12 +581,12 @@ export const StoryboardEditor = ({
                     >
                       {playingSceneId === scene.id ? (
                         // Stop square SVG
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                        <svg viewBox="0 0 24 24" width="14" height="14" style={{ fill: "#ffffff", flexShrink: 0, display: "block" }}>
                           <rect x="5" y="5" width="14" height="14" rx="1.5" />
                         </svg>
                       ) : (
-                        // Play triangle SVG - optically offset by 1.5px margin to the right to look perfectly centered
-                        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" style={{ marginLeft: "1.5px" }}>
+                        // Play triangle SVG
+                        <svg viewBox="0 0 24 24" width="15" height="15" style={{ fill: "#111111", flexShrink: 0, display: "block", marginLeft: "1.5px" }}>
                           <path d="M8 5v14l11-7z" />
                         </svg>
                       )}
