@@ -265,16 +265,6 @@ function App() {
           </div>
         </div>
         
-        <div>
-          <button 
-            className="primary" 
-            style={{ fontSize: "12px", padding: "8px 18px", borderRadius: "var(--radius-pill)" }}
-            onClick={handleRenderVideo}
-            disabled={rendering}
-          >
-            {rendering ? `Exporting (${renderProgress}%)` : "Export"}
-          </button>
-        </div>
       </header>
 
       {/* Main Workspace content */}
