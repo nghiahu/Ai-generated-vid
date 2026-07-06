@@ -5,6 +5,8 @@ import { MainComposition, safeParseFloat, getThemeBgStyle } from "../../../my-vi
 
 const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => {
   const localPlayerRef = useRef(null);
+  const sceneDurationFrames = Math.round(safeParseFloat(scene.duration) * 30);
+  const lastFrame = Math.max(0, sceneDurationFrames - 1);
 
   // Forward the local ref to the parent-provided callback/ref object
   useEffect(() => {
@@ -22,22 +24,46 @@ const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => 
     };
   }, [playerRef]);
 
-  // Handle play/pause sync when state changes
+  // On initial mount, seek to last frame to show fully-rendered preview
+  useEffect(() => {
+    const { current } = localPlayerRef;
+    if (!current) return;
+    // Small delay to let Player fully initialize before seeking
+    const t = setTimeout(() => {
+      try {
+        current.seekTo(lastFrame);
+      } catch (err) {
+        console.warn("Initial seek to last frame failed:", err);
+      }
+    }, 100);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Handle play/pause sync when isPlaying state changes
   useEffect(() => {
     const { current } = localPlayerRef;
     if (!current) return;
 
     if (!isPlaying) {
+      // When stopping, pause and show last frame as thumbnail
       try {
         if (current.isPlaying()) {
           current.pause();
         }
+        current.seekTo(lastFrame);
+      } catch (err) {
+        console.warn("Pause and seek to last frame failed: ", err);
+      }
+    } else {
+      // When starting to play, rewind to frame 0 first
+      try {
         current.seekTo(0);
       } catch (err) {
-        console.warn("Pause and seek failed: ", err);
+        console.warn("Rewind to frame 0 failed:", err);
       }
     }
-  }, [isPlaying]);
+  }, [isPlaying, lastFrame]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -78,8 +104,6 @@ const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => 
     };
   }, [isPlaying, onEnded]);
 
-  const sceneDurationFrames = Math.round(safeParseFloat(scene.duration) * 30);
-
   return (
     <Player
       ref={localPlayerRef}
@@ -89,12 +113,13 @@ const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => 
       fps={30}
       compositionWidth={1080}
       compositionHeight={1920}
+      initialFrame={lastFrame}
       style={{
         width: "100%",
         height: "100%",
       }}
       controls={false}
-      autoPlay={isPlaying}
+      autoPlay={false}
       acknowledgeRemotionLicense
     />
   );
