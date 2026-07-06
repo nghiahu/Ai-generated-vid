@@ -11,9 +11,11 @@ const InlineScenePlayer = ({ scene, config, onEnded }) => {
     if (!current) return;
 
     // Programmatically play to satisfy browser user interaction restrictions
-    current.play().catch((err) => {
+    try {
+      current.play();
+    } catch (err) {
       console.warn("Programmatic playback failed: ", err);
-    });
+    }
 
     const handleEnded = () => {
       onEnded();
@@ -42,6 +44,7 @@ const InlineScenePlayer = ({ scene, config, onEnded }) => {
       }}
       controls={false}
       autoPlay={true}
+      acknowledgeRemotionLicense
     />
   );
 };

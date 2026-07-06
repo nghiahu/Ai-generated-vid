@@ -105,6 +105,7 @@ export const MasterPlayer = ({
                 height: "100%",
               }}
               controls
+              acknowledgeRemotionLicense
             />
           ) : (
             <div style={{
