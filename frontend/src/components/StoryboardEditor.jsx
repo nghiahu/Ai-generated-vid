@@ -4,9 +4,26 @@ import { Player } from "@remotion/player";
 import { MainComposition, safeParseFloat } from "../../../my-video/src/compositions/MainComposition";
 
 const InlineScenePlayer = ({ playerRef, scene, config, onEnded }) => {
+  const localPlayerRef = useRef(null);
+
+  // Forward the local ref to the parent-provided callback/ref object
+  useEffect(() => {
+    if (typeof playerRef === "function") {
+      playerRef(localPlayerRef.current);
+    } else if (playerRef) {
+      playerRef.current = localPlayerRef.current;
+    }
+    return () => {
+      if (typeof playerRef === "function") {
+        playerRef(null);
+      } else if (playerRef) {
+        playerRef.current = null;
+      }
+    };
+  }, [playerRef]);
 
   useEffect(() => {
-    const { current } = playerRef;
+    const { current } = localPlayerRef;
     if (!current) return;
 
     const playVideo = () => {
@@ -40,13 +57,13 @@ const InlineScenePlayer = ({ playerRef, scene, config, onEnded }) => {
       timers.forEach(clearTimeout);
       current.removeEventListener("ended", handleEnded);
     };
-  }, [playerRef, onEnded]);
+  }, [onEnded]);
 
   const sceneDurationFrames = Math.round(safeParseFloat(scene.duration) * 30);
 
   return (
     <Player
-      ref={playerRef}
+      ref={localPlayerRef}
       component={MainComposition}
       inputProps={{ scenes: [scene], config }}
       durationInFrames={sceneDurationFrames}
@@ -140,7 +157,7 @@ export const StoryboardEditor = ({
   const [scriptText, setScriptText] = useState("");
   const [uploadingScenes, setUploadingScenes] = useState({});
   const [playingSceneId, setPlayingSceneId] = useState(null);
-  const activePlayerRef = useRef(null);
+  const playerRefs = useRef({});
 
   const handleImageUploadClick = (sceneId) => {
     const fileInput = document.createElement("input");
@@ -459,24 +476,30 @@ export const StoryboardEditor = ({
                       textAlign: "center"
                     }}
                   >
-                    {playingSceneId === scene.id ? (
-                      <div 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          try {
-                            activePlayerRef.current?.play();
-                          } catch (err) {}
+                    {/* Always mount the InlineScenePlayer but hide it when not playing */}
+                    <div 
+                      style={{ 
+                        width: "100%", 
+                        height: "100%", 
+                        display: playingSceneId === scene.id ? "block" : "none" 
+                      }}
+                    >
+                      <InlineScenePlayer 
+                        playerRef={(el) => {
+                          if (el) {
+                            playerRefs.current[scene.id] = el;
+                          } else {
+                            delete playerRefs.current[scene.id];
+                          }
                         }}
-                        style={{ width: "100%", height: "100%", cursor: "pointer" }}
-                      >
-                        <InlineScenePlayer 
-                          playerRef={activePlayerRef}
-                          scene={scene} 
-                          config={{ ...config, ending: { enabled: false } }} 
-                          onEnded={() => setPlayingSceneId(null)} 
-                        />
-                      </div>
-                    ) : (
+                        scene={scene} 
+                        config={{ ...config, ending: { enabled: false } }} 
+                        onEnded={() => setPlayingSceneId(null)} 
+                      />
+                    </div>
+
+                    {/* Show the static preview overlay when not playing */}
+                    {playingSceneId !== scene.id && (
                       <>
                         {/* Background media if selected */}
                         {currentImg ? (
@@ -661,6 +684,15 @@ export const StoryboardEditor = ({
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
+                            // Direct synchronous play gesture
+                            const player = playerRefs.current[scene.id];
+                            if (player) {
+                              try {
+                                player.play(e); // Pass the click event directly!
+                              } catch (err) {
+                                console.warn("Sync gesture play failed:", err);
+                              }
+                            }
                             setPlayingSceneId(scene.id);
                           }}
                           style={{
