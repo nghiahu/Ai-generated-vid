@@ -84,4 +84,15 @@
 | **Task 80** | Implement ThreeColumns Layout in DynamicLayout.tsx | Phase 19: Premium Layouts | `[x]` | `my-video/src/compositions/DynamicLayout.tsx` |
 | **Task 81** | Implement IntegrationCloud Layout in DynamicLayout.tsx | Phase 19: Premium Layouts | `[x]` | `my-video/src/compositions/DynamicLayout.tsx` |
 | **Task 82** | Verify and Commit Changes | Phase 19: Premium Layouts | `[x]` | Workspace-wide |
-
+| **Task 83** | Explore project context for Remotion agent-era video | Phase 20: Agent Video Tools | `[x]` | Workspace-wide |
+| **Task 84** | Clarify user goals and video requirements | Phase 20: Agent Video Tools | `[x]` | Workspace-wide |
+| **Task 85** | Propose 2-3 design approaches/themes | Phase 20: Agent Video Tools | `[x]` | Workspace-wide |
+| **Task 86** | Write validated design doc | Phase 20: Agent Video Tools | `[x]` | Workspace-wide |
+| **Task 87** | Create detailed implementation plan | Phase 20: Agent Video Tools | `[x]` | Workspace-wide |
+| **Task 88** | Fix Gemini prompt — preserve English tech terms in voiceover | Phase 21: OmniVoice Phonetics Fix | `[x]` | `backend/services/ai.js` |
+| **Task 89** | Add safety-net reverse-map in normalizeTextForTTS() | Phase 21: OmniVoice Phonetics Fix | `[x]` | `backend/services/tts.js` |
+| **Task 90** | Verify fix end-to-end with OmniVoice Anh Quy voice | Phase 21: OmniVoice Phonetics Fix | `[x]` | Workspace-wide |
+| **Task 91** | Fix Remotion CLI rendering path and parameters | Phase 22: Video Rendering Fix | `[x]` | `backend/services/render.js` |
+| **Task 92** | Remove Redundant "Export" Button from Header | Phase 23: UI Cleanup | `[x]` | `frontend/src/App.jsx` |
+| **Task 93** | Remove Simulated Timeline Panel & Enlarge Preview | Phase 23: UI Cleanup | `[x]` | `frontend/src/components/MasterPlayer.jsx` |
+| **Task 94** | Final Verification & Cleanup | Phase 23: UI Cleanup | `[x]` | Workspace-wide |
