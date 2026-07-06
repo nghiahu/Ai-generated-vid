@@ -95,4 +95,6 @@
 | **Task 91** | Fix Remotion CLI rendering path and parameters | Phase 22: Video Rendering Fix | `[x]` | `backend/services/render.js` |
 | **Task 92** | Remove Redundant "Export" Button from Header | Phase 23: UI Cleanup | `[x]` | `frontend/src/App.jsx` |
 | **Task 93** | Remove Simulated Timeline Panel & Enlarge Preview | Phase 23: UI Cleanup | `[x]` | `frontend/src/components/MasterPlayer.jsx` |
-| **Task 94** | Final Verification & Cleanup | Phase 23: UI Cleanup | `[x]` | Workspace-wide |
+| **Task 95** | Pass Project Config to StoryboardEditor | Phase 24: Scene Preview | `[x]` | `frontend/src/App.jsx` |
+| **Task 96** | Implement InlineScenePlayer & Play Overlay | Phase 24: Scene Preview | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
+| **Task 97** | Final Verification & Cleanup | Phase 24: Scene Preview | `[x]` | Workspace-wide |
