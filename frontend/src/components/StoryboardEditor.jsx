@@ -185,7 +185,42 @@ const resolveEditorComponents = (scene, currentImg, layoutType) => {
   return active;
 };
 
+const LAYOUTS_BY_FAMILY = {
+  "Opening / Headline": [
+    { value: "Hero", label: "Hero (Intro / Headline)" },
+    { value: "Terminal", label: "Terminal (Code Console)" },
+    { value: "Quote", label: "Quote (Quote / Insight)" }
+  ],
+  "List / Steps": [
+    { value: "Feature Grid", label: "Feature Grid (Bento Box)" },
+    { value: "Three Columns", label: "Three Columns (Pricing)" }
+  ],
+  "Data / Metrics": [
+    { value: "Dashboard", label: "Dashboard (Statistics)" },
+    { value: "Stats Banner", label: "Stats Banner (Live Chart)" }
+  ],
+  "Comparison / Table": [
+    { value: "Comparison", label: "Comparison (VS Arena)" }
+  ],
+  "Quote / Insight": [
+    { value: "Quote", label: "Quote (Quote / Insight)" }
+  ],
+  "Timeline": [
+    { value: "Timeline", label: "Timeline (Pill Steps)" }
+  ],
+  "Media": [
+    { value: "Split Screen", label: "Split Screen (Media + Info)" },
+    { value: "Gallery", label: "Gallery (3D Card Stack)" },
+    { value: "Laptop Mockup", label: "Laptop Mockup (Dual Device)" },
+    { value: "Integration Cloud", label: "Integration Cloud (API Graph)" }
+  ],
+  "Ending": [
+    { value: "Ending", label: "Ending (Closing / CTA)" }
+  ]
+};
+
 export const StoryboardEditor = ({ 
+
   scenes = [], 
   config = {},
   projectId, 
@@ -601,13 +636,23 @@ export const StoryboardEditor = ({
                       <label className="form-label-mono" style={{ fontSize: "11px" }}>Layout Family</label>
                       <select 
                         className="form-input-mono"
-                        value={scene.visualLayout === "Split Grid" ? "Body / Bullet Points" : "Opening / Headline"}
-                        onChange={(e) => {}}
+                        value={scene.layoutFamily || "Opening / Headline"}
+                        onChange={(e) => {
+                          const newFamily = e.target.value;
+                          const layouts = LAYOUTS_BY_FAMILY[newFamily] || [];
+                          const defaultLayout = layouts[0]?.value || "Hero";
+                          
+                          onUpdateScene(scene.id, {
+                            ...scene,
+                            layoutFamily: newFamily,
+                            visualLayout: defaultLayout
+                          });
+                        }}
                         style={{ padding: "8px", fontSize: "12px" }}
                       >
-                        <option>Opening / Headline</option>
-                        <option>Body / Bullet Points</option>
-                        <option>Closing / CTA</option>
+                        {Object.keys(LAYOUTS_BY_FAMILY).map((fam) => (
+                          <option key={fam} value={fam}>{fam}</option>
+                        ))}
                       </select>
                     </div>
                     <div>
@@ -618,18 +663,9 @@ export const StoryboardEditor = ({
                         onChange={(e) => handleFieldChange(scene.id, "visualLayout", e.target.value)}
                         style={{ padding: "8px", fontSize: "12px" }}
                       >
-                        <option value="Hero">Hero (Intro / Headline)</option>
-                        <option value="Split Screen">Split Screen (Media + Info)</option>
-                        <option value="Dashboard">Dashboard (Statistics)</option>
-                        <option value="Feature Grid">Feature Grid (Bento Box)</option>
-                        <option value="Timeline">Timeline (Steps)</option>
-                        <option value="Comparison">Comparison (VS / Pros-Cons)</option>
-                        <option value="Terminal">Terminal (Code Console)</option>
-                        <option value="Gallery">Gallery (Screenshots)</option>
-                        <option value="Laptop Mockup">Laptop Mockup (Double Device)</option>
-                        <option value="Stats Banner">Stats Banner (Dashboard View)</option>
-                        <option value="Three Columns">Three Columns (Pricing / Cards)</option>
-                        <option value="Integration Cloud">Integration Cloud (API Graph)</option>
+                        {(LAYOUTS_BY_FAMILY[scene.layoutFamily || "Opening / Headline"] || LAYOUTS_BY_FAMILY["Opening / Headline"]).map((lay) => (
+                          <option key={lay.value} value={lay.value}>{lay.label}</option>
+                        ))}
                       </select>
                     </div>
                     <div>
