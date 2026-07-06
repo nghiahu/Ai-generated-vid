@@ -57,7 +57,7 @@ export const MasterPlayer = ({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "24px",
+        padding: "12px",
         backgroundColor: "var(--bg-secondary)",
         position: "relative",
         overflow: "hidden"
@@ -76,7 +76,7 @@ export const MasterPlayer = ({
         <div 
           style={{
             width: "100%",
-            maxWidth: "250px",
+            maxWidth: "280px",
             aspectRatio: "9/16",
             backgroundColor: "#000000",
             border: "6px solid #e2e8f0",
@@ -124,45 +124,7 @@ export const MasterPlayer = ({
         </div>
       </div>
 
-      {/* Timeline & Scrubber Panel */}
-      <div style={{
-        padding: "20px 24px",
-        borderTop: "1px solid rgba(15, 23, 42, 0.06)",
-        backgroundColor: "rgba(255, 255, 255, 0.8)",
-        display: "flex",
-        flexDirection: "column",
-        gap: "18px"
-      }}>
-        {/* Scrubber timeline */}
-        <div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontFamily: "monospace", fontWeight: "700", color: "var(--text-secondary)", marginBottom: "8px" }}>
-            <span>00:00:00</span>
-            <span>00:00:{totalSeconds < 10 ? `0${Math.round(totalSeconds)}` : Math.round(totalSeconds)}</span>
-          </div>
-          {/* Simulated Scrubber Bar */}
-          <div style={{ height: "6px", backgroundColor: "rgba(15, 23, 42, 0.06)", borderRadius: "3px", position: "relative", cursor: "pointer" }}>
-            <div style={{ position: "absolute", top: 0, left: 0, height: "100%", backgroundColor: "var(--color-primary)", borderRadius: "3px", width: "15%" }} />
-            <div style={{ position: "absolute", top: "50%", transform: "translate(-50%, -50%)", left: "15%", width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#ffffff", border: "2px solid var(--color-primary)", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }} />
-          </div>
-        </div>
 
-        {/* Transport buttons */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-            <button style={{ background: "none", border: "none", fontSize: "16px", cursor: "pointer", padding: 0, color: "var(--text-secondary)", boxShadow: "none" }}>⏮</button>
-            <button style={{ width: "38px", height: "38px", backgroundColor: "var(--color-primary)", color: "#ffffff", border: "none", borderRadius: "50%", fontSize: "16px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 10px rgba(37, 99, 235, 0.2)" }}>
-              ▶
-            </button>
-            <button style={{ background: "none", border: "none", fontSize: "16px", cursor: "pointer", padding: 0, color: "var(--text-secondary)", boxShadow: "none" }}>⏭</button>
-            <div style={{ width: "1px", height: "18px", backgroundColor: "rgba(15, 23, 42, 0.1)", margin: "0 5px" }} />
-            <button style={{ background: "none", border: "none", fontSize: "15px", cursor: "pointer", padding: 0, color: "var(--text-secondary)", boxShadow: "none" }}>🔊</button>
-          </div>
-
-          <button className="secondary" style={{ padding: "6px 14px", fontSize: "11px", borderRadius: "20px" }}>
-            ⚙ Config
-          </button>
-        </div>
-      </div>
 
       {/* Rendering Progress Panel */}
       <div style={{
