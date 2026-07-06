@@ -126,13 +126,13 @@ function App() {
     }
   };
 
-  const handleGenerateStoryboard = async (scriptText) => {
+  const handleGenerateStoryboard = async (scriptText, visualStyle) => {
     if (!currentProject) return;
     setLoading(true);
     setLoadingMessage("AI đang phân tích kịch bản và sinh phân cảnh...");
 
     try {
-      const scenes = await api.generateStoryboard(currentProject.id, scriptText);
+      const scenes = await api.generateStoryboard(currentProject.id, scriptText, visualStyle);
       setCurrentProject(prev => ({
         ...prev,
         scenes

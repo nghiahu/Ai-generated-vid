@@ -220,6 +220,21 @@ const LAYOUTS_BY_FAMILY = {
   ]
 };
 
+const IMAGE_STYLES = [
+  { id: "photography", name: "Realistic Photography", query: "photography real life", img: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=200&h=200&fit=crop" },
+  { id: "anime", name: "Anime / Manga", query: "anime manga style", img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=200&h=200&fit=crop" },
+  { id: "cyberpunk", name: "Cyberpunk Neon", query: "cyberpunk neon style", img: "https://images.unsplash.com/photo-1578894381163-e72c17f2d45f?w=200&h=200&fit=crop" },
+  { id: "flat_vector", name: "Flat Vector Art", query: "flat vector illustration", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop" },
+  { id: "pixel", name: "Pixel Art 8-Bit", query: "pixel art 8-bit game", img: "https://images.unsplash.com/photo-1563089145-599997674d42?w=200&h=200&fit=crop" },
+  { id: "3d_cartoon", name: "3D Cartoon Toy", query: "3d cartoon toy pixar", img: "https://images.unsplash.com/photo-1634128221889-82ed6efebfc3?w=200&h=200&fit=crop" },
+  { id: "sketch", name: "Pencil Sketch", query: "pencil sketch drawing lineart", img: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=200&h=200&fit=crop" },
+  { id: "blueprint", name: "Tech Blueprint", query: "technical blueprint schematic", img: "https://images.unsplash.com/photo-1503387762-592dec58ef4e?w=200&h=200&fit=crop" },
+  { id: "vaporwave", name: "Vaporwave", query: "vaporwave aesthetic 80s", img: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=200&h=200&fit=crop" },
+  { id: "watercolor", name: "Watercolor Painting", query: "watercolor painting ink", img: "https://images.unsplash.com/photo-1579783928621-7a13d66a62d1?w=200&h=200&fit=crop" },
+  { id: "clay", name: "Claymorphism", query: "claymorphism render 3d", img: "https://images.unsplash.com/photo-1620641788421-7a1ae342ea42?w=200&h=200&fit=crop" },
+  { id: "cyber_circuit", name: "Circuit Tech Grid", query: "cyber circuit grid computer motherboard", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&h=200&fit=crop" }
+];
+
 export const StoryboardEditor = ({ 
 
   scenes = [], 
@@ -237,6 +252,8 @@ export const StoryboardEditor = ({
   const [scriptText, setScriptText] = useState("");
   const [uploadingScenes, setUploadingScenes] = useState({});
   const [playingSceneId, setPlayingSceneId] = useState(null);
+  const [showStyleModal, setShowStyleModal] = useState(false);
+  const [selectedStyle, setSelectedStyle] = useState("photography");
   const playerRefs = useRef({});
 
   const handleImageUploadClick = (sceneId) => {
@@ -293,7 +310,12 @@ export const StoryboardEditor = ({
 
   const handleGenerate = () => {
     if (!scriptText.trim()) return;
-    onGenerateStoryboard(scriptText);
+    setShowStyleModal(true);
+  };
+
+  const handleConfirmStyle = () => {
+    setShowStyleModal(false);
+    onGenerateStoryboard(scriptText, selectedStyle);
   };
 
   const handleFieldChange = (sceneId, field, value) => {
@@ -449,6 +471,205 @@ export const StoryboardEditor = ({
               >
                 🪄 &nbsp; TẠO STORYBOARD
               </button>
+            </div>
+          </div>
+        )}
+
+        {showStyleModal && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(10, 11, 20, 0.75)",
+            backdropFilter: "blur(8px)",
+            zIndex: 9999,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "20px"
+          }}>
+            <div style={{
+              backgroundColor: "#ffffff",
+              width: "100%",
+              maxWidth: "960px",
+              borderRadius: "24px",
+              border: "3px solid #000000",
+              boxShadow: "8px 8px 0px #000000",
+              display: "flex",
+              flexDirection: "column",
+              maxHeight: "90vh",
+              overflow: "hidden"
+            }}>
+              {/* Header */}
+              <div style={{
+                padding: "24px 30px",
+                borderBottom: "2px solid #000000",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center"
+              }}>
+                <h3 style={{
+                  margin: 0,
+                  fontFamily: "Space Grotesk",
+                  fontSize: "20px",
+                  fontWeight: "900",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
+                }}>
+                  IMAGE STYLE
+                </h3>
+                <button 
+                  onClick={() => setShowStyleModal(false)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "28px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    lineHeight: 1
+                  }}
+                >
+                  &times;
+                </button>
+              </div>
+
+              {/* Style Grid Container */}
+              <div className="custom-scrollbar" style={{
+                padding: "30px",
+                overflowY: "auto",
+                flex: 1
+              }}>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(135px, 1fr))",
+                  gap: "20px"
+                }}>
+                  {IMAGE_STYLES.map(style => {
+                    const isSelected = selectedStyle === style.query;
+                    return (
+                      <div 
+                        key={style.id}
+                        onClick={() => setSelectedStyle(style.query)}
+                        style={{
+                          position: "relative",
+                          cursor: "pointer",
+                          borderRadius: "16px",
+                          overflow: "hidden",
+                          border: isSelected ? "3px solid #000000" : "1.5px solid #e2e8f0",
+                          aspectRatio: "3/4",
+                          transition: "transform 0.15s, box-shadow 0.15s",
+                          transform: isSelected ? "scale(1.02)" : "scale(1)",
+                          boxShadow: isSelected ? "4px 4px 0px #000000" : "none"
+                        }}
+                      >
+                        {/* Image */}
+                        <img 
+                          src={style.img} 
+                          alt={style.name}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover"
+                          }}
+                        />
+
+                        {/* Label Overlay */}
+                        <div style={{
+                          position: "absolute",
+                          inset: 0,
+                          background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)",
+                          display: "flex",
+                          alignItems: "flex-end",
+                          padding: "12px",
+                          boxSizing: "border-box"
+                        }}>
+                          <span style={{
+                            color: "#ffffff",
+                            fontSize: "12px",
+                            fontWeight: "800",
+                            fontFamily: "Space Grotesk",
+                            lineHeight: "1.2"
+                          }}>
+                            {style.name}
+                          </span>
+                        </div>
+
+                        {/* Selected Badge */}
+                        {isSelected && (
+                          <div style={{
+                            position: "absolute",
+                            inset: 0,
+                            backgroundColor: "rgba(0,0,0,0.25)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            zIndex: 10
+                          }}>
+                            <span style={{
+                              backgroundColor: "#2563eb",
+                              color: "#ffffff",
+                              fontSize: "10px",
+                              fontWeight: "900",
+                              fontFamily: "Space Grotesk",
+                              padding: "6px 12px",
+                              borderRadius: "20px",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.5px",
+                              border: "1.5px solid #ffffff",
+                              boxShadow: "0 4px 8px rgba(0,0,0,0.3)"
+                            }}>
+                              SELECTED
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Footer Actions */}
+              <div style={{
+                padding: "20px 30px",
+                borderTop: "2px solid #000000",
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "12px",
+                backgroundColor: "#f8fafc"
+              }}>
+                <button 
+                  onClick={() => setShowStyleModal(false)}
+                  style={{
+                    padding: "10px 24px",
+                    borderRadius: "30px",
+                    border: "2px solid #000000",
+                    backgroundColor: "#ffffff",
+                    fontFamily: "Space Grotesk",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    boxShadow: "2px 2px 0px #000000"
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleConfirmStyle}
+                  style={{
+                    padding: "10px 24px",
+                    borderRadius: "30px",
+                    border: "2px solid #000000",
+                    backgroundColor: "#000000",
+                    color: "#ffffff",
+                    fontFamily: "Space Grotesk",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    boxShadow: "2px 2px 0px #000000"
+                  }}
+                >
+                  Save & Next
+                </button>
+              </div>
             </div>
           </div>
         )}

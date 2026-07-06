@@ -242,7 +242,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    const { scriptText } = req.body;
+    const { scriptText, visualStyle } = req.body;
     if (!scriptText) {
       return res.status(400).json({ error: 'Script text is required' });
     }
@@ -256,8 +256,9 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       const scene = rawScenes[i];
       const sceneId = `scene_${projectId}_${i}_${Math.random().toString(36).substr(2, 4)}`;
       
-      // Get images from Unsplash
-      const mediaList = await media.searchImages(scene.keywords);
+      // Get images from Unsplash (with themed visual style appended if present)
+      const searchQuery = visualStyle ? `${scene.keywords} ${visualStyle}` : scene.keywords;
+      const mediaList = await media.searchImages(searchQuery);
 
       // Generate TTS Voiceover audio
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
