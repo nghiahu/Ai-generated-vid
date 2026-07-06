@@ -518,8 +518,8 @@ export const StoryboardEditor = ({
                       justifyContent: "stretch",
                     }}
                   >
-                    {/* Always-visible Remotion Player - shows frame 0 when paused, plays on click */}
-                    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                    {/* Always-visible Remotion Player - shows last frame when paused */}
+                    <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
                       <InlineScenePlayer 
                         playerRef={(el) => {
                           if (el) {
@@ -533,61 +533,58 @@ export const StoryboardEditor = ({
                         isPlaying={playingSceneId === scene.id}
                         onEnded={() => setPlayingSceneId(null)} 
                       />
-
-                      {/* Play / Pause overlay button */}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (playingSceneId === scene.id) {
-                            // Pause: stop and reset
-                            const player = playerRefs.current[scene.id];
-                            if (player) {
-                              try { player.pause(); } catch (_) {}
-                            }
-                            setPlayingSceneId(null);
-                          } else {
-                            // Play: pass user gesture event directly to bypass autoplay policy
-                            const player = playerRefs.current[scene.id];
-                            if (player) {
-                              try { player.play(e); } catch (err) {
-                                console.warn("Sync gesture play failed:", err);
-                              }
-                            }
-                            setPlayingSceneId(scene.id);
-                          }
-                        }}
-                        style={{
-                          position: "absolute",
-                          bottom: "16px",
-                          left: "16px",
-                          width: "36px",
-                          height: "36px",
-                          borderRadius: "50%",
-                          backgroundColor: playingSceneId === scene.id 
-                            ? "rgba(255, 50, 50, 0.85)" 
-                            : "rgba(255, 255, 255, 0.92)",
-                          border: "none",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          cursor: "pointer",
-                          boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
-                          zIndex: 10,
-                          fontSize: playingSceneId === scene.id ? "11px" : "13px",
-                          color: playingSceneId === scene.id ? "#ffffff" : "#000000",
-                          transition: "all 0.15s ease-in-out",
-                          fontWeight: "bold",
-                          boxSizing: "border-box",
-                          paddingLeft: playingSceneId === scene.id ? "0" : "2px"
-                        }}
-                        onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.1)"; }}
-                        onMouseOut={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
-                        title={playingSceneId === scene.id ? "Dừng preview" : "Phát preview phân cảnh này"}
-                      >
-                        {playingSceneId === scene.id ? "■" : "▶"}
-                      </button>
                     </div>
+
+                    {/* Play / Pause overlay button — sits directly in the position:relative outer container */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (playingSceneId === scene.id) {
+                          const player = playerRefs.current[scene.id];
+                          if (player) { try { player.pause(); } catch (_) {} }
+                          setPlayingSceneId(null);
+                        } else {
+                          const player = playerRefs.current[scene.id];
+                          if (player) {
+                            try { player.play(e); } catch (err) {
+                              console.warn("Sync gesture play failed:", err);
+                            }
+                          }
+                          setPlayingSceneId(scene.id);
+                        }
+                      }}
+                      style={{
+                        position: "absolute",
+                        bottom: "12px",
+                        left: "12px",
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "50%",
+                        backgroundColor: playingSceneId === scene.id
+                          ? "rgba(220, 38, 38, 0.9)"
+                          : "rgba(255, 255, 255, 0.92)",
+                        border: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        boxShadow: "0 4px 14px rgba(0,0,0,0.5)",
+                        zIndex: 20,
+                        fontSize: playingSceneId === scene.id ? "11px" : "13px",
+                        color: playingSceneId === scene.id ? "#ffffff" : "#111111",
+                        transition: "transform 0.15s ease, background-color 0.15s ease",
+                        fontWeight: "bold",
+                        boxSizing: "border-box",
+                        paddingLeft: playingSceneId === scene.id ? "0" : "2px",
+                        lineHeight: "1"
+                      }}
+                      onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.12)"; }}
+                      onMouseOut={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+                      title={playingSceneId === scene.id ? "Dừng preview" : "Phát preview phân cảnh này"}
+                    >
+                      {playingSceneId === scene.id ? "■" : "▶"}
+                    </button>
                   </div>
                 </div>
 
