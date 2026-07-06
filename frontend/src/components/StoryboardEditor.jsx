@@ -187,35 +187,36 @@ const resolveEditorComponents = (scene, currentImg, layoutType) => {
 
 const LAYOUTS_BY_FAMILY = {
   "Opening / Headline": [
-    { value: "Hero", label: "Hero (Intro / Headline)" },
-    { value: "Terminal", label: "Terminal (Code Console)" },
-    { value: "Quote", label: "Quote (Quote / Insight)" }
+    { value: "Hero", label: "Hero Title" },
+    { value: "IntroBriefingCard", label: "Intro Briefing Card" },
+    { value: "Terminal", label: "Terminal Console" },
+    { value: "Quote", label: "Quote Insight" }
   ],
   "List / Steps": [
-    { value: "Feature Grid", label: "Feature Grid (Bento Box)" },
-    { value: "Three Columns", label: "Three Columns (Pricing)" }
+    { value: "Feature Grid", label: "Bento Feature Grid" },
+    { value: "Three Columns", label: "Three Pricing Cards" }
   ],
   "Data / Metrics": [
-    { value: "Dashboard", label: "Dashboard (Statistics)" },
-    { value: "Stats Banner", label: "Stats Banner (Live Chart)" }
+    { value: "Dashboard", label: "Stats Dashboard" },
+    { value: "Stats Banner", label: "SaaS Live Chart" }
   ],
   "Comparison / Table": [
-    { value: "Comparison", label: "Comparison (VS Arena)" }
+    { value: "Comparison", label: "Versus Arena Split" }
   ],
   "Quote / Insight": [
-    { value: "Quote", label: "Quote (Quote / Insight)" }
+    { value: "Quote", label: "Quote Insight" }
   ],
   "Timeline": [
-    { value: "Timeline", label: "Timeline (Pill Steps)" }
+    { value: "Timeline", label: "Staggered Pill Timeline" }
   ],
   "Media": [
-    { value: "Split Screen", label: "Split Screen (Media + Info)" },
-    { value: "Gallery", label: "Gallery (3D Card Stack)" },
-    { value: "Laptop Mockup", label: "Laptop Mockup (Dual Device)" },
-    { value: "Integration Cloud", label: "Integration Cloud (API Graph)" }
+    { value: "Split Screen", label: "Split Screen Media" },
+    { value: "Gallery", label: "3D Glass Stack Gallery" },
+    { value: "Laptop Mockup", label: "Double Device Mockup" },
+    { value: "Integration Cloud", label: "Integration Cloud Graph" }
   ],
   "Ending": [
-    { value: "Ending", label: "Ending (Closing / CTA)" }
+    { value: "Ending", label: "Ending / CTA Screen" }
   ]
 };
 
