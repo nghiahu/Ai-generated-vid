@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { Player } from "@remotion/player";
-import { MainComposition, safeParseFloat } from "../../../my-video/src/compositions/MainComposition";
+import { MainComposition, safeParseFloat, getThemeBgStyle } from "../../../my-video/src/compositions/MainComposition";
 
 const InlineScenePlayer = ({ playerRef, scene, config, onEnded }) => {
   const localPlayerRef = useRef(null);
@@ -465,7 +465,7 @@ export const StoryboardEditor = ({
                     className="border-strict"
                     style={{ 
                       aspectRatio: "9/16", 
-                      backgroundColor: "#e2e2e2", 
+                      backgroundColor: getThemeBgStyle(config?.videoTheme || scene.theme || "glassmorphism").backgroundColor, 
                       position: "relative", 
                       overflow: "hidden", 
                       display: "flex", 
@@ -514,8 +514,8 @@ export const StoryboardEditor = ({
                               height: "100%", 
                               objectFit: "cover", 
                               zIndex: 0, 
-                              filter: "grayscale(100%) opacity(40%)",
-                              borderRight: scene.visualLayout === "Split Screen" ? "2px solid #000000" : "none"
+                              opacity: 0.35,
+                              borderRight: scene.visualLayout === "Split Screen" ? "2px solid rgba(255,255,255,0.1)" : "none"
                             }} 
                             alt="bg preview" 
                           />
@@ -530,7 +530,7 @@ export const StoryboardEditor = ({
                               height: "100%", 
                               zIndex: 0,
                               background: `radial-gradient(circle at center, ${(scene.accentColor || "#FFB7C5")}33 0%, #090d1a 100%)`,
-                              borderRight: scene.visualLayout === "Split Screen" ? "2px solid #000000" : "none"
+                              borderRight: scene.visualLayout === "Split Screen" ? "2px solid rgba(255,255,255,0.1)" : "none"
                             }} 
                           />
                         )}
@@ -549,7 +549,8 @@ export const StoryboardEditor = ({
                           justifyContent: "center",
                           alignItems: "stretch",
                           gap: "8px",
-                          boxSizing: "border-box"
+                          boxSizing: "border-box",
+                          color: "#ffffff"
                         }}>
                           {(() => {
                             const resolved = resolveEditorComponents(scene, currentImg, scene.visualLayout);
@@ -566,18 +567,18 @@ export const StoryboardEditor = ({
                               }
                               if (comp.type === "hero_metric") {
                                 return (
-                                  <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "2px", backgroundColor: "#ffffff", border: "1px solid #000", padding: "3px", boxShadow: "1px 1px 0px 0px #000" }}>
+                                  <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "2px", backgroundColor: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.15)", padding: "3px", boxShadow: "1px 1px 0px 0px rgba(0,0,0,0.2)" }}>
                                     <span style={{ fontSize: "11px", fontWeight: "900", color: scene.accentColor || "#FFB7C5", fontFamily: "Space Grotesk", lineHeight: "1" }}>{comp.data.text.split("—")[0]}</span>
                                     {comp.data.text.includes("—") && (
-                                      <span style={{ fontSize: "7px", color: "#666", lineHeight: "1" }}>{comp.data.text.split("—")[1]}</span>
+                                      <span style={{ fontSize: "7px", color: "rgba(255,255,255,0.6)", lineHeight: "1" }}>{comp.data.text.split("—")[1]}</span>
                                     )}
                                   </div>
                                 );
                               }
                               if (comp.type === "feature_card") {
                                 return (
-                                  <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "3px", fontSize: "7.5px", fontWeight: "700", textAlign: "left", textTransform: "uppercase", fontFamily: "Inter" }}>
-                                    {!overrides.hideDot && <span style={{ width: "3.5px", height: "3.5px", backgroundColor: "#000000", marginTop: "3px", flexShrink: 0 }}></span>}
+                                  <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "3px", fontSize: "7.5px", fontWeight: "700", textAlign: "left", textTransform: "uppercase", fontFamily: "Inter", color: "#ffffff" }}>
+                                    {!overrides.hideDot && <span style={{ width: "3.5px", height: "3.5px", backgroundColor: scene.accentColor || "#FFB7C5", marginTop: "3px", flexShrink: 0 }}></span>}
                                     <span style={{ flex: 1 }}>{comp.data.text}</span>
                                   </div>
                                 );
@@ -586,7 +587,7 @@ export const StoryboardEditor = ({
                                 return (
                                   <div key={idx} style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
                                     {comp.data.badges.map((bg, bIdx) => (
-                                      <span key={bIdx} style={{ fontSize: "6.5px", fontWeight: "bold", padding: "2px 4px", border: "1px solid #000000", backgroundColor: "#ffffff", color: "#00" }}>
+                                      <span key={bIdx} style={{ fontSize: "6.5px", fontWeight: "bold", padding: "2px 4px", border: "1px solid rgba(255, 255, 255, 0.2)", backgroundColor: "rgba(255, 255, 255, 0.1)", color: "#ffffff" }}>
                                         {bg}
                                       </span>
                                     ))}
@@ -599,8 +600,8 @@ export const StoryboardEditor = ({
                             return (
                               <>
                                 {titleComp && (
-                                  <div className="border-strict" style={{ borderWidth: "1px", backgroundColor: "#ffffff", padding: "4px", width: "100%", boxShadow: "1.5px 1.5px 0px 0px #000" }}>
-                                    <h3 style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0 }}>
+                                  <div className="border-strict" style={{ borderWidth: "1px", borderColor: "rgba(255,255,255,0.15)", backgroundColor: "rgba(255, 255, 255, 0.08)", padding: "4px", width: "100%", boxShadow: "1.5px 1.5px 0px 0px rgba(0,0,0,0.2)" }}>
+                                    <h3 style={{ fontSize: "9px", fontFamily: "Space Grotesk, sans-serif", fontWeight: "900", lineHeight: "1.1", textTransform: "uppercase", margin: 0, color: "#ffffff" }}>
                                       {titleComp.data.text}
                                     </h3>
                                   </div>
@@ -641,7 +642,7 @@ export const StoryboardEditor = ({
                                         {otherComps.filter(c => c.type !== "badge_row").slice(0, Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
                                       </div>
                                       <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "4px" }}>
-                                        <div style={{ fontSize: "6px", fontWeight: "bold", color: "#888888", textTransform: "uppercase", textAlign: "left" }}>Nhược điểm</div>
+                                        <div style={{ fontSize: "6px", fontWeight: "bold", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", textAlign: "left" }}>Nhược điểm</div>
                                         {otherComps.filter(c => c.type !== "badge_row").slice(Math.ceil(otherComps.filter(c => c.type !== "badge_row").length / 2)).map(renderEditorComp)}
                                       </div>
                                     </div>
