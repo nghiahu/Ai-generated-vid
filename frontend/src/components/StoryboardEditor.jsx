@@ -3,19 +3,33 @@ import axios from "axios";
 import { Player } from "@remotion/player";
 import { MainComposition, safeParseFloat } from "../../../my-video/src/compositions/MainComposition";
 
-const InlineScenePlayer = ({ scene, config, onEnded }) => {
-  const playerRef = useRef(null);
+const InlineScenePlayer = ({ playerRef, scene, config, onEnded }) => {
 
   useEffect(() => {
     const { current } = playerRef;
     if (!current) return;
 
-    // Programmatically play to satisfy browser user interaction restrictions
-    try {
-      current.play();
-    } catch (err) {
-      console.warn("Programmatic playback failed: ", err);
-    }
+    const playVideo = () => {
+      try {
+        if (!current.isPlaying()) {
+          current.play();
+        }
+      } catch (err) {
+        console.warn("Programmatic playback failed: ", err);
+      }
+    };
+
+    // Try playing immediately
+    playVideo();
+
+    // Set up multiple delayed retries to guarantee playback starting as media loads
+    const timers = [
+      setTimeout(playVideo, 50),
+      setTimeout(playVideo, 150),
+      setTimeout(playVideo, 300),
+      setTimeout(playVideo, 600),
+      setTimeout(playVideo, 1200)
+    ];
 
     const handleEnded = () => {
       onEnded();
@@ -23,9 +37,10 @@ const InlineScenePlayer = ({ scene, config, onEnded }) => {
 
     current.addEventListener("ended", handleEnded);
     return () => {
+      timers.forEach(clearTimeout);
       current.removeEventListener("ended", handleEnded);
     };
-  }, [onEnded]);
+  }, [playerRef, onEnded]);
 
   const sceneDurationFrames = Math.round(safeParseFloat(scene.duration) * 30);
 
@@ -125,6 +140,7 @@ export const StoryboardEditor = ({
   const [scriptText, setScriptText] = useState("");
   const [uploadingScenes, setUploadingScenes] = useState({});
   const [playingSceneId, setPlayingSceneId] = useState(null);
+  const activePlayerRef = useRef(null);
 
   const handleImageUploadClick = (sceneId) => {
     const fileInput = document.createElement("input");
@@ -444,11 +460,22 @@ export const StoryboardEditor = ({
                     }}
                   >
                     {playingSceneId === scene.id ? (
-                      <InlineScenePlayer 
-                        scene={scene} 
-                        config={{ ...config, ending: { enabled: false } }} 
-                        onEnded={() => setPlayingSceneId(null)} 
-                      />
+                      <div 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          try {
+                            activePlayerRef.current?.play();
+                          } catch (err) {}
+                        }}
+                        style={{ width: "100%", height: "100%", cursor: "pointer" }}
+                      >
+                        <InlineScenePlayer 
+                          playerRef={activePlayerRef}
+                          scene={scene} 
+                          config={{ ...config, ending: { enabled: false } }} 
+                          onEnded={() => setPlayingSceneId(null)} 
+                        />
+                      </div>
                     ) : (
                       <>
                         {/* Background media if selected */}
