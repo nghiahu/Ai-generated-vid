@@ -29,7 +29,7 @@ export const api = {
   },
   generateStoryboard: async (projectId, scriptText, visualStyle, traits = []) => {
     const response = await axios.post(`${API_BASE}/projects/${projectId}/generate-storyboard`, { scriptText, visualStyle, traits });
-    return response.data.scenes;
+    return response.data;
   },
   triggerRender: async (projectId) => {
     const response = await axios.post(`${API_BASE}/projects/${projectId}/render`);

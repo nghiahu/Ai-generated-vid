@@ -357,10 +357,22 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       });
     }
 
-    // Save scenes to project in DB
-    await db.updateProjectScenes(projectId, scenes);
+    // Save scenes to project in DB and fetch updated project config
+    const updatedProject = await db.updateProjectScenes(projectId, scenes);
 
-    res.json({ scenes });
+    if (updatedProject.config) {
+      const activeStyle = updatedProject.config.visualStyle || 'minimal';
+      const activeTraits = [...(updatedProject.config.traits || [])];
+      if (updatedProject.config.ratio === '9:16' && !activeTraits.includes('vertical_video')) {
+        activeTraits.push('vertical_video');
+      }
+      updatedProject.config.vdeTokens = vde.getStyle(activeStyle, activeTraits);
+    }
+
+    res.json({ 
+      scenes: updatedProject.scenes, 
+      config: updatedProject.config 
+    });
   } catch (error) {
     console.error("Storyboard generation error:", error);
     res.status(500).json({ error: error.message });

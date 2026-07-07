@@ -96,10 +96,17 @@ function App() {
     }));
 
     try {
-      await api.updateProjectConfig(currentProject.id, newConfig);
+      const savedConfig = await api.updateProjectConfig(currentProject.id, newConfig);
+      // Update with exact backend details (including compiled vdeTokens)
+      setCurrentProject(prev => ({
+        ...prev,
+        config: savedConfig
+      }));
     } catch (error) {
       console.error("Failed to save project configuration:", error);
       alert(`Không thể lưu cấu hình dự án: ${error.response?.data?.error || error.message}`);
+      // Revert optimistic update
+      fetchProjects();
     }
   };
 
@@ -133,13 +140,14 @@ function App() {
 
     try {
       const traits = currentProject.config?.traits || [];
-      const scenes = await api.generateStoryboard(currentProject.id, scriptText, visualStyle, traits);
+      const result = await api.generateStoryboard(currentProject.id, scriptText, visualStyle, traits);
       setCurrentProject(prev => ({
         ...prev,
-        scenes
+        scenes: result.scenes,
+        config: result.config
       }));
-      if (scenes && scenes.length > 0) {
-        setSelectedSceneId(scenes[0].id);
+      if (result.scenes && result.scenes.length > 0) {
+        setSelectedSceneId(result.scenes[0].id);
       }
       setView("WORKSPACE_EDITOR");
     } catch (error) {
