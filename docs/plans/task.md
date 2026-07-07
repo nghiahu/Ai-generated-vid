@@ -133,6 +133,8 @@
 | **Task 130** | VDE Verification & End-to-End Testing | Phase 31: BeatVN Voice Refinements | `[x]` | Workspace-wide |
 | **Task 131** | VDE Standardize JSON Schema points declaration in ai.js | Phase 32: AI Prompt Schema Standardizations | `[x]` | `backend/services/ai.js` |
 | **Task 132** | VDE Verification & End-to-End Testing | Phase 32: AI Prompt Schema Standardizations | `[x]` | Workspace-wide |
+| **Task 133** | VDE Redesign HeroLayout in my-video | Phase 33: Hero Layout Editorial Upgrades | `[ ]` | `my-video/src/compositions/layouts/opening/HeroLayout.tsx` |
+| **Task 134** | VDE Verification & End-to-End Testing | Phase 33: Hero Layout Editorial Upgrades | `[ ]` | Workspace-wide |
 
 
 
