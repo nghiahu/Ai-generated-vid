@@ -99,7 +99,9 @@ function normalizeTextForTTS(text) {
     .replace(/\bapi\b/gi, "ây-pi-ai")
     .replace(/\bui\b/gi, "iu-ai")
     .replace(/\bux\b/gi, "iu-ích")
-    .replace(/\burl\b/gi, "u-rờ-lờ");
+    .replace(/\burl\b/gi, "u-rờ-lờ")
+    .replace(/\bit\b/gi, "ây-ti")
+    .replace(/\bcrud\b/gi, "cờ-rút");
 
   // Khôi phục lại các từ "ai" tiếng Việt đã được bảo vệ
   matchedProtections.forEach(p => {
