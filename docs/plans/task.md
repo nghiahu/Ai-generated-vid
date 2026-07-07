@@ -120,10 +120,10 @@
 | **Task 117** | VDE Setup Be Vietnam Pro font and VDE Tokens in my-video | Phase 28: Rikkei Style | `[x]` | `my-video/src/` |
 | **Task 118** | VDE Integrate Rikkei style select card and mockup preview | Phase 28: Rikkei Style | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
 | **Task 119** | VDE Verification & End-to-End Testing | Phase 28: Rikkei Style | `[x]` | Workspace-wide |
-| **Task 120** | VDE Create transcription file for BeatVN V2 voice sample | Phase 29: BeatVN V2 Voice | `[ ]` | `mp3/beatvn_voice2/beatV2.txt` |
-| **Task 121** | VDE Register omnivoice_beatvn2 key on backend TTS service | Phase 29: BeatVN V2 Voice | `[ ]` | `backend/services/tts.js` |
-| **Task 122** | VDE Add selection option to Sidebar config UI | Phase 29: BeatVN V2 Voice | `[ ]` | `frontend/src/components/SidebarConfig.jsx` |
-| **Task 123** | VDE Verification & End-to-End Testing | Phase 29: BeatVN V2 Voice | `[ ]` | Workspace-wide |
+| **Task 120** | VDE Create transcription file for BeatVN V2 voice sample | Phase 29: BeatVN V2 Voice | `[x]` | `mp3/beatvn_voice2/beatV2.txt` |
+| **Task 121** | VDE Register omnivoice_beatvn2 key on backend TTS service | Phase 29: BeatVN V2 Voice | `[x]` | `backend/services/tts.js` |
+| **Task 122** | VDE Add selection option to Sidebar config UI | Phase 29: BeatVN V2 Voice | `[x]` | `frontend/src/components/SidebarConfig.jsx` |
+| **Task 123** | VDE Verification & End-to-End Testing | Phase 29: BeatVN V2 Voice | `[x]` | Workspace-wide |
 
 
 
