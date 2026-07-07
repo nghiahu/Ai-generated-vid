@@ -131,6 +131,8 @@
 | **Task 128** | VDE Update voice gender settings for BeatVN cloner in tts.js | Phase 31: BeatVN Voice Refinements | `[x]` | `backend/services/tts.js` |
 | **Task 129** | VDE Add acronym normalization rules for IT and CRUD in tts.js | Phase 31: BeatVN Voice Refinements | `[x]` | `backend/services/tts.js` |
 | **Task 130** | VDE Verification & End-to-End Testing | Phase 31: BeatVN Voice Refinements | `[x]` | Workspace-wide |
+| **Task 131** | VDE Standardize JSON Schema points declaration in ai.js | Phase 32: AI Prompt Schema Standardizations | `[ ]` | `backend/services/ai.js` |
+| **Task 132** | VDE Verification & End-to-End Testing | Phase 32: AI Prompt Schema Standardizations | `[ ]` | Workspace-wide |
 
 
 
