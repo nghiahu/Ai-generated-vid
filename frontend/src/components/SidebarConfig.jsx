@@ -202,29 +202,6 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
         </div>
 
 
-
-        {/* Visual Design Style (VDE) select */}
-        <div>
-          <label className="form-label-mono">Visual Design Style (VDE)</label>
-          <div style={{ position: "relative" }}>
-            <select
-              className="form-input-mono"
-              value={config.visualStyle || "minimal"}
-              onChange={(e) => handleConfigChange("visualStyle", e.target.value)}
-              style={{ cursor: "pointer" }}
-            >
-              <option value="minimal">Minimalist Clean (Default)</option>
-              <option value="apple">Apple Keynote (Pure Black/White)</option>
-              <option value="claude">Claude Editorial (Warm Beige)</option>
-              <option value="light">Minimalist Light (Bright White)</option>
-              <option value="cyberpunk">Cyberpunk Neon Grid</option>
-              <option value="anime">Anime Comic Hand-drawn</option>
-            </select>
-          </div>
-        </div>
-
-
-
         {/* Watermark Section */}
         <div className="border-strict" style={{ padding: "20px", backgroundColor: "#ffffff" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
