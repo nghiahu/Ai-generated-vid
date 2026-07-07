@@ -34,6 +34,34 @@ function getAudioDuration(filePath) {
   return 0;
 }
 
+function addSilentPadding(filePath) {
+  const tempPath = filePath + '.temp' + path.extname(filePath);
+  try {
+    if (!fs.existsSync(filePath)) return;
+    
+    // Rename original file to temp
+    fs.renameSync(filePath, tempPath);
+    
+    // Run ffmpeg adelay filter to insert 300ms silence at the beginning
+    execSync(`ffmpeg -y -i "${tempPath}" -filter_complex "adelay=300|300" "${filePath}"`, { stdio: 'ignore' });
+    
+    // Delete temp file
+    if (fs.existsSync(tempPath)) {
+      fs.unlinkSync(tempPath);
+    }
+    console.log(`Successfully added 300ms silent padding to ${path.basename(filePath)}`);
+  } catch (error) {
+    console.error(`Failed to add silent padding to ${filePath}:`, error.message);
+    // Rollback if failed
+    if (fs.existsSync(tempPath)) {
+      if (fs.existsSync(filePath)) {
+        try { fs.unlinkSync(filePath); } catch (e) {}
+      }
+      try { fs.renameSync(tempPath, filePath); } catch (e) {}
+    }
+  }
+}
+
 function normalizeTextForTTS(text) {
   if (!text) return text;
   
@@ -104,8 +132,7 @@ function normalizeTextForTTS(text) {
 
   // Chuyển toàn bộ sang viết thường. Thực nghiệm chứng minh: Viết thường 100% giúp OmniVoice 
   // tokenizer không bao giờ bị treo/crash, đồng thời AI vẫn đọc tiếng Anh cực kỳ chuẩn và tự nhiên.
-  // Đồng thời chèn dấu phẩy ", " ở đầu để tạo khoảng lặng (silent padding ~300ms) giúp trình duyệt khởi động kênh âm thanh mà không nuốt mất từ đầu tiên.
-  return ", " + normalized.toLowerCase();
+  return normalized.toLowerCase();
 }
 
 
@@ -283,6 +310,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       }
 
       console.log(`Successfully saved Local OmniVoice WAV file: ${wavFileName}`);
+      addSilentPadding(wavOutputPath);
       const duration = getAudioDuration(wavOutputPath);
       return { url: `/tts/${wavFileName}`, duration };
     } catch (error) {
@@ -322,6 +350,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const buffer = Buffer.from(arrayBuffer);
       fs.writeFileSync(outputPath, buffer);
       console.log(`Successfully saved Microsoft Edge TTS file: ${fileName}`);
+      addSilentPadding(outputPath);
       const duration = getAudioDuration(outputPath);
       return { url: `/tts/${fileName}`, duration };
     } catch (error) {
@@ -365,6 +394,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
     const buffer = Buffer.from(arrayBuffer);
     fs.writeFileSync(outputPath, buffer);
     console.log(`Successfully saved TTS file: ${fileName}`);
+    addSilentPadding(outputPath);
     const duration = getAudioDuration(outputPath);
     return { url: `/tts/${fileName}`, duration };
 
