@@ -239,7 +239,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const isDoTrinh = voiceKey.toLowerCase() === "omnivoice_dotrinh";
       const isBeatvn = voiceKey.toLowerCase() === "omnivoice_beatvn";
       const isBeatvn2 = voiceKey.toLowerCase() === "omnivoice_beatvn2";
-      const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh || isBeatvn || isBeatvn2;
+      const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh;
       
       const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
       let refAudioPath = isAnhQuy 
@@ -281,7 +281,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
 
       // Ánh xạ voiceKey sang instruct string cho OmniVoice
       let instruct = "female"; // Mặc định
-      if (voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh || isBeatvn) {
+      if (voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh) {
         instruct = "male";
       } else if (voiceKey.toLowerCase() === "omnivoice_whisper") {
         instruct = "female, whisper";
