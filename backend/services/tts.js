@@ -238,7 +238,8 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const isAnhQuy = voiceKey.toLowerCase() === "omnivoice_anhquy";
       const isDoTrinh = voiceKey.toLowerCase() === "omnivoice_dotrinh";
       const isBeatvn = voiceKey.toLowerCase() === "omnivoice_beatvn";
-      const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh || isBeatvn;
+      const isBeatvn2 = voiceKey.toLowerCase() === "omnivoice_beatvn2";
+      const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh || isBeatvn || isBeatvn2;
       
       const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
       let refAudioPath = isAnhQuy 
@@ -247,6 +248,8 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         ? path.join(__dirname, '../../mp3/elevenlab/do_trinh/voice_preview_đô trịnh - giọng hay.mp3')
         : isBeatvn
         ? path.join(__dirname, '../../mp3/beatvn/voice_beatvn.mp3')
+        : isBeatvn2
+        ? path.join(__dirname, '../../mp3/beatvn_voice2/beatV2.mp3')
         : path.join(refsDir, refFileName);
       const refText = isAnhQuy 
         ? "Rồi chào các bạn nhá nốt tiếp nội dung của bài liên quan đến ứng dụng quản lý quản lý sinh viên bây giờ là chúng ta sẽ cùng nhau đi giải quyết nốt chức năng phân trang cho danh sách sinh viên này"
@@ -254,10 +257,12 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         ? "Giọng trầm ấm, rõ chữ, mang phong cách chuyên nghiệp, hiện đại, phù hợp cho các nội dung công nghệ, AI, kinh doanh, giáo dục và phát triển bản thân"
         : isBeatvn
         ? "giáo viên trường trung học phổ thông chuyên Tuyên Quang vừa bị tạm giữ từng đạt giải học sinh giỏi quốc gia môn Toán tuyển thẳng vào đại học và Tốt nghiệp loại giỏi sinh năm 1998 được giảng dạy ở một trường chuyên của tỉnh Tuyên Quang có nghĩa là người thầy giáo này phải thật sự giỏi"
+        : isBeatvn2
+        ? "Ông em khổ nhất tiktok là đây chỉ muốn làm họa sĩ đem những nét vẽ làm đẹp cho đời nhưng lên video nào mọi người cũng khuyên em đi đóng phim thật lòng thì em vẽ cũng đẹp thật nhưng thế méo nào nhìn đi nhìn lại cũng thấy giống như hai giọt nước"
         : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
 
       // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại (chỉ cho các giọng mặc định)
-      if (!isAnhQuy && !isDoTrinh && !isBeatvn && !fs.existsSync(refAudioPath)) {
+      if (!isAnhQuy && !isDoTrinh && !isBeatvn && !isBeatvn2 && !fs.existsSync(refAudioPath)) {
         console.log(`Creating OmniVoice reference voice file: ${refFileName}...`);
         const msVoice = isMale ? "vi-VN-NamMinhNeural" : "vi-VN-HoaiMyNeural";
         const ttsInstance = new EdgeTTS(refText, msVoice);
