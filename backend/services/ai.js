@@ -50,9 +50,14 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
           "heading": "Scene title/heading in Vietnamese",
           "points": [
             {
-              "text": "Up to 5 bullet points summarizing this scene, in Vietnamese. Keep points simple and descriptive.",
+              "type": "text" | "terminal" | "metric" | "logo_row" | "badge_row" | "button" | "subheader",
+              "text": "The main text content, or terminal command, or button label, or subheader label. Keep it simple and descriptive in Vietnamese.",
               "animation": "slide-up" | "scale-in" | "fade-in" | "blur-in" | "slide-left" | "slide-right",
-              "delay": estimated offset in seconds from the start of this scene (number, e.g. 1.8) indicating when the voice speaks this point. Delays should be spaced out (e.g., 0.5, 2.0, 3.5) and strictly less than the scene duration. Ensure the first point starts around 0.5s."
+              "delay": estimated offset in seconds from the start of this scene (number, e.g. 1.8) indicating when the voice speaks this point. Delays should be spaced out (e.g., 0.5, 2.0, 3.5) and strictly less than the scene duration. Ensure the first point starts around 0.5s.",
+              "logos": ["claude", "remotion", "youtube", "tiktok", "react", "nodejs", "python", "aws", "gemini", "openai"] (optional array of strings, ONLY for "logo_row" type),
+              "badges": ["Mẹo", "AI Video"] (optional array of strings, ONLY for "badge_row" type),
+              "value": "+85%" (optional string, ONLY for "metric" type),
+              "subtext": "tăng tốc" (optional string, ONLY for "metric" type)
             }
           ],
           "voiceover": "The subset of the script text read aloud in this scene, in Vietnamese. CRITICAL: Keep ALL technical/English terms (HTML, CSS, JavaScript, React, Node.js, Next.js, API, MP4, MP3, npm, JSON, SQL, etc.) in their ORIGINAL LOWERCASE ENGLISH form (e.g., write 'html', 'css', 'javascript'). NEVER phonetically translate them into Vietnamese pronunciation (e.g., NEVER write 'Hát Tê Em Lờ' for HTML, or 'Xê Ét Ét' for CSS).",
@@ -77,6 +82,11 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       - Use "Stats Banner" for detailed analytics dashboard panels with line charts and live metric widgets.
       - Use "Three Columns" for subscription plans, pricing tiers, or 3-step feature lists.
       - Use "Integration Cloud" for API connections, integrations, or automated workflow diagrams.
+      
+      CRITICAL BLOCK STYLE SELECTION RULES FOR phong cách "${visualStyle}":
+      - If style is "claude", prefer using "subheader", "logo_row", and "button" block types to create a premium editorial magazine aesthetic. Avoid using "terminal" unless it's a code-only command scene.
+      - If style is "cyberpunk", prefer using "terminal", "metric" and "badge_row" block types with vibrant text/metrics.
+      - If style is "apple" or "light", prefer using "subheader", "badge_row" and clean "button" CTA blocks.
       
       GLOBAL CRITICAL RULE FOR VOICEOVER TEXT:
       Technical and English terms in the "voiceover" field MUST remain as lowercase English words.
