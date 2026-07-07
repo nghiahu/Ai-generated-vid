@@ -1,0 +1,5 @@
+{
+  "constraints": [
+    "Maximum of 2 side-by-side elements are allowed due to limited horizontal width."
+  ]
+}
