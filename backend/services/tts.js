@@ -70,7 +70,8 @@ function normalizeTextForTTS(text) {
 
   // Chuyển toàn bộ sang viết thường. Thực nghiệm chứng minh: Viết thường 100% giúp OmniVoice 
   // tokenizer không bao giờ bị treo/crash, đồng thời AI vẫn đọc tiếng Anh (html, css, javascript, react, next.js) cực kỳ chuẩn và tự nhiên.
-  return normalized.toLowerCase();
+  // Đồng thời chèn dấu phẩy ", " ở đầu để tạo khoảng lặng (silent padding ~300ms) giúp trình duyệt khởi động kênh âm thanh mà không nuốt mất từ đầu tiên.
+  return ", " + normalized.toLowerCase();
 }
 
 
