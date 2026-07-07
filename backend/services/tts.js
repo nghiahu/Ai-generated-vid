@@ -37,19 +37,53 @@ function getAudioDuration(filePath) {
 function normalizeTextForTTS(text) {
   if (!text) return text;
   
+  const matchedProtections = [];
+  let protectionIndex = 0;
+  
+  // Bảo vệ các từ "ai" trong tiếng Việt mang ý nghĩa "ai đó/không ai" để không bị chuyển thành "ây-ai"
+  const protectionRegexes = [
+    /\bkhông\s+ai\b/gi,
+    /\bchẳng\s+ai\b/gi,
+    /\bchưa\s+ai\b/gi,
+    /\bcó\s+ai\b/gi,
+    /\bcho\s+ai\b/gi,
+    /\bvới\s+ai\b/gi,
+    /\bnhư\s+ai\b/gi,
+    /\bai\s+cũng\b/gi,
+    /\bai\s+đó\b/gi,
+    /\bai\s+đấy\b/gi,
+    /\bai\s+nấy\b/gi
+  ];
+
+  let tempText = text;
+  protectionRegexes.forEach(regex => {
+    tempText = tempText.replace(regex, (match) => {
+      const placeholder = `___PROT_WHO_${protectionIndex}___`;
+      matchedProtections.push({ placeholder, original: match });
+      protectionIndex++;
+      return placeholder;
+    });
+  });
+
+  // Chuyển đổi các từ viết tắt công nghệ không phân biệt chữ hoa/thường (Dùng gạch nối để đọc tách âm tốt hơn)
+  tempText = tempText
+    .replace(/\bai\b/gi, "ây-ai")
+    .replace(/\bapi\b/gi, "ây-pi-ai")
+    .replace(/\bui\b/gi, "iu-ai")
+    .replace(/\bux\b/gi, "iu-ích")
+    .replace(/\burl\b/gi, "u-rờ-lờ");
+
+  // Khôi phục lại các từ "ai" tiếng Việt đã được bảo vệ
+  matchedProtections.forEach(p => {
+    tempText = tempText.replace(p.placeholder, p.original);
+  });
+
   // Tránh việc ghép các từ viết tắt dạng viết hoa dính liền làm crash tokenizer của OmniVoice.
   // Đồng thời giữ nguyên cách phát âm tiếng Anh tự nhiên thay vì phiên âm tiếng Việt kỳ quặc.
-  let normalized = text
-    .replace(/\bAI\b/g, "ây ai") // Đọc chuẩn tiếng Anh "ây ai" thay vì "a i"
-    .replace(/\bAPI\b/g, "ây pi ai")
-    .replace(/\bUI\b/g, "iu ai")
-    .replace(/\bUX\b/g, "iu ích")
-    .replace(/\bURL\b/g, "u rờ lờ");
+  let normalized = tempText;
 
   // Safety net: reverse-map common phonetic Vietnamese back to lowercase English.
   // Prevents OmniVoice tokenizer crash when Gemini slips and phonetically translates tech terms.
-  // Confirmed crash patterns from error.log (2026-07-02): HTML→"Hát Tê Em Lờ", CSS→"Xê Ét Ét",
-  // JavaScript→"Gia va sờ cờ ríp", MP4→"Em Pê Bốn"
   normalized = normalized
     .replace(/hát tê em lờ/gi, "html")
     .replace(/xê ét ét/gi, "css")
@@ -69,7 +103,7 @@ function normalizeTextForTTS(text) {
     .replace(/gít hớp/gi, "github");
 
   // Chuyển toàn bộ sang viết thường. Thực nghiệm chứng minh: Viết thường 100% giúp OmniVoice 
-  // tokenizer không bao giờ bị treo/crash, đồng thời AI vẫn đọc tiếng Anh (html, css, javascript, react, next.js) cực kỳ chuẩn và tự nhiên.
+  // tokenizer không bao giờ bị treo/crash, đồng thời AI vẫn đọc tiếng Anh cực kỳ chuẩn và tự nhiên.
   // Đồng thời chèn dấu phẩy ", " ở đầu để tạo khoảng lặng (silent padding ~300ms) giúp trình duyệt khởi động kênh âm thanh mà không nuốt mất từ đầu tiên.
   return ", " + normalized.toLowerCase();
 }
