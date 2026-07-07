@@ -108,5 +108,8 @@
 | **Task 105** | VDE Setup Playfair Display font and tokens in Remotion | Phase 26: VDE Previews & Styles | `[x]` | `my-video/src/styles/` |
 | **Task 106** | VDE Refactor Style Selection Modal with code previews | Phase 26: VDE Previews & Styles | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
 | **Task 107** | VDE Update SidebarConfig style selections | Phase 26: VDE Previews & Styles | `[x]` | `frontend/src/components/SidebarConfig.jsx` |
+| **Task 108** | VDE Clean up legacy Video Theme and sync dropdowns | Phase 26: VDE Previews & Styles | `[x]` | `frontend/src/components/SidebarConfig.jsx` |
+| **Task 109** | VDE Implement high-fidelity mockup previews in style selection Modal | Phase 26: VDE Previews & Styles | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
+
 
 
