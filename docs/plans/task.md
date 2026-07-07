@@ -110,11 +110,11 @@
 | **Task 107** | VDE Update SidebarConfig style selections | Phase 26: VDE Previews & Styles | `[x]` | `frontend/src/components/SidebarConfig.jsx` |
 | **Task 108** | VDE Clean up legacy Video Theme and sync dropdowns | Phase 26: VDE Previews & Styles | `[x]` | `frontend/src/components/SidebarConfig.jsx` |
 | **Task 109** | VDE Implement high-fidelity mockup previews in style selection Modal | Phase 26: VDE Previews & Styles | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
-| **Task 110** | VDE Update Gemini prompt for Rich Semantic Blocks | Phase 27: Dynamic Blocks | `[ ]` | `backend/services/ai.js` |
-| **Task 111** | VDE Update Layout Parser in frontend (layoutResolver) | Phase 27: Dynamic Blocks | `[ ]` | `my-video/src/utils/layoutResolver.ts` |
-| **Task 112** | VDE Implement Subheader, LogoRow, and CTAButton Blocks | Phase 27: Dynamic Blocks | `[ ]` | `my-video/src/components/layout/UIBlocks.tsx` |
-| **Task 113** | VDE Mount blocks in DynamicLayout | Phase 27: Dynamic Blocks | `[ ]` | `my-video/src/compositions/layouts/DynamicLayout.tsx` |
-| **Task 114** | VDE Verification & Mock Testing | Phase 27: Dynamic Blocks | `[ ]` | `my-video/src/Root.tsx` |
+| **Task 110** | VDE Update Gemini prompt for Rich Semantic Blocks | Phase 27: Dynamic Blocks | `[x]` | `backend/services/ai.js` |
+| **Task 111** | VDE Update Layout Parser in frontend (layoutResolver) | Phase 27: Dynamic Blocks | `[x]` | `my-video/src/utils/layoutResolver.ts` |
+| **Task 112** | VDE Implement Subheader, LogoRow, and CTAButton Blocks | Phase 27: Dynamic Blocks | `[x]` | `my-video/src/components/layout/UIBlocks.tsx` |
+| **Task 113** | VDE Mount blocks in DynamicLayout | Phase 27: Dynamic Blocks | `[x]` | `my-video/src/compositions/layouts/DynamicLayout.tsx` |
+| **Task 114** | VDE Verification & Mock Testing | Phase 27: Dynamic Blocks | `[x]` | `my-video/src/Root.tsx` |
 
 
 
