@@ -64,8 +64,8 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
           "duration": estimated duration in seconds (number, e.g. 7.5),
           "placement": "Full" | "Split",
           "keywords": "1-3 English keywords for Unsplash photo search based on visual context, e.g., 'coding laptop'",
-          "theme": "japan" | "tech" | "finance" | "nature" | "default",
-          "accentColor": "A vibrant HEX color matching the theme, e.g., '#FFB7C5' for japan, '#00E5FF' for tech, '#FFD700' for finance"
+          "theme": "japan" | "tech" | "finance" | "nature" | "default" | "rikkei",
+          "accentColor": "A vibrant HEX color matching the theme, e.g., '#FFB7C5' for japan, '#A8232A' for rikkei"
         }
       ]
       
@@ -87,6 +87,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       - If style is "claude", prefer using "subheader", "logo_row", and "button" block types to create a premium editorial magazine aesthetic. Avoid using "terminal" unless it's a code-only command scene.
       - If style is "cyberpunk", prefer using "terminal", "metric" and "badge_row" block types with vibrant text/metrics.
       - If style is "apple" or "light", prefer using "subheader", "badge_row" and clean "button" CTA blocks.
+      - If style is "rikkei", prefer using "subheader", "logo_row", and "button" block types to create a premium, clean educational layout. Use crimson red (#A8232A) highlights and rounded buttons.
       
       GLOBAL CRITICAL RULE FOR VOICEOVER TEXT:
       Technical and English terms in the "voiceover" field MUST remain as lowercase English words.
