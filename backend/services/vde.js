@@ -75,7 +75,8 @@ const BUILTIN_STYLES = {
         title: "SF Pro, Inter",
         body: "SF Pro, Inter"
       },
-      radius: "28px"
+      radius: "28px",
+      shadow: "none"
     },
     motion: {
       energy: "very_low",
@@ -170,7 +171,8 @@ const BUILTIN_STYLES = {
         title: "Playfair Display, Georgia, serif",
         body: "Inter"
       },
-      radius: "20px"
+      radius: "20px",
+      shadow: "none"
     },
     motion: {
       energy: "low",
