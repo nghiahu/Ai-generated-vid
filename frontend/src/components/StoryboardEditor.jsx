@@ -220,19 +220,103 @@ const LAYOUTS_BY_FAMILY = {
   ]
 };
 
-const IMAGE_STYLES = [
-  { id: "photography", name: "Realistic Photography", query: "photography real life", img: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=200&h=200&fit=crop" },
-  { id: "anime", name: "Anime / Manga", query: "anime manga style", img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=200&h=200&fit=crop" },
-  { id: "cyberpunk", name: "Cyberpunk Neon", query: "cyberpunk neon style", img: "https://images.unsplash.com/photo-1578894381163-e72c17f2d45f?w=200&h=200&fit=crop" },
-  { id: "flat_vector", name: "Flat Vector Art", query: "flat vector illustration", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop" },
-  { id: "pixel", name: "Pixel Art 8-Bit", query: "pixel art 8-bit game", img: "https://images.unsplash.com/photo-1563089145-599997674d42?w=200&h=200&fit=crop" },
-  { id: "3d_cartoon", name: "3D Cartoon Toy", query: "3d cartoon toy pixar", img: "https://images.unsplash.com/photo-1634128221889-82ed6efebfc3?w=200&h=200&fit=crop" },
-  { id: "sketch", name: "Pencil Sketch", query: "pencil sketch drawing lineart", img: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=200&h=200&fit=crop" },
-  { id: "blueprint", name: "Tech Blueprint", query: "technical blueprint schematic", img: "https://images.unsplash.com/photo-1503387762-592dec58ef4e?w=200&h=200&fit=crop" },
-  { id: "vaporwave", name: "Vaporwave", query: "vaporwave aesthetic 80s", img: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=200&h=200&fit=crop" },
-  { id: "watercolor", name: "Watercolor Painting", query: "watercolor painting ink", img: "https://images.unsplash.com/photo-1579783928621-7a13d66a62d1?w=200&h=200&fit=crop" },
-  { id: "clay", name: "Claymorphism", query: "claymorphism render 3d", img: "https://images.unsplash.com/photo-1620641788421-7a1ae342ea42?w=200&h=200&fit=crop" },
-  { id: "cyber_circuit", name: "Circuit Tech Grid", query: "cyber circuit grid computer motherboard", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&h=200&fit=crop" }
+const VDE_PRESET_STYLES = [
+  {
+    id: "minimal",
+    name: "Minimalist Dark",
+    description: "Nền tối chàm, các thẻ kính mờ phát sáng nhẹ, thanh lịch và tập trung.",
+    tokens: {
+      background: "#080b11",
+      cardBg: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)",
+      border: "1.5px solid rgba(255,255,255,0.12)",
+      text: "#ffffff",
+      textSecondary: "rgba(255,255,255,0.6)",
+      accent: "#3b82f6",
+      radius: "16px",
+      shadow: "0 10px 30px rgba(0,0,0,0.5)",
+      fontFamily: "Space Grotesk, sans-serif"
+    }
+  },
+  {
+    id: "apple",
+    name: "Apple Keynote",
+    description: "Nền đen tuyền, chữ trắng cực lớn, tối giản và cao cấp tuyệt đối.",
+    tokens: {
+      background: "#000000",
+      cardBg: "rgba(255, 255, 255, 0.03)",
+      border: "1.5px solid rgba(255,255,255,0.08)",
+      text: "#ffffff",
+      textSecondary: "#86868b",
+      accent: "#ffffff",
+      radius: "24px",
+      shadow: "none",
+      fontFamily: "Space Grotesk, sans-serif"
+    }
+  },
+  {
+    id: "claude",
+    name: "Claude Editorial",
+    description: "Nền cát ấm, chữ có chân sang trọng, cam đất sét gạch ấm áp.",
+    tokens: {
+      background: "#FBF9F4",
+      cardBg: "rgba(217, 107, 67, 0.03)",
+      border: "1.5px solid rgba(217, 107, 67, 0.15)",
+      text: "#191919",
+      textSecondary: "#6b655f",
+      accent: "#d96b43",
+      radius: "16px",
+      shadow: "none",
+      fontFamily: "Georgia, serif"
+    }
+  },
+  {
+    id: "light",
+    name: "Minimalist Light",
+    description: "Nền trắng tinh, xám sáng hiện đại, màu xanh nhấn đầy năng lượng.",
+    tokens: {
+      background: "#ffffff",
+      cardBg: "#f8fafc",
+      border: "1.5px solid #e2e8f0",
+      text: "#0f172a",
+      textSecondary: "#475569",
+      accent: "#2563eb",
+      radius: "12px",
+      shadow: "0 10px 20px rgba(0,0,0,0.03)",
+      fontFamily: "Space Grotesk, sans-serif"
+    }
+  },
+  {
+    id: "cyberpunk",
+    name: "Cyberpunk Grid",
+    description: "Giao diện kỹ thuật số tương lai, neon hồng/xanh lam rực rỡ.",
+    tokens: {
+      background: "#030008",
+      cardBg: "linear-gradient(135deg, rgba(255,0,128,0.08) 0%, rgba(0,229,255,0.03) 100%)",
+      border: "1.5px solid rgba(0,229,255,0.25)",
+      text: "#ffffff",
+      textSecondary: "rgba(255,255,255,0.7)",
+      accent: "#ff007f",
+      radius: "6px",
+      shadow: "0 0 15px rgba(0,229,255,0.2)",
+      fontFamily: "monospace"
+    }
+  },
+  {
+    id: "anime",
+    name: "Anime Sketch",
+    description: "Phong cách comic thô nét viền đen đậm đầy sáng tạo.",
+    tokens: {
+      background: "#fdf8f5",
+      cardBg: "#ffffff",
+      border: "3px solid #000000",
+      text: "#1e1e24",
+      textSecondary: "#5a5a66",
+      accent: "#ff6b6b",
+      radius: "14px",
+      shadow: "5px 5px 0px #000000",
+      fontFamily: "Space Grotesk, sans-serif"
+    }
+  }
 ];
 
 export const StoryboardEditor = ({ 
@@ -253,7 +337,7 @@ export const StoryboardEditor = ({
   const [uploadingScenes, setUploadingScenes] = useState({});
   const [playingSceneId, setPlayingSceneId] = useState(null);
   const [showStyleModal, setShowStyleModal] = useState(false);
-  const [selectedStyle, setSelectedStyle] = useState("photography");
+  const [selectedStyle, setSelectedStyle] = useState("minimal");
   const playerRefs = useRef({});
 
   const handleImageUploadClick = (sceneId) => {
@@ -515,7 +599,7 @@ export const StoryboardEditor = ({
                   textTransform: "uppercase",
                   letterSpacing: "0.05em"
                 }}>
-                  IMAGE STYLE
+                  CHỌN PHONG CÁCH VIDEO (VDE)
                 </h3>
                 <button 
                   onClick={() => setShowStyleModal(false)}
@@ -540,87 +624,98 @@ export const StoryboardEditor = ({
               }}>
                 <div style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(135px, 1fr))",
-                  gap: "20px"
+                  gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+                  gap: "24px"
                 }}>
-                  {IMAGE_STYLES.map(style => {
-                    const isSelected = selectedStyle === style.query;
+                  {VDE_PRESET_STYLES.map(style => {
+                    const isSelected = selectedStyle === style.id;
                     return (
                       <div 
                         key={style.id}
-                        onClick={() => setSelectedStyle(style.query)}
+                        onClick={() => setSelectedStyle(style.id)}
                         style={{
-                          position: "relative",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "12px",
                           cursor: "pointer",
-                          borderRadius: "16px",
-                          overflow: "hidden",
+                          padding: "16px",
+                          borderRadius: "20px",
                           border: isSelected ? "3px solid #000000" : "1.5px solid #e2e8f0",
-                          aspectRatio: "3/4",
-                          transition: "transform 0.15s, box-shadow 0.15s",
-                          transform: isSelected ? "scale(1.02)" : "scale(1)",
-                          boxShadow: isSelected ? "4px 4px 0px #000000" : "none"
+                          backgroundColor: isSelected ? "#f8fafc" : "#ffffff",
+                          boxShadow: isSelected ? "4px 4px 0px #000000" : "none",
+                          transition: "all 0.15s ease-in-out"
                         }}
                       >
-                        {/* Image */}
-                        <img 
-                          src={style.img} 
-                          alt={style.name}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover"
-                          }}
-                        />
-
-                        {/* Label Overlay */}
+                        {/* Mini Viewport Code Mockup */}
                         <div style={{
-                          position: "absolute",
-                          inset: 0,
-                          background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)",
+                          width: "100%",
+                          aspectRatio: "9/16",
+                          backgroundColor: style.tokens.background,
+                          border: "2px solid #000",
+                          borderRadius: "12px",
+                          padding: "16px",
+                          boxSizing: "border-box",
                           display: "flex",
-                          alignItems: "flex-end",
-                          padding: "12px",
-                          boxSizing: "border-box"
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          position: "relative",
+                          overflow: "hidden",
+                          backgroundImage: style.id === "cyberpunk" ? "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)" : "none",
+                          backgroundSize: "15px 15px"
                         }}>
+                          <div style={{
+                            width: "100%",
+                            backgroundColor: style.tokens.cardBg.includes("gradient") ? undefined : style.tokens.cardBg,
+                            backgroundImage: style.tokens.cardBg.includes("gradient") ? style.tokens.cardBg : undefined,
+                            border: style.tokens.border,
+                            borderRadius: style.tokens.radius,
+                            boxShadow: style.tokens.shadow,
+                            padding: "12px",
+                            boxSizing: "border-box",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "8px"
+                          }}>
+                            <div style={{
+                              color: style.tokens.text,
+                              fontFamily: style.tokens.fontFamily,
+                              fontSize: "11px",
+                              fontWeight: "900",
+                              textTransform: "uppercase",
+                              lineHeight: "1.2"
+                            }}>
+                              {style.id === "apple" ? "SIMPLE KEYNOTE" : "Title Scene"}
+                            </div>
+                            <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+                              <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: style.tokens.accent }} />
+                              <div style={{ width: "35px", height: "2.5px", backgroundColor: style.tokens.textSecondary, borderRadius: "1.5px" }} />
+                            </div>
+                            <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+                              <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: style.tokens.accent }} />
+                              <div style={{ width: "50px", height: "2.5px", backgroundColor: style.tokens.textSecondary, borderRadius: "1.5px" }} />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Title and Description */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                           <span style={{
-                            color: "#ffffff",
-                            fontSize: "12px",
-                            fontWeight: "800",
+                            fontSize: "15px",
+                            fontWeight: "bold",
                             fontFamily: "Space Grotesk",
-                            lineHeight: "1.2"
+                            color: "#0f172a"
                           }}>
                             {style.name}
                           </span>
-                        </div>
-
-                        {/* Selected Badge */}
-                        {isSelected && (
-                          <div style={{
-                            position: "absolute",
-                            inset: 0,
-                            backgroundColor: "rgba(0,0,0,0.25)",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            zIndex: 10
+                          <span style={{
+                            fontSize: "12px",
+                            color: "#64748b",
+                            lineHeight: "1.4"
                           }}>
-                            <span style={{
-                              backgroundColor: "#2563eb",
-                              color: "#ffffff",
-                              fontSize: "10px",
-                              fontWeight: "900",
-                              fontFamily: "Space Grotesk",
-                              padding: "6px 12px",
-                              borderRadius: "20px",
-                              textTransform: "uppercase",
-                              letterSpacing: "0.5px",
-                              border: "1.5px solid #ffffff",
-                              boxShadow: "0 4px 8px rgba(0,0,0,0.3)"
-                            }}>
-                              SELECTED
-                            </span>
-                          </div>
-                        )}
+                            {style.description}
+                          </span>
+                        </div>
                       </div>
                     );
                   })}
