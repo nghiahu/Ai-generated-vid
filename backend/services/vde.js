@@ -216,7 +216,7 @@ const BUILTIN_STYLES = {
         cardBg: "#FAF5F5",
         border: "rgba(168, 35, 42, 0.08)",
         accent: "#A8232A",
-        text: "#191919",
+        text: "#000000",
         textSecondary: "#595959"
       },
       fonts: {
