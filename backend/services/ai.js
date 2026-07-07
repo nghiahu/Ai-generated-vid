@@ -50,21 +50,21 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
           "heading": "Scene title/heading in Vietnamese",
           "points": [
             {
-              "type": "text" | "terminal" | "metric" | "logo_row" | "badge_row" | "button" | "subheader",
+              "type": "text", // Required type. Allowed values: "text", "terminal", "metric", "logo_row", "badge_row", "button", "subheader"
               "text": "The main text content, or terminal command, or button label, or subheader label. Keep it simple and descriptive in Vietnamese.",
-              "animation": "slide-up" | "scale-in" | "fade-in" | "blur-in" | "slide-left" | "slide-right",
-              "delay": estimated offset in seconds from the start of this scene (number, e.g. 1.8) indicating when the voice speaks this point. Delays should be spaced out (e.g., 0.5, 2.0, 3.5) and strictly less than the scene duration. Ensure the first point starts around 0.5s.",
-              "logos": ["claude", "remotion", "youtube", "tiktok", "react", "nodejs", "python", "aws", "gemini", "openai"] (optional array of strings, ONLY for "logo_row" type),
-              "badges": ["Mẹo", "AI Video"] (optional array of strings, ONLY for "badge_row" type),
-              "value": "+85%" (optional string, ONLY for "metric" type),
-              "subtext": "tăng tốc" (optional string, ONLY for "metric" type)
+              "animation": "slide-up", // Required animation. Allowed values: "slide-up", "scale-in", "fade-in", "blur-in", "slide-left", "slide-right"
+              "delay": 0.5, // Estimated offset in seconds from the start of this scene (number, e.g. 1.8) indicating when the voice speaks this point. Delays should be spaced out (e.g., 0.5, 2.0, 3.5) and strictly less than the scene duration. Ensure the first point starts around 0.5s.
+              "logos": ["claude"], // Optional array of strings (ONLY for "logo_row" type). Allowed: "claude", "remotion", "youtube", "tiktok", "react", "nodejs", "python", "aws", "gemini", "openai"
+              "badges": ["Mẹo"], // Optional array of strings (ONLY for "badge_row" type)
+              "value": "+85%", // Optional string (ONLY for "metric" type)
+              "subtext": "tăng tốc" // Optional string (ONLY for "metric" type)
             }
           ],
           "voiceover": "The subset of the script text read aloud in this scene, in Vietnamese. CRITICAL: Keep ALL technical/English terms (HTML, CSS, JavaScript, React, Node.js, Next.js, API, MP4, MP3, npm, JSON, SQL, etc.) in their ORIGINAL LOWERCASE ENGLISH form (e.g., write 'html', 'css', 'javascript'). NEVER phonetically translate them into Vietnamese pronunciation (e.g., NEVER write 'Hát Tê Em Lờ' for HTML, or 'Xê Ét Ét' for CSS).",
-          "duration": estimated duration in seconds (number, e.g. 7.5),
-          "placement": "Full" | "Split",
+          "duration": 7.5, // Estimated duration in seconds (number, e.g. 7.5)
+          "placement": "Full", // Allowed values: "Full", "Split"
           "keywords": "1-3 English keywords for Unsplash photo search based on visual context, e.g., 'coding laptop'",
-          "theme": "japan" | "tech" | "finance" | "nature" | "default" | "rikkei",
+          "theme": "japan", // Allowed values: "japan", "tech", "finance", "nature", "default", "rikkei"
           "accentColor": "A vibrant HEX color matching the theme, e.g., '#FFB7C5' for japan, '#A8232A' for rikkei"
         }
       ]
