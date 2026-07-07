@@ -124,10 +124,10 @@
 | **Task 121** | VDE Register omnivoice_beatvn2 key on backend TTS service | Phase 29: BeatVN V2 Voice | `[x]` | `backend/services/tts.js` |
 | **Task 122** | VDE Add selection option to Sidebar config UI | Phase 29: BeatVN V2 Voice | `[x]` | `frontend/src/components/SidebarConfig.jsx` |
 | **Task 123** | VDE Verification & End-to-End Testing | Phase 29: BeatVN V2 Voice | `[x]` | Workspace-wide |
-| **Task 124** | VDE Refine Rikkei visual style colors in vdeTokens | Phase 30: Rikkei Style Refinements | `[ ]` | `my-video/src/styles/vdeTokens.ts` |
-| **Task 125** | VDE Update FeatureCardBlock in UIBlocks | Phase 30: Rikkei Style Refinements | `[ ]` | `my-video/src/components/layout/UIBlocks.tsx` |
-| **Task 126** | VDE Fix theme resolution and add primary/secondary support in DynamicLayout | Phase 30: Rikkei Style Refinements | `[ ]` | `my-video/src/compositions/layouts/DynamicLayout.tsx` |
-| **Task 127** | VDE Verification & End-to-End Testing | Phase 30: Rikkei Style Refinements | `[ ]` | Workspace-wide |
+| **Task 124** | VDE Refine Rikkei visual style colors in vdeTokens | Phase 30: Rikkei Style Refinements | `[x]` | `my-video/src/styles/vdeTokens.ts` |
+| **Task 125** | VDE Update FeatureCardBlock in UIBlocks | Phase 30: Rikkei Style Refinements | `[x]` | `my-video/src/components/layout/UIBlocks.tsx` |
+| **Task 126** | VDE Fix theme resolution and add primary/secondary support in DynamicLayout | Phase 30: Rikkei Style Refinements | `[x]` | `my-video/src/compositions/layouts/DynamicLayout.tsx` |
+| **Task 127** | VDE Verification & End-to-End Testing | Phase 30: Rikkei Style Refinements | `[x]` | Workspace-wide |
 
 
 
