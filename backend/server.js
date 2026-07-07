@@ -409,6 +409,17 @@ app.post('/api/projects/:id/render', async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
+    // Inject fully compiled VDE tokens into config for rendering
+    if (project.config) {
+      const visualStyle = project.config.visualStyle || 'minimal';
+      const traits = project.config.traits || [];
+      const activeTraits = [...traits];
+      if (project.config.ratio === '9:16' && !activeTraits.includes('vertical_video')) {
+        activeTraits.push('vertical_video');
+      }
+      project.config.vdeTokens = vde.getStyle(visualStyle, activeTraits);
+    }
+
     // Trigger actual child process video rendering
     const renderId = await render.renderVideo(projectId, project);
 
