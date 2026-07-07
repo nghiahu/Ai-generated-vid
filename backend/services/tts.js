@@ -153,8 +153,15 @@ function ensureWavReferenceAudio(mp3Path) {
   if (!fs.existsSync(wavPath)) {
     console.log(`Converting reference audio to 16kHz mono WAV: ${mp3Path} -> ${wavPath}...`);
     try {
-      execSync(`ffmpeg -y -i "${mp3Path}" -acodec pcm_s16le -ac 1 -ar 16000 "${wavPath}"`, { stdio: 'ignore' });
-      console.log(`Reference audio converted successfully.`);
+      // Tính toán thời lượng để áp dụng fade-out chuẩn xác ở cuối file nhằm khử click/pop/giật cục
+      const duration = getAudioDuration(mp3Path);
+      const fadeDuration = 0.25; // 250ms fade-in và fade-out rất mượt
+      const fadeOutStart = Math.max(0, duration - fadeDuration);
+      
+      const filterStr = `afade=t=in:ss=0:d=${fadeDuration},afade=t=out:st=${fadeOutStart}:d=${fadeDuration}`;
+      
+      execSync(`ffmpeg -y -i "${mp3Path}" -af "${filterStr}" -acodec pcm_s16le -ac 1 -ar 16000 "${wavPath}"`, { stdio: 'ignore' });
+      console.log(`Reference audio converted successfully with fade filters.`);
     } catch (err) {
       console.error(`Lỗi chuyển đổi giọng mẫu bằng ffmpeg: ${err.message}`);
       return mp3Path;
@@ -235,7 +242,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       
       const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
       let refAudioPath = isAnhQuy 
-        ? path.join(__dirname, '../../mp3/voiceanhquy.mp3')
+        ? path.join(__dirname, '../../mp3/anhquy/voiceanhquy.mp3')
         : isDoTrinh
         ? path.join(__dirname, '../../mp3/elevenlab/do_trinh/voice_preview_đô trịnh - giọng hay.mp3')
         : isBeatvn
