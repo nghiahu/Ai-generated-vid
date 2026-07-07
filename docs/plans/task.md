@@ -104,4 +104,9 @@
 | **Task 101** | VDE Implement Style Optimizer | Phase 25: Visual Design Engine | `[x]` | `backend/services/vde.js` |
 | **Task 102** | VDE Integrate Compiler into Server Routes | Phase 25: Visual Design Engine | `[x]` | `backend/services/ai.js`, `backend/server.js` |
 | **Task 103** | VDE Integrate Traits Selector on Config UI | Phase 25: Visual Design Engine | `[x]` | `frontend/src/components/SidebarConfig.jsx` |
+| **Task 104** | VDE Add Built-in Styles (Claude and Light) | Phase 26: VDE Previews & Styles | `[x]` | `backend/services/vde.js` |
+| **Task 105** | VDE Setup Playfair Display font and tokens in Remotion | Phase 26: VDE Previews & Styles | `[x]` | `my-video/src/styles/` |
+| **Task 106** | VDE Refactor Style Selection Modal with code previews | Phase 26: VDE Previews & Styles | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
+| **Task 107** | VDE Update SidebarConfig style selections | Phase 26: VDE Previews & Styles | `[x]` | `frontend/src/components/SidebarConfig.jsx` |
+
 
