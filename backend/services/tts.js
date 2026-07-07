@@ -38,13 +38,13 @@ function addSilentPadding(filePath) {
   const tempPath = filePath + '.temp' + path.extname(filePath);
   try {
     if (!fs.existsSync(filePath)) return;
-    
+
     // Rename original file to temp
     fs.renameSync(filePath, tempPath);
-    
+
     // Run ffmpeg adelay filter to insert 300ms silence at the beginning
     execSync(`ffmpeg -y -i "${tempPath}" -filter_complex "adelay=300|300" "${filePath}"`, { stdio: 'ignore' });
-    
+
     // Delete temp file
     if (fs.existsSync(tempPath)) {
       fs.unlinkSync(tempPath);
@@ -55,19 +55,19 @@ function addSilentPadding(filePath) {
     // Rollback if failed
     if (fs.existsSync(tempPath)) {
       if (fs.existsSync(filePath)) {
-        try { fs.unlinkSync(filePath); } catch (e) {}
+        try { fs.unlinkSync(filePath); } catch (e) { }
       }
-      try { fs.renameSync(tempPath, filePath); } catch (e) {}
+      try { fs.renameSync(tempPath, filePath); } catch (e) { }
     }
   }
 }
 
 function normalizeTextForTTS(text) {
   if (!text) return text;
-  
+
   const matchedProtections = [];
   let protectionIndex = 0;
-  
+
   // Bảo vệ các từ "ai" trong tiếng Việt mang ý nghĩa "ai đó/không ai" để không bị chuyển thành "ây-ai"
   const protectionRegexes = [
     /\bkhông\s+ai\b/gi,
@@ -100,8 +100,8 @@ function normalizeTextForTTS(text) {
     .replace(/\bui\b/gi, "iu-ai")
     .replace(/\bux\b/gi, "iu-ích")
     .replace(/\burl\b/gi, "u-rờ-lờ")
-    .replace(/\bit\b/gi, "ây-ti")
-    .replace(/\bcrud\b/gi, "cờ-rút");
+    .replace(/\bit\b/gi, "ai-ti")
+    .replace(/\bcrud\b/gi, "C-R-U-D");
 
   // Khôi phục lại các từ "ai" tiếng Việt đã được bảo vệ
   matchedProtections.forEach(p => {
@@ -141,17 +141,17 @@ function normalizeTextForTTS(text) {
 
 function ensureWavReferenceAudio(mp3Path) {
   const { execSync } = require('child_process');
-  
+
   if (!fs.existsSync(mp3Path)) {
     throw new Error(`Không tìm thấy file giọng mẫu tại: ${mp3Path}`);
   }
-  
+
   if (mp3Path.toLowerCase().endsWith('.wav')) {
     return mp3Path;
   }
-  
+
   const wavPath = mp3Path.slice(0, -path.extname(mp3Path).length) + '.wav';
-  
+
   if (!fs.existsSync(wavPath)) {
     console.log(`Converting reference audio to 16kHz mono WAV: ${mp3Path} -> ${wavPath}...`);
     try {
@@ -159,9 +159,9 @@ function ensureWavReferenceAudio(mp3Path) {
       const duration = getAudioDuration(mp3Path);
       const fadeDuration = 0.25; // 250ms fade-in và fade-out rất mượt
       const fadeOutStart = Math.max(0, duration - fadeDuration);
-      
+
       const filterStr = `afade=t=in:ss=0:d=${fadeDuration},afade=t=out:st=${fadeOutStart}:d=${fadeDuration}`;
-      
+
       execSync(`ffmpeg -y -i "${mp3Path}" -af "${filterStr}" -acodec pcm_s16le -ac 1 -ar 16000 "${wavPath}"`, { stdio: 'ignore' });
       console.log(`Reference audio converted successfully with fade filters.`);
     } catch (err) {
@@ -169,7 +169,7 @@ function ensureWavReferenceAudio(mp3Path) {
       return mp3Path;
     }
   }
-  
+
   return wavPath;
 }
 
@@ -190,8 +190,8 @@ async function runOmniVoiceSequentially(fn) {
       throw err;
     }
   });
-  
-  omnivoiceMutex = resultPromise.catch(() => {});
+
+  omnivoiceMutex = resultPromise.catch(() => { });
   return resultPromise;
 }
 
@@ -199,7 +199,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
   const apiKey = process.env.ELEVENLABS_API_KEY;
   const version = Math.random().toString(36).substr(2, 4);
   const outputDir = path.join(__dirname, '../public/tts');
-  
+
   // Ensure directory exists
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
@@ -211,10 +211,10 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
     const prefix = `tts_${projectId}_${sceneId}`;
     files.forEach(file => {
       if (file.startsWith(prefix)) {
-        try { fs.unlinkSync(path.join(outputDir, file)); } catch (e) {}
+        try { fs.unlinkSync(path.join(outputDir, file)); } catch (e) { }
       }
     });
-  } catch (e) {}
+  } catch (e) { }
 
   const fileName = `tts_${projectId}_${sceneId}_${version}.mp3`;
   const outputPath = path.join(outputDir, fileName);
@@ -227,7 +227,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const execFileAsync = promisify(execFile);
 
       // Đường dẫn đến omnivoice-infer.exe trong thư mục Scripts của Python
-      const omnivoiceExe = process.env.OMNIVOICE_INFER_PATH || 
+      const omnivoiceExe = process.env.OMNIVOICE_INFER_PATH ||
         "C:\\Users\\nghia\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\omnivoice-infer.exe";
 
       // Đảm bảo thư mục tài nguyên giọng tham chiếu tồn tại
@@ -242,26 +242,26 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const isBeatvn = voiceKey.toLowerCase() === "omnivoice_beatvn";
       const isBeatvn2 = voiceKey.toLowerCase() === "omnivoice_beatvn2";
       const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh;
-      
+
       const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
-      let refAudioPath = isAnhQuy 
+      let refAudioPath = isAnhQuy
         ? path.join(__dirname, '../../mp3/anhquy/voice_anh_quy.mp3')
         : isDoTrinh
-        ? path.join(__dirname, '../../mp3/elevenlab/do_trinh/voice_preview_đô trịnh - giọng hay.mp3')
-        : isBeatvn
-        ? path.join(__dirname, '../../mp3/beatvn/voice_beatvn.mp3')
-        : isBeatvn2
-        ? path.join(__dirname, '../../mp3/beatvn_voice2/beatV2.mp3')
-        : path.join(refsDir, refFileName);
-      const refText = isAnhQuy 
+          ? path.join(__dirname, '../../mp3/elevenlab/do_trinh/voice_preview_đô trịnh - giọng hay.mp3')
+          : isBeatvn
+            ? path.join(__dirname, '../../mp3/beatvn/voice_beatvn.mp3')
+            : isBeatvn2
+              ? path.join(__dirname, '../../mp3/beatvn_voice2/beatV2.mp3')
+              : path.join(refsDir, refFileName);
+      const refText = isAnhQuy
         ? "Rồi chào các bạn nhá nốt tiếp nội dung của bài liên quan đến ứng dụng quản lý quản lý sinh viên bây giờ là chúng ta sẽ cùng nhau đi giải quyết nốt chức năng phân trang cho danh sách sinh viên này"
         : isDoTrinh
-        ? "Giọng trầm ấm, rõ chữ, mang phong cách chuyên nghiệp, hiện đại, phù hợp cho các nội dung công nghệ, AI, kinh doanh, giáo dục và phát triển bản thân"
-        : isBeatvn
-        ? "giáo viên trường trung học phổ thông chuyên Tuyên Quang vừa bị tạm giữ từng đạt giải học sinh giỏi quốc gia môn Toán tuyển thẳng vào đại học và Tốt nghiệp loại giỏi sinh năm 1998 được giảng dạy ở một trường chuyên của tỉnh Tuyên Quang có nghĩa là người thầy giáo này phải thật sự giỏi"
-        : isBeatvn2
-        ? "Ông em khổ nhất tiktok là đây chỉ muốn làm họa sĩ đem những nét vẽ làm đẹp cho đời nhưng lên video nào mọi người cũng khuyên em đi đóng phim thật lòng thì em vẽ cũng đẹp thật nhưng thế méo nào nhìn đi nhìn lại cũng thấy giống như hai giọt nước"
-        : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
+          ? "Giọng trầm ấm, rõ chữ, mang phong cách chuyên nghiệp, hiện đại, phù hợp cho các nội dung công nghệ, AI, kinh doanh, giáo dục và phát triển bản thân"
+          : isBeatvn
+            ? "giáo viên trường trung học phổ thông chuyên Tuyên Quang vừa bị tạm giữ từng đạt giải học sinh giỏi quốc gia môn Toán tuyển thẳng vào đại học và Tốt nghiệp loại giỏi sinh năm 1998 được giảng dạy ở một trường chuyên của tỉnh Tuyên Quang có nghĩa là người thầy giáo này phải thật sự giỏi"
+            : isBeatvn2
+              ? "Ông em khổ nhất tiktok là đây chỉ muốn làm họa sĩ đem những nét vẽ làm đẹp cho đời nhưng lên video nào mọi người cũng khuyên em đi đóng phim thật lòng thì em vẽ cũng đẹp thật nhưng thế méo nào nhìn đi nhìn lại cũng thấy giống như hai giọt nước"
+              : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
 
       // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại (chỉ cho các giọng mặc định)
       if (!isAnhQuy && !isDoTrinh && !isBeatvn && !isBeatvn2 && !fs.existsSync(refAudioPath)) {
@@ -298,7 +298,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const cleanText = normalizeTextForTTS(text);
 
       console.log(`Calling Local OmniVoice CLI for scene ${sceneId} (Cloning reference voice)... Normalized text: "${cleanText}"`);
-      
+
       const relativeWavOutputPath = path.relative(process.cwd(), wavOutputPath);
       const relativeRefAudioPath = path.relative(process.cwd(), refAudioPath);
 
@@ -319,7 +319,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         // Chỉ dùng Voice Design mode khi không có file giọng mẫu
         args.push("--instruct", instruct);
       }
-      
+
       await runOmniVoiceSequentially(async () => {
         await execFileAsync(omnivoiceExe, args, {
           timeout: 300000,
@@ -342,7 +342,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       return { url: `/tts/${wavFileName}`, duration };
     } catch (error) {
       console.error(`Local OmniVoice CLI failed for scene ${sceneId}: ${error.message}`);
-      
+
       // Ghi log chi tiết lỗi ra file error.log để debug
       try {
         const logPath = path.join(__dirname, '../error.log');
@@ -363,8 +363,8 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
   // Nhánh xử lý Microsoft Edge TTS (Miễn phí, giọng đọc tiếng Việt siêu tự nhiên)
   if (voiceKey.toLowerCase().startsWith("microsoft_")) {
     try {
-      const msVoice = voiceKey.toLowerCase() === "microsoft_namminh" 
-        ? "vi-VN-NamMinhNeural" 
+      const msVoice = voiceKey.toLowerCase() === "microsoft_namminh"
+        ? "vi-VN-NamMinhNeural"
         : "vi-VN-HoaiMyNeural";
       console.log(`Calling Microsoft Edge TTS for scene ${sceneId} using voice ${msVoice}...`);
       const cleanText = normalizeTextForTTS(text);
