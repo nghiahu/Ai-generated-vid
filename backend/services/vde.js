@@ -154,7 +154,7 @@ const BUILTIN_STYLES = {
 
 const STYLES_DIR = path.join(__dirname, '../styles');
 
-// Helper to deep merge VDE style configurations
+// Helper to deep merge VDE style configurations (basic fallback)
 function deepMerge(target, source) {
   const output = { ...target };
   if (target && source && typeof target === 'object' && typeof source === 'object') {
@@ -192,6 +192,19 @@ function loadStyleComponent(styleId, componentName) {
   return null;
 }
 
+// Load a specific trait config from filesystem
+function loadTraitComponent(traitId, componentName) {
+  const filePath = path.join(__dirname, '../traits', traitId, `${componentName}.json`);
+  if (fs.existsSync(filePath)) {
+    try {
+      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    } catch (e) {
+      console.error(`[VDE] Error parsing VDE trait file ${filePath}:`, e.message);
+    }
+  }
+  return null;
+}
+
 // Check if style configuration exists
 function styleExists(styleId) {
   const dirPath = path.join(STYLES_DIR, styleId);
@@ -223,8 +236,59 @@ function getStyleExtends(styleId) {
   return null;
 }
 
-// Fully load and resolve VDE style with inheritance
-function getStyle(styleId) {
+// Merge source into target with check on accumulated permission locks
+function mergeWithPermissions(target, source, permissions = {}, pathPrefix = '') {
+  const output = { ...target };
+  if (target && source && typeof target === 'object' && typeof source === 'object') {
+    Object.keys(source).forEach(key => {
+      const currentPath = pathPrefix ? `${pathPrefix}.${key}` : key;
+      // If this specific path is locked, we retain target's value and do not merge
+      if (permissions[currentPath] && permissions[currentPath].canModify === false) {
+        return;
+      }
+      
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        if (!(key in target)) {
+          Object.assign(output, { [key]: source[key] });
+        } else {
+          output[key] = mergeWithPermissions(target[key], source[key], permissions, currentPath);
+        }
+      } else if (Array.isArray(source[key]) && Array.isArray(target[key])) {
+        // Merge arrays without duplicates
+        output[key] = Array.from(new Set([...target[key], ...source[key]]));
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    });
+  }
+  return output;
+}
+
+// Accumulate all _permissions properties recursively up the style inheritance tree
+function extractPermissions(styleId, accumulated = {}) {
+  const baseStyleId = getStyleExtends(styleId);
+  if (baseStyleId && styleExists(baseStyleId)) {
+    extractPermissions(baseStyleId, accumulated);
+  }
+  
+  const tokensData = loadStyleComponent(styleId, 'tokens');
+  if (tokensData && tokensData._permissions) {
+    Object.assign(accumulated, tokensData._permissions);
+  }
+  
+  const components = ['dna', 'grammar', 'motion', 'storytelling', 'assets', 'validator'];
+  components.forEach(comp => {
+    const compData = loadStyleComponent(styleId, comp);
+    if (compData && compData._permissions) {
+      Object.assign(accumulated, compData._permissions);
+    }
+  });
+  
+  return accumulated;
+}
+
+// Fully load and resolve VDE style with inheritance and trait composition
+function getStyle(styleId, traits = []) {
   let resolvedStyle = {};
   
   // Determine normalized style key matching available styles
@@ -238,7 +302,7 @@ function getStyle(styleId) {
   // Load inheritance base if specified
   const baseStyleId = getStyleExtends(targetStyleId);
   if (baseStyleId && styleExists(baseStyleId)) {
-    resolvedStyle = getStyle(baseStyleId);
+    resolvedStyle = getStyle(baseStyleId, []);
   }
 
   // Load local VDE components
@@ -252,7 +316,41 @@ function getStyle(styleId) {
     }
   });
 
-  return deepMerge(resolvedStyle, localStyle);
+  // Merge current style into resolved base style
+  let compiledStyle = deepMerge(resolvedStyle, localStyle);
+
+  // Extract accumulated permissions
+  const permissions = extractPermissions(targetStyleId);
+
+  // Apply traits (Layered Merger)
+  if (traits && Array.isArray(traits)) {
+    traits.forEach(traitId => {
+      components.forEach(comp => {
+        const traitCompData = loadTraitComponent(traitId, comp);
+        if (traitCompData) {
+          if (!compiledStyle[comp]) {
+            compiledStyle[comp] = {};
+          }
+          compiledStyle[comp] = mergeWithPermissions(
+            compiledStyle[comp],
+            traitCompData,
+            permissions,
+            comp
+          );
+        }
+      });
+    });
+  }
+
+  // Inject compilation metadata
+  compiledStyle.styleId = targetStyleId;
+  compiledStyle.meta = {
+    compiledAt: new Date().toISOString(),
+    inheritanceChain: baseStyleId ? [baseStyleId, targetStyleId] : [targetStyleId],
+    appliedTraits: traits
+  };
+
+  return compiledStyle;
 }
 
 // Initialize directory structure with default templates if empty
