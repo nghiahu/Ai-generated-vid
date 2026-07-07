@@ -657,45 +657,184 @@ export const StoryboardEditor = ({
                           boxSizing: "border-box",
                           display: "flex",
                           flexDirection: "column",
-                          justifyContent: "center",
-                          alignItems: "center",
+                          justifyContent: "space-between",
                           position: "relative",
                           overflow: "hidden",
                           backgroundImage: style.id === "cyberpunk" ? "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)" : "none",
-                          backgroundSize: "15px 15px"
+                          backgroundSize: "15px 15px",
+                          color: style.tokens.text
                         }}>
-                          <div style={{
-                            width: "100%",
-                            backgroundColor: style.tokens.cardBg.includes("gradient") ? undefined : style.tokens.cardBg,
-                            backgroundImage: style.tokens.cardBg.includes("gradient") ? style.tokens.cardBg : undefined,
-                            border: style.tokens.border,
-                            borderRadius: style.tokens.radius,
-                            boxShadow: style.tokens.shadow,
-                            padding: "12px",
-                            boxSizing: "border-box",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "8px"
-                          }}>
+                          {/* 1. Header decoration */}
+                          {style.id === "claude" && (
+                            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
+                              {/* Grid dots */}
+                              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 3px)", gap: "2px" }}>
+                                {Array.from({ length: 15 }).map((_, i) => (
+                                  <div key={i} style={{ width: "3px", height: "3px", borderRadius: "50%", backgroundColor: "#d9d2c9" }} />
+                                ))}
+                              </div>
+                              {/* Sun symbol */}
+                              <div style={{ color: "#d96b43", fontSize: "14px", fontWeight: "bold" }}>☀️</div>
+                            </div>
+                          )}
+
+                          {style.id === "cyberpunk" && (
+                            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontSize: "8px", fontFamily: "monospace", color: "rgba(0,229,255,0.4)" }}>
+                              <span>SYS.LOC // 0x48a</span>
+                              <span>GRID_ACTIVE</span>
+                            </div>
+                          )}
+
+                          {style.id !== "claude" && style.id !== "cyberpunk" && style.id !== "apple" && (
+                            <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                              <div style={{ fontSize: "8px", textTransform: "uppercase", padding: "2px 6px", border: `1px solid ${style.tokens.accent}50`, borderRadius: "10px", color: style.tokens.accent, fontWeight: "bold" }}>
+                                Kỷ nguyên AI
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Spacer for Apple center placement */}
+                          {style.id === "apple" && <div />}
+
+                          {/* 2. Main Content Card / Block */}
+                          {style.id === "apple" ? (
+                            <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
+                              <h4 style={{
+                                margin: 0,
+                                fontSize: "15px",
+                                fontWeight: "900",
+                                fontFamily: "sans-serif",
+                                textTransform: "uppercase",
+                                color: "#ffffff",
+                                letterSpacing: "-0.5px",
+                                lineHeight: "1.15"
+                              }}>
+                                AI BƯỚC SANG KỶ NGUYÊN MỚI
+                              </h4>
+                              <p style={{
+                                margin: 0,
+                                fontSize: "9px",
+                                color: "#86868b",
+                                lineHeight: "1.3"
+                              }}>
+                                Giờ đây nó có thể phát triển cả một dự án phần mềm.
+                              </p>
+                            </div>
+                          ) : style.id === "cyberpunk" ? (
                             <div style={{
-                              color: style.tokens.text,
-                              fontFamily: style.tokens.fontFamily,
-                              fontSize: "11px",
-                              fontWeight: "900",
-                              textTransform: "uppercase",
-                              lineHeight: "1.2"
+                              backgroundColor: style.tokens.cardBg.includes("gradient") ? undefined : style.tokens.cardBg,
+                              backgroundImage: style.tokens.cardBg.includes("gradient") ? style.tokens.cardBg : undefined,
+                              border: style.tokens.border,
+                              borderRadius: style.tokens.radius,
+                              boxShadow: style.tokens.shadow,
+                              padding: "10px",
+                              boxSizing: "border-box",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "6px",
+                              width: "100%"
                             }}>
-                              {style.id === "apple" ? "SIMPLE KEYNOTE" : "Title Scene"}
+                              <div style={{ fontSize: "7px", fontFamily: "monospace", color: "rgba(0,229,255,0.5)" }}>
+                                $ npm run dev --ai-agent
+                              </div>
+                              <h4 style={{
+                                margin: 0,
+                                fontSize: "10px",
+                                fontWeight: "bold",
+                                fontFamily: "monospace",
+                                color: "#ffffff",
+                                lineHeight: "1.2"
+                              }}>
+                                &gt; KỶ NGUYÊN AI MỚI
+                              </h4>
+                              <div style={{ fontSize: "8px", color: "#00e5ff", fontFamily: "monospace" }}>
+                                [X] CODE PROJECT IN PROGRESS
+                              </div>
                             </div>
-                            <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-                              <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: style.tokens.accent }} />
-                              <div style={{ width: "35px", height: "2.5px", backgroundColor: style.tokens.textSecondary, borderRadius: "1.5px" }} />
+                          ) : (
+                            <div style={{
+                              backgroundColor: style.tokens.cardBg.includes("gradient") ? undefined : style.tokens.cardBg,
+                              backgroundImage: style.tokens.cardBg.includes("gradient") ? style.tokens.cardBg : undefined,
+                              border: style.tokens.border,
+                              borderRadius: style.tokens.radius,
+                              boxShadow: style.tokens.shadow,
+                              padding: "12px",
+                              boxSizing: "border-box",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "8px",
+                              width: "100%"
+                            }}>
+                              <h4 style={{
+                                margin: 0,
+                                fontSize: "11px",
+                                fontWeight: "bold",
+                                fontFamily: style.tokens.fontFamily,
+                                color: style.tokens.text,
+                                lineHeight: "1.2"
+                              }}>
+                                AI THAY ĐỔI TOÀN DIỆN
+                              </h4>
+                              
+                              <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                                <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+                                  <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: style.tokens.accent }} />
+                                  <span style={{ fontSize: "8px", color: style.tokens.textSecondary }}>
+                                    Không chỉ viết vài dòng code
+                                  </span>
+                                </div>
+                                <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+                                  <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: style.tokens.accent }} />
+                                  <span style={{ fontSize: "8px", color: style.tokens.textSecondary }}>
+                                    Phát triển cả dự án phần mềm
+                                  </span>
+                                </div>
+                              </div>
                             </div>
-                            <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-                              <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: style.tokens.accent }} />
-                              <div style={{ width: "50px", height: "2.5px", backgroundColor: style.tokens.textSecondary, borderRadius: "1.5px" }} />
+                          )}
+
+                          {/* 3. Footer decoration / buttons */}
+                          {style.id === "claude" ? (
+                            <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%" }}>
+                              {/* Claude pill buttons matching screenshot */}
+                              <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+                                <span style={{ fontSize: "7px", padding: "3px 6px", border: "1px solid rgba(217, 107, 67, 0.25)", borderRadius: "10px", display: "flex", alignItems: "center", gap: "3px", backgroundColor: "#F7F2EB", color: "#6b655f" }}>
+                                  <span style={{ color: "#d96b43" }}>×</span> Không tự quay
+                                </span>
+                                <span style={{ fontSize: "7px", padding: "3px 6px", border: "1px solid rgba(217, 107, 67, 0.25)", borderRadius: "10px", display: "flex", alignItems: "center", gap: "3px", backgroundColor: "#F7F2EB", color: "#6b655f" }}>
+                                  <span style={{ color: "#d96b43" }}>×</span> Không cầm máy
+                                </span>
+                              </div>
+                              {/* Bottom branding */}
+                              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "7px", color: "#6b655f", borderTop: "1px solid rgba(0,0,0,0.05)", paddingTop: "4px" }}>
+                                <span>✴ TỔNG TÀI AI</span>
+                                <span>@tongtaiai</span>
+                              </div>
                             </div>
-                          </div>
+                          ) : style.id === "anime" ? (
+                            <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                              <button style={{
+                                width: "100%",
+                                padding: "4px",
+                                backgroundColor: "#ff6b6b",
+                                color: "#ffffff",
+                                border: "2px solid #000000",
+                                borderRadius: "8px",
+                                fontSize: "8px",
+                                fontWeight: "bold",
+                                boxShadow: "2px 2px 0px #000000"
+                              }}>
+                                XEM AI LÀM A-Z
+                              </button>
+                            </div>
+                          ) : style.id === "apple" ? (
+                            <div />
+                          ) : (
+                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "7px", color: style.tokens.textSecondary }}>
+                              <span>• HYPERFRAMES</span>
+                              <span>0:15</span>
+                            </div>
+                          )}
                         </div>
 
                         {/* Title and Description */}
