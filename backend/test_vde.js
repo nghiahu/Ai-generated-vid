@@ -71,12 +71,22 @@ function testNewBuiltinStyles() {
   console.log('  => PASS');
 }
 
+function testRikkeiStyle() {
+  console.log('- Test: Rikkei Academy Style (rikkei)');
+  const rikkeiStyle = vde.getStyle('rikkei', []);
+  assert.strictEqual(rikkeiStyle.tokens.colors.background, '#ffffff', 'Rikkei background must be #ffffff');
+  assert.strictEqual(rikkeiStyle.tokens.colors.accent, '#A8232A', 'Rikkei accent must be #A8232A');
+  assert.strictEqual(rikkeiStyle.tokens.fonts.title, 'Be Vietnam Pro', 'Rikkei title font must be Be Vietnam Pro');
+  console.log('  => PASS');
+}
+
 try {
   testSingleInheritance();
   testTraitApplication();
   testPermissionsCheck();
   testStylePromptOptimization();
   testNewBuiltinStyles();
+  testRikkeiStyle();
   console.log('=== ALL TESTS PASSED SUCCESSFULLY ===');
 } catch (error) {
   console.error('=== TEST FAILURE ===');
