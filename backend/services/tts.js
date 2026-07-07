@@ -188,14 +188,27 @@ async function runOmniVoiceSequentially(fn) {
 
 async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
   const apiKey = process.env.ELEVENLABS_API_KEY;
-  const fileName = `tts_${projectId}_${sceneId}.mp3`;
+  const version = Math.random().toString(36).substr(2, 4);
   const outputDir = path.join(__dirname, '../public/tts');
-  const outputPath = path.join(outputDir, fileName);
-
+  
   // Ensure directory exists
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
+
+  // Clean up any existing audio files for this scene to prevent disk bloat
+  try {
+    const files = fs.readdirSync(outputDir);
+    const prefix = `tts_${projectId}_${sceneId}`;
+    files.forEach(file => {
+      if (file.startsWith(prefix)) {
+        try { fs.unlinkSync(path.join(outputDir, file)); } catch (e) {}
+      }
+    });
+  } catch (e) {}
+
+  const fileName = `tts_${projectId}_${sceneId}_${version}.mp3`;
+  const outputPath = path.join(outputDir, fileName);
 
   // Nhánh xử lý OmniVoice (Chạy offline cục bộ qua omnivoice-infer CLI)
   if (voiceKey.toLowerCase().startsWith("omnivoice_")) {
@@ -265,7 +278,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       }
 
       // OmniVoice xuất WAV, nên lưu file .wav riêng
-      const wavFileName = `tts_${projectId}_${sceneId}.wav`;
+      const wavFileName = `tts_${projectId}_${sceneId}_${version}.wav`;
       const wavOutputPath = path.join(outputDir, wavFileName);
 
       const cleanText = normalizeTextForTTS(text);
