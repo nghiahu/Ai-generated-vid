@@ -128,6 +128,9 @@
 | **Task 125** | VDE Update FeatureCardBlock in UIBlocks | Phase 30: Rikkei Style Refinements | `[x]` | `my-video/src/components/layout/UIBlocks.tsx` |
 | **Task 126** | VDE Fix theme resolution and add primary/secondary support in DynamicLayout | Phase 30: Rikkei Style Refinements | `[x]` | `my-video/src/compositions/layouts/DynamicLayout.tsx` |
 | **Task 127** | VDE Verification & End-to-End Testing | Phase 30: Rikkei Style Refinements | `[x]` | Workspace-wide |
+| **Task 128** | VDE Update voice gender settings for BeatVN cloner in tts.js | Phase 31: BeatVN Voice Refinements | `[ ]` | `backend/services/tts.js` |
+| **Task 129** | VDE Add acronym normalization rules for IT and CRUD in tts.js | Phase 31: BeatVN Voice Refinements | `[ ]` | `backend/services/tts.js` |
+| **Task 130** | VDE Verification & End-to-End Testing | Phase 31: BeatVN Voice Refinements | `[ ]` | Workspace-wide |
 
 
 
