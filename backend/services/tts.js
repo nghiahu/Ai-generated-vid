@@ -40,16 +40,11 @@ function normalizeTextForTTS(text) {
   // Tránh việc ghép các từ viết tắt dạng viết hoa dính liền làm crash tokenizer của OmniVoice.
   // Đồng thời giữ nguyên cách phát âm tiếng Anh tự nhiên thay vì phiên âm tiếng Việt kỳ quặc.
   let normalized = text
-    .replace(/\bAI\b/g, "A I") // Thay thế AI thành A I để đọc đúng từng chữ cái trong tiếng Việt
-    .replace(/\bai\b/g, "a i")
-    .replace(/\bAPI\b/g, "A P I")
-    .replace(/\bapi\b/g, "a p i")
-    .replace(/\bUI\b/g, "U I")
-    .replace(/\bui\b/g, "u i")
-    .replace(/\bUX\b/g, "U X")
-    .replace(/\bux\b/g, "u x")
-    .replace(/\bURL\b/g, "U R L")
-    .replace(/\burl\b/g, "u r l");
+    .replace(/\bAI\b/g, "ây ai") // Đọc chuẩn tiếng Anh "ây ai" thay vì "a i"
+    .replace(/\bAPI\b/g, "ây pi ai")
+    .replace(/\bUI\b/g, "iu ai")
+    .replace(/\bUX\b/g, "iu ích")
+    .replace(/\bURL\b/g, "u rờ lờ");
 
   // Safety net: reverse-map common phonetic Vietnamese back to lowercase English.
   // Prevents OmniVoice tokenizer crash when Gemini slips and phonetically translates tech terms.
