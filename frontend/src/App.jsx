@@ -132,7 +132,8 @@ function App() {
     setLoadingMessage("AI đang phân tích kịch bản và sinh phân cảnh...");
 
     try {
-      const scenes = await api.generateStoryboard(currentProject.id, scriptText, visualStyle);
+      const traits = currentProject.config?.traits || [];
+      const scenes = await api.generateStoryboard(currentProject.id, scriptText, visualStyle, traits);
       setCurrentProject(prev => ({
         ...prev,
         scenes
