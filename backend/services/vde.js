@@ -380,33 +380,49 @@ function initializeVDESubdirs() {
   });
 }
 
-// Generate the visual design prompt rules for Gemini API
-function getStylePrompt(styleId) {
-  const style = getStyle(styleId);
-  return `
-- VISUAL PHILOSOPHY: ${style.dna?.tone || "clean, minimal"} (${style.dna?.description || "Tập trung cốt lõi"})
-- CORE DNA RULES:
-  * One idea per scene: ${style.dna?.philosophy?.oneIdeaPerScene ? "YES (Strict)" : "NO (Flexible)"}
-  * Minimalism target level: ${(style.dna?.philosophy?.minimalism || 1.0) * 100}%
-  * Clarity priority: ${(style.dna?.philosophy?.clarity || 1.0) * 100}%
+// Generate the visual design prompt rules for Gemini API (Pruning technical CSS parameters)
+function getStylePrompt(styleId, traits = []) {
+  const style = getStyle(styleId, traits);
+  
+  // Extract high-level conceptual rules and constraints
+  const optimizedDNA = {
+    tone: style.dna?.tone,
+    description: style.dna?.description,
+    philosophy: style.dna?.philosophy
+  };
+  
+  const optimizedGrammar = {
+    constraints: style.grammar?.constraints || []
+  };
 
-- LAYOUT GRAMMAR RULES:
-  * Allowed block nodes: ${JSON.stringify(style.grammar?.nodes || [])}
-  * Constraints: ${JSON.stringify(style.grammar?.constraints || [])}
+  const optimizedMotion = {
+    energy: style.motion?.energy || "low",
+    style: style.motion?.style || [],
+    avoid: style.motion?.avoid || []
+  };
+
+  return `
+- STYLE IDENTITY: "${style.styleId}" (Inheritance: ${style.meta?.inheritanceChain.join(' -> ')}, Active Traits: ${traits.join(', ') || 'none'})
+- VISUAL PHILOSOPHY & TONE:
+  * Tone: ${optimizedDNA.tone || "clean, minimal"}
+  * Description: ${optimizedDNA.description || ""}
+  * One idea per scene: ${optimizedDNA.philosophy?.oneIdeaPerScene ? "YES (Strict)" : "NO (Flexible)"}
+  * Minimalism level: ${(optimizedDNA.philosophy?.minimalism || 1.0) * 100}%
+  * Clarity priority: ${(optimizedDNA.philosophy?.clarity || 1.0) * 100}%
+
+- LAYOUT GRAMMAR CONSTRAINTS (Crucial for UI placement):
+  ${optimizedGrammar.constraints.map(c => `* ${c}`).join('\n  ')}
 
 - MOTION LANGUAGE:
-  * Motion energy: ${style.motion?.energy || "low"}
-  * Preferred transition styles: ${JSON.stringify(style.motion?.style || [])}
-  * Strictly avoid animations: ${JSON.stringify(style.motion?.avoid || [])}
+  * Energy: ${optimizedMotion.energy}
+  * Preferred transitions: ${JSON.stringify(optimizedMotion.style)}
+  * Strictly avoid: ${JSON.stringify(optimizedMotion.avoid)}
 
-- STORYTELLING PACING:
-  * Preferred narrative structure: ${JSON.stringify(style.storytelling?.scenePattern || [])}
+- STORYTELLING & ASSET SELECTION:
   * Pacing: ${style.storytelling?.pacing || "steady"}
-  * Typical scene duration target: ${style.storytelling?.averageSceneDuration || 6}s
-
-- ASSET GUIDELINES:
-  * Preferred visual asset types: ${JSON.stringify(style.assets?.preferred || [])}
-  * Strictly forbidden asset types: ${JSON.stringify(style.assets?.avoid || [])}
+  * Average Scene Duration: ${style.storytelling?.averageSceneDuration || 6}s
+  * Preferred assets: ${JSON.stringify(style.assets?.preferred || [])}
+  * Avoid assets: ${JSON.stringify(style.assets?.avoid || [])}
 `;
 }
 
