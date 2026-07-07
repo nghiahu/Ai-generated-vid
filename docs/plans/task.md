@@ -115,11 +115,11 @@
 | **Task 112** | VDE Implement Subheader, LogoRow, and CTAButton Blocks | Phase 27: Dynamic Blocks | `[x]` | `my-video/src/components/layout/UIBlocks.tsx` |
 | **Task 113** | VDE Mount blocks in DynamicLayout | Phase 27: Dynamic Blocks | `[x]` | `my-video/src/compositions/layouts/DynamicLayout.tsx` |
 | **Task 114** | VDE Verification & Mock Testing | Phase 27: Dynamic Blocks | `[x]` | `my-video/src/Root.tsx` |
-| **Task 115** | VDE Register Rikkei style on VDE backend compiler | Phase 28: Rikkei Style | `[ ]` | `backend/services/vde.js` |
-| **Task 116** | VDE Update Gemini AI visual prompt rules for Rikkei style | Phase 28: Rikkei Style | `[ ]` | `backend/services/ai.js` |
-| **Task 117** | VDE Setup Be Vietnam Pro font and VDE Tokens in my-video | Phase 28: Rikkei Style | `[ ]` | `my-video/src/` |
-| **Task 118** | VDE Integrate Rikkei style select card and mockup preview | Phase 28: Rikkei Style | `[ ]` | `frontend/src/components/StoryboardEditor.jsx` |
-| **Task 119** | VDE Verification & End-to-End Testing | Phase 28: Rikkei Style | `[ ]` | Workspace-wide |
+| **Task 115** | VDE Register Rikkei style on VDE backend compiler | Phase 28: Rikkei Style | `[x]` | `backend/services/vde.js` |
+| **Task 116** | VDE Update Gemini AI visual prompt rules for Rikkei style | Phase 28: Rikkei Style | `[x]` | `backend/services/ai.js` |
+| **Task 117** | VDE Setup Be Vietnam Pro font and VDE Tokens in my-video | Phase 28: Rikkei Style | `[x]` | `my-video/src/` |
+| **Task 118** | VDE Integrate Rikkei style select card and mockup preview | Phase 28: Rikkei Style | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
+| **Task 119** | VDE Verification & End-to-End Testing | Phase 28: Rikkei Style | `[x]` | Workspace-wide |
 
 
 
