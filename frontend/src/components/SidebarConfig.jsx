@@ -223,42 +223,7 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
           </div>
         </div>
 
-        {/* Style Traits (Modifiers) */}
-        <div>
-          <label className="form-label-mono">Style Modifiers (VDE Traits)</label>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "5px" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", cursor: "pointer" }}>
-              <input
-                type="checkbox"
-                checked={config.traits?.includes("dark_theme") ?? false}
-                onChange={(e) => {
-                  const currentTraits = config.traits || [];
-                  const newTraits = e.target.checked
-                    ? [...currentTraits, "dark_theme"]
-                    : currentTraits.filter(t => t !== "dark_theme");
-                  handleConfigChange("traits", newTraits);
-                }}
-                style={{ width: "16px", height: "16px", accentColor: "#000", cursor: "pointer" }}
-              />
-              Tông nền tối (Dark Theme)
-            </label>
-            <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", cursor: "pointer" }}>
-              <input
-                type="checkbox"
-                checked={config.traits?.includes("glass_effect") ?? false}
-                onChange={(e) => {
-                  const currentTraits = config.traits || [];
-                  const newTraits = e.target.checked
-                    ? [...currentTraits, "glass_effect"]
-                    : currentTraits.filter(t => t !== "glass_effect");
-                  handleConfigChange("traits", newTraits);
-                }}
-                style={{ width: "16px", height: "16px", accentColor: "#00", cursor: "pointer" }}
-              />
-              Hiệu ứng kính mờ (Glass Effect)
-            </label>
-          </div>
-        </div>
+
 
         {/* Watermark Section */}
         <div className="border-strict" style={{ padding: "20px", backgroundColor: "#ffffff" }}>
