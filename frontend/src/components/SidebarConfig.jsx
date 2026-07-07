@@ -201,23 +201,7 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
           </div>
         </div>
 
-        {/* Video Theme select */}
-        <div>
-          <label className="form-label-mono">Video Theme</label>
-          <div style={{ position: "relative" }}>
-            <select
-              className="form-input-mono"
-              value={config.videoTheme || "glassmorphism"}
-              onChange={(e) => handleConfigChange("videoTheme", e.target.value)}
-              style={{ cursor: "pointer" }}
-            >
-              <option value="glassmorphism">Vibrant Glassmorphism (Premium)</option>
-              <option value="brutalist">Brutalist Neo-Pop (Dynamic)</option>
-              <option value="minimalist">Minimalist Clean (Elegant)</option>
-              <option value="cyberpunk">Cyberpunk Neon</option>
-            </select>
-          </div>
-        </div>
+
 
         {/* Visual Design Style (VDE) select */}
         <div>
