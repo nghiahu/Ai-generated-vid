@@ -316,6 +316,22 @@ const VDE_PRESET_STYLES = [
       shadow: "5px 5px 0px #000000",
       fontFamily: "Space Grotesk, sans-serif"
     }
+  },
+  {
+    id: "rikkei",
+    name: "Rikkei Academic",
+    description: "Phong cách Rikkei Education: Nền trắng sạch, viền hồng đỏ, màu Crimson chủ đạo, thẻ học tập phẳng bo góc lớn cực dịu.",
+    tokens: {
+      background: "#ffffff",
+      cardBg: "#FAF5F5",
+      border: "1.5px solid #F1E2E3",
+      text: "#191919",
+      textSecondary: "#595959",
+      accent: "#A8232A",
+      radius: "16px",
+      shadow: "0 8px 24px rgba(168, 35, 42, 0.03)",
+      fontFamily: "Be Vietnam Pro, sans-serif"
+    }
   }
 ];
 
@@ -685,13 +701,20 @@ export const StoryboardEditor = ({
                             </div>
                           )}
 
-                          {style.id !== "claude" && style.id !== "cyberpunk" && style.id !== "apple" && (
-                            <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-                              <div style={{ fontSize: "8px", textTransform: "uppercase", padding: "2px 6px", border: `1px solid ${style.tokens.accent}50`, borderRadius: "10px", color: style.tokens.accent, fontWeight: "bold" }}>
-                                Kỷ nguyên AI
-                              </div>
-                            </div>
-                          )}
+                          {style.id === "rikkei" && (
+                             <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
+                               <span style={{ fontSize: "8px", fontWeight: "bold", color: "#A8232A", fontFamily: "sans-serif" }}>Hệ thống học tập</span>
+                               <span style={{ fontSize: "8px", color: "#555555", fontWeight: "500", fontFamily: "sans-serif" }}>Rikkei Edu</span>
+                             </div>
+                           )}
+
+                           {style.id !== "claude" && style.id !== "cyberpunk" && style.id !== "apple" && style.id !== "rikkei" && (
+                             <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                               <div style={{ fontSize: "8px", textTransform: "uppercase", padding: "2px 6px", border: `1px solid ${style.tokens.accent}50`, borderRadius: "10px", color: style.tokens.accent, fontWeight: "bold" }}>
+                                 Kỷ nguyên AI
+                               </div>
+                             </div>
+                           )}
                           
                           {/* Spacer for Apple center placement */}
                           {style.id === "apple" && <div />}
@@ -749,6 +772,38 @@ export const StoryboardEditor = ({
                               </h4>
                               <div style={{ fontSize: "8px", color: "#00e5ff", fontFamily: "monospace" }}>
                                 [X] CODE PROJECT IN PROGRESS
+                              </div>
+                            </div>
+                          ) : style.id === "rikkei" ? (
+                            <div style={{
+                              backgroundColor: "#FAF5F5",
+                              border: "1px solid #F1E2E3",
+                              borderRadius: "14px",
+                              padding: "10px",
+                              boxSizing: "border-box",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "4px",
+                              width: "100%"
+                            }}>
+                              <h4 style={{ margin: 0, fontSize: "10px", fontWeight: "bold", color: "#191919", fontFamily: "Be Vietnam Pro, sans-serif" }}>
+                                Quản lý dự án
+                              </h4>
+                              <p style={{ margin: 0, fontSize: "7px", color: "#595959", lineHeight: "1.3", fontFamily: "Be Vietnam Pro, sans-serif" }}>
+                                Nền kịch bản đăng ký, theo dõi các dự án của sinh viên.
+                              </p>
+                              <div style={{
+                                width: "fit-content",
+                                backgroundColor: "#A8232A",
+                                color: "#ffffff",
+                                fontSize: "7px",
+                                fontWeight: "bold",
+                                padding: "3px 8px",
+                                borderRadius: "8px",
+                                marginTop: "3px",
+                                fontFamily: "Be Vietnam Pro, sans-serif"
+                              }}>
+                                Truy cập →
                               </div>
                             </div>
                           ) : (
@@ -826,6 +881,11 @@ export const StoryboardEditor = ({
                               }}>
                                 XEM AI LÀM A-Z
                               </button>
+                            </div>
+                          ) : style.id === "rikkei" ? (
+                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "7px", color: "#A8232A", fontWeight: "bold", borderTop: "1px solid rgba(0,0,0,0.05)", paddingTop: "4px", width: "100%", fontFamily: "Be Vietnam Pro, sans-serif" }}>
+                              <span>Rikkei Education</span>
+                              <span style={{ color: "#595959" }}>@rikkeiedu</span>
                             </div>
                           ) : style.id === "apple" ? (
                             <div />
