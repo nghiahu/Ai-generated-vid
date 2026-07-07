@@ -59,11 +59,24 @@ function testStylePromptOptimization() {
   console.log('  => PASS');
 }
 
+function testNewBuiltinStyles() {
+  console.log('- Test: New VDE Styles (claude & light)');
+  const claudeStyle = vde.getStyle('claude', []);
+  assert.strictEqual(claudeStyle.tokens.colors.background, '#FBF9F4', 'Claude background must be #FBF9F4');
+  assert.strictEqual(claudeStyle.tokens.colors.accent, '#d96b43', 'Claude accent must be clay orange');
+  
+  const lightStyle = vde.getStyle('light', []);
+  assert.strictEqual(lightStyle.tokens.colors.background, '#ffffff', 'Light background must be #ffffff');
+  assert.strictEqual(lightStyle.tokens.colors.accent, '#2563eb', 'Light accent must be royal blue');
+  console.log('  => PASS');
+}
+
 try {
   testSingleInheritance();
   testTraitApplication();
   testPermissionsCheck();
   testStylePromptOptimization();
+  testNewBuiltinStyles();
   console.log('=== ALL TESTS PASSED SUCCESSFULLY ===');
 } catch (error) {
   console.error('=== TEST FAILURE ===');

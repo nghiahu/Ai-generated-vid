@@ -149,6 +149,57 @@ const BUILTIN_STYLES = {
       energy: "medium",
       style: ["scale-in", "bounce"]
     }
+  },
+  claude: {
+    extends: "minimal",
+    dna: {
+      philosophy: { oneIdeaPerScene: true, clarity: 0.95, minimalism: 0.9 },
+      tone: "warm editorial, premium publishing, claude beige, cozy scholarly",
+      description: "Phong cách biên tập báo chí cổ điển của Anthropic Claude: nền cát ấm, tiêu đề có chân chữ lớn, màu nhấn cam đất sét ấm áp."
+    },
+    tokens: {
+      colors: {
+        background: "#FBF9F4",
+        cardBg: "rgba(217, 107, 67, 0.03)",
+        border: "rgba(217, 107, 67, 0.15)",
+        accent: "#d96b43",
+        text: "#191919",
+        textSecondary: "#6b655f"
+      },
+      fonts: {
+        title: "Playfair Display, Georgia, serif",
+        body: "Inter"
+      },
+      radius: "20px"
+    },
+    motion: {
+      energy: "low",
+      style: ["fade", "opacity"]
+    }
+  },
+  light: {
+    extends: "minimal",
+    dna: {
+      philosophy: { oneIdeaPerScene: true, clarity: 1.0, minimalism: 0.95 },
+      tone: "clean minimalist light, bright corporate, positive startup",
+      description: "Thiết kế phẳng sáng sủa và tối giản: nền trắng tinh khiết, thẻ xám nhạt, màu nhấn xanh hoàng gia tươi tắn."
+    },
+    tokens: {
+      colors: {
+        background: "#ffffff",
+        cardBg: "#f8fafc",
+        border: "#e2e8f0",
+        accent: "#2563eb",
+        text: "#0f172a",
+        textSecondary: "#475569"
+      },
+      fonts: {
+        title: "Montserrat, Inter",
+        body: "Inter"
+      },
+      radius: "16px",
+      shadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)"
+    }
   }
 };
 
@@ -297,6 +348,8 @@ function getStyle(styleId, traits = []) {
   if (targetStyleId.includes("cyberpunk") || targetStyleId.includes("neon")) targetStyleId = "cyberpunk";
   else if (targetStyleId.includes("anime") || targetStyleId.includes("manga")) targetStyleId = "anime";
   else if (targetStyleId.includes("apple") || targetStyleId.includes("keynote")) targetStyleId = "apple";
+  else if (targetStyleId.includes("claude")) targetStyleId = "claude";
+  else if (targetStyleId.includes("light") || targetStyleId.includes("white")) targetStyleId = "light";
   else if (!styleExists(targetStyleId)) targetStyleId = "minimal"; // Default fallback
 
   // Load inheritance base if specified
