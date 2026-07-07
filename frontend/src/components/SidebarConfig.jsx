@@ -229,8 +229,10 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
               onChange={(e) => handleConfigChange("visualStyle", e.target.value)}
               style={{ cursor: "pointer" }}
             >
-              <option value="minimal">Minimalist Clean (Root Style)</option>
+              <option value="minimal">Minimalist Clean (Default)</option>
               <option value="apple">Apple Keynote (Pure Black/White)</option>
+              <option value="claude">Claude Editorial (Warm Beige)</option>
+              <option value="light">Minimalist Light (Bright White)</option>
               <option value="cyberpunk">Cyberpunk Neon Grid</option>
               <option value="anime">Anime Comic Hand-drawn</option>
             </select>
