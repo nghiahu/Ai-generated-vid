@@ -249,7 +249,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         ? path.join(__dirname, '../../mp3/beatvn/voice_beatvn.mp3')
         : path.join(refsDir, refFileName);
       const refText = isAnhQuy 
-        ? "Chúng ta ấy xem được hình ảnh của nó thì mình cần phải có một cái thuộc tính là gì các em hight 300 đúng chưa dúng là hight chưa ảnh này"
+        ? "Rồi chào các bạn nhá nốt tiếp nội dung của bài liên quan đến ứng dụng quản lý quản lý sinh viên bây giờ là chúng ta sẽ cùng nhau đi giải quyết nốt chức năng phân trang cho danh sách sinh viên này"
         : isDoTrinh
         ? "Giọng trầm ấm, rõ chữ, mang phong cách chuyên nghiệp, hiện đại, phù hợp cho các nội dung công nghệ, AI, kinh doanh, giáo dục và phát triển bản thân"
         : isBeatvn
