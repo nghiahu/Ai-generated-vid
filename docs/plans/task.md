@@ -98,3 +98,10 @@
 | **Task 95** | Pass Project Config to StoryboardEditor | Phase 24: Scene Preview | `[x]` | `frontend/src/App.jsx` |
 | **Task 96** | Implement InlineScenePlayer & Play Overlay | Phase 24: Scene Preview | `[x]` | `frontend/src/components/StoryboardEditor.jsx` |
 | **Task 97** | Final Verification & Cleanup | Phase 24: Scene Preview | `[x]` | Workspace-wide |
+| **Task 98** | VDE Setup Trait Configurations | Phase 25: Visual Design Engine | `[x]` | `backend/traits/` |
+| **Task 99** | VDE Write Compiler Unit Tests | Phase 25: Visual Design Engine | `[x]` | `backend/test_vde.js` |
+| **Task 100** | VDE Implement Inheritance & Layered Trait Merging | Phase 25: Visual Design Engine | `[x]` | `backend/services/vde.js` |
+| **Task 101** | VDE Implement Style Optimizer | Phase 25: Visual Design Engine | `[x]` | `backend/services/vde.js` |
+| **Task 102** | VDE Integrate Compiler into Server Routes | Phase 25: Visual Design Engine | `[x]` | `backend/services/ai.js`, `backend/server.js` |
+| **Task 103** | VDE Integrate Traits Selector on Config UI | Phase 25: Visual Design Engine | `[x]` | `frontend/src/components/SidebarConfig.jsx` |
+
