@@ -192,6 +192,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
           return { text: pt, animation: 'slide-up', delay: Number((idx * 1.5).toFixed(1)) };
         }
         return {
+          ...pt,
           text: pt.text || '',
           animation: pt.animation || 'slide-up',
           delay: typeof pt.delay === 'number' ? pt.delay : Number((idx * 1.5).toFixed(1))
