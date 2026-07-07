@@ -1,7 +1,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const vde = require("./vde");
 
-async function generateStoryboard(scriptText, visualStyle = "minimal") {
+async function generateStoryboard(scriptText, visualStyle = "minimal", traits = []) {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -18,7 +18,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal") {
   }
 
   // Retrieve Design DNA and guidelines for the selected visual style
-  const stylePrompt = vde.getStylePrompt(visualStyle);
+  const stylePrompt = vde.getStylePrompt(visualStyle, traits);
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);

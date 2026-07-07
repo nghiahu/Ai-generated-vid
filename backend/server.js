@@ -88,7 +88,43 @@ app.get('/api/projects/:id', async (req, res) => {
     if (!project) {
       return res.status(404).json({ error: 'Project not found' });
     }
+    
+    // Inject fully compiled VDE tokens into config
+    if (project.config) {
+      const visualStyle = project.config.visualStyle || 'minimal';
+      const traits = project.config.traits || [];
+      const activeTraits = [...traits];
+      if (project.config.ratio === '9:16' && !activeTraits.includes('vertical_video')) {
+        activeTraits.push('vertical_video');
+      }
+      project.config.vdeTokens = vde.getStyle(visualStyle, activeTraits);
+    }
+    
     res.json(project);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 3a. GET /api/projects/:id/vde-style: Get fully compiled VDE visual style
+app.get('/api/projects/:id/vde-style', async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    const project = await db.getProjectById(projectId);
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+    const visualStyle = project.config?.visualStyle || 'minimal';
+    const traits = project.config?.traits || [];
+    
+    // Automatically apply vertical_video trait contextually if ratio is 9:16
+    const activeTraits = [...traits];
+    if (project.config?.ratio === '9:16' && !activeTraits.includes('vertical_video')) {
+      activeTraits.push('vertical_video');
+    }
+    
+    const compiledStyle = vde.getStyle(visualStyle, activeTraits);
+    res.json(compiledStyle);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -155,6 +191,16 @@ app.put('/api/projects/:id/config', async (req, res) => {
           console.error(`Background TTS regeneration failed: ${bgError.message}`);
         }
       })();
+    }
+
+    if (updatedProject.config) {
+      const visualStyle = updatedProject.config.visualStyle || 'minimal';
+      const traits = updatedProject.config.traits || [];
+      const activeTraits = [...traits];
+      if (updatedProject.config.ratio === '9:16' && !activeTraits.includes('vertical_video')) {
+        activeTraits.push('vertical_video');
+      }
+      updatedProject.config.vdeTokens = vde.getStyle(visualStyle, activeTraits);
     }
 
     res.json(updatedProject.config);
@@ -246,19 +292,35 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    const { scriptText, visualStyle } = req.body;
+        const { scriptText, visualStyle, traits } = req.body;
     if (!scriptText) {
       return res.status(400).json({ error: 'Script text is required' });
     }
 
-    // Persist the selected visual style in the project configuration database
-    if (visualStyle) {
-      project.config.visualStyle = visualStyle;
-      await db.updateProjectConfig(projectId, { visualStyle });
+    // Persist the selected visual style and traits in the project configuration database
+    if (visualStyle || traits) {
+      const updateData = {};
+      if (visualStyle) {
+        project.config.visualStyle = visualStyle;
+        updateData.visualStyle = visualStyle;
+      }
+      if (traits) {
+        project.config.traits = traits;
+        updateData.traits = traits;
+      }
+      await db.updateProjectConfig(projectId, updateData);
+    }
+
+    // Determine active traits (including contextual ones like ratio-based)
+    const currentStyle = visualStyle || project.config.visualStyle || "minimal";
+    const currentTraits = traits || project.config.traits || [];
+    const activeTraits = [...currentTraits];
+    if (project.config.ratio === '9:16' && !activeTraits.includes('vertical_video')) {
+      activeTraits.push('vertical_video');
     }
 
     // Step 1: Call Gemini to parse and split script text using VDE rules
-    const rawScenes = await ai.generateStoryboard(scriptText, visualStyle || project.config.visualStyle || "minimal");
+    const rawScenes = await ai.generateStoryboard(scriptText, currentStyle, activeTraits);
 
     // Step 2: For each scene, fetch images and generate voiceover TTS
     const scenes = [];
