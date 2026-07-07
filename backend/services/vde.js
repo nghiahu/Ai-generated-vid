@@ -202,6 +202,34 @@ const BUILTIN_STYLES = {
       radius: "16px",
       shadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)"
     }
+  },
+  rikkei: {
+    extends: "minimal",
+    dna: {
+      philosophy: { oneIdeaPerScene: true, clarity: 0.95, minimalism: 0.8 },
+      tone: "professional, educational, academic, clean, corporate, structured",
+      description: "Phong cách học viện Rikkei Academy: Nền trắng sạch sẽ, màu đỏ crimson làm chủ đạo, thẻ bo góc lớn màu hồng nhạt siêu dịu."
+    },
+    tokens: {
+      colors: {
+        background: "#ffffff",
+        cardBg: "#FAF5F5",
+        border: "rgba(168, 35, 42, 0.08)",
+        accent: "#A8232A",
+        text: "#191919",
+        textSecondary: "#595959"
+      },
+      fonts: {
+        title: "Be Vietnam Pro",
+        body: "Be Vietnam Pro"
+      },
+      radius: "16px",
+      shadow: "0 8px 24px rgba(168, 35, 42, 0.03)"
+    },
+    motion: {
+      energy: "medium",
+      style: ["slide-up", "fade"]
+    }
   }
 };
 
