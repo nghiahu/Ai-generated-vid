@@ -176,7 +176,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         : isDoTrinh
         ? "Giọng trầm ấm, rõ chữ, mang phong cách chuyên nghiệp, hiện đại, phù hợp cho các nội dung công nghệ, AI, kinh doanh, giáo dục và phát triển bản thân"
         : isBeatvn
-        ? "Giọng đọc tin tức BeatVN rõ ràng và mạch lạc."
+        ? "giáo viên trường trung học phổ thông chuyên Tuyên Quang vừa bị tạm giữ từng đạt giải học sinh giỏi quốc gia môn Toán tuyển thẳng vào đại học và Tốt nghiệp loại giỏi sinh năm 1998 được giảng dạy ở một trường chuyên của tỉnh Tuyên Quang có nghĩa là người thầy giáo này phải thật sự giỏi"
         : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
 
       // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại (chỉ cho các giọng mặc định)
