@@ -242,7 +242,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       
       const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
       let refAudioPath = isAnhQuy 
-        ? path.join(__dirname, '../../mp3/anhquy/voiceanhquy.mp3')
+        ? path.join(__dirname, '../../mp3/anhquy/voice_anh_quy.mp3')
         : isDoTrinh
         ? path.join(__dirname, '../../mp3/elevenlab/do_trinh/voice_preview_đô trịnh - giọng hay.mp3')
         : isBeatvn
