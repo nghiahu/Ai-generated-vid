@@ -69,6 +69,24 @@ app.get('/api/projects', async (req, res) => {
   }
 });
 
+// 1.5. GET /api/vde-themes: Get all VDE themes dynamically from master JSON
+app.get('/api/vde-themes', (req, res) => {
+  try {
+    const stylesList = Object.keys(vde.BUILTIN_STYLES).map(id => {
+      const style = vde.BUILTIN_STYLES[id];
+      return {
+        id,
+        name: style.name,
+        description: style.description,
+        tokens: style.tokens
+      };
+    });
+    res.json(stylesList);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // 2. POST /api/projects: Create new project
 app.post('/api/projects', async (req, res) => {
   try {
@@ -176,7 +194,8 @@ app.put('/api/projects/:id/config', async (req, res) => {
             for (const scene of project.scenes) {
               if (scene.voiceover) {
                 console.log(`Regenerating TTS for project ${projectId} scene ${scene.id} with new voice ${voiceKey}...`);
-                const voiceoverText = scene.voiceoverTts || scene.voiceover;
+                const isOmniVoice = voiceKey.toLowerCase().startsWith("omnivoice_");
+                const voiceoverText = isOmniVoice ? (scene.voiceoverTts || scene.voiceover) : scene.voiceover;
                 const ttsResult = await tts.generateTTS(voiceoverText, projectId, scene.id, voiceKey);
                 
                 const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
@@ -278,7 +297,9 @@ app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
         : (project.config.voice || 'rachel');
-      const ttsResult = await tts.generateTTS(voiceoverTts, projectId, sceneId, voiceKey);
+      const isOmniVoice = voiceKey.toLowerCase().startsWith("omnivoice_");
+      const voiceoverText = isOmniVoice ? voiceoverTts : sceneData.voiceover;
+      const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
       voiceoverAudioUrl = ttsResult.url;
       voiceoverDuration = ttsResult.duration;
       sceneData.duration = ttsResult.duration;
@@ -354,7 +375,8 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
         : (project.config.voice || 'rachel');
-      const voiceoverText = scene.voiceoverTts || scene.voiceover;
+      const isOmniVoice = voiceKey.toLowerCase().startsWith("omnivoice_");
+      const voiceoverText = isOmniVoice ? (scene.voiceoverTts || scene.voiceover) : scene.voiceover;
       const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
 
       const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
