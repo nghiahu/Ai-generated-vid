@@ -55,34 +55,59 @@ const ADDITIONAL_VIETNAMESE_WORDS = [
 ];
 ADDITIONAL_VIETNAMESE_WORDS.forEach(w => VIETNAMESE_STOP_WORDS.add(w));
 
+const TECH_TERMS_WHITELIST = new Set([
+  'react', 'api', 'vite', 'nextjs', 'next.js', 'nodejs', 'node.js', 'javascript', 'typescript', 
+  'css', 'html', 'npm', 'json', 'sql', 'cli', 'git', 'github', 'docker', 'aws', 'vercel', 
+  'remotion', 'video', 'marketing', 'dashboard', 'animation', 'avatar', 'website', 'logo', 
+  'brand', 'component', 'framework', 'timeline', 'audio', 'mp4', 'mp3', 'client', 'server', 
+  'app', 'dev', 'build', 'deploy', 'code', 'database', 'ai', 'gpt', 'llm', 'agent', 'premiere',
+  'capcut', 'photoshop', 'illustrator', 'canva', 'figma', 'ui', 'ux', 'front-end', 'back-end'
+]);
+
 /**
  * Trích xuất thuật ngữ cục bộ không dùng LLM (sử dụng từ điển CMU và DB cache) làm fallback khi Gemini lỗi/quota
  */
 function localExtractTerms(text) {
-  // Tách văn bản thành các từ bằng khoảng trắng
   const rawWords = text.split(/\s+/);
   const terms = [];
   
   for (const rawWord of rawWords) {
-    // Làm sạch dấu câu ở đầu và cuối từ (như dấu phẩy, chấm, ngoặc kép, ngoặc vuông)
     const cleanWord = rawWord.replace(/^[-.,!?;()'"“”\[\]]+|[-.,!?;()'"“”\[\]]+$/g, "");
     
     // Nếu từ rỗng hoặc chứa ký tự tiếng Việt có dấu (non-ASCII như â, ê, ô, á, à, ự...), bỏ qua toàn bộ từ
     if (!cleanWord || /[^\x00-\x7F]/.test(cleanWord)) continue;
     
-    // Kiểm tra xem từ có phải là từ tiếng Anh chuẩn (gồm chữ cái, chấm, gạch ngang)
-    if (!/^[a-zA-Z]+(?:[-.][a-zA-Z]+)*$/.test(cleanWord)) continue;
+    // Phải chứa ít nhất 1 chữ cái
+    if (!/[a-zA-Z]/.test(cleanWord)) continue;
     
     const lower = cleanWord.toLowerCase();
     
-    // Nếu từ này nằm trong danh mục từ dừng tiếng Việt (viết không dấu), bỏ qua
-    // Ngoại lệ: Nếu từ viết HOA TOÀN BỘ từ 2 chữ cái trở lên (như "AI", "API", "SDK") thì không bỏ qua vì đó là viết tắt tiếng Anh.
+    // Nếu nằm trong danh mục từ dừng tiếng Việt (viết không dấu), bỏ qua (trừ khi viết hoa toàn bộ như AI)
     const isAllCaps = cleanWord === cleanWord.toUpperCase() && cleanWord.length >= 2;
     if (VIETNAMESE_STOP_WORDS.has(lower) && !isAllCaps) continue;
     
-    // Giữ lại từ nếu nó nằm trong từ điển CMU hoặc là từ viết tắt từ 2 ký tự trở lên (như AI, API, SDK, CLI)
-    if (cmuDict.has(lower) || cleanWord.length >= 2) {
+    // 1. Khớp từ viết tắt/thuật ngữ công nghệ nổi tiếng
+    if (TECH_TERMS_WHITELIST.has(lower)) {
       terms.push(cleanWord);
+      continue;
+    }
+    
+    // 2. Khớp từ viết hoa hoàn toàn (acronyms)
+    if (isAllCaps) {
+      terms.push(cleanWord);
+      continue;
+    }
+    
+    // 3. Khớp từ có cấu trúc đặc trưng tiếng Anh (có ký tự w, f, z, j hoặc kết thúc bằng r, s, l, d, g, b, k hoặc có cụm phụ âm tiếng Anh)
+    const hasForeignChars = /[wfzj]/i.test(cleanWord);
+    const endsWithEnglishConsonant = /[rsldgbk]$/i.test(cleanWord) && cleanWord.length >= 3;
+    const hasEnglishPrefix = /^(cl|cr|fl|gl|gr|pl|pr|sl|sp|st|sh|str)/i.test(cleanWord);
+    const hasEnglishSuffix = /(rt|nd|ld|ck|ct|mp|lt|nt|rk|st)$/i.test(cleanWord);
+    
+    if (hasForeignChars || endsWithEnglishConsonant || hasEnglishPrefix || hasEnglishSuffix) {
+      if (cmuDict.has(lower)) {
+        terms.push(cleanWord);
+      }
     }
   }
   return [...new Set(terms)];
