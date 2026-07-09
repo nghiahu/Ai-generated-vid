@@ -26,7 +26,10 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
     console.log(`[Gemini API] Khởi tạo model: ${modelName} cho phong cách thiết kế VDE: ${visualStyle}`);
     let model = genAI.getGenerativeModel({ 
       model: modelName,
-      generationConfig: { responseMimeType: "application/json" }
+      generationConfig: { 
+        responseMimeType: "application/json",
+        maxOutputTokens: 8192
+      }
     });
 
     const prompt = `
@@ -47,7 +50,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       [
         {
           "layoutFamily": "Opening / Headline" | "Points / List" | "Quote / Text",
-          "visualLayout": "Hero" | "Split Screen" | "Dashboard" | "Feature Grid" | "Timeline" | "Comparison" | "Terminal" | "Gallery" | "Laptop Mockup" | "Stats Banner" | "Three Columns" | "Integration Cloud" | "IntroChapterStack",
+          "visualLayout": "AppCardConcept" | "AppShowcaseTitle" | "AuditTrailChecklist" | "BeforeAfterPanel" | "BottomAnchorOutro" | "BrandOutro" | "BroadcastLowerThirdTitle" | "CandlestickBreakoutHook" | "CaseStudyEditorial" | "CenterLineOutro" | "ComparisionScoreboard" | "Comparison" | "ComparisonBoard" | "ContactCardEnding" | "ConversationQuote" | "Dashboard" | "DebateTriangleBullet" | "DecisionCardRadio" | "DecisionMatrix" | "DecisionTree" | "DiffReceiptQuote" | "DossierNotes" | "DossierProofBullet" | "DossierQuestion" | "EarningsSnapshotHook" | "EditorialChart" | "EditorialQuestion" | "Ending" | "EvidenceBoardConcept" | "FearGreedHook" | "Feature Grid" | "FeedScrollHook" | "FlowchartTitle" | "ForumQuote" | "Gallery" | "GaugeStat" | "GlassStatTable" | "HeartQuestion" | "Hero" | "HeroMetricCards" | "HotTakeQuote" | "ImageBackbroundPoster" | "ImageBackgroundBadge" | "ImageBackgroundDefault" | "ImageBackgroundGlobe" | "ImpactLadderTable" | "Integration Cloud" | "IntroBriefingCard" | "IntroBubbleImage" | "IntroChapterStack" | "IntroCutoutHeadlineImage" | "IntroEvidenceReadlineImage" | "IntroEvidenceScanlineImage" | "IntroEvidenceTagsImage" | "IntroEvidenceTimelineImage" | "IntroFullImage" | "IntroFullImageBreakingStack" | "IntroFullImageCaptionLockup" | "IntroFullImageDataBroadcast" | "IntroFullImageReporterOverlay" | "IntroFullImageSplitHeadline" | "IntroFullImageSpotlightSubject" | "IntroHalfImage" | "IntroKineticCountdownImage" | "IntroKineticImage" | "IntroMapPinsImage" | "IntroMediaCard" | "IntroMediaHero" | "IntroMediaPoster" | "IntroMetricConstellationImage" | "IntroMetricGyroscopeImage" | "IntroMetricKpiBoardImage" | "IntroMetricOrbitImage" | "IntroMetricPillImage" | "IntroMetricPulseStackImage" | "IntroNumberLede" | "IntroProfile" | "IntroProfileDossier" | "IntroRadarSignalImage" | "IntroSignalStepsImages" | "IntroStampStackImage" | "KanbanChecklist" | "KineticType" | "LabelwriterQuote" | "Laptop Mockup" | "Launch" | "LessonHightlightQuote" | "LogoWall" | "LowerThirdNews" | "ManifestoConcept" | "ManifestoQuote" | "MapPinsHook" | "MarketBoard" | "MediaCard" | "MediaCardHook" | "MediaHeadlineHook" | "MediaImageBottomBrief" | "MediaImageFloatingPoints" | "MediaImageFocusWindow" | "MediaImageHorizontalPan" | "MediaImageLandscapeZoomOut" | "MediaImageMapCallout" | "MediaImageNewsLowerThird" | "MediaImagePinBoard" | "MediaImageTopBrief" | "MediaImageWideCardStack" | "MessageQuote" | "MetricCards" | "Minimal" | "NeonPlanVersus" | "NeonStackTitle" | "NewsTicker" | "NextStepEnding" | "NotificationHook" | "OldVsNews" | "OpsBriefBullef" | "OpsMonitorHook" | "OptionSelectorRadio" | "OrbitMetricsHook" | "PinnedMessageQuote" | "PollStackQuesion" | "PosterTitle" | "PriceAlertHook" | "ProcessStrip" | "Product" | "ProgressBars" | "ProgressGateChecklist" | "Pullquote" | "QuietLogoMark" | "Quote" | "QuoteColumnQuestion" | "RadialMetricCards" | "Ranked" | "RankedImpactBullet" | "RedditPostHook" | "ScoreboardMeticCards" | "SelectorWheelRadio" | "SignalCheckpointsBullet" | "SignalRailBullet" | "SingleStat" | "SocialFollowEnding" | "SocialPost" | "SoftBoardChecklist" | "SomparisonTable" | "SpeakerAvatarQuote" | "Split Screen" | "SplitBandChecklist" | "SplitClaimStat" | "SplitEditorial" | "SplitProofBullet" | "SplitScreenInterview" | "SplitVerdictTable" | "SporlightOutcome" | "SpotlightConcept" | "SpotlightStat" | "StackedProofMetrics" | "StampCheklist" | "StampStat" | "Stats Banner" | "StatusGridHook" | "Subscribe" | "SwissGrid" | "SwitchboardRadio" | "SysteamAlertHook" | "Terminal" | "TerminalCommandHook" | "Three Columns" | "TickerMetricCards" | "TickerTapeHook" | "Timeline" | "TimelineBeamRail" | "TimelineChapters" | "TimelineCheckFlow" | "TimelineEditorial" | "TimelineMapPins" | "TimelineNewswire" | "TimelineRadar" | "TimelineRoadmap" | "TimelineStaircase" | "VersusArena" | "VersusBrightDiagonalPoster" | "VersusChoiceRadio" | "VersusDiagonalDetailsPoster" | "VersusDiagonalSpotlight" | "VersusScale" | "VersusSplitBands" | "VersusSplitCards" | "VersusTimelineShift" | "VersusTugline" | "VersusVerdict" | "VignelliQuote" | "VignelliTitle" | "WalkthroughPhoneExample" | "WarmGrainHook" | "XPostHook",
           "heading": "Scene title/heading in Vietnamese",
           "points": [
             {
@@ -71,31 +74,27 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       ]
       
       Layout selection guide for "visualLayout":
-      - Use "Hero" for introduction scenes with big title.
-      - Use "Split Screen" if there is an image illustration and description side-by-side.
-      - Use "Dashboard" if there are 2 or more statistics / key metric lines (e.g., lines containing "+85% speed", "95K stars").
-      - Use "Feature Grid" if there are 4 or more clean bullet points listing features.
-      - Use "Timeline" if the scene shows step-by-step instructions or sequential events (e.g., "Bước 1", "Bước 2", "Tiến trình").
-      - Use "Comparison" if the scene contrasts two systems or has Pros vs Cons.
-      - Use "Terminal" if there are terminal installation commands (e.g. starting with "$" or "npm install").
-      - Use "Gallery" for multiple screenshots.
-      - Use "Laptop Mockup" for responsive showcase, cross-platform apps, or product features.
-      - Use "Stats Banner" for detailed analytics dashboard panels with line charts and live metric widgets.
-      - Use "Three Columns" for subscription plans, pricing tiers, or 3-step feature lists.
-      - Use "Integration Cloud" for API connections, integrations, or automated workflow diagrams.
-      - Use "IntroChapterStack" for opening scenes or chapter announcements with a 3D overlapping stack of cards (like previous, active, and next chapters stacked together).
+      Select the best matching layout from the categories below based on visual context:
+      - Opening / Headline: AppCardConcept, AppShowcaseTitle, BeforeAfterPanel, BroadcastLowerThirdTitle, CandlestickBreakoutHook, CaseStudyEditorial, DossierNotes, EarningsSnapshotHook, EvidenceBoardConcept, FearGreedHook, FeedScrollHook, FlowchartTitle, Hero, IntroBriefingCard, IntroBubbleImage, IntroChapterStack, IntroCutoutHeadlineImage, IntroEvidenceReadlineImage, IntroEvidenceScanlineImage, IntroEvidenceTagsImage, IntroEvidenceTimelineImage, IntroFullImage, IntroFullImageBreakingStack, IntroFullImageCaptionLockup, IntroFullImageDataBroadcast, IntroFullImageReporterOverlay, IntroFullImageSplitHeadline, IntroFullImageSpotlightSubject, IntroHalfImage, IntroKineticCountdownImage, IntroKineticImage, IntroMapPinsImage, IntroMediaCard, IntroMediaHero, IntroMediaPoster, IntroMetricConstellationImage, IntroMetricGyroscopeImage, IntroMetricKpiBoardImage, IntroMetricOrbitImage, IntroMetricPillImage, IntroMetricPulseStackImage, IntroNumberLede, IntroProfile, IntroProfileDossier, IntroRadarSignalImage, IntroSignalStepsImages, IntroStampStackImage, KineticType, LowerThirdNews, ManifestoConcept, MapPinsHook, MediaCardHook, MediaHeadlineHook, NeonStackTitle, NotificationHook, OpsMonitorHook, OrbitMetricsHook, PosterTitle, PriceAlertHook, ProcessStrip, RedditPostHook, SplitEditorial, SporlightOutcome, SpotlightConcept, StatusGridHook, SwissGrid, SysteamAlertHook, Terminal, TerminalCommandHook, TickerTapeHook, VignelliTitle, WalkthroughPhoneExample, WarmGrainHook, XPostHook
+      - List / Steps: AuditTrailChecklist, DebateTriangleBullet, DecisionCardRadio, DecisionTree, DossierProofBullet, Feature Grid, KanbanChecklist, LogoWall, OpsBriefBullef, OptionSelectorRadio, ProgressGateChecklist, RankedImpactBullet, SelectorWheelRadio, SignalCheckpointsBullet, SignalRailBullet, SocialPost, SoftBoardChecklist, SplitBandChecklist, SplitProofBullet, StampCheklist, SwitchboardRadio, Three Columns, VersusChoiceRadio
+      - Data / Metrics: Dashboard, EditorialChart, GaugeStat, HeroMetricCards, MarketBoard, MetricCards, ProgressBars, RadialMetricCards, ScoreboardMeticCards, SingleStat, SplitClaimStat, SpotlightStat, StackedProofMetrics, StampStat, Stats Banner, TickerMetricCards
+      - Comparison / Table: ComparisionScoreboard, Comparison, ComparisonBoard, DecisionMatrix, GlassStatTable, ImpactLadderTable, NeonPlanVersus, OldVsNews, Ranked, SomparisonTable, SplitScreenInterview, SplitVerdictTable, VersusArena, VersusBrightDiagonalPoster, VersusDiagonalDetailsPoster, VersusDiagonalSpotlight, VersusScale, VersusSplitBands, VersusSplitCards, VersusTimelineShift, VersusTugline, VersusVerdict
+      - Quote / Insight: ConversationQuote, DiffReceiptQuote, DossierQuestion, EditorialQuestion, ForumQuote, HeartQuestion, HotTakeQuote, LabelwriterQuote, LessonHightlightQuote, ManifestoQuote, MessageQuote, NewsTicker, PinnedMessageQuote, PollStackQuesion, Pullquote, Quote, QuoteColumnQuestion, SpeakerAvatarQuote, VignelliQuote
+      - Timeline: Timeline, TimelineBeamRail, TimelineChapters, TimelineCheckFlow, TimelineEditorial, TimelineMapPins, TimelineNewswire, TimelineRadar, TimelineRoadmap, TimelineStaircase
+      - Media: Gallery, ImageBackbroundPoster, ImageBackgroundBadge, ImageBackgroundDefault, ImageBackgroundGlobe, Integration Cloud, Laptop Mockup, MediaCard, MediaImageBottomBrief, MediaImageFloatingPoints, MediaImageFocusWindow, MediaImageHorizontalPan, MediaImageLandscapeZoomOut, MediaImageMapCallout, MediaImageNewsLowerThird, MediaImagePinBoard, MediaImageTopBrief, MediaImageWideCardStack, Split Screen
+      - Ending: BottomAnchorOutro, BrandOutro, CenterLineOutro, ContactCardEnding, Ending, Launch, Minimal, NextStepEnding, Product, QuietLogoMark, SocialFollowEnding, Subscribe
       
-      CRITICAL BLOCK STYLE SELECTION RULES FOR phong cách "${visualStyle}":
-      - If style is "claude", prefer using "subheader", "logo_row", and "button" block types to create a premium editorial magazine aesthetic. Avoid using "terminal" unless it's a code-only command scene.
-      - If style is "cyberpunk", prefer using "terminal", "metric" and "badge_row" block types with vibrant text/metrics.
-      - If style is "apple" or "light", prefer using "subheader", "badge_row" and clean "button" CTA blocks.
-      - If style is "rikkei", prefer using "subheader", "logo_row", and "button" block types to create a premium, clean educational layout. Use crimson red (#A8232A) highlights and rounded buttons.
+      CRITICAL BLOCK STYLE SELECTION RULES FOR THE THEME:
+      ${vde.getStylePrompt(visualStyle)}
       
       GLOBAL CRITICAL RULE FOR VOICEOVER TEXT:
       Technical and English terms in the "voiceover" field MUST remain as lowercase English words.
       Examples of CORRECT voiceover text: "html, css, và javascript là nền tảng của web."
       Examples of WRONG voiceover text: "Hát Tê Em Lờ, Xê Ét Ét, và Gia va sờ cờ ríp là nền tảng của web."
       Apply this rule to: html, css, javascript, react, node.js, next.js, api, mp4, mp3, npm, json, sql, typescript, python, github, docker, aws, gpt.
+      
+      CRITICAL JSON SYNTAX RULE:
+      Any double quotes inside string values (such as "heading" or "voiceover") MUST be escaped as \\" (e.g., \\"tin vui\\") or replaced with single quotes to keep the JSON syntax valid.
       
       Return ONLY the raw JSON array. Do not include markdown formatting or wrapping.
     `;
@@ -133,7 +132,10 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
           modelName = nextFallback;
           model = genAI.getGenerativeModel({ 
             model: modelName,
-            generationConfig: { responseMimeType: "application/json" }
+            generationConfig: { 
+              responseMimeType: "application/json",
+              maxOutputTokens: 8192
+            }
           });
           attempt--; // Reset attempt index to retry with the fallback model
           continue;
@@ -176,7 +178,22 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
 
     console.log("Gemini raw response:", text);
 
-    let scenes = JSON.parse(text);
+    let scenes;
+    try {
+      scenes = JSON.parse(text);
+    } catch (e) {
+      console.warn("[Gemini API] JSON.parse failed. Attempting quote repair...", e.message);
+      try {
+        const repaired = text.replace(/:\s*"([\s\S]*?)"\s*(,|\n|\})/g, (match, p1, p2) => {
+          const escapedVal = p1.replace(/(?<!\\)"/g, '\\"');
+          return `: "${escapedVal}"${p2}`;
+        });
+        scenes = JSON.parse(repaired);
+      } catch (repairErr) {
+        throw new Error(`Expected valid JSON from Gemini but got parse error: ${e.message}`);
+      }
+    }
+
     if (!Array.isArray(scenes)) {
       throw new Error("Dữ liệu Gemini trả về không phải là một mảng JSON.");
     }
