@@ -196,15 +196,15 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
                 ? path.join(__dirname, '../../mp3/duy_thanh_nguyen/voice_duy_thanh.mp3')
                 : path.join(refsDir, refFileName);
       const refText = isAnhQuy
-        ? "Rồi chào các bạn nhá nốt tiếp nội dung của bài liên quan đến ứng dụng quản lý quản lý sinh viên bây giờ là chúng ta sẽ cùng nhau đi giải quyết nốt chức năng phân trang cho danh sách sinh viên này"
+        ? "Rồi, chào các bạn nhá! Nốt tiếp nội dung của bài liên quan đến ứng dụng quản lý, quản lý sinh viên. Bây giờ là chúng ta sẽ cùng nhau đi giải quyết nốt chức năng phân trang, cho danh sách sinh viên này."
         : isDoTrinh
-          ? "Giọng trầm ấm, rõ chữ, mang phong cách chuyên nghiệp, hiện đại, phù hợp cho các nội dung công nghệ, AI, kinh doanh, giáo dục và phát triển bản thân"
+          ? "Giọng trầm ấm, rõ chữ, mang phong cách chuyên nghiệp, hiện đại. Phù hợp cho các nội dung công nghệ, AI, kinh doanh, giáo dục, và phát triển bản thân."
           : isBeatvn
-            ? "giáo viên trường trung học phổ thông chuyên Tuyên Quang vừa bị tạm giữ từng đạt giải học sinh giỏi quốc gia môn Toán tuyển thẳng vào đại học và Tốt nghiệp loại giỏi sinh năm 1998 được giảng dạy ở một trường chuyên của tỉnh Tuyên Quang có nghĩa là người thầy giáo này phải thật sự giỏi"
+            ? "Giáo viên trường trung học phổ thông chuyên Tuyên Quang vừa bị tạm giữ. Từng đạt giải học sinh giỏi quốc gia môn Toán, tuyển thẳng vào đại học, và tốt nghiệp loại giỏi. Sinh năm 1998, được giảng dạy ở một trường chuyên của tỉnh Tuyên Quang, có nghĩa là người thầy giáo này phải thật sự giỏi."
             : isBeatvn2
-              ? "Ông em khổ nhất tiktok là đây chỉ muốn làm họa sĩ đem những nét vẽ làm đẹp cho đời nhưng lên video nào mọi người cũng khuyên em đi đóng phim thật lòng thì em vẽ cũng đẹp thật nhưng thế méo nào nhìn đi nhìn lại cũng thấy giống như hai giọt nước"
+              ? "Ông em khổ nhất TikTok là đây. Chỉ muốn làm họa sĩ, đem những nét vẽ làm đẹp cho đời. Nhưng lên video nào, mọi người cũng khuyên em đi đóng phim. Thật lòng thì em vẽ cũng đẹp thật, nhưng thế méo nào nhìn đi nhìn lại, cũng thấy giống như hai giọt nước."
               : isDuyThanh
-                ? "Khoảng một hai năm trở lại đây một ngày mình thức dậy là hàng tá những nội dung về AI đập vào mắt bỗng dưng từ đâu xuất hiện rất nhiều chuyên gia am hiểu tường tận mọi lĩnh vực cái gì cũng phân tích được Rồi nhiều khóa học xuất hiện hơn nhiều video xuất hiện hơn dạy về cách sử dụng cách tối ưu hóa AI mà mình thấy tần xuất nó ngày càng dày đặc hơn"
+                ? "Khoảng một hai năm trở lại đây, một ngày mình thức dậy là hàng tá những nội dung về AI đập vào mắt. Bỗng dưng từ đâu xuất hiện rất nhiều chuyên gia, am hiểu tường tận mọi lĩnh vực, cái gì cũng phân tích được. Rồi nhiều khóa học xuất hiện hơn, nhiều video xuất hiện hơn, dạy về cách sử dụng, cách tối ưu hóa AI, mà mình thấy tần xuất nó ngày càng dày đặc hơn."
                 : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
 
       // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại (chỉ cho các giọng mặc định)
@@ -246,10 +246,12 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const relativeWavOutputPath = path.relative(process.cwd(), wavOutputPath);
       const relativeRefAudioPath = path.relative(process.cwd(), refAudioPath);
 
+      const speed = parseFloat(process.env.OMNIVOICE_SPEED) || 0.95;
       const args = [
         "--text", cleanText,
         "--output", relativeWavOutputPath,
-        "--language", "Vietnamese"
+        "--language", "Vietnamese",
+        "--speed", speed.toString()
       ];
 
       // Nếu có file giọng tham chiếu, truyền vào để khóa giọng (Cloning mode)
