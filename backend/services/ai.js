@@ -1,6 +1,100 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const vde = require("./vde");
 const phoneme = require("./phoneme");
+
+const STORYBOARD_SCHEMA = {
+  type: SchemaType.ARRAY,
+  description: "List of visual scenes parsed from the script",
+  items: {
+    type: SchemaType.OBJECT,
+    properties: {
+      layoutFamily: {
+        type: SchemaType.STRING,
+        description: "Must be one of: 'Opening / Headline', 'Points / List', 'Quote / Text', 'Timeline', 'Media', 'Ending'"
+      },
+      visualLayout: {
+        type: SchemaType.STRING,
+        description: "Must be a valid layout from the schema matching the visual context, e.g. 'Hero', 'Pullquote', 'TimelineBeamRail', 'VersusScale'"
+      },
+      heading: {
+        type: SchemaType.STRING,
+        description: "A short, engaging heading for the scene in Vietnamese"
+      },
+      points: {
+        type: SchemaType.ARRAY,
+        description: "List of bullet points or interactive items shown on the layout",
+        items: {
+          type: SchemaType.OBJECT,
+          properties: {
+            type: {
+              type: SchemaType.STRING,
+              description: "Must be one of: 'text', 'terminal', 'metric', 'logo_row', 'badge_row', 'button', 'subheader'"
+            },
+            text: {
+              type: SchemaType.STRING,
+              description: "The text content for this point in Vietnamese"
+            },
+            animation: {
+              type: SchemaType.STRING,
+              description: "Must be one of: 'slide-up', 'scale-in', 'fade-in', 'blur-in', 'slide-left', 'slide-right'"
+            },
+            delay: {
+              type: SchemaType.NUMBER,
+              description: "Float value representing the second offset at which the point appears (e.g. 0.5, 2.0)"
+            },
+            logos: {
+              type: SchemaType.ARRAY,
+              items: { type: SchemaType.STRING },
+              description: "Optional array of logo strings, e.g., ['claude', 'react'] (only for logo_row type)"
+            },
+            badges: {
+              type: SchemaType.ARRAY,
+              items: { type: SchemaType.STRING },
+              description: "Optional array of badge text strings (only for badge_row type)"
+            },
+            value: {
+              type: SchemaType.STRING,
+              description: "Optional metric value (only for metric type)"
+            },
+            subtext: {
+              type: SchemaType.STRING,
+              description: "Optional metric subtext (only for metric type)"
+            }
+          },
+          required: ["type", "text"]
+        }
+      },
+      voiceover: {
+        type: SchemaType.STRING,
+        description: "Vietnamese speech text read aloud. Technical English terms (html, css, react, api) must remain lowercase English."
+      },
+      duration: {
+        type: SchemaType.NUMBER,
+        description: "Estimated duration in seconds (float)"
+      },
+      placement: {
+        type: SchemaType.STRING,
+        description: "Must be 'Full' or 'Split'"
+      },
+      keywords: {
+        type: SchemaType.STRING,
+        description: "1-3 English keywords for Unsplash search based on the visual layout"
+      },
+      theme: {
+        type: SchemaType.STRING,
+        description: "Visual overlay theme: 'default', 'tech', 'japan', 'finance', 'rikkei'"
+      },
+      accentColor: {
+        type: SchemaType.STRING,
+        description: "Vibrant HEX color (e.g., '#FFB7C5', '#A8232A')"
+      }
+    },
+    required: [
+      "layoutFamily", "visualLayout", "heading", "points", "voiceover",
+      "duration", "placement", "keywords", "theme", "accentColor"
+    ]
+  }
+};
 
 async function generateStoryboard(scriptText, visualStyle = "minimal", traits = []) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -28,6 +122,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       model: modelName,
       generationConfig: { 
         responseMimeType: "application/json",
+        responseSchema: STORYBOARD_SCHEMA,
         maxOutputTokens: 8192
       }
     });
@@ -134,6 +229,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
             model: modelName,
             generationConfig: { 
               responseMimeType: "application/json",
+              responseSchema: STORYBOARD_SCHEMA,
               maxOutputTokens: 8192
             }
           });
@@ -185,7 +281,10 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       console.warn("[Gemini API] JSON.parse failed. Attempting quote repair...", e.message);
       try {
         const repaired = text.replace(/:\s*"([\s\S]*?)"\s*(,|\n|\})/g, (match, p1, p2) => {
-          const escapedVal = p1.replace(/(?<!\\)"/g, '\\"');
+          const escapedVal = p1
+            .replace(/(?<!\\)"/g, '\\"')
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '\\r');
           return `: "${escapedVal}"${p2}`;
         });
         scenes = JSON.parse(repaired);
