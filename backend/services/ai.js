@@ -1,5 +1,6 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const vde = require("./vde");
+const phoneme = require("./phoneme");
 
 async function generateStoryboard(scriptText, visualStyle = "minimal", traits = []) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -46,7 +47,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       [
         {
           "layoutFamily": "Opening / Headline" | "Points / List" | "Quote / Text",
-          "visualLayout": "Hero" | "Split Screen" | "Dashboard" | "Feature Grid" | "Timeline" | "Comparison" | "Terminal" | "Gallery" | "Laptop Mockup" | "Stats Banner" | "Three Columns" | "Integration Cloud",
+          "visualLayout": "Hero" | "Split Screen" | "Dashboard" | "Feature Grid" | "Timeline" | "Comparison" | "Terminal" | "Gallery" | "Laptop Mockup" | "Stats Banner" | "Three Columns" | "Integration Cloud" | "IntroChapterStack",
           "heading": "Scene title/heading in Vietnamese",
           "points": [
             {
@@ -82,6 +83,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       - Use "Stats Banner" for detailed analytics dashboard panels with line charts and live metric widgets.
       - Use "Three Columns" for subscription plans, pricing tiers, or 3-step feature lists.
       - Use "Integration Cloud" for API connections, integrations, or automated workflow diagrams.
+      - Use "IntroChapterStack" for opening scenes or chapter announcements with a 3D overlapping stack of cards (like previous, active, and next chapters stacked together).
       
       CRITICAL BLOCK STYLE SELECTION RULES FOR phong cách "${visualStyle}":
       - If style is "claude", prefer using "subheader", "logo_row", and "button" block types to create a premium editorial magazine aesthetic. Avoid using "terminal" unless it's a code-only command scene.
@@ -180,7 +182,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
     }
 
     // Format and sanitize scenes
-    return scenes.map((scene, index) => ({
+    const mappedScenes = scenes.map((scene, index) => ({
       id: `scene_${Date.now()}_${index}`,
       sceneIndex: index,
       duration: Number(scene.duration) || 6.0,
@@ -204,6 +206,17 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       theme: scene.theme || "default",
       accentColor: scene.accentColor || "#FFB7C5"
     }));
+
+    // Process phoneme optimization for all scenes
+    for (const scene of mappedScenes) {
+      if (scene.voiceover) {
+        scene.voiceoverTts = await phoneme.optimizeTextForPhonemes(scene.voiceover);
+      } else {
+        scene.voiceoverTts = "";
+      }
+    }
+
+    return mappedScenes;
 
   } catch (error) {
     console.error("Error calling Gemini API:", error);

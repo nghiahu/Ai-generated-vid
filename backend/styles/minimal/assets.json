@@ -1,0 +1,13 @@
+{
+  "preferred": [
+    "product_render",
+    "ui_mockup",
+    "outline_icon"
+  ],
+  "avoid": [
+    "anime",
+    "sticker",
+    "meme",
+    "cartoon"
+  ]
+}

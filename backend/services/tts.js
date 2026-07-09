@@ -42,14 +42,16 @@ function addSilentPadding(filePath) {
     // Rename original file to temp
     fs.renameSync(filePath, tempPath);
 
-    // Run ffmpeg adelay filter to insert 300ms silence at the beginning
-    execSync(`ffmpeg -y -i "${tempPath}" -filter_complex "adelay=300|300" "${filePath}"`, { stdio: 'ignore' });
+    // Trim all start/end silence, then pad exactly 150ms at start and 150ms at end
+    const filter = "silenceremove=start_periods=1:start_threshold=-50dB:detection=peak,areverse,silenceremove=start_periods=1:start_threshold=-50dB:detection=peak,areverse,adelay=150|150,apad=pad_dur=0.15";
+    
+    execSync(`ffmpeg -y -i "${tempPath}" -af "${filter}" "${filePath}"`, { stdio: 'ignore' });
 
     // Delete temp file
     if (fs.existsSync(tempPath)) {
       fs.unlinkSync(tempPath);
     }
-    console.log(`Successfully added 300ms silent padding to ${path.basename(filePath)}`);
+    console.log(`Successfully trimmed and padded 150ms start/end silence to ${path.basename(filePath)}`);
   } catch (error) {
     console.error(`Failed to add silent padding to ${filePath}:`, error.message);
     // Rollback if failed
@@ -63,78 +65,15 @@ function addSilentPadding(filePath) {
 }
 
 function normalizeTextForTTS(text) {
-  if (!text) return text;
-
-  const matchedProtections = [];
-  let protectionIndex = 0;
-
-  // Bảo vệ các từ "ai" trong tiếng Việt mang ý nghĩa "ai đó/không ai" để không bị chuyển thành "ây-ai"
-  const protectionRegexes = [
-    /\bkhông\s+ai\b/gi,
-    /\bchẳng\s+ai\b/gi,
-    /\bchưa\s+ai\b/gi,
-    /\bcó\s+ai\b/gi,
-    /\bcho\s+ai\b/gi,
-    /\bvới\s+ai\b/gi,
-    /\bnhư\s+ai\b/gi,
-    /\bai\s+cũng\b/gi,
-    /\bai\s+đó\b/gi,
-    /\bai\s+đấy\b/gi,
-    /\bai\s+nấy\b/gi
-  ];
-
-  let tempText = text;
-  protectionRegexes.forEach(regex => {
-    tempText = tempText.replace(regex, (match) => {
-      const placeholder = `___PROT_WHO_${protectionIndex}___`;
-      matchedProtections.push({ placeholder, original: match });
-      protectionIndex++;
-      return placeholder;
-    });
+  if (!text) return "";
+  // Strip quotes to avoid breaking Windows command line arguments
+  const temp = text.replace(/["'“”‘’]/g, ' ');
+  // Convert text to lowercase, but restore uppercase for CMU phonemes inside [ ]
+  let normalized = temp.toLowerCase();
+  normalized = normalized.replace(/\[([^\]]+)\]/g, (match, p1) => {
+    return `[${p1.toUpperCase()}]`;
   });
-
-  // Chuyển đổi các từ viết tắt công nghệ không phân biệt chữ hoa/thường (Dùng gạch nối để đọc tách âm tốt hơn)
-  tempText = tempText
-    .replace(/\bai\b/gi, "ây-ai")
-    .replace(/\bapi\b/gi, "ây-pi-ai")
-    .replace(/\bui\b/gi, "iu-ai")
-    .replace(/\bux\b/gi, "iu-ích")
-    .replace(/\burl\b/gi, "u-rờ-lờ")
-    .replace(/\bit\b/gi, "ai-ti")
-    .replace(/\bcrud\b/gi, "C-R-U-D");
-
-  // Khôi phục lại các từ "ai" tiếng Việt đã được bảo vệ
-  matchedProtections.forEach(p => {
-    tempText = tempText.replace(p.placeholder, p.original);
-  });
-
-  // Tránh việc ghép các từ viết tắt dạng viết hoa dính liền làm crash tokenizer của OmniVoice.
-  // Đồng thời giữ nguyên cách phát âm tiếng Anh tự nhiên thay vì phiên âm tiếng Việt kỳ quặc.
-  let normalized = tempText;
-
-  // Safety net: reverse-map common phonetic Vietnamese back to lowercase English.
-  // Prevents OmniVoice tokenizer crash when Gemini slips and phonetically translates tech terms.
-  normalized = normalized
-    .replace(/hát tê em lờ/gi, "html")
-    .replace(/xê ét ét/gi, "css")
-    .replace(/gia va sờ cờ ríp/gi, "javascript")
-    .replace(/gia va xờ cờ ríp/gi, "javascript")
-    .replace(/ri ắc/gi, "react")
-    .replace(/nốt đề ếch es/gi, "node.js")
-    .replace(/nốt đề ếch ét/gi, "node.js")
-    .replace(/nếch t chấm gi ét/gi, "next.js")
-    .replace(/em pê bốn/gi, "mp4")
-    .replace(/em pê 4/gi, "mp4")
-    .replace(/em pê ba/gi, "mp3")
-    .replace(/em pê 3/gi, "mp3")
-    .replace(/tai pi xờ cờ ríp/gi, "typescript")
-    .replace(/ét qu i/gi, "sql")
-    .replace(/đốc cờ ro/gi, "docker")
-    .replace(/gít hớp/gi, "github");
-
-  // Chuyển toàn bộ sang viết thường. Thực nghiệm chứng minh: Viết thường 100% giúp OmniVoice 
-  // tokenizer không bao giờ bị treo/crash, đồng thời AI vẫn đọc tiếng Anh cực kỳ chuẩn và tự nhiên.
-  return normalized.toLowerCase();
+  return normalized;
 }
 
 
@@ -236,12 +175,13 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         fs.mkdirSync(refsDir, { recursive: true });
       }
 
-      // Xác định file giọng tham chiếu (Nữ, Nam, hoặc tùy chỉnh Anh Quý / Đô Trịnh / BeatVN) để clone
+      // Xác định file giọng tham chiếu (Nữ, Nam, hoặc tùy chỉnh Anh Quý / Đô Trịnh / BeatVN / Duy Thanh) để clone
       const isAnhQuy = voiceKey.toLowerCase() === "omnivoice_anhquy";
       const isDoTrinh = voiceKey.toLowerCase() === "omnivoice_dotrinh";
       const isBeatvn = voiceKey.toLowerCase() === "omnivoice_beatvn";
       const isBeatvn2 = voiceKey.toLowerCase() === "omnivoice_beatvn2";
-      const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh;
+      const isDuyThanh = voiceKey.toLowerCase() === "omnivoice_duythanh";
+      const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh || isDuyThanh;
 
       const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
       let refAudioPath = isAnhQuy
@@ -252,7 +192,9 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
             ? path.join(__dirname, '../../mp3/beatvn/voice_beatvn.mp3')
             : isBeatvn2
               ? path.join(__dirname, '../../mp3/beatvn_voice2/beatV2.mp3')
-              : path.join(refsDir, refFileName);
+              : isDuyThanh
+                ? path.join(__dirname, '../../mp3/duy_thanh_nguyen/voice_duy_thanh.mp3')
+                : path.join(refsDir, refFileName);
       const refText = isAnhQuy
         ? "Rồi chào các bạn nhá nốt tiếp nội dung của bài liên quan đến ứng dụng quản lý quản lý sinh viên bây giờ là chúng ta sẽ cùng nhau đi giải quyết nốt chức năng phân trang cho danh sách sinh viên này"
         : isDoTrinh
@@ -261,10 +203,12 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
             ? "giáo viên trường trung học phổ thông chuyên Tuyên Quang vừa bị tạm giữ từng đạt giải học sinh giỏi quốc gia môn Toán tuyển thẳng vào đại học và Tốt nghiệp loại giỏi sinh năm 1998 được giảng dạy ở một trường chuyên của tỉnh Tuyên Quang có nghĩa là người thầy giáo này phải thật sự giỏi"
             : isBeatvn2
               ? "Ông em khổ nhất tiktok là đây chỉ muốn làm họa sĩ đem những nét vẽ làm đẹp cho đời nhưng lên video nào mọi người cũng khuyên em đi đóng phim thật lòng thì em vẽ cũng đẹp thật nhưng thế méo nào nhìn đi nhìn lại cũng thấy giống như hai giọt nước"
-              : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
+              : isDuyThanh
+                ? "Khoảng một hai năm trở lại đây một ngày mình thức dậy là hàng tá những nội dung về AI đập vào mắt bỗng dưng từ đâu xuất hiện rất nhiều chuyên gia am hiểu tường tận mọi lĩnh vực cái gì cũng phân tích được Rồi nhiều khóa học xuất hiện hơn nhiều video xuất hiện hơn dạy về cách sử dụng cách tối ưu hóa AI mà mình thấy tần xuất nó ngày càng dày đặc hơn"
+                : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
 
       // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại (chỉ cho các giọng mặc định)
-      if (!isAnhQuy && !isDoTrinh && !isBeatvn && !isBeatvn2 && !fs.existsSync(refAudioPath)) {
+      if (!isAnhQuy && !isDoTrinh && !isBeatvn && !isBeatvn2 && !isDuyThanh && !fs.existsSync(refAudioPath)) {
         console.log(`Creating OmniVoice reference voice file: ${refFileName}...`);
         const msVoice = isMale ? "vi-VN-NamMinhNeural" : "vi-VN-HoaiMyNeural";
         const ttsInstance = new EdgeTTS(refText, msVoice);
@@ -283,7 +227,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
 
       // Ánh xạ voiceKey sang instruct string cho OmniVoice
       let instruct = "female"; // Mặc định
-      if (voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh) {
+      if (voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh || isDuyThanh) {
         instruct = "male";
       } else if (voiceKey.toLowerCase() === "omnivoice_whisper") {
         instruct = "female, whisper";

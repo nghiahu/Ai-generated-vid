@@ -1,0 +1,11 @@
+{
+  "scenePattern": [
+    "hook",
+    "reveal",
+    "feature",
+    "benefit",
+    "ending"
+  ],
+  "pacing": "steady",
+  "averageSceneDuration": 6
+}

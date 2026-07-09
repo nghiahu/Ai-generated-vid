@@ -8,6 +8,8 @@ const tts = require('./services/tts');
 const media = require('./services/media');
 const render = require('./services/render');
 const vde = require('./services/vde');
+const phoneme = require('./services/phoneme');
+const aligner = require('./services/aligner');
 const cloudinary = require('cloudinary').v2;
 
 // Initialize VDE directory structure and templates
@@ -174,11 +176,18 @@ app.put('/api/projects/:id/config', async (req, res) => {
             for (const scene of project.scenes) {
               if (scene.voiceover) {
                 console.log(`Regenerating TTS for project ${projectId} scene ${scene.id} with new voice ${voiceKey}...`);
-                const ttsResult = await tts.generateTTS(scene.voiceover, projectId, scene.id, voiceKey);
+                const voiceoverText = scene.voiceoverTts || scene.voiceover;
+                const ttsResult = await tts.generateTTS(voiceoverText, projectId, scene.id, voiceKey);
+                
+                const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
+                const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, scene.voiceover, ttsResult.duration);
+
                 updatedScenes.push({
                   ...scene,
+                  duration: ttsResult.duration,
                   voiceoverAudioUrl: ttsResult.url,
-                  voiceoverDuration: ttsResult.duration
+                  voiceoverDuration: ttsResult.duration,
+                  subtitlesJson
                 });
               } else {
                 updatedScenes.push(scene);
@@ -261,13 +270,22 @@ app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
     let voiceoverDuration = oldScene.voiceoverDuration || 0;
 
     // If voiceover text has changed, regenerate TTS using currently configured voice
-    if (sceneData.voiceover && sceneData.voiceover !== oldScene.voiceover) {
+    if (sceneData.voiceover !== undefined && sceneData.voiceover !== oldScene.voiceover) {
+      // Regenerate optimized TTS phonetic script (CMU phonemes)
+      const voiceoverTts = await phoneme.optimizeTextForPhonemes(sceneData.voiceover);
+      sceneData.voiceoverTts = voiceoverTts;
+
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
         : (project.config.voice || 'rachel');
-      const ttsResult = await tts.generateTTS(sceneData.voiceover, projectId, sceneId, voiceKey);
+      const ttsResult = await tts.generateTTS(voiceoverTts, projectId, sceneId, voiceKey);
       voiceoverAudioUrl = ttsResult.url;
       voiceoverDuration = ttsResult.duration;
+      sceneData.duration = ttsResult.duration;
+
+      const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
+      const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, sceneData.voiceover, ttsResult.duration);
+      sceneData.subtitlesJson = subtitlesJson;
     }
 
     const updatedScene = await db.updateScene(projectId, sceneId, {
@@ -336,19 +354,25 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
         : (project.config.voice || 'rachel');
-      const ttsResult = await tts.generateTTS(scene.voiceover, projectId, sceneId, voiceKey);
+      const voiceoverText = scene.voiceoverTts || scene.voiceover;
+      const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
+
+      const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
+      const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, scene.voiceover, ttsResult.duration);
 
       scenes.push({
         id: sceneId,
         sceneIndex: i,
-        duration: scene.duration || 6.0,
+        duration: ttsResult.duration || scene.duration || 6.0,
         layoutFamily: scene.layoutFamily,
         visualLayout: scene.visualLayout,
         heading: scene.heading,
         points: scene.points,
         voiceover: scene.voiceover,
+        voiceoverTts: scene.voiceoverTts || "",
         voiceoverAudioUrl: ttsResult.url,
         voiceoverDuration: ttsResult.duration,
+        subtitlesJson,
         placement: scene.placement,
         mediaList,
         selectedMediaIndex: 0,

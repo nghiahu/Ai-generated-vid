@@ -190,7 +190,8 @@ const LAYOUTS_BY_FAMILY = {
     { value: "Hero", label: "Hero Title" },
     { value: "IntroBriefingCard", label: "Intro Briefing Card" },
     { value: "Terminal", label: "Terminal Console" },
-    { value: "Quote", label: "Quote Insight" }
+    { value: "Quote", label: "Quote Insight" },
+    { value: "IntroChapterStack", label: "Intro Chapter Stack Image" }
   ],
   "List / Steps": [
     { value: "Feature Grid", label: "Bento Feature Grid" },

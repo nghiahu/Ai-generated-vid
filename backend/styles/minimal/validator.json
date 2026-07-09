@@ -1,0 +1,12 @@
+{
+  "rules": [
+    {
+      "rule": "Only one dominant focus",
+      "severity": "error"
+    },
+    {
+      "rule": "Whitespace > 45%",
+      "severity": "warning"
+    }
+  ]
+}

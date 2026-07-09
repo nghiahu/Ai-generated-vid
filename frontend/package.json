@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@remotion/google-fonts": "^4.0.485",
     "@remotion/player": "^4.0.483",
     "axios": "^1.18.1",
     "gsap": "^3.15.0",
+    "lucide-react": "^1.23.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "remotion": "^4.0.483"
