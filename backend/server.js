@@ -73,12 +73,23 @@ app.get('/api/projects', async (req, res) => {
 app.get('/api/vde-themes', (req, res) => {
   try {
     const stylesList = Object.keys(vde.BUILTIN_STYLES).map(id => {
-      const style = vde.BUILTIN_STYLES[id];
+      const compiledStyle = vde.getStyle(id);
+      const tokens = compiledStyle.tokens;
       return {
         id,
-        name: style.name,
-        description: style.description,
-        tokens: style.tokens
+        name: compiledStyle.name || id,
+        description: compiledStyle.description || "",
+        tokens: {
+          background: tokens?.colors?.background || "#000000",
+          cardBg: tokens?.colors?.cardBg || "rgba(255, 255, 255, 0.05)",
+          border: tokens?.colors?.border || "1px solid rgba(255, 255, 255, 0.1)",
+          text: tokens?.colors?.text || "#ffffff",
+          textSecondary: tokens?.colors?.textSecondary || "rgba(255, 255, 255, 0.6)",
+          accent: tokens?.colors?.accent || "#3b82f6",
+          radius: tokens?.radius || "12px",
+          shadow: tokens?.shadow || "none",
+          fontFamily: tokens?.fonts?.title || "Inter, sans-serif"
+        }
       };
     });
     res.json(stylesList);
