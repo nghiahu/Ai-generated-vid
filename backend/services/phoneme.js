@@ -66,51 +66,66 @@ const TECH_TERMS_WHITELIST = new Set([
 ]);
 
 /**
- * Trích xuất thuật ngữ cục bộ không dùng LLM (sử dụng từ điển CMU và DB cache) làm fallback khi Gemini lỗi/quota
+ * Kiểm tra một từ đơn có phải từ tiếng Anh cần phiên âm hay không
+ */
+function isEnglishWord(word) {
+  if (!word) return false;
+  if (/[^\x00-\x7F]/.test(word)) return false;
+  if (!/[a-zA-Z]/.test(word)) return false;
+  const lower = word.toLowerCase();
+  const isAllCaps = word === word.toUpperCase() && word.length >= 2;
+  if (VIETNAMESE_STOP_WORDS.has(lower) && !isAllCaps) return false;
+  if (TECH_TERMS_WHITELIST.has(lower)) return true;
+  if (isAllCaps) return true;
+  const hasForeignChars = /[wfzj]/i.test(word);
+  const endsWithEnglishConsonant = /[rsldgbk]$/i.test(word) && word.length >= 3;
+  const hasEnglishPrefix = /^(cl|cr|fl|gl|gr|pl|pr|sl|sp|st|sh|str)/i.test(word);
+  const hasEnglishSuffix = /(rt|nd|ld|ck|ct|mp|lt|nt|rk|st)$/i.test(word);
+  if (hasForeignChars || endsWithEnglishConsonant || hasEnglishPrefix || hasEnglishSuffix) {
+    if (cmuDict.has(lower)) return true;
+  }
+  return false;
+}
+
+/**
+ * Trích xuất thuật ngữ cục bộ không dùng LLM.
+ * Nhận diện cả cụm từ tiếng Anh liên tiếp (n-gram) để xử lý như một thể thống nhất.
  */
 function localExtractTerms(text) {
   const rawWords = text.split(/\s+/);
+  const cleanWords = rawWords.map(w => w.replace(/^[-.,!?;()'""\[\]—–]+|[-.,!?;()'""\[\]—–]+$/g, ''));
+
   const terms = [];
-  
-  for (const rawWord of rawWords) {
-    const cleanWord = rawWord.replace(/^[-.,!?;()'"“”\[\]]+|[-.,!?;()'"“”\[\]]+$/g, "");
-    
-    // Nếu từ rỗng hoặc chứa ký tự tiếng Việt có dấu (non-ASCII như â, ê, ô, á, à, ự...), bỏ qua toàn bộ từ
-    if (!cleanWord || /[^\x00-\x7F]/.test(cleanWord)) continue;
-    
-    // Phải chứa ít nhất 1 chữ cái
-    if (!/[a-zA-Z]/.test(cleanWord)) continue;
-    
-    const lower = cleanWord.toLowerCase();
-    
-    // Nếu nằm trong danh mục từ dừng tiếng Việt (viết không dấu), bỏ qua (trừ khi viết hoa toàn bộ như AI)
-    const isAllCaps = cleanWord === cleanWord.toUpperCase() && cleanWord.length >= 2;
-    if (VIETNAMESE_STOP_WORDS.has(lower) && !isAllCaps) continue;
-    
-    // 1. Khớp từ viết tắt/thuật ngữ công nghệ nổi tiếng
-    if (TECH_TERMS_WHITELIST.has(lower)) {
-      terms.push(cleanWord);
+  let i = 0;
+
+  while (i < cleanWords.length) {
+    const word = cleanWords[i];
+    if (!word || !isEnglishWord(word)) {
+      i++;
       continue;
     }
-    
-    // 2. Khớp từ viết hoa hoàn toàn (acronyms)
-    if (isAllCaps) {
-      terms.push(cleanWord);
-      continue;
+
+    // Thử gộp cụm từ tiếng Anh liên tiếp (tối đa 4 từ)
+    let longestPhrase = word;
+    let longestEnd = i;
+    for (let j = i + 1; j <= Math.min(i + 3, cleanWords.length - 1); j++) {
+      const nextWord = cleanWords[j];
+      if (!nextWord || !isEnglishWord(nextWord)) break;
+      // Nếu rawWords[j] chứa ký tự tiếng Việt thì dừng
+      if (/[^\x00-\x7F]/.test(rawWords[j])) break;
+      longestPhrase = `${longestPhrase} ${nextWord}`;
+      longestEnd = j;
     }
-    
-    // 3. Khớp từ có cấu trúc đặc trưng tiếng Anh (có ký tự w, f, z, j hoặc kết thúc bằng r, s, l, d, g, b, k hoặc có cụm phụ âm tiếng Anh)
-    const hasForeignChars = /[wfzj]/i.test(cleanWord);
-    const endsWithEnglishConsonant = /[rsldgbk]$/i.test(cleanWord) && cleanWord.length >= 3;
-    const hasEnglishPrefix = /^(cl|cr|fl|gl|gr|pl|pr|sl|sp|st|sh|str)/i.test(cleanWord);
-    const hasEnglishSuffix = /(rt|nd|ld|ck|ct|mp|lt|nt|rk|st)$/i.test(cleanWord);
-    
-    if (hasForeignChars || endsWithEnglishConsonant || hasEnglishPrefix || hasEnglishSuffix) {
-      if (cmuDict.has(lower)) {
-        terms.push(cleanWord);
-      }
+
+    if (longestEnd > i) {
+      terms.push(longestPhrase);
+      i = longestEnd + 1;
+    } else {
+      terms.push(word);
+      i++;
     }
   }
+
   return [...new Set(terms)];
 }
 
@@ -195,13 +210,15 @@ async function getPhonemesForTerms(terms) {
       console.error("[Phoneme Engine] Lỗi truy vấn Cache DB:", dbErr.message);
     }
 
-    // 2. Kiểm tra từ điển CMU local
-    if (cmuDict.has(cleanTerm)) {
-      const phoneme = cmuDict.get(cleanTerm);
+    // 2. Kiểm tra từ điển CMU local (hỗ trợ cả cụm từ ghép bằng cách tra từng từ thành viên)
+    const words = cleanTerm.split(' ');
+    const wordPhonemes = words.map(w => cmuDict.get(w.toLowerCase())).filter(Boolean);
+
+    if (wordPhonemes.length === words.length) {
+      // Tất cả từ thành viên đều có trong CMU Dict => gộp phoneme lại
+      const phoneme = wordPhonemes.join(' ');
       mapping[term] = phoneme;
-      console.log(`[Phoneme Engine] Tra cứu thành công từ CMU Dict: "${term}" -> [${phoneme}]`);
-      
-      // Tự động lưu vào DB cache để tối ưu hóa truy vấn sau này
+      console.log(`[Phoneme Engine] Tra cứu thành công từ CMU Dict (compound): "${term}" -> [${phoneme}]`);
       try {
         await db.savePhonemeToCache({
           term: cleanTerm,

@@ -66,13 +66,25 @@ function addSilentPadding(filePath) {
 
 function normalizeTextForTTS(text) {
   if (!text) return "";
-  // Strip quotes to avoid breaking Windows command line arguments
-  const temp = text.replace(/["'“”‘’]/g, ' ');
-  // Convert text to lowercase, but restore uppercase for CMU phonemes inside [ ]
+  
+  // Thay thế dấu ngoặc kép bằng khoảng trắng để tránh lỗi command line
+  let temp = text.replace(/["'“”‘’]/g, ' ');
+  
+  // Chuyển đổi dấu gạch ngang dài (em-dash, en-dash) thành dấu phẩy để tạo điểm nghỉ tự nhiên
+  temp = temp.replace(/[—–]/g, ', ');
+  
+  // Thay thế các chuỗi nhiều dấu chấm liên tục (ellipsis) bằng một dấu chấm duy nhất
+  temp = temp.replace(/\.{2,}/g, '. ');
+  
+  // Chuyển thành chữ thường nhưng giữ nguyên chữ hoa cho âm vị CMU trong [ ]
   let normalized = temp.toLowerCase();
   normalized = normalized.replace(/\[([^\]]+)\]/g, (match, p1) => {
     return `[${p1.toUpperCase()}]`;
   });
+  
+  // Thu gọn nhiều khoảng trắng liên tiếp và trim
+  normalized = normalized.replace(/\s+/g, ' ').trim();
+  
   return normalized;
 }
 

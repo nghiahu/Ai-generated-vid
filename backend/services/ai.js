@@ -196,6 +196,9 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       Examples of WRONG voiceover text: "Hát Tê Em Lờ, Xê Ét Ét, và Gia va sờ cờ ríp là nền tảng của web."
       Apply this rule to: html, css, javascript, react, node.js, next.js, api, mp4, mp3, npm, json, sql, typescript, python, github, docker, aws, gpt.
       
+      CRITICAL SENTENCE BOUNDARY RULE:
+      Each scene's "voiceover" text MUST consist of complete sentences. Never split a single sentence or a clause across multiple scenes. If the script has a long sentence, keep it entirely within one scene. The boundaries between scenes must always align with natural sentence endings (periods '.', question marks '?', exclamation marks '!').
+      
       CRITICAL JSON SYNTAX RULE:
       Any double quotes inside string values (such as "heading" or "voiceover") MUST be escaped as \\" (e.g., \\"tin vui\\") or replaced with single quotes to keep the JSON syntax valid.
       
