@@ -52,6 +52,7 @@ async function initDb() {
       duration DOUBLE PRECISION DEFAULT 6.0,
       layout_family VARCHAR(100),
       visual_layout VARCHAR(100),
+      scene_intent JSONB,
       heading VARCHAR(255),
       points JSONB DEFAULT '[]'::jsonb,
       voiceover TEXT,
@@ -73,7 +74,7 @@ async function initDb() {
       phoneme TEXT NOT NULL,
       phoneme_format VARCHAR(20) NOT NULL DEFAULT 'CMU',
       language VARCHAR(10) NOT NULL DEFAULT 'en',
-      source VARCHAR(30) NOT NULL DEFAULT 'cmudict',
+      source VARCHAR(30) NOT NULL DEFAULT 'g2p',
       confidence NUMERIC(4,3) DEFAULT 1.000,
       manual_override BOOLEAN DEFAULT FALSE,
       review_required BOOLEAN DEFAULT FALSE,
@@ -98,6 +99,7 @@ async function initDb() {
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS theme VARCHAR(100) DEFAULT 'default'`);
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS accent_color VARCHAR(50) DEFAULT '#FFB7C5'`);
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS voiceover_tts TEXT`);
+    await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS scene_intent JSONB`);
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS voiceover_duration DOUBLE PRECISION`);
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS subtitles_json JSONB DEFAULT '[]'::jsonb`);
 
@@ -165,6 +167,7 @@ module.exports = {
         duration: s.duration,
         layoutFamily: s.layout_family,
         visualLayout: s.visual_layout,
+        sceneIntent: s.scene_intent,
         heading: s.heading,
         points: s.points,
         voiceover: s.voiceover,
@@ -233,10 +236,10 @@ module.exports = {
 
       const insertSceneQuery = `
         INSERT INTO scenes (
-          id, project_id, scene_index, duration, layout_family, visual_layout, 
+          id, project_id, scene_index, duration, layout_family, visual_layout, scene_intent,
           heading, points, voiceover, voiceover_tts, voiceover_audio_url, placement, media_list, selected_media_index,
           theme, accent_color, voiceover_duration, subtitles_json
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
       `;
 
       for (const scene of scenes) {
@@ -245,8 +248,9 @@ module.exports = {
           id,
           scene.sceneIndex,
           scene.duration,
-          scene.layoutFamily,
-          scene.visualLayout,
+          scene.layoutFamily || null,
+          scene.visualLayout || null,
+          JSON.stringify(scene.sceneIntent || null),
           scene.heading,
           JSON.stringify(scene.points),
           scene.voiceover,
@@ -287,6 +291,7 @@ module.exports = {
       duration: 'duration',
       layoutFamily: 'layout_family',
       visualLayout: 'visual_layout',
+      sceneIntent: 'scene_intent',
       heading: 'heading',
       points: 'points',
       voiceover: 'voiceover',
@@ -305,7 +310,7 @@ module.exports = {
       if (sceneData[key] !== undefined) {
         fields.push(`${dbCol} = $${placeholderIndex}`);
         let val = sceneData[key];
-        if (key === 'points' || key === 'mediaList' || key === 'subtitlesJson') {
+        if (key === 'points' || key === 'mediaList' || key === 'subtitlesJson' || key === 'sceneIntent') {
           val = JSON.stringify(val);
         }
         values.push(val);
@@ -339,6 +344,7 @@ module.exports = {
       duration: s.duration,
       layoutFamily: s.layout_family,
       visualLayout: s.visual_layout,
+      sceneIntent: s.scene_intent,
       heading: s.heading,
       points: s.points,
       voiceover: s.voiceover,
@@ -364,10 +370,10 @@ module.exports = {
     
     const insertQuery = `
       INSERT INTO scenes (
-        id, project_id, scene_index, duration, layout_family, visual_layout, 
+        id, project_id, scene_index, duration, layout_family, visual_layout, scene_intent,
         heading, points, voiceover, voiceover_tts, voiceover_audio_url, placement, media_list, selected_media_index,
         theme, accent_color, voiceover_duration, subtitles_json
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
       RETURNING *
     `;
     
@@ -376,10 +382,11 @@ module.exports = {
       projectId,
       nextIndex,
       sceneData.duration || 6.0,
-      sceneData.layoutFamily || "Opening / Headline",
-      sceneData.visualLayout || "Intro Profile",
+      sceneData.layoutFamily || null,
+      sceneData.visualLayout || null,
+      JSON.stringify(sceneData.sceneIntent || { type: "opening", importance: "medium", density: "medium", emotion: "neutral" }),
       sceneData.heading || "Tiêu đề phân cảnh mới",
-      JSON.stringify(sceneData.points || ["Ý chính 1", "Ý chính 2"]),
+      JSON.stringify(sceneData.points || [{ type: "card", text: "Ý chính 1" }, { type: "card", text: "Ý chính 2" }]),
       sceneData.voiceover || "Lời thoại của phân cảnh mới.",
       sceneData.voiceoverTts || sceneData.voiceover_tts || sceneData.voiceover || "Lời thoại của phân cảnh mới.",
       sceneData.voiceoverAudioUrl || "",
@@ -399,6 +406,7 @@ module.exports = {
       duration: s.duration,
       layoutFamily: s.layout_family,
       visualLayout: s.visual_layout,
+      sceneIntent: s.scene_intent,
       heading: s.heading,
       points: s.points,
       voiceover: s.voiceover,
