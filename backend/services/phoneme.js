@@ -61,7 +61,8 @@ const TECH_TERMS_WHITELIST = new Set([
   'remotion', 'video', 'marketing', 'dashboard', 'animation', 'avatar', 'website', 'logo', 
   'brand', 'component', 'framework', 'timeline', 'audio', 'mp4', 'mp3', 'client', 'server', 
   'app', 'dev', 'build', 'deploy', 'code', 'database', 'ai', 'gpt', 'llm', 'agent', 'premiere',
-  'capcut', 'photoshop', 'illustrator', 'canva', 'figma', 'ui', 'ux', 'front-end', 'back-end'
+  'capcut', 'photoshop', 'illustrator', 'canva', 'figma', 'ui', 'ux', 'front-end', 'back-end',
+  'native', 'gateway', 'service', 'cloud', 'serverless'
 ]);
 
 /**
@@ -345,6 +346,16 @@ async function optimizeTextForPhonemes(text) {
       const regex = new RegExp(`(?<=^|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])(${escaped})(?=$|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])`, "g");
       
       optimizedText = optimizedText.replace(regex, `[${phoneme}]`);
+    }
+
+    // Gộp các thẻ âm vị liền kề (ngăn cách bởi khoảng trắng, gạch ngang, gạch chéo) thành 1 thẻ duy nhất
+    // để tránh bị sượng hoặc khựng khi chuyển tiếp giữa các từ tiếng Anh.
+    let lastLength = 0;
+    while (optimizedText.length !== lastLength) {
+      lastLength = optimizedText.length;
+      optimizedText = optimizedText.replace(/\[([^\]]+)\]([\s\-_/]+)\[([^\]]+)\]/g, (match, p1, sep, p2) => {
+        return `[${p1} ${p2}]`;
+      });
     }
 
     return optimizedText;

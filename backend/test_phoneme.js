@@ -13,7 +13,7 @@ async function runTest() {
     console.log("Đã khởi tạo xong cơ sở dữ liệu mới.");
 
     // 2. Chạy thử văn bản mẫu qua Phoneme Agent
-    const sampleText = "Hôm nay chúng ta học React và Docker để xây dựng API. Không ai phủ nhận sức mạnh của AI. Sau đó triển khai lên Vercel.";
+    const sampleText = "Hôm nay chúng ta học React Native và Docker để xây dựng API Gateway. Không ai phủ nhận sức mạnh của AI. Sau đó triển khai lên Vercel.";
     console.log(`\n2. Văn bản mẫu đầu vào:\n"${sampleText}"`);
     
     console.log("\nĐang gọi Phoneme Agent...");
@@ -36,11 +36,11 @@ async function runTest() {
 
     // 4. Kiểm tra các phiên âm quan trọng trong kết quả
     const assertions = [
-      { term: "React", pattern: /\[R IY\d AE\d K T\]/i },
-      { term: "Docker", pattern: /\[D AA\d K ER\d\]/i },
-      { term: "API", pattern: /\[EY\d P IY\d AY\d\]/i },
-      { term: "Vercel", pattern: /\[V ER\d S EH\d L\]/i },
-      { term: "AI", pattern: /\[EY\d AY\d\]/ } // AI must be replaced
+      { name: "React Native (merged)", pattern: /\[R IY\d AE\d K T N EY\d T IH\d V\]/i },
+      { name: "Docker", pattern: /\[D AA\d K ER\d\]/i },
+      { name: "API Gateway (merged)", pattern: /\[EY\d P IY\d AY\d G EY\d T W EY\d\]/i },
+      { name: "Vercel", pattern: /\[V ER\d S EH\d L\]/i },
+      { name: "AI", pattern: /\[EY\d AY\d\]/ } // AI must be replaced
     ];
 
     console.log("\n4. Chạy các khẳng định kiểm tra (Assertions)...");
@@ -48,9 +48,9 @@ async function runTest() {
     for (const test of assertions) {
       const passed = test.pattern.test(optimizedText);
       if (passed) {
-        console.log(` ✅ Đạt: Thẻ âm vị khớp mẫu cho từ "${test.term}"`);
+        console.log(` ✅ Đạt: Thẻ âm vị khớp mẫu cho cụm "${test.name}"`);
       } else {
-        console.log(` ❌ Lỗi: Thẻ âm vị KHÔNG khớp mẫu cho từ "${test.term}" (kỳ vọng khớp: ${test.pattern})`);
+        console.log(` ❌ Lỗi: Thẻ âm vị KHÔNG khớp mẫu cho cụm "${test.name}" (kỳ vọng khớp: ${test.pattern})`);
         allPassed = false;
       }
     }
@@ -70,9 +70,9 @@ async function runTest() {
       .replace(/\s+/g, " ");
     
     const originalWithPlaceholders = sampleText
-      .replace(/React/g, "---")
+      .replace(/React Native/g, "---")
       .replace(/Docker/g, "---")
-      .replace(/API/g, "---")
+      .replace(/API Gateway/g, "---")
       .replace(/Vercel/g, "---")
       .replace(/AI/g, "---")
       .replace(/\s+/g, " ");
