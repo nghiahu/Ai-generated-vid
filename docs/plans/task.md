@@ -1,7 +1,13 @@
-# Task Checklist
+# Task Tracker — Layout Engine V2
 
-| Task ID | Description | Status |
-| --- | --- | --- |
-| T12 | Update custom voice reference texts (refText) and add `--speed` speed control to CLI call in backend/services/tts.js | `[x]` |
-| T13 | Distinguish TTS kịch bản inputs (CMU Phonemes vs Original Text) based on voiceKey starting with "omnivoice_" in backend/server.js | `[x]` |
-| T14 | Verify syntax and run system compile builds and backend checks | `[x]` |
+| # | Task | Status |
+|---|---|---|
+| 1.1 | Định nghĩa Intent Schema mới cho AI (`ai.js`) | ✅ done |
+| 1.2 | Cập nhật DB Layer để lưu Intent (`db.js`, `server.js`) | ✅ done |
+| 1.3 | Tạo Layout Scoring Engine (`layoutScorer.ts`) | ✅ done |
+| 1.4 | Xóa Regex Parser — dùng Typed Points (`layoutResolver.ts`) | ⬜ not_started |
+| 2.1 | Adaptive Layout Engine — 5 giai đoạn (`layoutResolver.ts`) | ⬜ not_started |
+| 2.2 | Area Resolver — Semantic Layout Support (`areaResolver.ts`) | ⬜ not_started |
+| 3.1 | Design Tokens tập trung (`tokens.ts`) | ⬜ not_started |
+| 3.2 | Auto-registration via Vite Glob Import (`index.ts`) | ⬜ not_started |
+| 3.3 | Animation Metadata trong JSON Layout | ⬜ not_started |
