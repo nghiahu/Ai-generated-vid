@@ -3,6 +3,9 @@ const path = require('path');
 const fs = require('fs');
 const vde = require('./services/vde');
 
+// Initialize subdirs to ensure directories are created before testing
+vde.initializeVDESubdirs();
+
 console.log('=== RUNNING VDE COMPILER TESTS ===');
 
 function testSingleInheritance() {

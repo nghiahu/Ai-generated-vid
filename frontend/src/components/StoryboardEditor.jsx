@@ -187,37 +187,216 @@ const resolveEditorComponents = (scene, currentImg, layoutType) => {
 
 const LAYOUTS_BY_FAMILY = {
   "Opening / Headline": [
+    { value: "AppCardConcept", label: "APP Card Concept" },
+    { value: "AppShowcaseTitle", label: "APP Showcase Title" },
+    { value: "BeforeAfterPanel", label: "Before After Panel" },
+    { value: "BroadcastLowerThirdTitle", label: "Broadcast Lower Third Title" },
+    { value: "CandlestickBreakoutHook", label: "Candlestick Breakout Hook" },
+    { value: "CaseStudyEditorial", label: "Case Study Editorial" },
+    { value: "DossierNotes", label: "Dossier Notes" },
+    { value: "EarningsSnapshotHook", label: "Earnings Snapshot Hook" },
+    { value: "EvidenceBoardConcept", label: "Evidence Board Concept" },
+    { value: "FearGreedHook", label: "Fear Greed Hook" },
+    { value: "FeedScrollHook", label: "Feed Scroll Hook" },
+    { value: "FlowchartTitle", label: "Flowchart Title" },
     { value: "Hero", label: "Hero Title" },
     { value: "IntroBriefingCard", label: "Intro Briefing Card" },
-    { value: "Terminal", label: "Terminal Console" },
+    { value: "IntroBubbleImage", label: "Intro Bubble Image" },
+    { value: "IntroChapterStack", label: "Intro Chapter Stack Image" },
+    { value: "IntroCutoutHeadlineImage", label: "Intro Cutout Headline Image" },
+    { value: "IntroEvidenceReadlineImage", label: "Intro Evidence Readline Image" },
+    { value: "IntroEvidenceScanlineImage", label: "Intro Evidence Scanline Image" },
+    { value: "IntroEvidenceTagsImage", label: "Intro Evidence Tags Image" },
+    { value: "IntroEvidenceTimelineImage", label: "Intro Evidence Timeline Image" },
+    { value: "IntroFullImage", label: "Intro Full Image" },
+    { value: "IntroFullImageBreakingStack", label: "Intro Full Image Breaking Stack" },
+    { value: "IntroFullImageCaptionLockup", label: "Intro Full Image Caption Lockup" },
+    { value: "IntroFullImageDataBroadcast", label: "Intro Full Image Data Broadcast" },
+    { value: "IntroFullImageReporterOverlay", label: "Intro Full Image Reporter Overlay" },
+    { value: "IntroFullImageSplitHeadline", label: "Intro Full Image Split Headline" },
+    { value: "IntroFullImageSpotlightSubject", label: "Intro Full Image Spotlight Subject" },
+    { value: "IntroHalfImage", label: "Intro Half Image" },
+    { value: "IntroKineticCountdownImage", label: "Intro Kinetic Countdown Image" },
+    { value: "IntroKineticImage", label: "Intro Kinetic Image" },
+    { value: "IntroMapPinsImage", label: "Intro MAP Pins Image" },
+    { value: "IntroMediaCard", label: "Intro Media Card" },
+    { value: "IntroMediaHero", label: "Intro Media Hero" },
+    { value: "IntroMediaPoster", label: "Intro Media Poster" },
+    { value: "IntroMetricConstellationImage", label: "Intro Metric Constellation Image" },
+    { value: "IntroMetricGyroscopeImage", label: "Intro Metric Gyroscope Image" },
+    { value: "IntroMetricKpiBoardImage", label: "Intro Metric KPI Board Image" },
+    { value: "IntroMetricOrbitImage", label: "Intro Metric Orbit Image" },
+    { value: "IntroMetricPillImage", label: "Intro Metric Pill Image" },
+    { value: "IntroMetricPulseStackImage", label: "Intro Metric Pulse Stack Image" },
+    { value: "IntroNumberLede", label: "Intro Number Lede" },
+    { value: "IntroProfile", label: "Intro Profile" },
+    { value: "IntroProfileDossier", label: "Intro Profile Dossier" },
+    { value: "IntroRadarSignalImage", label: "Intro Radar Signal Image" },
+    { value: "IntroSignalStepsImages", label: "Intro Signal Steps Images" },
+    { value: "IntroStampStackImage", label: "Intro Stamp Stack Image" },
+    { value: "KineticType", label: "Kinetic Type" },
+    { value: "LowerThirdNews", label: "Lower Third News" },
+    { value: "MapPinsHook", label: "MAP Pins Hook" },
+    { value: "ManifestoConcept", label: "Manifesto Concept" },
+    { value: "MediaCardHook", label: "Media Card Hook" },
+    { value: "MediaHeadlineHook", label: "Media Headline Hook" },
+    { value: "NeonStackTitle", label: "Neon Stack Title" },
+    { value: "NotificationHook", label: "Notification Hook" },
+    { value: "OpsMonitorHook", label: "OPS Monitor Hook" },
+    { value: "OrbitMetricsHook", label: "Orbit Metrics Hook" },
+    { value: "PosterTitle", label: "Poster Title" },
+    { value: "PriceAlertHook", label: "Price Alert Hook" },
+    { value: "ProcessStrip", label: "Process Strip" },
     { value: "Quote", label: "Quote Insight" },
-    { value: "IntroChapterStack", label: "Intro Chapter Stack Image" }
+    { value: "RedditPostHook", label: "Reddit Post Hook" },
+    { value: "SplitEditorial", label: "Split Editorial" },
+    { value: "SporlightOutcome", label: "Sporlight Outcome" },
+    { value: "SpotlightConcept", label: "Spotlight Concept" },
+    { value: "StatusGridHook", label: "Status Grid Hook" },
+    { value: "SwissGrid", label: "Swiss Grid" },
+    { value: "SysteamAlertHook", label: "Systeam Alert Hook" },
+    { value: "TerminalCommandHook", label: "Terminal Command Hook" },
+    { value: "Terminal", label: "Terminal Console" },
+    { value: "TickerTapeHook", label: "Ticker Tape Hook" },
+    { value: "VignelliTitle", label: "Vignelli Title" },
+    { value: "WalkthroughPhoneExample", label: "Walkthrough Phone Example" },
+    { value: "WarmGrainHook", label: "Warm Grain Hook" },
+    { value: "XPostHook", label: "X Post Hook" }
   ],
   "List / Steps": [
+    { value: "AuditTrailChecklist", label: "Audit Trail Checklist" },
     { value: "Feature Grid", label: "Bento Feature Grid" },
-    { value: "Three Columns", label: "Three Pricing Cards" }
+    { value: "DebateTriangleBullet", label: "Debate Triangle Bullet" },
+    { value: "DecisionCardRadio", label: "Decision Card Radio" },
+    { value: "DecisionTree", label: "Decision Tree" },
+    { value: "DossierProofBullet", label: "Dossier Proof Bullet" },
+    { value: "KanbanChecklist", label: "Kanban Checklist" },
+    { value: "LogoWall", label: "Logo Wall" },
+    { value: "OpsBriefBullef", label: "OPS Brief Bullef" },
+    { value: "OptionSelectorRadio", label: "Option Selector Radio" },
+    { value: "ProgressGateChecklist", label: "Progress Gate Checklist" },
+    { value: "RankedImpactBullet", label: "Ranked Impact Bullet" },
+    { value: "SelectorWheelRadio", label: "Selector Wheel Radio" },
+    { value: "SignalCheckpointsBullet", label: "Signal Checkpoints Bullet" },
+    { value: "SignalRailBullet", label: "Signal Rail Bullet" },
+    { value: "SocialPost", label: "Social Post" },
+    { value: "SoftBoardChecklist", label: "Soft Board Checklist" },
+    { value: "SplitBandChecklist", label: "Split Band Checklist" },
+    { value: "SplitProofBullet", label: "Split Proof Bullet" },
+    { value: "StampCheklist", label: "Stamp Cheklist" },
+    { value: "SwitchboardRadio", label: "Switchboard Radio" },
+    { value: "Three Columns", label: "Three Pricing Cards" },
+    { value: "VersusChoiceRadio", label: "Versus Choice Radio" }
   ],
   "Data / Metrics": [
+    { value: "EditorialChart", label: "Editorial Chart" },
+    { value: "GaugeStat", label: "Gauge Stat" },
+    { value: "HeroMetricCards", label: "Hero Metric Cards" },
+    { value: "MarketBoard", label: "Market Board" },
+    { value: "MetricCards", label: "Metric Cards" },
+    { value: "ProgressBars", label: "Progress Bars" },
+    { value: "RadialMetricCards", label: "Radial Metric Cards" },
+    { value: "Stats Banner", label: "SaaS Live Chart" },
+    { value: "ScoreboardMeticCards", label: "Scoreboard Metic Cards" },
+    { value: "SingleStat", label: "Single Stat" },
+    { value: "SplitClaimStat", label: "Split Claim Stat" },
+    { value: "SpotlightStat", label: "Spotlight Stat" },
+    { value: "StackedProofMetrics", label: "Stacked Proof Metrics" },
+    { value: "StampStat", label: "Stamp Stat" },
     { value: "Dashboard", label: "Stats Dashboard" },
-    { value: "Stats Banner", label: "SaaS Live Chart" }
+    { value: "TickerMetricCards", label: "Ticker Metric Cards" }
   ],
   "Comparison / Table": [
-    { value: "Comparison", label: "Versus Arena Split" }
+    { value: "ComparisionScoreboard", label: "Comparision Scoreboard" },
+    { value: "ComparisonBoard", label: "Comparison Board" },
+    { value: "DecisionMatrix", label: "Decision Matrix" },
+    { value: "GlassStatTable", label: "Glass Stat Table" },
+    { value: "ImpactLadderTable", label: "Impact Ladder Table" },
+    { value: "NeonPlanVersus", label: "Neon Plan Versus" },
+    { value: "OldVsNews", label: "OLD VS News" },
+    { value: "Ranked", label: "Ranked" },
+    { value: "SomparisonTable", label: "Somparison Table" },
+    { value: "SplitScreenInterview", label: "Split Screen Interview" },
+    { value: "SplitVerdictTable", label: "Split Verdict Table" },
+    { value: "VersusArena", label: "Versus Arena" },
+    { value: "Comparison", label: "Versus Arena Split" },
+    { value: "VersusBrightDiagonalPoster", label: "Versus Bright Diagonal Poster" },
+    { value: "VersusDiagonalDetailsPoster", label: "Versus Diagonal Details Poster" },
+    { value: "VersusDiagonalSpotlight", label: "Versus Diagonal Spotlight" },
+    { value: "VersusScale", label: "Versus Scale" },
+    { value: "VersusSplitBands", label: "Versus Split Bands" },
+    { value: "VersusSplitCards", label: "Versus Split Cards" },
+    { value: "VersusTimelineShift", label: "Versus Timeline Shift" },
+    { value: "VersusTugline", label: "Versus Tugline" },
+    { value: "VersusVerdict", label: "Versus Verdict" }
   ],
   "Quote / Insight": [
-    { value: "Quote", label: "Quote Insight" }
+    { value: "ConversationQuote", label: "Conversation Quote" },
+    { value: "DiffReceiptQuote", label: "Diff Receipt Quote" },
+    { value: "DossierQuestion", label: "Dossier Question" },
+    { value: "EditorialQuestion", label: "Editorial Question" },
+    { value: "ForumQuote", label: "Forum Quote" },
+    { value: "HotTakeQuote", label: "HOT Take Quote" },
+    { value: "HeartQuestion", label: "Heart Question" },
+    { value: "LabelwriterQuote", label: "Labelwriter Quote" },
+    { value: "LessonHightlightQuote", label: "Lesson Hightlight Quote" },
+    { value: "ManifestoQuote", label: "Manifesto Quote" },
+    { value: "MessageQuote", label: "Message Quote" },
+    { value: "NewsTicker", label: "News Ticker" },
+    { value: "PinnedMessageQuote", label: "Pinned Message Quote" },
+    { value: "PollStackQuesion", label: "Poll Stack Quesion" },
+    { value: "Pullquote", label: "Pullquote" },
+    { value: "QuoteColumnQuestion", label: "Quote Column Question" },
+    { value: "Quote", label: "Quote Insight" },
+    { value: "SpeakerAvatarQuote", label: "Speaker Avatar Quote" },
+    { value: "VignelliQuote", label: "Vignelli Quote" }
   ],
   "Timeline": [
-    { value: "Timeline", label: "Staggered Pill Timeline" }
+    { value: "Timeline", label: "Staggered Pill Timeline" },
+    { value: "TimelineBeamRail", label: "Timeline Beam Rail" },
+    { value: "TimelineChapters", label: "Timeline Chapters" },
+    { value: "TimelineCheckFlow", label: "Timeline Check Flow" },
+    { value: "TimelineEditorial", label: "Timeline Editorial" },
+    { value: "TimelineMapPins", label: "Timeline MAP Pins" },
+    { value: "TimelineNewswire", label: "Timeline Newswire" },
+    { value: "TimelineRadar", label: "Timeline Radar" },
+    { value: "TimelineRoadmap", label: "Timeline Roadmap" },
+    { value: "TimelineStaircase", label: "Timeline Staircase" }
   ],
   "Media": [
-    { value: "Split Screen", label: "Split Screen Media" },
     { value: "Gallery", label: "3D Glass Stack Gallery" },
     { value: "Laptop Mockup", label: "Double Device Mockup" },
-    { value: "Integration Cloud", label: "Integration Cloud Graph" }
+    { value: "ImageBackbroundPoster", label: "Image Backbround Poster" },
+    { value: "ImageBackgroundBadge", label: "Image Background Badge" },
+    { value: "ImageBackgroundDefault", label: "Image Background Default" },
+    { value: "ImageBackgroundGlobe", label: "Image Background Globe" },
+    { value: "Integration Cloud", label: "Integration Cloud Graph" },
+    { value: "MediaCard", label: "Media Card" },
+    { value: "MediaImageBottomBrief", label: "Media Image Bottom Brief" },
+    { value: "MediaImageFloatingPoints", label: "Media Image Floating Points" },
+    { value: "MediaImageFocusWindow", label: "Media Image Focus Window" },
+    { value: "MediaImageHorizontalPan", label: "Media Image Horizontal PAN" },
+    { value: "MediaImageLandscapeZoomOut", label: "Media Image Landscape Zoom OUT" },
+    { value: "MediaImageMapCallout", label: "Media Image MAP Callout" },
+    { value: "MediaImageNewsLowerThird", label: "Media Image News Lower Third" },
+    { value: "MediaImagePinBoard", label: "Media Image PIN Board" },
+    { value: "MediaImageTopBrief", label: "Media Image TOP Brief" },
+    { value: "MediaImageWideCardStack", label: "Media Image Wide Card Stack" },
+    { value: "Split Screen", label: "Split Screen Media" }
   ],
   "Ending": [
-    { value: "Ending", label: "Ending / CTA Screen" }
+    { value: "BottomAnchorOutro", label: "Bottom Anchor Outro" },
+    { value: "BrandOutro", label: "Brand Outro" },
+    { value: "CenterLineOutro", label: "Center Line Outro" },
+    { value: "ContactCardEnding", label: "Contact Card Ending" },
+    { value: "Ending", label: "Ending / CTA Screen" },
+    { value: "Launch", label: "Launch" },
+    { value: "Minimal", label: "Minimal" },
+    { value: "NextStepEnding", label: "Next Step Ending" },
+    { value: "Product", label: "Product" },
+    { value: "QuietLogoMark", label: "Quiet Logo Mark" },
+    { value: "SocialFollowEnding", label: "Social Follow Ending" },
+    { value: "Subscribe", label: "Subscribe" }
   ]
 };
 
@@ -355,6 +534,20 @@ export const StoryboardEditor = ({
   const [playingSceneId, setPlayingSceneId] = useState(null);
   const [showStyleModal, setShowStyleModal] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState("minimal");
+  const [vdeThemes, setVdeThemes] = useState(VDE_PRESET_STYLES);
+
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/vde-themes");
+        setVdeThemes(response.data);
+      } catch (err) {
+        console.error("Error fetching VDE themes:", err);
+      }
+    };
+    fetchThemes();
+  }, []);
+
   const playerRefs = useRef({});
 
   const handleImageUploadClick = (sceneId) => {
@@ -644,7 +837,7 @@ export const StoryboardEditor = ({
                   gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
                   gap: "24px"
                 }}>
-                  {VDE_PRESET_STYLES.map(style => {
+                  {vdeThemes.map(style => {
                     const isSelected = selectedStyle === style.id;
                     return (
                       <div 

@@ -4,5 +4,10 @@
     "fade",
     "opacity",
     "mask_reveal"
+  ],
+  "avoid": [
+    "bounce",
+    "spin",
+    "shake"
   ]
 }

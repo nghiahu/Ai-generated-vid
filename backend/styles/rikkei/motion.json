@@ -3,5 +3,8 @@
   "style": [
     "slide-up",
     "fade"
+  ],
+  "avoid": [
+    "bounce"
   ]
 }

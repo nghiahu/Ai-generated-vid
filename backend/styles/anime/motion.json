@@ -3,5 +3,8 @@
   "style": [
     "scale-in",
     "bounce"
+  ],
+  "avoid": [
+    "spin"
   ]
 }

@@ -169,56 +169,9 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const omnivoiceExe = process.env.OMNIVOICE_INFER_PATH ||
         "C:\\Users\\nghia\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\omnivoice-infer.exe";
 
-      // Đảm bảo thư mục tài nguyên giọng tham chiếu tồn tại
-      const refsDir = path.join(__dirname, '../resources/ref_voices');
-      if (!fs.existsSync(refsDir)) {
-        fs.mkdirSync(refsDir, { recursive: true });
-      }
-
-      // Xác định file giọng tham chiếu (Nữ, Nam, hoặc tùy chỉnh Anh Quý / Đô Trịnh / BeatVN / Duy Thanh) để clone
-      const isAnhQuy = voiceKey.toLowerCase() === "omnivoice_anhquy";
-      const isDoTrinh = voiceKey.toLowerCase() === "omnivoice_dotrinh";
-      const isBeatvn = voiceKey.toLowerCase() === "omnivoice_beatvn";
-      const isBeatvn2 = voiceKey.toLowerCase() === "omnivoice_beatvn2";
-      const isDuyThanh = voiceKey.toLowerCase() === "omnivoice_duythanh";
-      const isMale = voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh || isDuyThanh;
-
-      const refFileName = isMale ? "ref_vietnamese_male.wav" : "ref_vietnamese_female.wav";
-      let refAudioPath = isAnhQuy
-        ? path.join(__dirname, '../../mp3/anhquy/voice_anh_quy.mp3')
-        : isDoTrinh
-          ? path.join(__dirname, '../../mp3/elevenlab/do_trinh/voice_preview_đô trịnh - giọng hay.mp3')
-          : isBeatvn
-            ? path.join(__dirname, '../../mp3/beatvn/voice_beatvn.mp3')
-            : isBeatvn2
-              ? path.join(__dirname, '../../mp3/beatvn_voice2/beatV2.mp3')
-              : isDuyThanh
-                ? path.join(__dirname, '../../mp3/duy_thanh_nguyen/voice_duy_thanh.mp3')
-                : path.join(refsDir, refFileName);
-      const refText = isAnhQuy
-        ? "Rồi, chào các bạn nhá! Nốt tiếp nội dung của bài liên quan đến ứng dụng quản lý, quản lý sinh viên. Bây giờ là chúng ta sẽ cùng nhau đi giải quyết nốt chức năng phân trang, cho danh sách sinh viên này."
-        : isDoTrinh
-          ? "Giọng trầm ấm, rõ chữ, mang phong cách chuyên nghiệp, hiện đại. Phù hợp cho các nội dung công nghệ, AI, kinh doanh, giáo dục, và phát triển bản thân."
-          : isBeatvn
-            ? "Giáo viên trường trung học phổ thông chuyên Tuyên Quang vừa bị tạm giữ. Từng đạt giải học sinh giỏi quốc gia môn Toán, tuyển thẳng vào đại học, và tốt nghiệp loại giỏi. Sinh năm 1998, được giảng dạy ở một trường chuyên của tỉnh Tuyên Quang, có nghĩa là người thầy giáo này phải thật sự giỏi."
-            : isBeatvn2
-              ? "Ông em khổ nhất TikTok là đây. Chỉ muốn làm họa sĩ, đem những nét vẽ làm đẹp cho đời. Nhưng lên video nào, mọi người cũng khuyên em đi đóng phim. Thật lòng thì em vẽ cũng đẹp thật, nhưng thế méo nào nhìn đi nhìn lại, cũng thấy giống như hai giọt nước."
-              : isDuyThanh
-                ? "Khoảng một hai năm trở lại đây, một ngày mình thức dậy là hàng tá những nội dung về AI đập vào mắt. Bỗng dưng từ đâu xuất hiện rất nhiều chuyên gia, am hiểu tường tận mọi lĩnh vực, cái gì cũng phân tích được. Rồi nhiều khóa học xuất hiện hơn, nhiều video xuất hiện hơn, dạy về cách sử dụng, cách tối ưu hóa AI, mà mình thấy tần xuất nó ngày càng dày đặc hơn."
-                : "Hệ thống trí tuệ nhân tạo đang tạo giọng nói mẫu.";
-
-      // Tạo file giọng mẫu bằng Edge TTS nếu chưa tồn tại (chỉ cho các giọng mặc định)
-      if (!isAnhQuy && !isDoTrinh && !isBeatvn && !isBeatvn2 && !isDuyThanh && !fs.existsSync(refAudioPath)) {
-        console.log(`Creating OmniVoice reference voice file: ${refFileName}...`);
-        const msVoice = isMale ? "vi-VN-NamMinhNeural" : "vi-VN-HoaiMyNeural";
-        const ttsInstance = new EdgeTTS(refText, msVoice);
-        const result = await ttsInstance.synthesize();
-        if (result && result.audio) {
-          const ab = await result.audio.arrayBuffer();
-          fs.writeFileSync(refAudioPath, Buffer.from(ab));
-          console.log(`OmniVoice reference voice created successfully.`);
-        }
-      }
+      // Xác định file giọng tham chiếu Duy Thanh để clone
+      let refAudioPath = path.join(__dirname, '../../mp3/duy_thanh_nguyen/voice_duy_thanh.mp3');
+      const refText = "Khoảng một hai năm trở lại đây, một ngày mình thức dậy là hàng tá những nội dung về AI đập vào mắt. Bỗng dưng từ đâu xuất hiện rất nhiều chuyên gia, am hiểu tường tận mọi lĩnh vực, cái gì cũng phân tích được. Rồi nhiều khóa học xuất hiện hơn, nhiều video xuất hiện hơn, dạy về cách sử dụng, cách tối ưu hóa AI, mà mình thấy tần xuất nó ngày càng dày đặc hơn.";
 
       // Đảm bảo file giọng tham chiếu luôn ở dạng WAV 16kHz Mono sạch để tránh lỗi giải mã gây tiếng xì xồ
       if (fs.existsSync(refAudioPath)) {
@@ -226,14 +179,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       }
 
       // Ánh xạ voiceKey sang instruct string cho OmniVoice
-      let instruct = "female"; // Mặc định
-      if (voiceKey.toLowerCase() === "omnivoice_male" || isAnhQuy || isDoTrinh || isDuyThanh) {
-        instruct = "male";
-      } else if (voiceKey.toLowerCase() === "omnivoice_whisper") {
-        instruct = "female, whisper";
-      } else if (voiceKey.toLowerCase() === "omnivoice_british") {
-        instruct = "female, british accent";
-      }
+      let instruct = "male";
 
       // OmniVoice xuất WAV, nên lưu file .wav riêng
       const wavFileName = `tts_${projectId}_${sceneId}_${version}.wav`;

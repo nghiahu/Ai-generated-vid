@@ -1,237 +1,19 @@
 const fs = require('fs');
 const path = require('path');
+// Path to master theme config in my-video src
+const MASTER_THEMES_PATH = path.join(__dirname, '../../my-video/src/styles/vde_themes.json');
 
-// Default built-in VDE Style specifications to guarantee absolute stability
-const BUILTIN_STYLES = {
-  minimal: {
-    dna: {
-      philosophy: { oneIdeaPerScene: true, clarity: 1.0, minimalism: 0.95 },
-      tone: "clean, premium, highly focused, silent space",
-      description: "Tập trung tối đa vào thông tin chính, loại bỏ mọi chi tiết thừa thãi. Không gian trống đóng vai trò quan trọng."
-    },
-    grammar: {
-      nodes: ["primary_focus", "supporting_text", "background_element"],
-      constraints: [
-        "Only one dominant visual focus is allowed per scene.",
-        "Whitespace must occupy at least 45% of the viewport.",
-        "Supporting text must never visually dominate the title."
-      ]
-    },
-    tokens: {
-      colors: {
-        background: "#080b11",
-        cardBg: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)",
-        border: "rgba(255, 255, 255, 0.1)",
-        accent: "#3b82f6",
-        text: "#ffffff",
-        textSecondary: "rgba(255,255,255,0.6)"
-      },
-      fonts: {
-        title: "Montserrat",
-        body: "Inter"
-      },
-      spacing: { padding: "40px", gap: "24px" },
-      radius: "20px",
-      shadow: "0 10px 30px rgba(0,0,0,0.5)"
-    },
-    motion: {
-      energy: "low",
-      style: ["fade", "opacity", "scale-in"],
-      avoid: ["bounce", "spin", "shake", "flash", "glitch"]
-    },
-    storytelling: {
-      scenePattern: ["hook", "reveal", "feature", "benefit", "ending"],
-      pacing: "steady",
-      averageSceneDuration: 6
-    },
-    assets: {
-      preferred: ["product_render", "ui_mockup", "outline_icon"],
-      avoid: ["anime", "sticker", "meme", "cartoon"]
-    },
-    validator: {
-      rules: [
-        { rule: "Only one dominant focus", severity: "error" },
-        { rule: "Whitespace > 45%", severity: "warning" }
-      ]
-    }
-  },
-  apple: {
-    extends: "minimal",
-    dna: {
-      philosophy: { oneIdeaPerScene: true, clarity: 1.0, minimalism: 0.98 },
-      tone: "premium, sleek, presentation keynote, luxury",
-      description: "Thiết kế dạng slide ra mắt sản phẩm của Apple: chữ trắng cực lớn trên nền đen tuyền, tối giản tuyệt đối."
-    },
-    tokens: {
-      colors: {
-        background: "#000000",
-        cardBg: "rgba(255, 255, 255, 0.03)",
-        border: "rgba(255, 255, 255, 0.08)",
-        accent: "#ffffff",
-        text: "#ffffff",
-        textSecondary: "#86868b"
-      },
-      fonts: {
-        title: "SF Pro, Inter",
-        body: "SF Pro, Inter"
-      },
-      radius: "28px",
-      shadow: "none"
-    },
-    motion: {
-      energy: "very_low",
-      style: ["fade", "opacity", "mask_reveal"]
-    }
-  },
-  cyberpunk: {
-    extends: "minimal",
-    dna: {
-      philosophy: { oneIdeaPerScene: false, clarity: 0.8, minimalism: 0.4 },
-      tone: "high energy, futuristic, neon cyberpunk, data-rich",
-      description: "Thế giới tương lai ngập tràn ánh sáng neon, dữ liệu chạy liên tục, chữ phát sáng rực rỡ."
-    },
-    grammar: {
-      nodes: ["primary_focus", "supporting_text", "statistic", "technical_grid"],
-      constraints: [
-        "High energy and high contrast are preferred.",
-        "Allow glowing visual noise and technical UI elements in the background."
-      ]
-    },
-    tokens: {
-      colors: {
-        background: "#030008",
-        cardBg: "linear-gradient(135deg, rgba(255,0,128,0.08) 0%, rgba(0,229,255,0.03) 100%)",
-        border: "rgba(0, 229, 255, 0.25)",
-        accent: "#ff007f",
-        accentSecondary: "#00e5ff",
-        text: "#ffffff",
-        textSecondary: "rgba(255, 255, 255, 0.7)"
-      },
-      fonts: {
-        title: "Orbitron, Montserrat",
-        body: "Share Tech Mono, Inter"
-      },
-      radius: "8px",
-      shadow: "0 0 25px rgba(0, 229, 255, 0.3)"
-    },
-    motion: {
-      energy: "high",
-      style: ["slide-up", "glitch", "scale-in"],
-      avoid: ["fade"]
-    },
-    assets: {
-      preferred: ["technical_grid", "hacker_terminal", "neon_device"]
-    }
-  },
-  anime: {
-    extends: "minimal",
-    dna: {
-      philosophy: { oneIdeaPerScene: true, clarity: 0.9, minimalism: 0.7 },
-      tone: "vibrant, creative, sketch, hand-drawn comic",
-      description: "Phong cách truyện tranh/hoạt hình Nhật Bản với các mảng màu tươi tắn, nét vẽ thô phác họa viền đen đậm."
-    },
-    tokens: {
-      colors: {
-        background: "#fdf8f5",
-        cardBg: "#ffffff",
-        border: "#000000",
-        accent: "#ff6b6b",
-        text: "#1e1e24",
-        textSecondary: "#5a5a66"
-      },
-      fonts: {
-        title: "Outfit, Comic Sans MS",
-        body: "Outfit, Inter"
-      },
-      radius: "16px",
-      shadow: "6px 6px 0px #000000"
-    },
-    motion: {
-      energy: "medium",
-      style: ["scale-in", "bounce"]
-    }
-  },
-  claude: {
-    extends: "minimal",
-    dna: {
-      philosophy: { oneIdeaPerScene: true, clarity: 0.95, minimalism: 0.9 },
-      tone: "warm editorial, premium publishing, claude beige, cozy scholarly",
-      description: "Phong cách biên tập báo chí cổ điển của Anthropic Claude: nền cát ấm, tiêu đề có chân chữ lớn, màu nhấn cam đất sét ấm áp."
-    },
-    tokens: {
-      colors: {
-        background: "#FBF9F4",
-        cardBg: "rgba(217, 107, 67, 0.03)",
-        border: "rgba(217, 107, 67, 0.15)",
-        accent: "#d96b43",
-        text: "#191919",
-        textSecondary: "#6b655f"
-      },
-      fonts: {
-        title: "Playfair Display, Georgia, serif",
-        body: "Inter"
-      },
-      radius: "20px",
-      shadow: "none"
-    },
-    motion: {
-      energy: "low",
-      style: ["fade", "opacity"]
-    }
-  },
-  light: {
-    extends: "minimal",
-    dna: {
-      philosophy: { oneIdeaPerScene: true, clarity: 1.0, minimalism: 0.95 },
-      tone: "clean minimalist light, bright corporate, positive startup",
-      description: "Thiết kế phẳng sáng sủa và tối giản: nền trắng tinh khiết, thẻ xám nhạt, màu nhấn xanh hoàng gia tươi tắn."
-    },
-    tokens: {
-      colors: {
-        background: "#ffffff",
-        cardBg: "#f8fafc",
-        border: "#e2e8f0",
-        accent: "#2563eb",
-        text: "#0f172a",
-        textSecondary: "#475569"
-      },
-      fonts: {
-        title: "Montserrat, Inter",
-        body: "Inter"
-      },
-      radius: "16px",
-      shadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)"
-    }
-  },
-  rikkei: {
-    extends: "minimal",
-    dna: {
-      philosophy: { oneIdeaPerScene: true, clarity: 0.95, minimalism: 0.8 },
-      tone: "professional, educational, academic, clean, corporate, structured",
-      description: "Phong cách học viện Rikkei Academy: Nền trắng sạch sẽ, màu đỏ crimson làm chủ đạo, thẻ bo góc lớn màu hồng nhạt siêu dịu."
-    },
-    tokens: {
-      colors: {
-        background: "#ffffff",
-        cardBg: "#FAF5F5",
-        border: "rgba(168, 35, 42, 0.08)",
-        accent: "#A8232A",
-        text: "#000000",
-        textSecondary: "#595959"
-      },
-      fonts: {
-        title: "Be Vietnam Pro",
-        body: "Be Vietnam Pro"
-      },
-      radius: "16px",
-      shadow: "0 8px 24px rgba(168, 35, 42, 0.03)"
-    },
-    motion: {
-      energy: "medium",
-      style: ["slide-up", "fade"]
-    }
+let BUILTIN_STYLES = {};
+try {
+  if (fs.existsSync(MASTER_THEMES_PATH)) {
+    BUILTIN_STYLES = JSON.parse(fs.readFileSync(MASTER_THEMES_PATH, 'utf8'));
+    console.log('[VDE] Loaded master themes configuration from my-video styles successfully.');
+  } else {
+    console.warn('[VDE] Master themes file not found at:', MASTER_THEMES_PATH);
   }
-};
+} catch (err) {
+  console.error('[VDE] Error reading master themes file:', err);
+}
 
 const STYLES_DIR = path.join(__dirname, '../styles');
 
@@ -446,20 +228,27 @@ function initializeVDESubdirs() {
     const stylePath = path.join(STYLES_DIR, styleId);
     if (!fs.existsSync(stylePath)) {
       fs.mkdirSync(stylePath, { recursive: true });
-      
-      const styleConfig = BUILTIN_STYLES[styleId];
-      Object.keys(styleConfig).forEach(compName => {
-        if (compName === 'extends') {
-          fs.writeFileSync(path.join(stylePath, 'extends.txt'), styleConfig.extends);
-        } else {
-          fs.writeFileSync(
-            path.join(stylePath, `${compName}.json`), 
-            JSON.stringify(styleConfig[compName], null, 2)
-          );
-        }
-      });
-      console.log(`[VDE] Created filesystem style template for "${styleId}"`);
     }
+    
+    // Always write/overwrite with master configs to keep everything in sync
+    const styleConfig = BUILTIN_STYLES[styleId];
+    if (styleConfig.extends) {
+      fs.writeFileSync(path.join(stylePath, 'extends.txt'), styleConfig.extends);
+    } else if (fs.existsSync(path.join(stylePath, 'extends.txt'))) {
+      try {
+        fs.unlinkSync(path.join(stylePath, 'extends.txt'));
+      } catch (e) {}
+    }
+
+    Object.keys(styleConfig).forEach(compName => {
+      if (compName !== 'extends' && compName !== 'name' && compName !== 'description') {
+        fs.writeFileSync(
+          path.join(stylePath, `${compName}.json`), 
+          JSON.stringify(styleConfig[compName], null, 2)
+        );
+      }
+    });
+    console.log(`[VDE] Synchronized filesystem style configs for "${styleId}"`);
   });
 }
 
@@ -513,5 +302,6 @@ function getStylePrompt(styleId, traits = []) {
 module.exports = {
   getStyle,
   getStylePrompt,
-  initializeVDESubdirs
+  initializeVDESubdirs,
+  BUILTIN_STYLES
 };

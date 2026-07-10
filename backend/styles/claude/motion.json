@@ -3,5 +3,10 @@
   "style": [
     "fade",
     "opacity"
+  ],
+  "avoid": [
+    "bounce",
+    "spin",
+    "glitch"
   ]
 }
