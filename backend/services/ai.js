@@ -8,13 +8,28 @@ const STORYBOARD_SCHEMA = {
   items: {
     type: SchemaType.OBJECT,
     properties: {
-      layoutFamily: {
-        type: SchemaType.STRING,
-        description: "Must be one of: 'Opening / Headline', 'Points / List', 'Quote / Text', 'Timeline', 'Media', 'Ending'"
-      },
-      visualLayout: {
-        type: SchemaType.STRING,
-        description: "Must be a valid layout from the schema matching the visual context, e.g. 'Hero', 'Pullquote', 'TimelineBeamRail', 'VersusScale'"
+      sceneIntent: {
+        type: SchemaType.OBJECT,
+        description: "The visual intent and context descriptors for the scene layout selection",
+        properties: {
+          type: {
+            type: SchemaType.STRING,
+            description: "Must be one of: 'opening', 'comparison', 'metric', 'list', 'quote', 'timeline', 'media', 'ending'"
+          },
+          importance: {
+            type: SchemaType.STRING,
+            description: "Must be one of: 'high', 'medium', 'low'"
+          },
+          density: {
+            type: SchemaType.STRING,
+            description: "Must be one of: 'dense', 'medium', 'sparse'"
+          },
+          emotion: {
+            type: SchemaType.STRING,
+            description: "Must be one of: 'exciting', 'serious', 'informative', 'neutral'"
+          }
+        },
+        required: ["type", "importance", "density", "emotion"]
       },
       heading: {
         type: SchemaType.STRING,
@@ -28,11 +43,11 @@ const STORYBOARD_SCHEMA = {
           properties: {
             type: {
               type: SchemaType.STRING,
-              description: "Must be one of: 'text', 'terminal', 'metric', 'logo_row', 'badge_row', 'button', 'subheader'"
+              description: "Must be one of: 'card', 'terminal', 'metric', 'logo_row', 'badge_row', 'button', 'subheader'"
             },
             text: {
               type: SchemaType.STRING,
-              description: "The text content for this point in Vietnamese"
+              description: "The text content for this point in Vietnamese (optional for metric if value and subtext are used)"
             },
             animation: {
               type: SchemaType.STRING,
@@ -61,7 +76,7 @@ const STORYBOARD_SCHEMA = {
               description: "Optional metric subtext (only for metric type)"
             }
           },
-          required: ["type", "text"]
+          required: ["type"]
         }
       },
       voiceover: {
@@ -90,7 +105,7 @@ const STORYBOARD_SCHEMA = {
       }
     },
     required: [
-      "layoutFamily", "visualLayout", "heading", "points", "voiceover",
+      "sceneIntent", "heading", "points", "voiceover",
       "duration", "placement", "keywords", "theme", "accentColor"
     ]
   }
@@ -136,7 +151,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       ${stylePrompt}
       =========================================
 
-      For each scene, determine the layout, theme, accent color, and estimate duration (assume 3 Vietnamese words per second).
+      For each scene, determine the visual intent (sceneIntent), theme, accent color, and estimate duration (assume 3 Vietnamese words per second).
       
       Raw Script:
       "${scriptText}"
@@ -144,12 +159,16 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       You must respond with a JSON array of scene objects matching this JSON Schema:
       [
         {
-          "layoutFamily": "Opening / Headline" | "Points / List" | "Quote / Text",
-          "visualLayout": "AppCardConcept" | "AppShowcaseTitle" | "AuditTrailChecklist" | "BeforeAfterPanel" | "BottomAnchorOutro" | "BrandOutro" | "BroadcastLowerThirdTitle" | "CandlestickBreakoutHook" | "CaseStudyEditorial" | "CenterLineOutro" | "ComparisionScoreboard" | "Comparison" | "ComparisonBoard" | "ContactCardEnding" | "ConversationQuote" | "Dashboard" | "DebateTriangleBullet" | "DecisionCardRadio" | "DecisionMatrix" | "DecisionTree" | "DiffReceiptQuote" | "DossierNotes" | "DossierProofBullet" | "DossierQuestion" | "EarningsSnapshotHook" | "EditorialChart" | "EditorialQuestion" | "Ending" | "EvidenceBoardConcept" | "FearGreedHook" | "Feature Grid" | "FeedScrollHook" | "FlowchartTitle" | "ForumQuote" | "Gallery" | "GaugeStat" | "GlassStatTable" | "HeartQuestion" | "Hero" | "HeroMetricCards" | "HotTakeQuote" | "ImageBackbroundPoster" | "ImageBackgroundBadge" | "ImageBackgroundDefault" | "ImageBackgroundGlobe" | "ImpactLadderTable" | "Integration Cloud" | "IntroBriefingCard" | "IntroBubbleImage" | "IntroChapterStack" | "IntroCutoutHeadlineImage" | "IntroEvidenceReadlineImage" | "IntroEvidenceScanlineImage" | "IntroEvidenceTagsImage" | "IntroEvidenceTimelineImage" | "IntroFullImage" | "IntroFullImageBreakingStack" | "IntroFullImageCaptionLockup" | "IntroFullImageDataBroadcast" | "IntroFullImageReporterOverlay" | "IntroFullImageSplitHeadline" | "IntroFullImageSpotlightSubject" | "IntroHalfImage" | "IntroKineticCountdownImage" | "IntroKineticImage" | "IntroMapPinsImage" | "IntroMediaCard" | "IntroMediaHero" | "IntroMediaPoster" | "IntroMetricConstellationImage" | "IntroMetricGyroscopeImage" | "IntroMetricKpiBoardImage" | "IntroMetricOrbitImage" | "IntroMetricPillImage" | "IntroMetricPulseStackImage" | "IntroNumberLede" | "IntroProfile" | "IntroProfileDossier" | "IntroRadarSignalImage" | "IntroSignalStepsImages" | "IntroStampStackImage" | "KanbanChecklist" | "KineticType" | "LabelwriterQuote" | "Laptop Mockup" | "Launch" | "LessonHightlightQuote" | "LogoWall" | "LowerThirdNews" | "ManifestoConcept" | "ManifestoQuote" | "MapPinsHook" | "MarketBoard" | "MediaCard" | "MediaCardHook" | "MediaHeadlineHook" | "MediaImageBottomBrief" | "MediaImageFloatingPoints" | "MediaImageFocusWindow" | "MediaImageHorizontalPan" | "MediaImageLandscapeZoomOut" | "MediaImageMapCallout" | "MediaImageNewsLowerThird" | "MediaImagePinBoard" | "MediaImageTopBrief" | "MediaImageWideCardStack" | "MessageQuote" | "MetricCards" | "Minimal" | "NeonPlanVersus" | "NeonStackTitle" | "NewsTicker" | "NextStepEnding" | "NotificationHook" | "OldVsNews" | "OpsBriefBullef" | "OpsMonitorHook" | "OptionSelectorRadio" | "OrbitMetricsHook" | "PinnedMessageQuote" | "PollStackQuesion" | "PosterTitle" | "PriceAlertHook" | "ProcessStrip" | "Product" | "ProgressBars" | "ProgressGateChecklist" | "Pullquote" | "QuietLogoMark" | "Quote" | "QuoteColumnQuestion" | "RadialMetricCards" | "Ranked" | "RankedImpactBullet" | "RedditPostHook" | "ScoreboardMeticCards" | "SelectorWheelRadio" | "SignalCheckpointsBullet" | "SignalRailBullet" | "SingleStat" | "SocialFollowEnding" | "SocialPost" | "SoftBoardChecklist" | "SomparisonTable" | "SpeakerAvatarQuote" | "Split Screen" | "SplitBandChecklist" | "SplitClaimStat" | "SplitEditorial" | "SplitProofBullet" | "SplitScreenInterview" | "SplitVerdictTable" | "SporlightOutcome" | "SpotlightConcept" | "SpotlightStat" | "StackedProofMetrics" | "StampCheklist" | "StampStat" | "Stats Banner" | "StatusGridHook" | "Subscribe" | "SwissGrid" | "SwitchboardRadio" | "SysteamAlertHook" | "Terminal" | "TerminalCommandHook" | "Three Columns" | "TickerMetricCards" | "TickerTapeHook" | "Timeline" | "TimelineBeamRail" | "TimelineChapters" | "TimelineCheckFlow" | "TimelineEditorial" | "TimelineMapPins" | "TimelineNewswire" | "TimelineRadar" | "TimelineRoadmap" | "TimelineStaircase" | "VersusArena" | "VersusBrightDiagonalPoster" | "VersusChoiceRadio" | "VersusDiagonalDetailsPoster" | "VersusDiagonalSpotlight" | "VersusScale" | "VersusSplitBands" | "VersusSplitCards" | "VersusTimelineShift" | "VersusTugline" | "VersusVerdict" | "VignelliQuote" | "VignelliTitle" | "WalkthroughPhoneExample" | "WarmGrainHook" | "XPostHook",
+          "sceneIntent": {
+            "type": "opening" | "comparison" | "metric" | "list" | "quote" | "timeline" | "media" | "ending",
+            "importance": "high" | "medium" | "low",
+            "density": "dense" | "medium" | "sparse",
+            "emotion": "exciting" | "serious" | "informative" | "neutral"
+          },
           "heading": "Scene title/heading in Vietnamese",
           "points": [
             {
-              "type": "text", // Required type. Allowed values: "text", "terminal", "metric", "logo_row", "badge_row", "button", "subheader"
+              "type": "card", // Required type. Allowed values: "card", "terminal", "metric", "logo_row", "badge_row", "button", "subheader"
               "text": "The main text content, or terminal command, or button label, or subheader label. Keep it simple and descriptive in Vietnamese.",
               "animation": "slide-up", // Required animation. Allowed values: "slide-up", "scale-in", "fade-in", "blur-in", "slide-left", "slide-right"
               "delay": 0.5, // Estimated offset in seconds from the start of this scene (number, e.g. 1.8) indicating when the voice speaks this point. Delays should be spaced out (e.g., 0.5, 2.0, 3.5) and strictly less than the scene duration. Ensure the first point starts around 0.5s.
@@ -168,17 +187,6 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
         }
       ]
       
-      Layout selection guide for "visualLayout":
-      Select the best matching layout from the categories below based on visual context:
-      - Opening / Headline: AppCardConcept, AppShowcaseTitle, BeforeAfterPanel, BroadcastLowerThirdTitle, CandlestickBreakoutHook, CaseStudyEditorial, DossierNotes, EarningsSnapshotHook, EvidenceBoardConcept, FearGreedHook, FeedScrollHook, FlowchartTitle, Hero, IntroBriefingCard, IntroBubbleImage, IntroChapterStack, IntroCutoutHeadlineImage, IntroEvidenceReadlineImage, IntroEvidenceScanlineImage, IntroEvidenceTagsImage, IntroEvidenceTimelineImage, IntroFullImage, IntroFullImageBreakingStack, IntroFullImageCaptionLockup, IntroFullImageDataBroadcast, IntroFullImageReporterOverlay, IntroFullImageSplitHeadline, IntroFullImageSpotlightSubject, IntroHalfImage, IntroKineticCountdownImage, IntroKineticImage, IntroMapPinsImage, IntroMediaCard, IntroMediaHero, IntroMediaPoster, IntroMetricConstellationImage, IntroMetricGyroscopeImage, IntroMetricKpiBoardImage, IntroMetricOrbitImage, IntroMetricPillImage, IntroMetricPulseStackImage, IntroNumberLede, IntroProfile, IntroProfileDossier, IntroRadarSignalImage, IntroSignalStepsImages, IntroStampStackImage, KineticType, LowerThirdNews, ManifestoConcept, MapPinsHook, MediaCardHook, MediaHeadlineHook, NeonStackTitle, NotificationHook, OpsMonitorHook, OrbitMetricsHook, PosterTitle, PriceAlertHook, ProcessStrip, RedditPostHook, SplitEditorial, SporlightOutcome, SpotlightConcept, StatusGridHook, SwissGrid, SysteamAlertHook, Terminal, TerminalCommandHook, TickerTapeHook, VignelliTitle, WalkthroughPhoneExample, WarmGrainHook, XPostHook
-      - List / Steps: AuditTrailChecklist, DebateTriangleBullet, DecisionCardRadio, DecisionTree, DossierProofBullet, Feature Grid, KanbanChecklist, LogoWall, OpsBriefBullef, OptionSelectorRadio, ProgressGateChecklist, RankedImpactBullet, SelectorWheelRadio, SignalCheckpointsBullet, SignalRailBullet, SocialPost, SoftBoardChecklist, SplitBandChecklist, SplitProofBullet, StampCheklist, SwitchboardRadio, Three Columns, VersusChoiceRadio
-      - Data / Metrics: Dashboard, EditorialChart, GaugeStat, HeroMetricCards, MarketBoard, MetricCards, ProgressBars, RadialMetricCards, ScoreboardMeticCards, SingleStat, SplitClaimStat, SpotlightStat, StackedProofMetrics, StampStat, Stats Banner, TickerMetricCards
-      - Comparison / Table: ComparisionScoreboard, Comparison, ComparisonBoard, DecisionMatrix, GlassStatTable, ImpactLadderTable, NeonPlanVersus, OldVsNews, Ranked, SomparisonTable, SplitScreenInterview, SplitVerdictTable, VersusArena, VersusBrightDiagonalPoster, VersusDiagonalDetailsPoster, VersusDiagonalSpotlight, VersusScale, VersusSplitBands, VersusSplitCards, VersusTimelineShift, VersusTugline, VersusVerdict
-      - Quote / Insight: ConversationQuote, DiffReceiptQuote, DossierQuestion, EditorialQuestion, ForumQuote, HeartQuestion, HotTakeQuote, LabelwriterQuote, LessonHightlightQuote, ManifestoQuote, MessageQuote, NewsTicker, PinnedMessageQuote, PollStackQuesion, Pullquote, Quote, QuoteColumnQuestion, SpeakerAvatarQuote, VignelliQuote
-      - Timeline: Timeline, TimelineBeamRail, TimelineChapters, TimelineCheckFlow, TimelineEditorial, TimelineMapPins, TimelineNewswire, TimelineRadar, TimelineRoadmap, TimelineStaircase
-      - Media: Gallery, ImageBackbroundPoster, ImageBackgroundBadge, ImageBackgroundDefault, ImageBackgroundGlobe, Integration Cloud, Laptop Mockup, MediaCard, MediaImageBottomBrief, MediaImageFloatingPoints, MediaImageFocusWindow, MediaImageHorizontalPan, MediaImageLandscapeZoomOut, MediaImageMapCallout, MediaImageNewsLowerThird, MediaImagePinBoard, MediaImageTopBrief, MediaImageWideCardStack, Split Screen
-      - Ending: BottomAnchorOutro, BrandOutro, CenterLineOutro, ContactCardEnding, Ending, Launch, Minimal, NextStepEnding, Product, QuietLogoMark, SocialFollowEnding, Subscribe
-      
       CRITICAL BLOCK STYLE SELECTION RULES FOR THE THEME:
       ${vde.getStylePrompt(visualStyle)}
       
@@ -193,6 +201,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       
       Return ONLY the raw JSON array. Do not include markdown formatting or wrapping.
     `;
+
 
     let result;
     const maxRetries = 4;
@@ -302,15 +311,20 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       id: `scene_${Date.now()}_${index}`,
       sceneIndex: index,
       duration: Number(scene.duration) || 6.0,
-      layoutFamily: scene.layoutFamily || "Opening / Headline",
-      visualLayout: scene.visualLayout || "Hero",
+      sceneIntent: scene.sceneIntent || {
+        type: "opening",
+        importance: "medium",
+        density: "medium",
+        emotion: "neutral"
+      },
       heading: scene.heading || `Phân cảnh ${index + 1}`,
       points: Array.isArray(scene.points) ? scene.points.map((pt, idx) => {
         if (typeof pt === 'string') {
-          return { text: pt, animation: 'slide-up', delay: Number((idx * 1.5).toFixed(1)) };
+          return { type: 'card', text: pt, animation: 'slide-up', delay: Number((idx * 1.5).toFixed(1)) };
         }
         return {
           ...pt,
+          type: pt.type || 'card',
           text: pt.text || '',
           animation: pt.animation || 'slide-up',
           delay: typeof pt.delay === 'number' ? pt.delay : Number((idx * 1.5).toFixed(1))
