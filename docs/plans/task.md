@@ -9,5 +9,5 @@
 | 2.1 | Adaptive Layout Engine — 5 giai đoạn (`layoutResolver.ts`) | ✅ done |
 | 2.2 | Area Resolver — Semantic Layout Support (`areaResolver.ts`) | ✅ done |
 | 3.1 | Design Tokens tập trung (`tokens.ts`) | ✅ done |
-| 3.2 | Auto-registration via Vite Glob Import (`index.ts`) | ⬜ not_started |
+| 3.2 | Auto-registration via Vite Glob Import (`index.ts`) | ✅ done |
 | 3.3 | Animation Metadata trong JSON Layout | ⬜ not_started |
