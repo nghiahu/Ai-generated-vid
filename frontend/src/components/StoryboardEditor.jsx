@@ -523,6 +523,25 @@ export const StoryboardEditor = ({
   const [showStyleModal, setShowStyleModal] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState("minimal");
   const [vdeThemes, setVdeThemes] = useState(VDE_PRESET_STYLES);
+  
+  // Media Modal & Upload states
+  const [selectedMedia, setSelectedMedia] = useState([]);
+  const [showMediaModal, setShowMediaModal] = useState(false);
+  const [mediaTab, setMediaTab] = useState("YOUR_MEDIA"); // YOUR_MEDIA, UPLOAD, STOCK, AI
+  const [previousMedia, setPreviousMedia] = useState([]);
+  const [stockQuery, setStockQuery] = useState("");
+  const [stockResults, setStockResults] = useState([]);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    if (showMediaModal) {
+      axios.get("http://localhost:5000/api/media/previous")
+        .then(res => {
+          setPreviousMedia(res.data || []);
+        })
+        .catch(err => console.error("Failed to fetch previous media:", err));
+    }
+  }, [showMediaModal]);
 
   useEffect(() => {
     const fetchThemes = async () => {
@@ -586,6 +605,49 @@ export const StoryboardEditor = ({
     
     fileInput.click();
   };
+
+  const handleToggleSelectMedia = (url) => {
+    setSelectedMedia(prev => {
+      if (prev.includes(url)) {
+        return prev.filter(u => u !== url);
+      } else {
+        return [...prev, url];
+      }
+    });
+  };
+
+  const handleStockSearch = async () => {
+    if (!stockQuery.trim()) return;
+    try {
+      const res = await axios.get(`http://localhost:5000/api/media/search?query=${encodeURIComponent(stockQuery)}`);
+      setStockResults(res.data || []);
+    } catch (err) {
+      console.error("Stock search failed:", err);
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      setUploading(true);
+      try {
+        const res = await axios.post("http://localhost:5000/api/upload", { file: reader.result });
+        if (res.data && res.data.url) {
+          setSelectedMedia(prev => [...prev, res.data.url]);
+          setPreviousMedia(prev => [res.data.url, ...prev]);
+          setMediaTab("YOUR_MEDIA");
+        }
+      } catch (err) {
+        console.error("Upload failed:", err);
+        alert("Không thể tải ảnh lên: " + (err.response?.data?.error || err.message));
+      } finally {
+        setUploading(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
   
   const [searchQueries, setSearchQueries] = useState({});
   const [searchingImages, setSearchingImages] = useState({});
@@ -597,7 +659,7 @@ export const StoryboardEditor = ({
 
   const handleConfirmStyle = () => {
     setShowStyleModal(false);
-    onGenerateStoryboard(scriptText, selectedStyle);
+    onGenerateStoryboard(scriptText, selectedStyle, selectedMedia);
   };
 
   const handleFieldChange = (sceneId, field, value) => {
@@ -728,14 +790,543 @@ export const StoryboardEditor = ({
               />
             </div>
 
-            <div style={{ borderTop: "2px solid #000000", paddingTop: "20px", display: "flex", justifyContent: "flex-end" }}>
+            <div style={{ borderTop: "1px solid rgba(15, 23, 42, 0.08)", paddingTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <button 
+                type="button"
+                onClick={() => setShowMediaModal(true)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "12px 24px",
+                  borderRadius: "30px",
+                  border: "1px solid rgba(15, 23, 42, 0.12)",
+                  background: "#ffffff",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  color: "var(--text-primary)",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 6px rgba(0, 0, 0, 0.04)",
+                  transition: "all 0.2s ease"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--color-primary)";
+                  e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
+                  e.currentTarget.style.backgroundColor = "#ffffff";
+                }}
+              >
+                <span style={{ fontSize: "16px" }}>🖼️</span>
+                Media ({selectedMedia.length})
+              </button>
+
               <button 
                 className="btn-mono btn-mono-primary"
-                style={{ width: "100%", padding: "16px", fontSize: "15px", letterSpacing: "0.05em" }}
+                style={{ 
+                  width: "auto", 
+                  minWidth: "160px",
+                  padding: "12px 32px", 
+                  fontSize: "14px", 
+                  fontWeight: "bold",
+                  borderRadius: "30px",
+                  letterSpacing: "0.03em" 
+                }}
                 onClick={handleGenerate}
               >
-                🪄 &nbsp; TẠO STORYBOARD
+                Tạo storyboard &nbsp; 🪄
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Media Modal */}
+        {showMediaModal && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(15, 23, 42, 0.6)",
+            backdropFilter: "blur(6px)",
+            zIndex: 9999,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "20px"
+          }}>
+            <div style={{
+              backgroundColor: "#ffffff",
+              width: "1000px",
+              maxWidth: "95%",
+              height: "85vh",
+              maxHeight: "800px",
+              borderRadius: "20px",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+              border: "1px solid rgba(15, 23, 42, 0.08)",
+              fontFamily: "Inter, sans-serif"
+            }}>
+              
+              {/* Modal Header */}
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "20px 24px",
+                borderBottom: "1px solid rgba(15, 23, 42, 0.06)",
+                backgroundColor: "#fafbfc"
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span style={{ fontSize: "20px" }}>🖼️</span>
+                  <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "700", color: "#0f172a" }}>Project Images</h3>
+                </div>
+                
+                {/* Tabs Switcher */}
+                <div style={{
+                  display: "flex",
+                  background: "#f1f5f9",
+                  padding: "4px",
+                  borderRadius: "30px",
+                  gap: "4px"
+                }}>
+                  <button 
+                    type="button"
+                    onClick={() => setMediaTab("YOUR_MEDIA")}
+                    style={{
+                      border: "none",
+                      background: mediaTab === "YOUR_MEDIA" ? "#ffffff" : "none",
+                      color: mediaTab === "YOUR_MEDIA" ? "#0f172a" : "#64748b",
+                      padding: "8px 16px",
+                      borderRadius: "20px",
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      boxShadow: mediaTab === "YOUR_MEDIA" ? "0 2px 4px rgba(0,0,0,0.05)" : "none"
+                    }}
+                  >
+                    Your Media
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setMediaTab("UPLOAD")}
+                    style={{
+                      border: "none",
+                      background: mediaTab === "UPLOAD" ? "#ffffff" : "none",
+                      color: mediaTab === "UPLOAD" ? "#0f172a" : "#64748b",
+                      padding: "8px 16px",
+                      borderRadius: "20px",
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      boxShadow: mediaTab === "UPLOAD" ? "0 2px 4px rgba(0,0,0,0.05)" : "none"
+                    }}
+                  >
+                    Upload
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setMediaTab("STOCK")}
+                    style={{
+                      border: "none",
+                      background: mediaTab === "STOCK" ? "#ffffff" : "none",
+                      color: mediaTab === "STOCK" ? "#0f172a" : "#64748b",
+                      padding: "8px 16px",
+                      borderRadius: "20px",
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      boxShadow: mediaTab === "STOCK" ? "0 2px 4px rgba(0,0,0,0.05)" : "none"
+                    }}
+                  >
+                    Stock Images
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setMediaTab("AI")}
+                    style={{
+                      border: "none",
+                      background: mediaTab === "AI" ? "#ffffff" : "none",
+                      color: mediaTab === "AI" ? "#0f172a" : "#64748b",
+                      padding: "8px 16px",
+                      borderRadius: "20px",
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      boxShadow: mediaTab === "AI" ? "0 2px 4px rgba(0,0,0,0.05)" : "none"
+                    }}
+                  >
+                    AI Images
+                  </button>
+                </div>
+
+                <button 
+                  type="button"
+                  onClick={() => setShowMediaModal(false)}
+                  style={{
+                    border: "none",
+                    background: "rgba(15, 23, 42, 0.04)",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    color: "#64748b",
+                    transition: "background 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.08)"}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.04)"}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div style={{ flex: 1, padding: "24px", overflowY: "auto", minHeight: 0 }}>
+                {mediaTab === "YOUR_MEDIA" && (
+                  <div>
+                    <div style={{ marginBottom: "16px" }}>
+                      <h4 style={{ margin: "0 0 4px 0", fontSize: "15px", fontWeight: "600", color: "#1e293b" }}>Your Media</h4>
+                      <p style={{ margin: 0, fontSize: "13px", color: "#64748b" }}>Reuse images and videos from your previous projects.</p>
+                    </div>
+                    {previousMedia.length === 0 ? (
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 20px", border: "2px dashed #e2e8f0", borderRadius: "12px" }}>
+                        <span style={{ fontSize: "32px", marginBottom: "12px" }}>📂</span>
+                        <p style={{ margin: 0, fontSize: "14px", color: "#64748b", fontWeight: "600" }}>Chưa có file phương tiện nào được lưu trước đây.</p>
+                      </div>
+                    ) : (
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: "16px" }}>
+                        {previousMedia.map((url, idx) => {
+                          const isSelected = selectedMedia.includes(url);
+                          return (
+                            <div 
+                              key={idx}
+                              onClick={() => handleToggleSelectMedia(url)}
+                              style={{
+                                position: "relative",
+                                width: "100%",
+                                paddingTop: "100%",
+                                borderRadius: "12px",
+                                overflow: "hidden",
+                                cursor: "pointer",
+                                border: isSelected ? "3px solid #3b82f6" : "1px solid rgba(15,23,42,0.08)",
+                                boxShadow: isSelected ? "0 4px 12px rgba(59,130,246,0.15)" : "none",
+                                transition: "all 0.2s ease"
+                              }}
+                            >
+                              <img 
+                                src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
+                                alt="Previous Media Item"
+                                style={{
+                                  position: "absolute",
+                                  top: 0,
+                                  left: 0,
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover"
+                                }}
+                              />
+                              {isSelected && (
+                                <div style={{
+                                  position: "absolute",
+                                  top: "8px",
+                                  right: "8px",
+                                  backgroundColor: "#3b82f6",
+                                  color: "#ffffff",
+                                  borderRadius: "50%",
+                                  width: "20px",
+                                  height: "20px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "11px",
+                                  fontWeight: "bold"
+                                }}>
+                                  ✓
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {mediaTab === "UPLOAD" && (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", minHeight: "300px" }}>
+                    <div 
+                      onClick={() => document.getElementById("media-modal-upload-input").click()}
+                      style={{
+                        width: "100%",
+                        maxWidth: "500px",
+                        border: "2px dashed #cbd5e1",
+                        borderRadius: "16px",
+                        padding: "48px 24px",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        backgroundColor: "#f8fafc",
+                        transition: "all 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = "#3b82f6";
+                        e.currentTarget.style.backgroundColor = "#f0f9ff";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = "#cbd5e1";
+                        e.currentTarget.style.backgroundColor = "#f8fafc";
+                      }}
+                    >
+                      <input 
+                        type="file"
+                        id="media-modal-upload-input"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        style={{ display: "none" }}
+                      />
+                      {uploading ? (
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                          <div style={{ width: "30px", height: "30px", border: "3px solid #cbd5e1", borderTop: "3px solid #3b82f6", borderRadius: "50%", animation: "spin 1s linear infinite", marginBottom: "12px" }} />
+                          <span style={{ fontSize: "14px", fontWeight: "600", color: "#64748b" }}>Đang tải ảnh lên Cloudinary...</span>
+                        </div>
+                      ) : (
+                        <div style={{ textAlign: "center" }}>
+                          <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>☁️</span>
+                          <span style={{ fontSize: "15px", fontWeight: "700", color: "#334155", display: "block", marginBottom: "4px" }}>Click to upload files</span>
+                          <span style={{ fontSize: "12px", color: "#64748b" }}>Supports JPG, PNG, GIF up to 5MB</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {mediaTab === "STOCK" && (
+                  <div>
+                    {/* Search bar */}
+                    <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+                      <input 
+                        type="text"
+                        placeholder="Search high-quality stock photos from Unsplash..."
+                        value={stockQuery}
+                        onChange={(e) => setStockQuery(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleStockSearch()}
+                        style={{
+                          flex: 1,
+                          padding: "12px 16px",
+                          borderRadius: "30px",
+                          border: "1px solid #cbd5e1",
+                          fontSize: "14px",
+                          outline: "none"
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleStockSearch}
+                        style={{
+                          backgroundColor: "#0f172a",
+                          color: "#ffffff",
+                          border: "none",
+                          padding: "0 24px",
+                          borderRadius: "30px",
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          cursor: "pointer"
+                        }}
+                      >
+                        Tìm kiếm
+                      </button>
+                    </div>
+
+                    {stockResults.length === 0 ? (
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 20px" }}>
+                        <span style={{ fontSize: "32px", marginBottom: "12px" }}>🔍</span>
+                        <p style={{ margin: 0, fontSize: "14px", color: "#64748b", fontWeight: "600" }}>Nhập từ khóa tìm kiếm để duyệt ảnh Unsplash</p>
+                      </div>
+                    ) : (
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: "16px" }}>
+                        {stockResults.map((url, idx) => {
+                          const isSelected = selectedMedia.includes(url);
+                          return (
+                            <div 
+                              key={idx}
+                              onClick={() => handleToggleSelectMedia(url)}
+                              style={{
+                                position: "relative",
+                                width: "100%",
+                                paddingTop: "100%",
+                                borderRadius: "12px",
+                                overflow: "hidden",
+                                cursor: "pointer",
+                                border: isSelected ? "3px solid #3b82f6" : "1px solid rgba(15,23,42,0.08)",
+                                boxShadow: isSelected ? "0 4px 12px rgba(59,130,246,0.15)" : "none",
+                                transition: "all 0.2s ease"
+                              }}
+                            >
+                              <img 
+                                src={url}
+                                alt="Unsplash Stock"
+                                style={{
+                                  position: "absolute",
+                                  top: 0,
+                                  left: 0,
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover"
+                                }}
+                              />
+                              {isSelected && (
+                                <div style={{
+                                  position: "absolute",
+                                  top: "8px",
+                                  right: "8px",
+                                  backgroundColor: "#3b82f6",
+                                  color: "#ffffff",
+                                  borderRadius: "50%",
+                                  width: "20px",
+                                  height: "20px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "11px",
+                                  fontWeight: "bold"
+                                }}>
+                                  ✓
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {mediaTab === "AI" && (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", minHeight: "300px" }}>
+                    <span style={{ fontSize: "48px", marginBottom: "16px" }}>✨</span>
+                    <h4 style={{ margin: "0 0 8px 0", fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>AI Image Generation</h4>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#64748b", textAlign: "center", maxWidth: "340px" }}>Tính năng tạo ảnh minh họa tự động bằng AI đang được phát triển và sẽ sớm ra mắt.</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Selected Media Preview Bar / Footer */}
+              <div style={{
+                borderTop: "1px solid rgba(15, 23, 42, 0.06)",
+                padding: "16px 24px",
+                backgroundColor: "#fafbfc",
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "13px", fontWeight: "700", color: "#475569" }}>
+                    Selected Media ({selectedMedia.length} asset{selectedMedia.length !== 1 ? "s" : ""})
+                  </span>
+                  {selectedMedia.length > 0 && (
+                    <button 
+                      type="button" 
+                      onClick={() => setSelectedMedia([])}
+                      style={{ border: "none", background: "none", color: "#ef4444", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
+                    >
+                      Xóa tất cả
+                    </button>
+                  )}
+                </div>
+                
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px" }}>
+                  <div style={{
+                    flex: 1,
+                    display: "flex",
+                    gap: "10px",
+                    overflowX: "auto",
+                    paddingBottom: "4px",
+                    minHeight: "56px"
+                  }}>
+                    {selectedMedia.length === 0 ? (
+                      <span style={{ fontSize: "13px", color: "#94a3b8", fontStyle: "italic", alignSelf: "center" }}>
+                        No project media selected yet.
+                      </span>
+                    ) : (
+                      selectedMedia.map((url, idx) => (
+                        <div 
+                          key={idx}
+                          style={{
+                            position: "relative",
+                            width: "50px",
+                            height: "50px",
+                            borderRadius: "8px",
+                            overflow: "hidden",
+                            flexShrink: 0,
+                            border: "1px solid rgba(0,0,0,0.1)"
+                          }}
+                        >
+                          <img 
+                            src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
+                            alt="Selected Thumbnail"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSelectMedia(url)}
+                            style={{
+                              position: "absolute",
+                              top: "2px",
+                              right: "2px",
+                              width: "14px",
+                              height: "14px",
+                              borderRadius: "50%",
+                              backgroundColor: "rgba(0,0,0,0.6)",
+                              color: "#ffffff",
+                              border: "none",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "8px",
+                              cursor: "pointer"
+                            }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowMediaModal(false)}
+                    style={{
+                      backgroundColor: "#3b82f6",
+                      color: "#ffffff",
+                      border: "none",
+                      padding: "12px 24px",
+                      borderRadius: "30px",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      boxShadow: "0 4px 10px rgba(59, 130, 246, 0.2)",
+                      transition: "all 0.2s ease"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#2563eb"}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#3b82f6"}
+                  >
+                    Xác nhận
+                  </button>
+                </div>
+              </div>
+
             </div>
           </div>
         )}

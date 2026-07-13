@@ -287,6 +287,35 @@ app.post('/api/upload', async (req, res) => {
   }
 });
 
+// 5c. GET /api/media/previous: Retrieve all previously used images from scenes
+app.get('/api/media/previous', async (req, res) => {
+  try {
+    const thinProjects = await db.getProjects();
+    const fullProjects = await Promise.all(
+      thinProjects.map(p => db.getProjectById(p.id))
+    );
+
+    const allUrls = new Set();
+    for (const project of fullProjects) {
+      if (project && project.scenes) {
+        for (const scene of project.scenes) {
+          if (Array.isArray(scene.mediaList)) {
+            for (const url of scene.mediaList) {
+              if (url && typeof url === 'string') {
+                allUrls.add(url);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    res.json(Array.from(allUrls));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // 6. PUT /api/projects/:id/scenes/:sceneId: Update scene details
 app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
   try {
@@ -350,7 +379,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-        const { scriptText, visualStyle, traits } = req.body;
+    const { scriptText, visualStyle, traits, selectedMedia } = req.body;
     if (!scriptText) {
       return res.status(400).json({ error: 'Script text is required' });
     }
@@ -386,9 +415,15 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       const scene = rawScenes[i];
       const sceneId = `scene_${projectId}_${i}_${Math.random().toString(36).substr(2, 4)}`;
       
-      // Get images from Unsplash (with themed visual style appended if present)
-      const searchQuery = visualStyle ? `${scene.keywords} ${visualStyle}` : scene.keywords;
-      const mediaList = await media.searchImages(searchQuery);
+      // Get images: use user selected media sequentially if available, otherwise search Unsplash
+      let mediaList = [];
+      if (Array.isArray(selectedMedia) && selectedMedia.length > 0) {
+        const userImg = selectedMedia[i % selectedMedia.length];
+        mediaList = [userImg];
+      } else {
+        const searchQuery = visualStyle ? `${scene.keywords} ${visualStyle}` : scene.keywords;
+        mediaList = await media.searchImages(searchQuery);
+      }
 
       // Generate TTS Voiceover audio
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 

@@ -140,7 +140,7 @@ function App() {
     }
   };
 
-  const handleGenerateStoryboard = async (scriptText, visualStyle) => {
+  const handleGenerateStoryboard = async (scriptText, visualStyle, selectedMedia = []) => {
     // If not saved yet, we'll create the project first
     let projectId = selectedProjectId;
     let traits = [];
@@ -187,7 +187,7 @@ function App() {
     setLoadingMessage("AI đang phân tích kịch bản và sinh phân cảnh...");
 
     try {
-      const result = await api.generateStoryboard(projectId, scriptText, visualStyle, traits);
+      const result = await api.generateStoryboard(projectId, scriptText, visualStyle, traits, selectedMedia);
       
       // Update the current project details
       const detailedProj = await api.getProjectById(projectId);
