@@ -12,6 +12,14 @@ function App() {
   const [currentProject, setCurrentProject] = useState(null);
   const [selectedSceneId, setSelectedSceneId] = useState(null);
   const [view, setView] = useState("PROJECTS"); // "PROJECTS", "STUDIO", "BATCH", "WORKSPACE_EDITOR"
+  const [draftConfig, setDraftConfig] = useState({
+    length: "Short (~60s)",
+    language: "Vietnamese",
+    voice: "rachel",
+    watermark: { enabled: true, text: "yupclip.com", position: "top-right", color: "#000000" },
+    ending: { enabled: true, logoText: "YupVid", website: "yupvid.com" },
+    backgroundMusic: "Chill Lofi Beats"
+  });
 
   // States for generation & rendering loading
   const [loading, setLoading] = useState(false);
@@ -158,6 +166,11 @@ function App() {
         const newProj = await api.createProject(title);
         projectId = newProj.id;
         setSelectedProjectId(newProj.id);
+        
+        // Save the settings from the draft config
+        await api.updateProjectConfig(newProj.id, draftConfig);
+        traits = draftConfig.traits || [];
+
         // Refresh project list in background
         fetchProjects();
       } catch (error) {
@@ -402,8 +415,8 @@ function App() {
               </div>
               <div style={{ flex: "0 0 41.67%", overflowY: "auto" }}>
                 <SidebarConfig
-                  config={{}}
-                  onChange={() => {}}
+                  config={draftConfig}
+                  onChange={setDraftConfig}
                   onBack={() => setView("PROJECTS")}
                 />
               </div>
