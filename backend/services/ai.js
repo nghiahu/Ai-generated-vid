@@ -97,7 +97,7 @@ const STORYBOARD_SCHEMA = {
       },
       theme: {
         type: SchemaType.STRING,
-        description: "Visual overlay theme: 'default', 'tech', 'japan', 'finance', 'rikkei', 'ai_hub_grid'"
+        description: "Visual overlay theme: 'default', 'tech', 'japan', 'finance', 'rikkei'"
       },
       accentColor: {
         type: SchemaType.STRING,
@@ -119,7 +119,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
   }
 
   let modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  
+
   // Safe fallback: Gemini 3.5 doesn't exist on Google AI Studio API yet.
   // Fallback to gemini-2.5-flash which is free, fast, and has higher rate limits.
   if (modelName.includes("3.5")) {
@@ -133,9 +133,9 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     console.log(`[Gemini API] Khởi tạo model: ${modelName} cho phong cách thiết kế VDE: ${visualStyle} với thời lượng mục tiêu: ${targetLength}`);
-    let model = genAI.getGenerativeModel({ 
+    let model = genAI.getGenerativeModel({
       model: modelName,
-      generationConfig: { 
+      generationConfig: {
         responseMimeType: "application/json",
         responseSchema: STORYBOARD_SCHEMA,
         maxOutputTokens: 8192,
@@ -194,8 +194,8 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
           "duration": 7.5, // Estimated duration in seconds (number, e.g. 7.5)
           "placement": "Full", // Allowed values: "Full", "Split"
           "keywords": "1-3 English keywords for Unsplash photo search based on visual context, e.g., 'coding laptop'",
-          "theme": "japan", // Allowed values: "japan", "tech", "finance", "nature", "default", "rikkei", "ai_hub_grid"
-          "accentColor": "A vibrant HEX color matching the theme, e.g., '#FFB7C5' for japan, '#A8232A' for rikkei, '#3b82f6' for ai_hub_grid"
+          "theme": "japan", // Allowed values: "japan", "tech", "finance", "nature", "default", "rikkei"
+          "accentColor": "A vibrant HEX color matching the theme, e.g., '#FFB7C5' for japan, '#A8232A' for rikkei"
         }
       ]
       
@@ -240,8 +240,8 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
         result = await model.generateContent(prompt);
         break; // Success, exit retry loop
       } catch (err) {
-        const isModelError = 
-          err.message.toLowerCase().includes("not found") || 
+        const isModelError =
+          err.message.toLowerCase().includes("not found") ||
           err.message.toLowerCase().includes("not_found") ||
           err.message.includes("404") ||
           err.message.toLowerCase().includes("invalid model");
@@ -262,9 +262,9 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
 
           console.warn(`[Gemini API] Lỗi model "${modelName}" (${err.message}). Tự động chuyển đổi sang model dự phòng "${nextFallback}" để tiếp tục.`);
           modelName = nextFallback;
-          model = genAI.getGenerativeModel({ 
+          model = genAI.getGenerativeModel({
             model: modelName,
-            generationConfig: { 
+            generationConfig: {
               responseMimeType: "application/json",
               responseSchema: STORYBOARD_SCHEMA,
               maxOutputTokens: 8192,
@@ -278,9 +278,9 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
           continue;
         }
 
-        const isRateLimit = 
-          err.message.includes("429") || 
-          err.message.toLowerCase().includes("quota") || 
+        const isRateLimit =
+          err.message.includes("429") ||
+          err.message.toLowerCase().includes("quota") ||
           err.message.toLowerCase().includes("too many requests");
 
         if ((isRateLimit || isServerError) && attempt < maxRetries) {
@@ -328,7 +328,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
         console.warn(`[Gemini API] Truncating suspiciously long string value (${p1.length} chars) to 500 chars.`);
         return `: "${p1.substring(0, 500).replace(/[^\u0000-\uFFFF]*$/, '')}..."`;
       });
-      
+
       scenes = JSON.parse(cleanedText);
     } catch (e) {
       console.warn("[Gemini API] JSON.parse failed. Attempting quote repair...", e.message);
@@ -427,20 +427,20 @@ function repairTruncatedJson(jsonStr) {
   if (trimmed.endsWith(']')) {
     return trimmed;
   }
-  
+
   console.warn("[Gemini API] Phát hiện chuỗi JSON bị cắt cụt (truncated). Tiến hành sửa chữa...");
-  
+
   const lastBraceIndex = Math.max(
     trimmed.lastIndexOf('\n  }'),
     trimmed.lastIndexOf('\r\n  }')
   );
-  
+
   if (lastBraceIndex !== -1) {
     const hasCarriageReturn = trimmed.charAt(lastBraceIndex) === '\r';
     const offset = hasCarriageReturn ? 5 : 4;
     return trimmed.substring(0, lastBraceIndex + offset) + (hasCarriageReturn ? '\r\n]' : '\n]');
   }
-  
+
   return trimmed;
 }
 

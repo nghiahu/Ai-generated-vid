@@ -35,3 +35,14 @@
 | 6.1 | Cập nhật hàm sửa quote và log lỗi trong `ai.js` | ✅ done |
 | 6.2 | Chạy kiểm tra regex repair (`test_regex_repair.js`) | ✅ done |
 | 6.3 | Chạy tích hợp Gemini storyboard (`test_ai_storyboard.js`) | ✅ done |
+
+# Task Tracker — AI Hub Grid Theme Integration
+
+| # | Task | Status |
+|---|---|---|
+| 7.1 | Add automated compiler test & register AI Hub Grid style | ✅ done |
+| 7.2 | Create AIHubGridOverlay Component & Integrate in Scenes | ✅ done |
+| 7.3 | Implement Bottom Scrubber Progress Bar and Watermark | ✅ done |
+| 7.4 | Add Theme Selection UI & Preview Mockup in Web Editor | ⏳ not_started |
+| 7.5 | Register Theme in Backend Gemini Prompt Schema | ⏳ not_started |
+
