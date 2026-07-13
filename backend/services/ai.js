@@ -295,12 +295,18 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
     console.log("Gemini raw response:", text);
 
     let scenes;
+    let cleanedText = text;
     try {
-      scenes = JSON.parse(text);
+      // Fix unterminated fractional numbers like "duration": 4. which break JSON parsing
+      cleanedText = cleanedText.replace(/(:\s*\d+)\.(?=\s*[,\}\]])/g, "$1.0");
+      // Fix missing leading zero like "duration": .5 -> "duration": 0.5
+      cleanedText = cleanedText.replace(/(:\s*)\.(\d+)(?=\s*[,\}\]])/g, "$10.$2");
+      
+      scenes = JSON.parse(cleanedText);
     } catch (e) {
       console.warn("[Gemini API] JSON.parse failed. Attempting quote repair...", e.message);
       try {
-        const repaired = text.replace(/:\s*"([\s\S]*?)"\s*(,|\n|\})/g, (match, p1, p2) => {
+        const repaired = cleanedText.replace(/:\s*"([\s\S]*?)"\s*(,|\n|\})/g, (match, p1, p2) => {
           const escapedVal = p1
             .replace(/(?<!\\)"/g, '\\"')
             .replace(/\n/g, '\\n')
