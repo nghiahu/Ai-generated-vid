@@ -83,6 +83,15 @@ function testRikkeiStyle() {
   console.log('  => PASS');
 }
 
+function testAIHubGridStyle() {
+  console.log('- Test: AI Hub Grid Style (ai_hub_grid)');
+  const aiHubStyle = vde.getStyle('ai_hub_grid', []);
+  assert.strictEqual(aiHubStyle.tokens.colors.background, '#030712', 'AI Hub Grid background must be #030712');
+  assert.strictEqual(aiHubStyle.tokens.colors.accent, '#3b82f6', 'AI Hub Grid accent must be #3b82f6');
+  assert.strictEqual(aiHubStyle.tokens.fonts.title, 'Be Vietnam Pro, sans-serif', 'AI Hub Grid title font must be Be Vietnam Pro');
+  console.log('  => PASS');
+}
+
 try {
   testSingleInheritance();
   testTraitApplication();
@@ -90,6 +99,7 @@ try {
   testStylePromptOptimization();
   testNewBuiltinStyles();
   testRikkeiStyle();
+  testAIHubGridStyle();
   console.log('=== ALL TESTS PASSED SUCCESSFULLY ===');
 } catch (error) {
   console.error('=== TEST FAILURE ===');
