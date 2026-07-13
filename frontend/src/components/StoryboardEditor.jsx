@@ -500,6 +500,22 @@ const VDE_PRESET_STYLES = [
       shadow: "0 8px 24px rgba(168, 35, 42, 0.03)",
       fontFamily: "Be Vietnam Pro, sans-serif"
     }
+  },
+  {
+    id: "ai_hub_grid",
+    name: "AI Hub Grid",
+    description: "Nền chàm tối với lưới tọa độ kỹ thuật số, quầng sáng xanh dương và các thẻ kính mờ phát sáng viền cyan.",
+    tokens: {
+      background: "#030712",
+      cardBg: "linear-gradient(135deg, rgba(8, 17, 37, 0.7) 0%, rgba(3, 7, 18, 0.4) 100%)",
+      border: "1px solid rgba(59, 130, 246, 0.35)",
+      text: "#ffffff",
+      textSecondary: "rgba(255, 255, 255, 0.65)",
+      accent: "#3b82f6",
+      radius: "16px",
+      shadow: "0 0 25px rgba(59, 130, 246, 0.15)",
+      fontFamily: "Be Vietnam Pro, sans-serif"
+    }
   }
 ];
 
@@ -1481,7 +1497,14 @@ export const StoryboardEditor = ({
                              </div>
                            )}
 
-                           {style.id !== "claude" && style.id !== "cyberpunk" && style.id !== "apple" && style.id !== "rikkei" && (
+                          {style.id === "ai_hub_grid" && (
+                            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
+                              <span style={{ fontSize: "8px", fontWeight: "bold", color: "#3b82f6", fontFamily: "Be Vietnam Pro, sans-serif", letterSpacing: "1px" }}>CHI TIÊU AI TOÀN CẦU</span>
+                              <span style={{ fontSize: "8px", color: "rgba(255,255,255,0.4)", fontWeight: "500" }}>2026</span>
+                            </div>
+                          )}
+
+                           {style.id !== "claude" && style.id !== "cyberpunk" && style.id !== "apple" && style.id !== "rikkei" && style.id !== "ai_hub_grid" && (
                              <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
                                <div style={{ fontSize: "8px", textTransform: "uppercase", padding: "2px 6px", border: `1px solid ${style.tokens.accent}50`, borderRadius: "10px", color: style.tokens.accent, fontWeight: "bold" }}>
                                  Kỷ nguyên AI
@@ -1579,6 +1602,28 @@ export const StoryboardEditor = ({
                                 Truy cập →
                               </div>
                             </div>
+                          ) : style.id === "ai_hub_grid" ? (
+                            <div style={{
+                              background: "linear-gradient(135deg, rgba(8, 17, 37, 0.75) 0%, rgba(3, 7, 18, 0.5) 100%)",
+                              border: "1px solid rgba(59, 130, 246, 0.4)",
+                              borderRadius: "12px",
+                              padding: "8px 10px",
+                              boxSizing: "border-box",
+                              display: "grid",
+                              gridTemplateColumns: "1fr 1fr",
+                              gap: "8px",
+                              width: "100%",
+                              position: "relative"
+                            }}>
+                              <div style={{ display: "flex", flexDirection: "column" }}>
+                                <span style={{ fontSize: "14px", fontWeight: "900", color: "#ffffff", fontFamily: "Be Vietnam Pro, sans-serif" }}>900tr</span>
+                                <span style={{ fontSize: "6px", color: "rgba(255,255,255,0.6)", fontFamily: "Be Vietnam Pro, sans-serif" }}>ChatGPT / tuần</span>
+                              </div>
+                              <div style={{ display: "flex", flexDirection: "column" }}>
+                                <span style={{ fontSize: "14px", fontWeight: "900", color: "#ffffff", fontFamily: "Be Vietnam Pro, sans-serif" }}>88%</span>
+                                <span style={{ fontSize: "6px", color: "rgba(255,255,255,0.6)", fontFamily: "Be Vietnam Pro, sans-serif" }}>dùng AI</span>
+                              </div>
+                            </div>
                           ) : (
                             <div style={{
                               backgroundColor: style.tokens.cardBg.includes("gradient") ? undefined : style.tokens.cardBg,
@@ -1662,6 +1707,11 @@ export const StoryboardEditor = ({
                             </div>
                           ) : style.id === "apple" ? (
                             <div />
+                          ) : style.id === "ai_hub_grid" ? (
+                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "7px", color: "#3b82f6", fontWeight: "bold", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "4px", width: "100%", fontFamily: "Be Vietnam Pro, sans-serif", letterSpacing: "1px" }}>
+                              <span>AI HUB</span>
+                              <span style={{ color: "rgba(255,255,255,0.4)" }}>0:15</span>
+                            </div>
                           ) : (
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "7px", color: style.tokens.textSecondary }}>
                               <span>• HYPERFRAMES</span>
