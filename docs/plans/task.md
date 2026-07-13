@@ -20,3 +20,10 @@
 | 4.2 | Implement new View States in `App.jsx` and handle draft mode for Studio | ✅ done |
 | 4.3 | Update `Dashboard.jsx` to remove old navigation and creation buttons | ✅ done |
 | 4.4 | Implement Studio auto-creation and generation flow | ✅ done |
+
+# Task Tracker — Project Card Redesign
+
+| # | Task | Status |
+|---|---|---|
+| 5.1 | Extend backend `/api/projects` endpoint to return full project schema | ✅ done |
+| 5.2 | Redesign Project Card in `Dashboard.jsx` with vertical player preview and downloads section | ✅ done |

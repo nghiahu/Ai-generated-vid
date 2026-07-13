@@ -56,14 +56,7 @@ db.initDb()
 app.get('/api/projects', async (req, res) => {
   try {
     const projects = await db.getProjects();
-    // Return thin project list for dashboard
-    const list = projects.map(p => ({
-      id: p.id,
-      title: p.title,
-      status: p.status,
-      createdAt: p.createdAt
-    }));
-    res.json(list);
+    res.json(projects);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
