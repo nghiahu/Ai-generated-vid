@@ -378,7 +378,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
     }
 
     // Step 1: Call Gemini to parse and split script text using VDE rules
-    const rawScenes = await ai.generateStoryboard(scriptText, currentStyle, activeTraits);
+    const rawScenes = await ai.generateStoryboard(scriptText, currentStyle, activeTraits, project.config.length);
 
     // Step 2: For each scene, fetch images and generate voiceover TTS
     const scenes = [];

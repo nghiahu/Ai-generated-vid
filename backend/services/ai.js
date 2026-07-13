@@ -111,7 +111,7 @@ const STORYBOARD_SCHEMA = {
   }
 };
 
-async function generateStoryboard(scriptText, visualStyle = "minimal", traits = []) {
+async function generateStoryboard(scriptText, visualStyle = "minimal", traits = [], targetLength = "Short (~60s)") {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -132,7 +132,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    console.log(`[Gemini API] Khởi tạo model: ${modelName} cho phong cách thiết kế VDE: ${visualStyle}`);
+    console.log(`[Gemini API] Khởi tạo model: ${modelName} cho phong cách thiết kế VDE: ${visualStyle} với thời lượng mục tiêu: ${targetLength}`);
     let model = genAI.getGenerativeModel({ 
       model: modelName,
       generationConfig: { 
@@ -144,6 +144,14 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
 
     const prompt = `
       You are an expert AI video producer. Parse the following raw script text into a structured storyboard (scenes).
+      
+      CRITICAL TARGET LENGTH: The user has requested a video of length: "${targetLength}".
+      - "Short (~60s)": Keep the storyboard concise. Total speech across all scenes should be around 50-60 seconds. Average voiceover speed is 2.5 - 3 words per second, so total words should be around 130-150 words.
+      - "Medium (~120s)": Allow more elaboration. Total speech across all scenes should be around 110-120 seconds. Total words should be around 280-320 words.
+      - "Long (~180s)": Provide detailed explanation. Total speech across all scenes should be around 170-180 seconds. Total words should be around 420-480 words.
+      
+      If the raw script is too long for the chosen length, you MUST summarize and condense the voiceover text in each scene to fit within the word budget corresponding to the requested "${targetLength}" length. Do NOT exceed the word limit.
+      
       CRITICAL: You must follow the visual design rules of the chosen style "${visualStyle}" described in the Visual Design Engine rulebook below:
 
       =========================================
@@ -151,7 +159,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       ${stylePrompt}
       =========================================
 
-      For each scene, determine the visual intent (sceneIntent), theme, accent color, and estimate duration (assume 3 Vietnamese words per second).
+      For each scene, determine the visual intent (sceneIntent), theme, accent color, and estimate duration (assume 2.7 Vietnamese words per second).
       
       Raw Script:
       "${scriptText}"
