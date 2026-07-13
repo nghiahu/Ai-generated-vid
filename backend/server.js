@@ -55,8 +55,11 @@ db.initDb()
 // 1. GET /api/projects: List all projects
 app.get('/api/projects', async (req, res) => {
   try {
-    const projects = await db.getProjects();
-    res.json(projects);
+    const thinProjects = await db.getProjects();
+    const fullProjects = await Promise.all(
+      thinProjects.map(p => db.getProjectById(p.id))
+    );
+    res.json(fullProjects);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -39,11 +39,11 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
           <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
             {projects.map((project) => {
               // Extract concatenated script excerpt
-              const scriptExcerpt = project.scenes && project.scenes.length > 0 
-                ? project.scenes.map(s => s.voiceover).filter(Boolean).join(" ") 
+              const scriptExcerpt = project.scenes && project.scenes.length > 0
+                ? project.scenes.map(s => s.voiceover).filter(Boolean).join(" ")
                 : "";
-              const shortScript = scriptExcerpt.length > 250 
-                ? scriptExcerpt.substring(0, 247) + "..." 
+              const shortScript = scriptExcerpt.length > 250
+                ? scriptExcerpt.substring(0, 247) + "..."
                 : scriptExcerpt || "Chưa có kịch bản chi tiết cho dự án này.";
 
               // Extract thumbnail from first scene
@@ -95,31 +95,31 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                         />
                       </div>
                     ) : (
-                      <div 
-                        style={{ 
-                          width: "100%", 
-                          height: "100%", 
-                          backgroundColor: "#0f172a", 
-                          borderRadius: "12px", 
-                          position: "relative", 
-                          overflow: "hidden", 
-                          display: "flex", 
-                          alignItems: "center", 
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          backgroundColor: "#0f172a",
+                          borderRadius: "12px",
+                          position: "relative",
+                          overflow: "hidden",
+                          display: "flex",
+                          alignItems: "center",
                           justifyContent: "center",
                           border: "1px solid rgba(15, 23, 42, 0.08)",
                           boxShadow: "inset 0 0 40px rgba(0,0,0,0.5)"
                         }}
                       >
                         {thumbnailUrl ? (
-                          <img 
-                            src={thumbnailUrl.startsWith("http") ? thumbnailUrl : `http://localhost:5000${thumbnailUrl}`} 
-                            alt={project.title} 
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                          <img
+                            src={thumbnailUrl.startsWith("http") ? thumbnailUrl : `http://localhost:5000${thumbnailUrl}`}
+                            alt={project.title}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
                         ) : (
                           <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", fontFamily: "var(--font-heading)", fontWeight: "700" }}>NO PREVIEW</div>
                         )}
-                        
+
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -155,11 +155,11 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                     <div>
                       {/* Top Row: Title & Action buttons */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "20px" }}>
-                        <h3 
-                          style={{ 
-                            fontSize: "20px", 
-                            fontFamily: "var(--font-heading)", 
-                            fontWeight: "800", 
+                        <h3
+                          style={{
+                            fontSize: "20px",
+                            fontFamily: "var(--font-heading)",
+                            fontWeight: "800",
                             color: "var(--text-primary)",
                             lineHeight: "1.3"
                           }}
@@ -193,7 +193,7 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                           >
                             ✕
                           </button>
-                          
+
                           {/* Open in Studio button */}
                           <button
                             className="secondary"
@@ -214,11 +214,11 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                       </div>
 
                       {/* Script Excerpt */}
-                      <p 
-                        style={{ 
-                          color: "var(--text-secondary)", 
-                          fontSize: "14px", 
-                          lineHeight: "1.6", 
+                      <p
+                        style={{
+                          color: "var(--text-secondary)",
+                          fontSize: "14px",
+                          lineHeight: "1.6",
                           margin: "12px 0 8px 0"
                         }}
                       >
@@ -233,15 +233,15 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
 
                     {/* Footer sections: Downloads & Publish */}
                     <div style={{ display: "flex", flexDirection: "column", gap: "16px", borderTop: "1px solid rgba(15, 23, 42, 0.06)", paddingTop: "16px" }}>
-                      
+
                       {/* DOWNLOADS Section */}
                       <div>
                         <div style={{ fontSize: "10px", fontWeight: "800", color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>
                           DOWNLOADS
                         </div>
                         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                          <a 
-                            href={`http://localhost:5000/downloads/output_${project.id}.mp4`} 
+                          <a
+                            href={`http://localhost:5000/downloads/output_${project.id}.mp4`}
                             download
                             style={{ textDecoration: "none" }}
                           >
@@ -250,8 +250,8 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                             </button>
                           </a>
                           {thumbnailUrl && (
-                            <a 
-                              href={thumbnailUrl.startsWith("http") ? thumbnailUrl : `http://localhost:5000${thumbnailUrl}`} 
+                            <a
+                              href={thumbnailUrl.startsWith("http") ? thumbnailUrl : `http://localhost:5000${thumbnailUrl}`}
                               download
                               target="_blank"
                               rel="noreferrer"
@@ -263,8 +263,8 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                             </a>
                           )}
                           {firstScene && firstScene.voiceoverAudioUrl && (
-                            <a 
-                              href={firstScene.voiceoverAudioUrl.startsWith("http") ? firstScene.voiceoverAudioUrl : `http://localhost:5000${firstScene.voiceoverAudioUrl}`} 
+                            <a
+                              href={firstScene.voiceoverAudioUrl.startsWith("http") ? firstScene.voiceoverAudioUrl : `http://localhost:5000${firstScene.voiceoverAudioUrl}`}
                               download
                               style={{ textDecoration: "none" }}
                             >
@@ -273,8 +273,8 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                               </button>
                             </a>
                           )}
-                          <a 
-                            href={`http://localhost:5000/downloads/subtitles_${project.id}.vtt`} 
+                          <a
+                            href={`http://localhost:5000/downloads/subtitles_${project.id}.vtt`}
                             download
                             style={{ textDecoration: "none" }}
                           >
