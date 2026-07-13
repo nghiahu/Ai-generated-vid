@@ -213,8 +213,7 @@ app.put('/api/projects/:id/config', async (req, res) => {
             for (const scene of project.scenes) {
               if (scene.voiceover) {
                 console.log(`Regenerating TTS for project ${projectId} scene ${scene.id} with new voice ${voiceKey}...`);
-                const isOmniVoice = voiceKey.toLowerCase().startsWith("omnivoice_");
-                const voiceoverText = isOmniVoice ? (scene.voiceoverTts || scene.voiceover) : scene.voiceover;
+                const voiceoverText = scene.voiceoverTts || scene.voiceover;
                 const ttsResult = await tts.generateTTS(voiceoverText, projectId, scene.id, voiceKey);
                 
                 const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
@@ -345,8 +344,7 @@ app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
         : (project.config.voice || 'rachel');
-      const isOmniVoice = voiceKey.toLowerCase().startsWith("omnivoice_");
-      const voiceoverText = isOmniVoice ? voiceoverTts : sceneData.voiceover;
+      const voiceoverText = voiceoverTts || sceneData.voiceover;
       const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
       voiceoverAudioUrl = ttsResult.url;
       voiceoverDuration = ttsResult.duration;
@@ -429,8 +427,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
         : (project.config.voice || 'rachel');
-      const isOmniVoice = voiceKey.toLowerCase().startsWith("omnivoice_");
-      const voiceoverText = isOmniVoice ? (scene.voiceoverTts || scene.voiceover) : scene.voiceover;
+      const voiceoverText = scene.voiceoverTts || scene.voiceover;
       const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
 
       const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);

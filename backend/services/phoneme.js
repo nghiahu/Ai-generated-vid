@@ -3,6 +3,74 @@ const path = require("path");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const db = require("./db");
 
+const TECH_TERMS_TRANSLITERATION = {
+  'react': 'ri-éc',
+  'api': 'a-pi-ai',
+  'vite': 'vít',
+  'nextjs': 'néch-chây-ét',
+  'next.js': 'néch-chây-ét',
+  'nodejs': 'nốt-chây-ét',
+  'node.js': 'nốt-chây-ét',
+  'javascript': 'gia-va-sờ-cờ-ríp',
+  'typescript': 'tháp-sờ-cờ-ríp',
+  'css': 'xê-ét-ét',
+  'html': 'át-tê-em-lờ',
+  'npm': 'en-pi-em',
+  'json': 'giây-xơn',
+  'sql': 'ét-quờ-en',
+  'cli': 'xê-lờ-ai',
+  'git': 'gít',
+  'github': 'gít-hắp',
+  'docker': 'đốc-cơ',
+  'aws': 'a-vê-ét',
+  'vercel': 'vơ-xen',
+  'remotion': 'ri-mô-sơn',
+  'video': 'vi-đê-ô',
+  'marketing': 'mác-két-tinh',
+  'dashboard': 'đáp-bo',
+  'animation': 'a-ni-mei-sơn',
+  'avatar': 'a-va-ta',
+  'website': 'oét-sai',
+  'logo': 'lô-gô',
+  'brand': 'bờ-ren',
+  'component': 'com-po-nơnt',
+  'framework': 'fờ-rem-uốc',
+  'timeline': 'tai-lai',
+  'audio': 'au-đi-ô',
+  'mp4': 'em-pi-bốn',
+  'mp3': 'em-pi-ba',
+  'client': 'clai-ơn',
+  'server': 'sơ-vơ',
+  'app': 'áp',
+  'dev': 'đép',
+  'build': 'biu',
+  'deploy': 'đi-ploi',
+  'code': 'cốt',
+  'database': 'đê-ta-bây',
+  'ai': 'ai',
+  'gpt': 'gi-pi-ti',
+  'llm': 'en-en-em',
+  'agent': 'ây-giơnt',
+  'premiere': 'pờ-re-mi-e',
+  'capcut': 'cáp-cắt',
+  'photoshop': 'phô-tô-thóp',
+  'illustrator': 'in-lút-trây-tơ',
+  'canva': 'can-va',
+  'figma': 'fích-ma',
+  'ui': 'u-ai',
+  'ux': 'u-ích',
+  'front-end': 'phờ-rơn-en',
+  'back-end': 'bách-en',
+  'native': 'nây-típ',
+  'gateway': 'gết-uê',
+  'service': 'sơ-vít',
+  'cloud': 'clao',
+  'serverless': 'sơ-vơ-lét',
+  'verceljs': 'vơ-xen-chây-ét',
+  'supabase': 'xu-pa-bây',
+  'tailwind': 'teo-uin'
+};
+
 const cmuDict = new Map();
 
 // Load CMU Pronouncing Dictionary from resources
@@ -185,10 +253,6 @@ async function extractTerms(text) {
   }
 }
 
-/**
- * Tra cứu âm vị CMU cho danh sách các thuật ngữ.
- * Gọi Gemini làm G2P fallback nếu không có trong Cache DB hoặc CMU Dict.
- */
 async function getPhonemesForTerms(terms) {
   const mapping = {};
   if (!terms || terms.length === 0) return mapping;
@@ -198,44 +262,45 @@ async function getPhonemesForTerms(terms) {
   for (const term of terms) {
     const cleanTerm = term.toLowerCase().trim();
     
-    // 1. Kiểm tra database cache
-    try {
-      const cached = await db.getPhonemeFromCache(cleanTerm);
-      if (cached) {
-        mapping[term] = cached.phoneme;
-        console.log(`[Phoneme Engine] Tra cứu thành công từ Cache DB: "${term}" -> [${cached.phoneme}] (matched_from_cache: true)`);
-        continue;
-      }
-    } catch (dbErr) {
-      console.error("[Phoneme Engine] Lỗi truy vấn Cache DB:", dbErr.message);
-    }
-
-    // 2. Kiểm tra từ điển CMU local (hỗ trợ cả cụm từ ghép bằng cách tra từng từ thành viên)
-    const words = cleanTerm.split(' ');
-    const wordPhonemes = words.map(w => cmuDict.get(w.toLowerCase())).filter(Boolean);
-
-    if (wordPhonemes.length === words.length) {
-      // Tất cả từ thành viên đều có trong CMU Dict => gộp phoneme lại
-      const phoneme = wordPhonemes.join(' ');
-      mapping[term] = phoneme;
-      console.log(`[Phoneme Engine] Tra cứu thành công từ CMU Dict (compound): "${term}" -> [${phoneme}]`);
+    // 1. Kiểm tra từ điển dịch tĩnh TECH_TERMS_TRANSLITERATION
+    if (TECH_TERMS_TRANSLITERATION[cleanTerm]) {
+      const transliterated = TECH_TERMS_TRANSLITERATION[cleanTerm];
+      mapping[term] = transliterated;
+      console.log(`[Phoneme Engine] Tra cứu thành công từ Static Dict: "${term}" -> "${transliterated}"`);
       try {
         await db.savePhonemeToCache({
           term: cleanTerm,
           display_term: term,
-          phoneme: phoneme,
-          source: "cmudict",
+          phoneme: transliterated,
+          source: "static_dict",
           confidence: 1.0
         });
       } catch (saveErr) {}
       continue;
     }
 
+    // 2. Kiểm tra database cache (bỏ qua nếu cache chứa CMU cũ hoặc không hợp lệ)
+    try {
+      const cached = await db.getPhonemeFromCache(cleanTerm);
+      if (cached && cached.phoneme) {
+        const isLegacyCmu = /[A-Z0-9]/.test(cached.phoneme);
+        if (!isLegacyCmu) {
+          mapping[term] = cached.phoneme;
+          console.log(`[Phoneme Engine] Tra cứu thành công từ Cache DB (Vietnamese): "${term}" -> "${cached.phoneme}"`);
+          continue;
+        } else {
+          console.log(`[Phoneme Engine] Phát hiện CMU cũ trong cache cho "${term}" -> [${cached.phoneme}], tiến hành dịch lại sang tiếng Việt.`);
+        }
+      }
+    } catch (dbErr) {
+      console.error("[Phoneme Engine] Lỗi truy vấn Cache DB:", dbErr.message);
+    }
+
     // 3. Nếu không có ở cả 2 nguồn, cho vào danh sách chưa biết để chạy G2P Fallback
     unknownTerms.push(term);
   }
 
-  // 3. Chạy Gemini làm Fallback G2P cho các từ chưa biết
+  // 3. Chạy Gemini làm Fallback G2P cho các từ chưa biết (dịch sang tiếng Việt tự nhiên)
   if (unknownTerms.length > 0) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -254,34 +319,28 @@ async function getPhonemesForTerms(terms) {
       });
 
       const prompt = `
-        Translate this list of technical English terms or proper nouns into CMU/ARPABET phoneme sequences.
+        Translate this list of technical English terms or proper nouns into natural, easy-to-read Vietnamese phonetic pronunciations.
         
         Guidelines:
-        - Generate phonemes closest to American English pronunciation.
+        - Convert the English words to standard, simple Vietnamese syllables representing how they are naturally pronounced by Vietnamese developers.
+        - Separate syllables with hyphens (e.g. 'vercel' -> 'vơ-xen', 'supabase' -> 'xu-pa-bây', 'tailwind' -> 'teo-uin', 'clippy' -> 'clíp-pi').
+        - Use lowercase letters only.
         - Return a JSON array matching this schema:
           [
             {
               "term": "the lowercase word (e.g. 'vercel')",
               "display_term": "original word (e.g. 'Vercel')",
-              "phoneme": "CMU phoneme string (e.g. 'V ER1 S EH1 L')",
-              "confidence": 1.000, // Float value representing accuracy
-              "source": "g2p",
-              "aliases": ["verceljs"]
+              "phoneme": "Vietnamese phonetic string (e.g. 'vơ-xen')",
+              "confidence": 1.000,
+              "source": "g2p"
             }
           ]
         
-        Confidence rules:
-        - 0.95 for famous tech companies (e.g. OpenAI, Anthropic, ElevenLabs)
-        - 0.90 for common frameworks/tools (e.g. Supabase, Vercel, Remotion)
-        - 0.80 for new product names (e.g. Lovable, Bolt.new)
-        - 0.60 for contextual guesses
-        - <0.5 for uncertain translations
-
         Terms List to Translate:
         ${JSON.stringify(unknownTerms)}
       `;
 
-      console.log(`[Phoneme Agent] Gọi Gemini G2P Fallback cho ${unknownTerms.length} từ:`, unknownTerms);
+      console.log(`[Phoneme Agent] Gọi Gemini G2P Fallback dịch sang tiếng Việt cho ${unknownTerms.length} từ:`, unknownTerms);
       const result = await model.generateContent(prompt);
       const responseText = result.response.text().trim();
       
@@ -303,7 +362,7 @@ async function getPhonemesForTerms(terms) {
           const dbItem = {
             term: item.term.toLowerCase().trim(),
             display_term: item.display_term || item.term,
-            phoneme: item.phoneme.trim(),
+            phoneme: item.phoneme.toLowerCase().trim(),
             source: "g2p",
             confidence,
             review_required: reviewRequired,
@@ -313,7 +372,7 @@ async function getPhonemesForTerms(terms) {
           // Lưu vào Cache DB
           try {
             await db.savePhonemeToCache(dbItem);
-            console.log(`[Phoneme Engine] Đã lưu G2P Fallback vào DB: "${dbItem.display_term}" -> [${dbItem.phoneme}] (Confidence: ${dbItem.confidence}, Review Required: ${dbItem.review_required})`);
+            console.log(`[Phoneme Engine] Đã lưu G2P Fallback (Vietnamese) vào DB: "${dbItem.display_term}" -> "${dbItem.phoneme}"`);
           } catch (dbSaveErr) {
             console.error("[Phoneme Engine] Không thể lưu G2P vào DB:", dbSaveErr.message);
           }
@@ -346,7 +405,7 @@ async function optimizeTextForPhonemes(text) {
     // 2. Tra cứu/dịch âm vị CMU
     const mapping = await getPhonemesForTerms(terms);
 
-    // 3. Thực hiện chèn âm vị bằng JavaScript Regex cục bộ (Đảm bảo chữ tiếng Việt 100% không đổi)
+    // 3. Thực hiện thay thế từ tiếng Anh bằng từ phiên âm tiếng Việt tương đương
     let optimizedText = text;
     
     // Sắp xếp các từ theo độ dài giảm dần để thay thế từ dài trước (tránh lỗi thay thế chuỗi con trước, vd: "ReactJS" trước "React")
@@ -362,17 +421,7 @@ async function optimizeTextForPhonemes(text) {
       // Việc phân biệt hoa thường giúp tránh thay thế nhầm các từ tiếng Việt như pronoun "ai" (khi ta cần thay thế viết tắt "AI")
       const regex = new RegExp(`(?<=^|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])(${escaped})(?=$|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])`, "g");
       
-      optimizedText = optimizedText.replace(regex, `[${phoneme}]`);
-    }
-
-    // Gộp các thẻ âm vị liền kề (ngăn cách bởi khoảng trắng, gạch ngang, gạch chéo) thành 1 thẻ duy nhất
-    // để tránh bị sượng hoặc khựng khi chuyển tiếp giữa các từ tiếng Anh.
-    let lastLength = 0;
-    while (optimizedText.length !== lastLength) {
-      lastLength = optimizedText.length;
-      optimizedText = optimizedText.replace(/\[([^\]]+)\]([\s\-_/]+)\[([^\]]+)\]/g, (match, p1, sep, p2) => {
-        return `[${p1} ${p2}]`;
-      });
+      optimizedText = optimizedText.replace(regex, phoneme);
     }
 
     return optimizedText;
