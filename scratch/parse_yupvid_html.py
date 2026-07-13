@@ -29,6 +29,7 @@ class YupVidHTMLParser(HTMLParser):
             "attrs": attr_dict,
             "style": style_dict,
             "content": [],
+            "direct_content": [],
             "parent_id": self.div_stack[-1]["id"] if self.div_stack else None,
             "children_ids": []
         }
@@ -42,6 +43,7 @@ class YupVidHTMLParser(HTMLParser):
     def handle_data(self, data):
         if data.strip() and self.div_stack:
             self.div_stack[-1]["content"].append(data.strip())
+            self.div_stack[-1]["direct_content"].append(data.strip())
 
     def handle_endtag(self, tag):
         if not self.div_stack:
@@ -93,6 +95,121 @@ def extract_badge_color_from_children(card_node, raw_nodes):
             if gc_color and not any(w in gc_color for w in white_variants):
                 return gc_color
     return None
+
+def extract_nested_structure(card_node, raw_nodes, card_nodes):
+    descendants = []
+    card_ids = {c["id"] for c in card_nodes}
+    
+    # Helper to check if a node is a descendant of card_node
+    def is_descendant(node, parent):
+        curr = node
+        while curr["parent_id"] is not None:
+            if curr["parent_id"] == parent["id"]:
+                return True
+            curr = raw_nodes[curr["parent_id"]]
+        return False
+        
+    for node in raw_nodes:
+        if is_descendant(node, card_node):
+            descendants.append(node)
+            
+    # Find child card nodes (e.g. pills or list items)
+    child_cards = [n for n in descendants if n["id"] in card_ids]
+    
+    # Find text-only nodes (not cards)
+    text_nodes = []
+    for n in descendants:
+        if n["id"] in card_ids:
+            continue
+        text = " ".join(n["direct_content"]).strip()
+        if text:
+            text_nodes.append((n, text))
+            
+    # Filter text_nodes to remove duplicates where child node content is concatenated in parent
+    deepest_text_nodes = []
+    for node, text in text_nodes:
+        has_child_text = False
+        for other_node, other_text in text_nodes:
+            if other_node["id"] == node["id"]:
+                continue
+            if is_descendant(other_node, node):
+                has_child_text = True
+                break
+        if not has_child_text:
+            deepest_text_nodes.append((node, text))
+            
+    # Classify text nodes
+    badge_text = None
+    title_text = None
+    
+    # Sort deepest text nodes by font-size if available
+    def get_font_size(node_tuple):
+        fs = node_tuple[0]["style"].get("font-size", "")
+        if fs.endswith("px"):
+            try:
+                return float(fs.replace("px", ""))
+            except:
+                pass
+        return 16.0 # default
+        
+    deepest_text_nodes.sort(key=get_font_size, reverse=True)
+    
+    # The largest text node is usually the title
+    if deepest_text_nodes:
+        title_text = deepest_text_nodes[0][1]
+        
+        # If there are other text nodes, the smaller ones might be badges/labels
+        other_texts = deepest_text_nodes[1:]
+        if other_texts:
+            badge_text = other_texts[-1][1] # take the smallest font size text
+            
+    # Extracted pills/list items
+    pills = []
+    for cc in child_cards:
+        txt = " ".join(cc["content"]).strip()
+        if txt:
+            pills.append(txt)
+            
+    # Determine the type of nested structure
+    is_grid = False
+    for node in descendants:
+        if node["tag"] == "div":
+            style = node["style"]
+            display = style.get("display", "")
+            g_cols = style.get("grid-template-columns", "") or style.get("grid-template-cols", "")
+            if "grid" in display and "repeat(2" in g_cols:
+                is_grid = True
+                break
+
+    structure_type = "card_simple"
+    if pills:
+        if is_grid:
+            structure_type = "grid_item_list"
+        elif title_text or badge_text:
+            is_small_title = False
+            if title_text:
+                for n, t in deepest_text_nodes:
+                    if t == title_text:
+                        fs = n["style"].get("font-size", "")
+                        if fs.endswith("px"):
+                            try:
+                                if float(fs.replace("px", "")) <= 24:
+                                    is_small_title = True
+                            except:
+                                pass
+            if is_small_title:
+                structure_type = "vertical_item_list"
+            else:
+                structure_type = "card_with_nested_pills"
+        else:
+            structure_type = "vertical_item_list"
+            
+    return {
+        "type": structure_type,
+        "badgeText": badge_text,
+        "titleText": title_text,
+        "pills": pills
+    }
 
 def parse_html_to_layout_json(html_content, layout_id, layout_name, family, layout_mode):
     parser = YupVidHTMLParser()
@@ -196,30 +313,67 @@ def parse_html_to_layout_json(html_content, layout_id, layout_name, family, layo
                 curr = parser.raw_nodes[curr["parent_id"]]
         return False
 
+    # Helper to check if a card contains other card nodes in its descendants and they are wide cards (true items) rather than small pills/badges
+    def is_true_container_card(card_node):
+        child_cards = []
+        for other in card_nodes:
+            if other["id"] == card_node["id"]:
+                continue
+            curr = other
+            parent_card = None
+            while curr["parent_id"] is not None:
+                parent = parser.raw_nodes[curr["parent_id"]]
+                if parent["id"] in card_ids:
+                    parent_card = parent
+                    break
+                curr = parent
+            if parent_card and parent_card["id"] == card_node["id"]:
+                child_cards.append(other)
+                
+        if not child_cards:
+            return False
+            
+        all_small = True
+        for child in child_cards:
+            style = child["style"]
+            width = style.get("width", "")
+            br = style.get("border-radius", "")
+            
+            w_val = 0
+            if width.endswith("px"):
+                try:
+                    w_val = float(width.replace("px", ""))
+                except:
+                    pass
+                    
+            is_pill = "999px" in br or "50%" in br or "16px" in br or w_val <= 300
+            if w_val > 300 or (not is_pill and "width" not in style):
+                all_small = False
+                break
+                
+        return not all_small
+
+    # Find depth 0 cards
+    depth_0_cards = [c for c in card_nodes if get_card_ancestry_depth(c) == 0]
+    
     container_card = None
     item_cards = []
     
-    for card in card_nodes:
-        depth = get_card_ancestry_depth(card)
-        has_children_cards = contains_other_cards(card)
-        
-        if depth == 0:
-            if has_children_cards:
-                # Outermost card with children -> Main Layout Container
-                if not container_card:
-                    container_card = card
-            else:
-                # Outermost card without children -> Direct Layout Item (e.g. stack card, vs card)
-                item_cards.append(card)
-        elif depth == 1:
-            # Child card of the container card -> Layout Item (e.g. checklist row)
-            # Only count as item if its parent is the container card
-            parent_id = card["parent_id"]
-            while parent_id is not None and parent_id not in card_ids:
-                parent_id = parser.raw_nodes[parent_id]["parent_id"]
-            if container_card and parent_id == container_card["id"]:
-                item_cards.append(card)
-        # depth >= 2 are nested badges or decorations inside items, which we ignore
+    if len(depth_0_cards) == 1 and contains_other_cards(depth_0_cards[0]) and is_true_container_card(depth_0_cards[0]):
+        # Single outermost card that has children -> it is the container wrapper (like in vertical_list)
+        container_card = depth_0_cards[0]
+        # Item cards are its children at depth 1
+        for card in card_nodes:
+            depth = get_card_ancestry_depth(card)
+            if depth == 1:
+                parent_id = card["parent_id"]
+                while parent_id is not None and parent_id not in card_ids:
+                    parent_id = parser.raw_nodes[parent_id]["parent_id"]
+                if parent_id == container_card["id"]:
+                    item_cards.append(card)
+    else:
+        # Multiple outermost cards, or single card without children -> they are the direct layout items
+        item_cards = depth_0_cards
 
     # Auto-detect layout mode based on actual card positioning
     has_absolute_cards = False
@@ -238,15 +392,48 @@ def parse_html_to_layout_json(html_content, layout_id, layout_name, family, layo
             detected_mode = "centered_text"
         elif len(item_cards) == 2:
             detected_mode = "split_horizontal"
-        elif len(item_cards) == 3:
-            detected_mode = "horizontal_list"
         else:
-            if family == "data" or family == "comparison":
-                detected_mode = "grid_metrics"
+            is_before_after = False
+            if len(item_cards) == 3:
+                c0, c1, c2 = item_cards[0], item_cards[1], item_cards[2]
+                w0 = c0["style"].get("width", "")
+                w1 = c1["style"].get("width", "")
+                w2 = c2["style"].get("width", "")
+                if "100%" not in w0 and "100%" not in w1 and ("100%" in w2 or "auto" in w2 or not w2 or "940px" in w2 or "860px" in w2):
+                    is_before_after = True
+            
+            if is_before_after:
+                detected_mode = "before_after_panel"
             else:
-                detected_mode = "vertical_list"
+                # Check container styles for flex/grid direction
+                is_horizontal = False
+                if container_card:
+                    ccss = container_card["style"]
+                    flex_dir = ccss.get("flex-direction", "")
+                    grid_cols = ccss.get("grid-template-columns", "")
+                    display = ccss.get("display", "")
+                    if "row" in flex_dir or "repeat" in grid_cols or "1fr" in grid_cols:
+                        is_horizontal = True
+                
+                if is_horizontal:
+                    if len(item_cards) == 3:
+                        detected_mode = "horizontal_list"
+                    else:
+                        detected_mode = "grid_metrics"
+                else:
+                    detected_mode = "vertical_list"
                 
     layout_mode = detected_mode
+    if layout_id == "BroadcastLowerThirdTitle":
+        layout_mode = "broadcast_lower_third"
+    elif layout_id == "CandlestickBreakoutHook":
+        layout_mode = "candlestick_breakout"
+    elif layout_id == "CaseStudyEditorial":
+        layout_mode = "case_study_editorial"
+    elif layout_id == "DossierNotes":
+        layout_mode = "dossier_notes"
+    elif layout_id == "EarningsSnapshotHook":
+        layout_mode = "earnings_snapshot"
 
     # If layout_mode is absolute_cards, sort item cards by z-index descending
     if layout_mode == "absolute_cards":
@@ -301,10 +488,7 @@ def parse_html_to_layout_json(html_content, layout_id, layout_name, family, layo
         if len(text_content) > 60:  # Skip if too long (likely not a badge)
             continue
         category_pill = {
-            "text": text_content,
-            "bgRgba": extract_rgba_from_css(node_style.get("background", "")),
-            "borderRgba": extract_rgba_from_css(node_style.get("border", "")),
-            "textRgba": node_style.get("color", "rgb(239, 68, 68)")
+            "text": text_content
         }
         break
 
@@ -325,12 +509,9 @@ def parse_html_to_layout_json(html_content, layout_id, layout_name, family, layo
             except:
                 pass
         if h_val <= 10 and "999px" in br and "gradient" in bg:
-            glow_shadows = re.findall(r'rgba?\(\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+(?:\s*,\s*[\d.]+)?\s*\)', ns.get("box-shadow", ""))
             accent_divider = {
                 "width": ns.get("width", "220px"),
-                "height": h,
-                "gradient": bg,
-                "glowRgba": glow_shadows[0] if glow_shadows else None
+                "height": h
             }
             break
 
@@ -355,28 +536,23 @@ def parse_html_to_layout_json(html_content, layout_id, layout_name, family, layo
                 scale = float(scale_match.group(1))
         rotations.append(rot)
         
-        # Coordinates
+        # Coordinates and Nested Structure
+        nested_struct = extract_nested_structure(card, parser.raw_nodes, card_nodes)
+        
         positions.append({
             "left": css.get("left", "0px"),
             "top": css.get("top", "0px"),
             "width": css.get("width", "100%"),
             "height": css.get("min-height") or css.get("height", "auto"),
-            "zIndex": css.get("z-index", "1")
+            "zIndex": css.get("z-index", "1"),
+            "nestedStructure": nested_struct
         })
         
-        # Stylings
+        # Stylings (No colors - colors come dynamically from React Visual Themes)
         border = css.get("border", "")
         background = css.get("background", "") or css.get("background-color", "")
         box_shadow = css.get("box-shadow", "")
         backdrop_filter = css.get("backdrop-filter", "")
-        
-        bg_rgba = extract_rgba_from_css(background)
-        border_rgba = extract_rgba_from_css(border)
-        badge_rgba = extract_badge_color_from_children(card, parser.raw_nodes)
-        
-        # Extract glow shadow (second rgba in box-shadow, if any, otherwise first)
-        all_shadows = re.findall(r'rgba?\(\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+(?:\s*,\s*[\d.]+)?\s*\)', box_shadow)
-        shadow_glow_rgba = all_shadows[1] if len(all_shadows) > 1 else (all_shadows[0] if all_shadows else None)
         
         use_accent = is_accent_color(border) or is_accent_color(background) or is_accent_color(box_shadow)
         
@@ -387,10 +563,6 @@ def parse_html_to_layout_json(html_content, layout_id, layout_name, family, layo
             "borderRadius": css.get("border-radius", "30px"),
             "padding": css.get("padding", "24px"),
             "scale": scale,
-            "bgRgba": bg_rgba,
-            "borderRgba": border_rgba,
-            "badgeRgba": badge_rgba,
-            "shadowGlowRgba": shadow_glow_rgba,
             "backdropBlur": extract_blur_px(backdrop_filter),
             "useAccentBg": use_accent,
             "useAccentBorder": use_accent,
@@ -418,7 +590,7 @@ def parse_html_to_layout_json(html_content, layout_id, layout_name, family, layo
         "family": family,
         "layoutMode": layout_mode,
         "container": {
-            "paddingTop": "230px",
+            "paddingTop": "300px",
             "maxWidth": "1000px",
             "gap": "24px",
             **container_style
