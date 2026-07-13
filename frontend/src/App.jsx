@@ -11,7 +11,7 @@ function App() {
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [currentProject, setCurrentProject] = useState(null);
   const [selectedSceneId, setSelectedSceneId] = useState(null);
-  const [view, setView] = useState("DASHBOARD"); // "DASHBOARD", "WORKSPACE_SETUP", "WORKSPACE_EDITOR"
+  const [view, setView] = useState("PROJECTS"); // "PROJECTS", "STUDIO", "BATCH", "WORKSPACE_EDITOR"
 
   // States for generation & rendering loading
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,6 @@ function App() {
       setCurrentProject(null);
       setSelectedSceneId(null);
       setVideoUrl(null);
-      setView("DASHBOARD");
     }
   }, [selectedProjectId]);
 
@@ -134,20 +133,55 @@ function App() {
   };
 
   const handleGenerateStoryboard = async (scriptText, visualStyle) => {
-    if (!currentProject) return;
+    // If not saved yet, we'll create the project first
+    let projectId = selectedProjectId;
+    let traits = [];
+
+    if (!projectId) {
+      // Determine project title from script text
+      let title = "";
+      const trimmedScript = (scriptText || "").trim();
+      if (trimmedScript) {
+        // Take the first line or first 40 chars
+        const firstLine = trimmedScript.split("\n")[0];
+        title = firstLine.length > 40 ? firstLine.substring(0, 37) + "..." : firstLine;
+      }
+      if (!title) {
+        const now = new Date();
+        title = `Dự án Studio ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+      }
+
+      setLoading(true);
+      setLoadingMessage("Đang tạo dự án mới...");
+
+      try {
+        const newProj = await api.createProject(title);
+        projectId = newProj.id;
+        setSelectedProjectId(newProj.id);
+        // Refresh project list in background
+        fetchProjects();
+      } catch (error) {
+        console.error("Failed to auto-create project:", error);
+        alert(`Không thể tạo dự án mới: ${error.response?.data?.error || error.message}`);
+        setLoading(false);
+        return;
+      }
+    } else {
+      traits = currentProject?.config?.traits || [];
+    }
+
     setLoading(true);
     setLoadingMessage("AI đang phân tích kịch bản và sinh phân cảnh...");
 
     try {
-      const traits = currentProject.config?.traits || [];
-      const result = await api.generateStoryboard(currentProject.id, scriptText, visualStyle, traits);
-      setCurrentProject(prev => ({
-        ...prev,
-        scenes: result.scenes,
-        config: result.config
-      }));
-      if (result.scenes && result.scenes.length > 0) {
-        setSelectedSceneId(result.scenes[0].id);
+      const result = await api.generateStoryboard(projectId, scriptText, visualStyle, traits);
+      
+      // Update the current project details
+      const detailedProj = await api.getProjectById(projectId);
+      setCurrentProject(detailedProj);
+      
+      if (detailedProj.scenes && detailedProj.scenes.length > 0) {
+        setSelectedSceneId(detailedProj.scenes[0].id);
       }
       setView("WORKSPACE_EDITOR");
     } catch (error) {
@@ -204,15 +238,191 @@ function App() {
     }
   };
 
-  // If in dashboard, show dashboard screen
-  if (view === "DASHBOARD" || !selectedProjectId) {
+  // Main navigation sidebar layout for PROJECTS, STUDIO, BATCH views
+  if (!selectedProjectId || view === "PROJECTS" || view === "STUDIO" || view === "BATCH") {
     return (
-      <Dashboard
-        projects={projects}
-        onCreateProject={handleCreateProject}
-        onSelectProject={setSelectedProjectId}
-        onDeleteProject={handleDeleteProject}
-      />
+      <div style={{ display: "flex", height: "100vh", overflow: "hidden", backgroundColor: "var(--bg-secondary)" }}>
+        {/* Left Sidebar */}
+        <nav style={{
+          width: "260px",
+          backgroundColor: "rgba(255, 255, 255, 0.75)",
+          backdropFilter: "blur(20px)",
+          borderRight: "1px solid rgba(15, 23, 42, 0.08)",
+          display: "flex",
+          flexDirection: "column",
+          padding: "24px 20px",
+          flexShrink: 0
+        }}>
+          {/* Logo */}
+          <div style={{ marginBottom: "36px", paddingLeft: "12px" }}>
+            <span style={{
+              fontSize: "24px",
+              fontFamily: "var(--font-heading)",
+              fontWeight: "900",
+              letterSpacing: "-0.04em",
+              background: "linear-gradient(135deg, var(--color-primary), var(--color-accent))",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              cursor: "pointer"
+            }} onClick={() => { setSelectedProjectId(null); setView("PROJECTS"); }}>
+              kisafes
+            </span>
+          </div>
+
+          {/* Navigation Links */}
+          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+            <li>
+              <button
+                onClick={() => { setSelectedProjectId(null); setView("PROJECTS"); }}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  background: "none",
+                  border: "none",
+                  boxShadow: "none",
+                  color: "var(--text-secondary)",
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  textTransform: "none",
+                  letterSpacing: "0",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  cursor: "pointer"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.04)"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+              >
+                🏠 Home
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => { setSelectedProjectId(null); setView("STUDIO"); }}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  background: view === "STUDIO" ? "rgba(37, 99, 235, 0.08)" : "none",
+                  border: "none",
+                  boxShadow: "none",
+                  color: view === "STUDIO" ? "var(--color-primary)" : "var(--text-secondary)",
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: view === "STUDIO" ? "700" : "600",
+                  textTransform: "none",
+                  letterSpacing: "0",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  cursor: "pointer"
+                }}
+                onMouseEnter={(e) => { if (view !== "STUDIO") e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.04)"; }}
+                onMouseLeave={(e) => { if (view !== "STUDIO") e.currentTarget.style.backgroundColor = "transparent"; }}
+              >
+                🎥 Studio
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => { setSelectedProjectId(null); setView("BATCH"); }}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  background: view === "BATCH" ? "rgba(37, 99, 235, 0.08)" : "none",
+                  border: "none",
+                  boxShadow: "none",
+                  color: view === "BATCH" ? "var(--color-primary)" : "var(--text-secondary)",
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: view === "BATCH" ? "700" : "600",
+                  textTransform: "none",
+                  letterSpacing: "0",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  cursor: "pointer"
+                }}
+                onMouseEnter={(e) => { if (view !== "BATCH") e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.04)"; }}
+                onMouseLeave={(e) => { if (view !== "BATCH") e.currentTarget.style.backgroundColor = "transparent"; }}
+              >
+                📦 Hàng loạt
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => { setSelectedProjectId(null); setView("PROJECTS"); }}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  background: view === "PROJECTS" ? "rgba(37, 99, 235, 0.08)" : "none",
+                  border: "none",
+                  boxShadow: "none",
+                  color: view === "PROJECTS" ? "var(--color-primary)" : "var(--text-secondary)",
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: view === "PROJECTS" ? "700" : "600",
+                  textTransform: "none",
+                  letterSpacing: "0",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  cursor: "pointer"
+                }}
+                onMouseEnter={(e) => { if (view !== "PROJECTS") e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.04)"; }}
+                onMouseLeave={(e) => { if (view !== "PROJECTS") e.currentTarget.style.backgroundColor = "transparent"; }}
+              >
+                📁 Dự án
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        {/* Content Area */}
+        <div style={{ flex: 1, overflowY: "auto", position: "relative" }}>
+          {view === "STUDIO" ? (
+            <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+              <div style={{ flex: "0 0 58.33%", borderRight: "1px solid rgba(15, 23, 42, 0.08)", overflowY: "auto", display: "flex" }}>
+                <StoryboardEditor
+                  mode="setup"
+                  scenes={[]}
+                  config={{}}
+                  projectId={null}
+                  onGenerateStoryboard={handleGenerateStoryboard}
+                  onUpdateScene={() => {}}
+                  loading={loading}
+                  loadingMessage={loadingMessage}
+                  selectedSceneId={null}
+                  onSelectScene={() => {}}
+                />
+              </div>
+              <div style={{ flex: "0 0 41.67%", overflowY: "auto" }}>
+                <SidebarConfig
+                  config={{}}
+                  onChange={() => {}}
+                  onBack={() => setView("PROJECTS")}
+                />
+              </div>
+            </div>
+          ) : view === "BATCH" ? (
+            <div style={{ padding: "50px 40px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }}>
+              <h2 style={{ fontSize: "28px", marginBottom: "16px" }}>Sản xuất video Hàng loạt</h2>
+              <p style={{ color: "var(--text-secondary)", fontSize: "16px" }}>Chức năng sản xuất hàng loạt video cùng lúc đang được phát triển.</p>
+            </div>
+          ) : (
+            <Dashboard
+              projects={projects}
+              onCreateProject={handleCreateProject}
+              onSelectProject={setSelectedProjectId}
+              onDeleteProject={handleDeleteProject}
+            />
+          )}
+        </div>
+      </div>
     );
   }
 

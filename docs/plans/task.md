@@ -11,3 +11,12 @@
 | 3.1 | Design Tokens tập trung (`tokens.ts`) | ✅ done |
 | 3.2 | Auto-registration via Vite Glob Import (`index.ts`) | ✅ done |
 | 3.3 | Animation Metadata trong JSON Layout | ✅ done |
+
+# Task Tracker — Layout Restructure & Studio Flow
+
+| # | Task | Status |
+|---|---|---|
+| 4.1 | Restructure App Layout with navigation Sidebar & `kisafes` logo | ✅ done |
+| 4.2 | Implement new View States in `App.jsx` and handle draft mode for Studio | ✅ done |
+| 4.3 | Update `Dashboard.jsx` to remove old navigation and creation buttons | ✅ done |
+| 4.4 | Implement Studio auto-creation and generation flow | ✅ done |
