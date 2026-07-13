@@ -1,6 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Player } from "@remotion/player";
 import { MainComposition, safeParseFloat, getThemeBgStyle } from "../../../my-video/src/compositions/MainComposition";
+
+const DashboardProjectPlayer = ({ scenes, config, totalDurationFrames }) => {
+  const playerRef = useRef(null);
+
+  useEffect(() => {
+    const { current } = playerRef;
+    if (!current) return;
+
+    const playVideo = () => {
+      try {
+        if (!current.isPlaying()) {
+          current.play();
+        }
+      } catch (err) {
+        console.warn("Programmatic playback failed:", err);
+      }
+    };
+
+    // Try playing immediately
+    playVideo();
+
+    // Set up multiple delayed retries to guarantee playback starting as media loads
+    const timers = [
+      setTimeout(playVideo, 100),
+      setTimeout(playVideo, 300),
+      setTimeout(playVideo, 600),
+      setTimeout(playVideo, 1200),
+      setTimeout(playVideo, 2000)
+    ];
+
+    return () => {
+      timers.forEach(t => clearTimeout(t));
+      try {
+        if (current.isPlaying()) {
+          current.pause();
+        }
+      } catch (_) {}
+    };
+  }, []);
+
+  return (
+    <Player
+      ref={playerRef}
+      component={MainComposition}
+      inputProps={{
+        scenes,
+        config
+      }}
+      durationInFrames={totalDurationFrames}
+      fps={30}
+      compositionWidth={1080}
+      compositionHeight={1920}
+      style={{ width: "100%", height: "100%" }}
+      controls={true}
+      loop={false}
+    />
+  );
+};
 
 export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) => {
   const [playingProjectId, setPlayingProjectId] = useState(null);
@@ -89,20 +147,10 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                   <div style={{ width: "300px", height: "533px", flexShrink: 0 }}>
                     {playingProjectId === project.id ? (
                       <div style={{ width: "100%", height: "100%", backgroundColor: "#000", borderRadius: "12px", overflow: "hidden", position: "relative" }}>
-                        <Player
-                          component={MainComposition}
-                          inputProps={{
-                            scenes: project.scenes || [],
-                            config: project.config || {}
-                          }}
-                          durationInFrames={Math.max(30, Math.round((project.scenes || []).reduce((sum, s) => sum + safeParseFloat(s.duration || 6.0), 0) * 30))}
-                          fps={30}
-                          compositionWidth={1080}
-                          compositionHeight={1920}
-                          style={{ width: "100%", height: "100%" }}
-                          controls={true}
-                          autoPlay={true}
-                          loop={false}
+                        <DashboardProjectPlayer
+                          scenes={project.scenes || []}
+                          config={project.config || {}}
+                          totalDurationFrames={Math.max(30, Math.round((project.scenes || []).reduce((sum, s) => sum + safeParseFloat(s.duration || 6.0), 0) * 30))}
                         />
                       </div>
                     ) : (
