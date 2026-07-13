@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Player } from "@remotion/player";
+import { MainComposition, safeParseFloat, getThemeBgStyle } from "../../../my-video/src/compositions/MainComposition";
 
 export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) => {
   const [playingProjectId, setPlayingProjectId] = useState(null);
@@ -110,12 +112,23 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                           boxShadow: "inset 0 0 40px rgba(0,0,0,0.5)"
                         }}
                       >
-                        {thumbnailUrl ? (
-                          <img
-                            src={thumbnailUrl.startsWith("http") ? thumbnailUrl : `http://localhost:5000${thumbnailUrl}`}
-                            alt={project.title}
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                          />
+                        {firstScene ? (
+                          <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
+                            <Player
+                              component={MainComposition}
+                              inputProps={{
+                                scenes: [firstScene],
+                                config: project.config || {}
+                              }}
+                              durationInFrames={Math.round(safeParseFloat(firstScene.duration || 6.0) * 30)}
+                              fps={30}
+                              compositionWidth={1080}
+                              compositionHeight={1920}
+                              style={{ width: "100%", height: "100%" }}
+                              controls={false}
+                              loop={false}
+                            />
+                          </div>
                         ) : (
                           <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", fontFamily: "var(--font-heading)", fontWeight: "700" }}>NO PREVIEW</div>
                         )}

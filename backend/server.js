@@ -57,7 +57,19 @@ app.get('/api/projects', async (req, res) => {
   try {
     const thinProjects = await db.getProjects();
     const fullProjects = await Promise.all(
-      thinProjects.map(p => db.getProjectById(p.id))
+      thinProjects.map(async p => {
+        const project = await db.getProjectById(p.id);
+        if (project && project.config) {
+          const visualStyle = project.config.visualStyle || 'minimal';
+          const traits = project.config.traits || [];
+          const activeTraits = [...traits];
+          if (project.config.ratio === '9:16' && !activeTraits.includes('vertical_video')) {
+            activeTraits.push('vertical_video');
+          }
+          project.config.vdeTokens = vde.getStyle(visualStyle, activeTraits);
+        }
+        return project;
+      })
     );
     res.json(fullProjects);
   } catch (error) {
