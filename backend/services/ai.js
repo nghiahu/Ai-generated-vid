@@ -2,151 +2,6 @@ const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const vde = require("./vde");
 const phoneme = require("./phoneme");
 
-function repairJsonQuotes(jsonStr) {
-  let output = "";
-  let inString = false;
-  
-  for (let i = 0; i < jsonStr.length; i++) {
-    const char = jsonStr[i];
-    
-    if (char === '\\') {
-      output += char;
-      if (i + 1 < jsonStr.length) {
-        output += jsonStr[i + 1];
-        i++;
-      }
-      continue;
-    }
-    
-    if (char === '\n' && inString) {
-      output += '\\n';
-      continue;
-    }
-    
-    if (char === '\r' && inString) {
-      continue;
-    }
-    
-    if (char === '"') {
-      if (!inString) {
-        inString = true;
-        output += char;
-      } else {
-        // Check if this is the closing quote
-        let isClosing = false;
-        let j = i + 1;
-        while (j < jsonStr.length) {
-          const nextChar = jsonStr[j];
-          if (nextChar === ' ' || nextChar === '\t' || nextChar === '\n' || nextChar === '\r') {
-            j++;
-            continue;
-          }
-          if (nextChar === ',' || nextChar === ':' || nextChar === '}' || nextChar === ']' || nextChar === '/') {
-            isClosing = true;
-          }
-          break;
-        }
-        
-        if (j >= jsonStr.length) {
-          isClosing = true;
-        }
-        
-        if (isClosing) {
-          inString = false;
-          output += char;
-        } else {
-          output += '\\"';
-        }
-      }
-    } else {
-      output += char;
-    }
-  }
-  
-  return output;
-}
-
-function repairTruncatedJson(jsonStr) {
-  let inString = false;
-  let bracketStack = [];
-  
-  for (let i = 0; i < jsonStr.length; i++) {
-    const char = jsonStr[i];
-    
-    if (char === '\\') {
-      if (i + 1 < jsonStr.length) {
-        i++;
-      }
-      continue;
-    }
-    
-    if (char === '"') {
-      if (!inString) {
-        inString = true;
-      } else {
-        // Check if this is the closing quote
-        let isClosing = false;
-        let j = i + 1;
-        while (j < jsonStr.length) {
-          const nextChar = jsonStr[j];
-          if (nextChar === ' ' || nextChar === '\t' || nextChar === '\n' || nextChar === '\r') {
-            j++;
-            continue;
-          }
-          if (nextChar === ',' || nextChar === ':' || nextChar === '}' || nextChar === ']' || nextChar === '/') {
-            isClosing = true;
-          }
-          break;
-        }
-        if (j >= jsonStr.length) {
-          isClosing = true;
-        }
-        if (isClosing) {
-          inString = false;
-        }
-      }
-    } else if (!inString) {
-      if (char === '{') {
-        bracketStack.push('{');
-      } else if (char === '}') {
-        if (bracketStack[bracketStack.length - 1] === '{') {
-          bracketStack.pop();
-        }
-      } else if (char === '[') {
-        bracketStack.push('[');
-      } else if (char === ']') {
-        if (bracketStack[bracketStack.length - 1] === '[') {
-          bracketStack.pop();
-        }
-      }
-    }
-  }
-  
-  let repaired = jsonStr;
-  if (inString) {
-    repaired += '"';
-  }
-  
-  // Remove any trailing comma that would cause syntax error before closing braces
-  let trimmed = repaired.trim();
-  while (trimmed.endsWith(',')) {
-    trimmed = trimmed.slice(0, -1).trim();
-  }
-  repaired = trimmed;
-  
-  // Close any open braces and brackets
-  for (let k = bracketStack.length - 1; k >= 0; k--) {
-    const openChar = bracketStack[k];
-    if (openChar === '{') {
-      repaired += '}';
-    } else if (openChar === '[') {
-      repaired += ']';
-    }
-  }
-  
-  return repaired;
-}
-
 const STORYBOARD_SCHEMA = {
   type: SchemaType.ARRAY,
   description: "List of visual scenes parsed from the script",
@@ -349,9 +204,6 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       Examples of WRONG voiceover text: "Hát Tê Em Lờ, Xê Ét Ét, và Gia va sờ cờ ríp là nền tảng của web."
       Apply this rule to: html, css, javascript, react, node.js, next.js, api, mp4, mp3, npm, json, sql, typescript, python, github, docker, aws, gpt.
       
-      CRITICAL HASHTAG RULE:
-      DO NOT output social media hashtags (e.g., #shorts, #trending, #tiktok, #it, #dev, #viral, #xuhuong) in the JSON points list, heading, or voiceover. If the input script contains hashtags, filter them out completely. This prevents token bloat, keeps the video professional, and avoids response truncation.
-      
       CRITICAL SENTENCE BOUNDARY RULE:
       Each scene's "voiceover" text MUST consist of complete sentences. Never split a single sentence or a clause across multiple scenes. If the script has a long sentence, keep it entirely within one scene. The boundaries between scenes must always align with natural sentence endings (periods '.', question marks '?', exclamation marks '!').
       
@@ -445,20 +297,14 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
     let scenes;
     let cleanedText = text;
     try {
-      // 0. Fix truncated/incomplete JSON if cut off mid-stream
-      cleanedText = repairTruncatedJson(cleanedText.trim());
-      
-      // 1. Fix unterminated fractional numbers like "duration": 4. which break JSON parsing
+      // Fix unterminated fractional numbers like "duration": 4. which break JSON parsing
       cleanedText = cleanedText.replace(/(:\s*\d+)\.(?=\s*[,\}\]])/g, "$1.0");
-      // 2. Fix missing leading zero like "duration": .5 -> "duration": 0.5
+      // Fix missing leading zero like "duration": .5 -> "duration": 0.5
       cleanedText = cleanedText.replace(/(:\s*)\.(\d+)(?=\s*[,\}\]])/g, "$10.$2");
       
-      // 3. Fix unescaped double quotes and literal newlines in strings using the state-machine quote repairer
-      cleanedText = repairJsonQuotes(cleanedText);
-
       scenes = JSON.parse(cleanedText);
     } catch (e) {
-      console.warn("[Gemini API] JSON.parse attempt failed. Trying fallback cleanup...", e.message);
+      console.warn("[Gemini API] JSON.parse failed. Attempting quote repair...", e.message);
       try {
         const repaired = cleanedText.replace(/:\s*"([\s\S]*?)"\s*(,|\n|\})/g, (match, p1, p2) => {
           const escapedVal = p1
