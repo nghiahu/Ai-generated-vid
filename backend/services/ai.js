@@ -349,6 +349,9 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       Examples of WRONG voiceover text: "Hát Tê Em Lờ, Xê Ét Ét, và Gia va sờ cờ ríp là nền tảng của web."
       Apply this rule to: html, css, javascript, react, node.js, next.js, api, mp4, mp3, npm, json, sql, typescript, python, github, docker, aws, gpt.
       
+      CRITICAL HASHTAG RULE:
+      DO NOT output social media hashtags (e.g., #shorts, #trending, #tiktok, #it, #dev, #viral, #xuhuong) in the JSON points list, heading, or voiceover. If the input script contains hashtags, filter them out completely. This prevents token bloat, keeps the video professional, and avoids response truncation.
+      
       CRITICAL SENTENCE BOUNDARY RULE:
       Each scene's "voiceover" text MUST consist of complete sentences. Never split a single sentence or a clause across multiple scenes. If the script has a long sentence, keep it entirely within one scene. The boundaries between scenes must always align with natural sentence endings (periods '.', question marks '?', exclamation marks '!').
       
