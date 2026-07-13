@@ -690,12 +690,6 @@ export const StoryboardEditor = ({
   if (mode === "setup") {
     return (
       <div className="custom-scrollbar" style={{ flex: 1, padding: "30px", display: "flex", flexDirection: "column", gap: "25px", overflowY: "auto", boxSizing: "border-box" }}>
-        {/* Tab Selector matching Stitch */}
-        <div style={{ display: "flex", borderBottom: "2px solid #000000", gap: "30px", marginBottom: "5px" }}>
-          <button className="tab-active" style={{ background: "none", border: "none", fontSize: "14px", fontWeight: "bold", paddingBottom: "12px", cursor: "pointer", textTransform: "uppercase" }}>Kịch bản AI</button>
-          <button className="tab-inactive" style={{ background: "none", border: "none", fontSize: "14px", paddingBottom: "12px", cursor: "pointer", textTransform: "uppercase" }}>Bài viết thành Video</button>
-          <button className="tab-inactive" style={{ background: "none", border: "none", fontSize: "14px", paddingBottom: "12px", cursor: "pointer", textTransform: "uppercase" }}>Kịch bản thủ công</button>
-        </div>
 
         {loading ? (
           <div className="border-strict" style={{ display: "flex", flex: 1, flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "350px", backgroundColor: "#ffffff", boxShadow: "4px 4px 0px 0px #000000" }}>
@@ -719,17 +713,6 @@ export const StoryboardEditor = ({
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: 1 }}>
-            <div>
-              <label className="form-label-mono" style={{ fontSize: "15px" }}>Chủ đề video</label>
-              <input 
-                type="text"
-                className="form-input-mono"
-                value={topicText}
-                onChange={(e) => setTopicText(e.target.value)}
-                placeholder="Ví dụ: Lợi ích của việc thiền định mỗi ngày..."
-                style={{ padding: "14px", fontSize: "15px" }}
-              />
-            </div>
             
             <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: "250px" }}>
               <div style={{ display: "flex", justifyBetween: "space-between", alignItems: "flex-end", marginBottom: "8px" }}>
