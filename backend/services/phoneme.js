@@ -216,7 +216,12 @@ async function extractTerms(text) {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: modelName,
-      generationConfig: { responseMimeType: "application/json" }
+      generationConfig: { 
+        responseMimeType: "application/json",
+        thinkingConfig: {
+          thinkingBudget: 0
+        }
+      }
     });
 
     const prompt = `
@@ -315,7 +320,12 @@ async function getPhonemesForTerms(terms) {
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({
         model: modelName,
-        generationConfig: { responseMimeType: "application/json" }
+        generationConfig: { 
+          responseMimeType: "application/json",
+          thinkingConfig: {
+            thinkingBudget: 0
+          }
+        }
       });
 
       const prompt = `

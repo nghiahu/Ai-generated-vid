@@ -532,6 +532,8 @@ export const StoryboardEditor = ({
   const [stockQuery, setStockQuery] = useState("");
   const [stockResults, setStockResults] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [mediaModalContext, setMediaModalContext] = useState(null); // 'scene-editor' or null
+  const [activeUploadSceneId, setActiveUploadSceneId] = useState(null);
 
   useEffect(() => {
     if (showMediaModal) {
@@ -558,52 +560,58 @@ export const StoryboardEditor = ({
   const playerRefs = useRef({});
 
   const handleImageUploadClick = (sceneId) => {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    
-    fileInput.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+    const scene = scenes.find(s => s.id === sceneId);
+    if (scene) {
+      setSelectedMedia(scene.mediaList || []);
+    } else {
+      setSelectedMedia([]);
+    }
+    setActiveUploadSceneId(sceneId);
+    setMediaModalContext('scene-editor');
+    setShowMediaModal(true);
+  };
 
-      setUploadingScenes(prev => ({ ...prev, [sceneId]: true }));
-      
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = async () => {
-        try {
-          const base64data = reader.result;
-          // Gửi lên API Backend
-          const response = await axios.post("http://localhost:5000/api/upload", {
-            file: base64data
-          });
-          
-          const newImageUrl = response.data.url;
-          
-          // Thêm vào mediaList của Scene hiện tại
-          const scene = scenes.find(s => s.id === sceneId);
-          if (!scene) return;
-          const currentMediaList = scene.mediaList || [];
-          const updatedMediaList = [...currentMediaList, newImageUrl];
-          const newIndex = updatedMediaList.length - 1;
+  const handleCloseMediaModal = () => {
+    setShowMediaModal(false);
+    setMediaModalContext(null);
+    setActiveUploadSceneId(null);
+  };
 
-          // Cập nhật lên CSDL bằng API có sẵn
-          onUpdateScene(sceneId, {
-            ...scene,
-            mediaList: updatedMediaList,
-            selectedMediaIndex: newIndex
-          });
-          
-        } catch (err) {
-          console.error("Lỗi tải ảnh:", err);
-          alert(`Không thể upload ảnh: ${err.response?.data?.error || err.message}`);
-        } finally {
-          setUploadingScenes(prev => ({ ...prev, [sceneId]: false }));
+  const handleMediaModalConfirm = () => {
+    if (mediaModalContext === 'scene-editor' && activeUploadSceneId) {
+      // Update ALL scenes' mediaList with the selectedMedia
+      scenes.forEach(scene => {
+        const currentMediaList = scene.mediaList || [];
+        // Union of current media list and selected media, preserving order and uniqueness
+        const unionList = [...currentMediaList];
+        selectedMedia.forEach(url => {
+          if (!unionList.includes(url)) {
+            unionList.push(url);
+          }
+        });
+
+        const updateData = { mediaList: unionList };
+
+        // For the active scene that initiated the upload, set selectedMediaIndex to the last selected/added image
+        if (scene.id === activeUploadSceneId && selectedMedia.length > 0) {
+          const lastSelectedUrl = selectedMedia[selectedMedia.length - 1];
+          const newIdx = unionList.indexOf(lastSelectedUrl);
+          if (newIdx !== -1) {
+            updateData.selectedMediaIndex = newIdx;
+          }
         }
-      };
-    };
-    
-    fileInput.click();
+
+        onUpdateScene(scene.id, {
+          ...scene,
+          ...updateData
+        });
+      });
+    }
+
+    // Reset state and close modal
+    setShowMediaModal(false);
+    setMediaModalContext(null);
+    setActiveUploadSceneId(null);
   };
 
   const handleToggleSelectMedia = (url) => {
@@ -748,101 +756,10 @@ export const StoryboardEditor = ({
     }
   };
 
-  // MODE 1: SETUP & SCRIPT INPUT
-  if (mode === "setup") {
+
+  const renderMediaModal = () => {
+    if (!showMediaModal) return null;
     return (
-      <div className="custom-scrollbar" style={{ flex: 1, padding: "30px", display: "flex", flexDirection: "column", gap: "25px", overflowY: "auto", boxSizing: "border-box" }}>
-
-        {loading ? (
-          <div className="border-strict" style={{ display: "flex", flex: 1, flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "350px", backgroundColor: "#ffffff", boxShadow: "4px 4px 0px 0px #000000" }}>
-            <div style={{
-              width: "40px",
-              height: "40px",
-              border: "4px solid #f3f3f3",
-              borderTop: "4px solid #000000",
-              borderRadius: "50%",
-              animation: "spin 1s linear infinite"
-            }} />
-            <style>{`
-              @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-              }
-            `}</style>
-            <p style={{ marginTop: "20px", fontFamily: "Space Grotesk", fontWeight: "bold" }}>
-              {loadingMessage || "AI đang phân tách kịch bản..."}
-            </p>
-          </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: 1 }}>
-            
-            <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: "250px" }}>
-              <div style={{ display: "flex", justifyBetween: "space-between", alignItems: "flex-end", marginBottom: "8px" }}>
-                <label className="form-label-mono" style={{ fontSize: "15px", marginBottom: 0 }}>Kịch bản chi tiết</label>
-                <span style={{ fontSize: "12px", color: "#555555", fontFamily: "Inter" }}>~150 words</span>
-              </div>
-              <textarea
-                value={scriptText}
-                onChange={(e) => setScriptText(e.target.value)}
-                placeholder="Ví dụ: Thiền định không chỉ là ngồi yên. Đó là một cách để thiết lập lại tâm trí của bạn..."
-                className="form-input-mono"
-                style={{ flex: 1, padding: "14px", fontSize: "15px", resize: "none", lineHeight: "1.6" }}
-              />
-            </div>
-
-            <div style={{ borderTop: "1px solid rgba(15, 23, 42, 0.08)", paddingTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <button 
-                type="button"
-                onClick={() => setShowMediaModal(true)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "12px 24px",
-                  borderRadius: "30px",
-                  border: "1px solid rgba(15, 23, 42, 0.12)",
-                  background: "#ffffff",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  color: "var(--text-primary)",
-                  cursor: "pointer",
-                  boxShadow: "0 2px 6px rgba(0, 0, 0, 0.04)",
-                  transition: "all 0.2s ease"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--color-primary)";
-                  e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
-                  e.currentTarget.style.backgroundColor = "#ffffff";
-                }}
-              >
-                <span style={{ fontSize: "16px" }}>🖼️</span>
-                Media ({selectedMedia.length})
-              </button>
-
-              <button 
-                className="btn-mono btn-mono-primary"
-                style={{ 
-                  width: "auto", 
-                  minWidth: "160px",
-                  padding: "12px 32px", 
-                  fontSize: "14px", 
-                  fontWeight: "bold",
-                  borderRadius: "30px",
-                  letterSpacing: "0.03em" 
-                }}
-                onClick={handleGenerate}
-              >
-                Tạo storyboard &nbsp; 🪄
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Media Modal */}
-        {showMediaModal && (
           <div style={{
             position: "fixed",
             inset: 0,
@@ -967,7 +884,7 @@ export const StoryboardEditor = ({
 
                 <button 
                   type="button"
-                  onClick={() => setShowMediaModal(false)}
+                  onClick={handleCloseMediaModal}
                   style={{
                     border: "none",
                     background: "rgba(15, 23, 42, 0.04)",
@@ -1306,7 +1223,7 @@ export const StoryboardEditor = ({
 
                   <button
                     type="button"
-                    onClick={() => setShowMediaModal(false)}
+                    onClick={handleMediaModalConfirm}
                     style={{
                       backgroundColor: "#3b82f6",
                       color: "#ffffff",
@@ -1329,7 +1246,107 @@ export const StoryboardEditor = ({
 
             </div>
           </div>
+    );
+  };
+
+  // MODE 1: SETUP & SCRIPT INPUT
+  if (mode === "setup") {
+    return (
+      <div className="custom-scrollbar" style={{ flex: 1, padding: "30px", display: "flex", flexDirection: "column", gap: "25px", overflowY: "auto", boxSizing: "border-box" }}>
+
+        {loading ? (
+          <div className="border-strict" style={{ display: "flex", flex: 1, flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "350px", backgroundColor: "#ffffff", boxShadow: "4px 4px 0px 0px #000000" }}>
+            <div style={{
+              width: "40px",
+              height: "40px",
+              border: "4px solid #f3f3f3",
+              borderTop: "4px solid #000000",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite"
+            }} />
+            <style>{`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
+            <p style={{ marginTop: "20px", fontFamily: "Space Grotesk", fontWeight: "bold" }}>
+              {loadingMessage || "AI đang phân tách kịch bản..."}
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: 1 }}>
+            
+            <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: "250px" }}>
+              <div style={{ display: "flex", justifyBetween: "space-between", alignItems: "flex-end", marginBottom: "8px" }}>
+                <label className="form-label-mono" style={{ fontSize: "15px", marginBottom: 0 }}>Kịch bản chi tiết</label>
+                <span style={{ fontSize: "12px", color: "#555555", fontFamily: "Inter" }}>~150 words</span>
+              </div>
+              <textarea
+                value={scriptText}
+                onChange={(e) => setScriptText(e.target.value)}
+                placeholder="Ví dụ: Thiền định không chỉ là ngồi yên. Đó là một cách để thiết lập lại tâm trí của bạn..."
+                className="form-input-mono"
+                style={{ flex: 1, padding: "14px", fontSize: "15px", resize: "none", lineHeight: "1.6" }}
+              />
+            </div>
+
+            <div style={{ borderTop: "1px solid rgba(15, 23, 42, 0.08)", paddingTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <button 
+                type="button"
+                onClick={() => {
+                  setMediaModalContext(null);
+                  setActiveUploadSceneId(null);
+                  setShowMediaModal(true);
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "12px 24px",
+                  borderRadius: "30px",
+                  border: "1px solid rgba(15, 23, 42, 0.12)",
+                  background: "#ffffff",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  color: "var(--text-primary)",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 6px rgba(0, 0, 0, 0.04)",
+                  transition: "all 0.2s ease"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--color-primary)";
+                  e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
+                  e.currentTarget.style.backgroundColor = "#ffffff";
+                }}
+              >
+                <span style={{ fontSize: "16px" }}>🖼️</span>
+                Media ({selectedMedia.length})
+              </button>
+
+              <button 
+                className="btn-mono btn-mono-primary"
+                style={{ 
+                  width: "auto", 
+                  minWidth: "160px",
+                  padding: "12px 32px", 
+                  fontSize: "14px", 
+                  fontWeight: "bold",
+                  borderRadius: "30px",
+                  letterSpacing: "0.03em" 
+                }}
+                onClick={handleGenerate}
+              >
+                Tạo storyboard &nbsp; 🪄
+              </button>
+            </div>
+          </div>
         )}
+
+        {renderMediaModal()}
 
         {showStyleModal && (
           <div style={{
@@ -2243,6 +2260,7 @@ export const StoryboardEditor = ({
           </button>
         </div>
       )}
+      {renderMediaModal()}
     </div>
   );
 };

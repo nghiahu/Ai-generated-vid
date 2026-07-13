@@ -27,3 +27,11 @@
 |---|---|---|
 | 5.1 | Extend backend `/api/projects` endpoint to return full project schema | ✅ done |
 | 5.2 | Redesign Project Card in `Dashboard.jsx` with vertical player preview and downloads section | ✅ done |
+
+# Task Tracker — Fixing JSON Parse Failures
+
+| # | Task | Status |
+|---|---|---|
+| 6.1 | Cập nhật hàm sửa quote và log lỗi trong `ai.js` | ✅ done |
+| 6.2 | Chạy kiểm tra regex repair (`test_regex_repair.js`) | ✅ done |
+| 6.3 | Chạy tích hợp Gemini storyboard (`test_ai_storyboard.js`) | ✅ done |

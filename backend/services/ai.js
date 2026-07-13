@@ -47,7 +47,7 @@ const STORYBOARD_SCHEMA = {
             },
             text: {
               type: SchemaType.STRING,
-              description: "The text content for this point in Vietnamese (optional for metric if value and subtext are used)"
+              description: "SHORT label for this point in Vietnamese. MAXIMUM 80 characters. No paragraphs, no repeating sentences. E.g.: 'RAG = 3 bước', 'Tốc độ phản hồi: 2ms'."
             },
             animation: {
               type: SchemaType.STRING,
@@ -69,11 +69,11 @@ const STORYBOARD_SCHEMA = {
             },
             value: {
               type: SchemaType.STRING,
-              description: "Optional metric value (only for metric type)"
+              description: "SHORT metric value string (only for metric type). MAXIMUM 20 characters. E.g.: '+85%', '2.5x', '#1'. NEVER put full sentences here."
             },
             subtext: {
               type: SchemaType.STRING,
-              description: "Optional metric subtext (only for metric type)"
+              description: "SHORT metric subtext (only for metric type). MAXIMUM 40 characters. E.g.: 'tăng tốc', 'hiệu quả'. NEVER put full sentences here."
             }
           },
           required: ["type"]
@@ -138,7 +138,11 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       generationConfig: { 
         responseMimeType: "application/json",
         responseSchema: STORYBOARD_SCHEMA,
-        maxOutputTokens: 8192
+        maxOutputTokens: 8192,
+        temperature: 0.2,
+        thinkingConfig: {
+          thinkingBudget: 0
+        }
       }
     });
 
@@ -198,6 +202,19 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       CRITICAL BLOCK STYLE SELECTION RULES FOR THE THEME:
       ${vde.getStylePrompt(visualStyle)}
       
+      CRITICAL SCHEMA RULE FOR POINTS:
+      For each point in "points", you must ONLY include the properties that match its "type". 
+      - If "type" is NOT "metric", do NOT generate "value" or "subtext".
+      - If "type" is NOT "logo_row", do NOT generate "logos".
+      - If "type" is NOT "badge_row", do NOT generate "badges".
+      - Do NOT put conversational paragraphs or repeating sentences inside "text" or "value" or "heading". Keep them strictly brief and concise.
+      
+      ABSOLUTE ANTI-REPETITION RULE FOR "text" AND "value":
+      EVERY "text" field MUST be a short, unique label (max 80 chars). EVERY "value" field MUST be a short metric (max 20 chars, e.g. '+85%').
+      NEVER repeat the same sentence or phrase multiple times within any single field.
+      NEVER write paragraph-length content inside a points "text" or "value" field.
+      If you feel the urge to explain something in "text", put it in "voiceover" instead.
+      
       GLOBAL CRITICAL RULE FOR VOICEOVER TEXT:
       Technical and English terms in the "voiceover" field MUST remain as lowercase English words.
       Examples of CORRECT voiceover text: "html, css, và javascript là nền tảng của web."
@@ -250,7 +267,11 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
             generationConfig: { 
               responseMimeType: "application/json",
               responseSchema: STORYBOARD_SCHEMA,
-              maxOutputTokens: 8192
+              maxOutputTokens: 8192,
+              temperature: 0.2,
+              thinkingConfig: {
+                thinkingBudget: 0
+              }
             }
           });
           attempt--; // Reset attempt index to retry with the fallback model
@@ -295,26 +316,56 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
     console.log("Gemini raw response:", text);
 
     let scenes;
-    let cleanedText = text;
+    let cleanedText = repairTruncatedJson(text);
     try {
       // Fix unterminated fractional numbers like "duration": 4. which break JSON parsing
       cleanedText = cleanedText.replace(/(:\s*\d+)\.(?=\s*[,\}\]])/g, "$1.0");
       // Fix missing leading zero like "duration": .5 -> "duration": 0.5
       cleanedText = cleanedText.replace(/(:\s*)\.(\d+)(?=\s*[,\}\]])/g, "$10.$2");
+      // ANTI-HALLUCINATION LOOP GUARD: Truncate any string values that are suspiciously long
+      // (indicates the model is stuck in a repetition loop). Limit string values to 500 chars.
+      cleanedText = cleanedText.replace(/: "([^"\\]{500,})"/g, (match, p1) => {
+        console.warn(`[Gemini API] Truncating suspiciously long string value (${p1.length} chars) to 500 chars.`);
+        return `: "${p1.substring(0, 500).replace(/[^\u0000-\uFFFF]*$/, '')}..."`;
+      });
       
       scenes = JSON.parse(cleanedText);
     } catch (e) {
       console.warn("[Gemini API] JSON.parse failed. Attempting quote repair...", e.message);
+      let repaired = cleanedText;
       try {
-        const repaired = cleanedText.replace(/:\s*"([\s\S]*?)"\s*(,|\n|\})/g, (match, p1, p2) => {
-          const escapedVal = p1
-            .replace(/(?<!\\)"/g, '\\"')
-            .replace(/\n/g, '\\n')
-            .replace(/\r/g, '\\r');
-          return `: "${escapedVal}"${p2}`;
+        const lines = cleanedText.split('\n');
+        const repairedLines = lines.map(line => {
+          const match = line.match(/^(\s*"[^"]+"\s*:\s*")([\s\S]*)"(,?)\s*$/);
+          if (match) {
+            const prefix = match[1];
+            const value = match[2];
+            const suffix = match[3];
+            const escapedValue = value.replace(/(?<!\\)"/g, '\\"');
+            return `${prefix}${escapedValue}"${suffix}`;
+          }
+          return line;
         });
+        repaired = repairedLines.join('\n');
         scenes = JSON.parse(repaired);
       } catch (repairErr) {
+        console.error("[Gemini API] Failed to parse JSON even after repair.");
+        console.error("[Gemini API] Cleaned text:", cleanedText);
+        console.error("[Gemini API] Repaired text:", repaired);
+        console.error("[Gemini API] Repair error:", repairErr.message);
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          fs.writeFileSync(path.join(__dirname, '../gemini_error_response.json'), JSON.stringify({
+            message: e.message,
+            repairError: repairErr.message,
+            rawText: text,
+            cleanedText,
+            repaired
+          }, null, 2));
+        } catch (fsErr) {
+          console.error("Failed to write error response log:", fsErr);
+        }
         throw new Error(`Expected valid JSON from Gemini but got parse error: ${e.message}`);
       }
     }
@@ -371,6 +422,29 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
   }
 }
 
+function repairTruncatedJson(jsonStr) {
+  const trimmed = jsonStr.trim();
+  if (trimmed.endsWith(']')) {
+    return trimmed;
+  }
+  
+  console.warn("[Gemini API] Phát hiện chuỗi JSON bị cắt cụt (truncated). Tiến hành sửa chữa...");
+  
+  const lastBraceIndex = Math.max(
+    trimmed.lastIndexOf('\n  }'),
+    trimmed.lastIndexOf('\r\n  }')
+  );
+  
+  if (lastBraceIndex !== -1) {
+    const hasCarriageReturn = trimmed.charAt(lastBraceIndex) === '\r';
+    const offset = hasCarriageReturn ? 5 : 4;
+    return trimmed.substring(0, lastBraceIndex + offset) + (hasCarriageReturn ? '\r\n]' : '\n]');
+  }
+  
+  return trimmed;
+}
+
 module.exports = {
-  generateStoryboard
+  generateStoryboard,
+  STORYBOARD_SCHEMA
 };

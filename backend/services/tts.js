@@ -330,8 +330,28 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
     return { url: `/tts/${fileName}`, duration };
 
   } catch (error) {
-    console.error("Error generating ElevenLabs TTS:", error);
-    throw new Error(`Lỗi ElevenLabs TTS: ${error.message}`);
+    console.warn(`ElevenLabs TTS failed: ${error.message}. Falling back to Microsoft Edge TTS...`);
+    try {
+      const isMale = ["antonio", "domic"].includes(voiceKey.toLowerCase());
+      const msVoice = isMale ? "vi-VN-NamMinhNeural" : "vi-VN-HoaiMyNeural";
+      console.log(`[TTS Fallback] Calling Microsoft Edge TTS for scene ${sceneId} using voice ${msVoice}...`);
+      const cleanText = normalizeTextForTTS(text);
+      const ttsFallback = new EdgeTTS(cleanText, msVoice);
+      const result = await ttsFallback.synthesize();
+      if (!result || !result.audio) {
+        throw new Error("Không nhận được dữ liệu âm thanh từ Edge TTS");
+      }
+      const arrayBuffer = await result.audio.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      fs.writeFileSync(outputPath, buffer);
+      console.log(`[TTS Fallback] Successfully saved Microsoft Edge TTS file: ${fileName}`);
+      addSilentPadding(outputPath);
+      const duration = getAudioDuration(outputPath);
+      return { url: `/tts/${fileName}`, duration };
+    } catch (fallbackError) {
+      console.error("TTS Fallback failed:", fallbackError);
+      throw new Error(`Lỗi ElevenLabs TTS (${error.message}) và Fallback Edge TTS cũng thất bại: ${fallbackError.message}`);
+    }
   }
 }
 
