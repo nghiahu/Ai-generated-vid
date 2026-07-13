@@ -2,6 +2,70 @@ const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const vde = require("./vde");
 const phoneme = require("./phoneme");
 
+function repairJsonQuotes(jsonStr) {
+  let output = "";
+  let inString = false;
+  
+  for (let i = 0; i < jsonStr.length; i++) {
+    const char = jsonStr[i];
+    
+    if (char === '\\') {
+      output += char;
+      if (i + 1 < jsonStr.length) {
+        output += jsonStr[i + 1];
+        i++;
+      }
+      continue;
+    }
+    
+    if (char === '\n' && inString) {
+      output += '\\n';
+      continue;
+    }
+    
+    if (char === '\r' && inString) {
+      continue;
+    }
+    
+    if (char === '"') {
+      if (!inString) {
+        inString = true;
+        output += char;
+      } else {
+        // Check if this is the closing quote
+        let isClosing = false;
+        let j = i + 1;
+        while (j < jsonStr.length) {
+          const nextChar = jsonStr[j];
+          if (nextChar === ' ' || nextChar === '\t' || nextChar === '\n' || nextChar === '\r') {
+            j++;
+            continue;
+          }
+          if (nextChar === ',' || nextChar === ':' || nextChar === '}' || nextChar === ']' || nextChar === '/') {
+            isClosing = true;
+          }
+          break;
+        }
+        
+        if (j >= jsonStr.length) {
+          isClosing = true;
+        }
+        
+        if (isClosing) {
+          inString = false;
+          output += char;
+        } else {
+          output += '\\"';
+        }
+      }
+    } else {
+      output += char;
+    }
+  }
+  
+  return output;
+}
+
 const STORYBOARD_SCHEMA = {
   type: SchemaType.ARRAY,
   description: "List of visual scenes parsed from the script",
@@ -302,18 +366,12 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       // 2. Fix missing leading zero like "duration": .5 -> "duration": 0.5
       cleanedText = cleanedText.replace(/(:\s*)\.(\d+)(?=\s*[,\}\]])/g, "$10.$2");
       
-      // 3. Fix unescaped double quotes and newlines inside JSON string values
-      cleanedText = cleanedText.replace(/"(\w+)":\s*"([\s\S]*?)"\s*(?=,\s*"\w+"\s*:|,\s*\}|\s*\})/g, (match, key, val) => {
-        const escapedVal = val
-          .replace(/(?<!\\)"/g, '\\"')
-          .replace(/\n/g, '\\n')
-          .replace(/\r/g, '\\r');
-        return `"${key}": "${escapedVal}"`;
-      });
+      // 3. Fix unescaped double quotes and literal newlines in strings using the state-machine quote repairer
+      cleanedText = repairJsonQuotes(cleanedText);
 
       scenes = JSON.parse(cleanedText);
     } catch (e) {
-      console.warn("[Gemini API] First JSON.parse attempt failed. Trying fallback cleanup...", e.message);
+      console.warn("[Gemini API] JSON.parse attempt failed. Trying fallback cleanup...", e.message);
       try {
         const repaired = cleanedText.replace(/:\s*"([\s\S]*?)"\s*(,|\n|\})/g, (match, p1, p2) => {
           const escapedVal = p1
