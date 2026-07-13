@@ -84,7 +84,7 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                   }}
                 >
                   {/* Left Column: Vertical 9:16 Video Player/Thumbnail */}
-                  <div style={{ width: "192px", height: "341px", flexShrink: 0 }}>
+                  <div style={{ width: "300px", height: "533px", flexShrink: 0 }}>
                     {playingProjectId === project.id ? (
                       <div style={{ width: "100%", height: "100%", backgroundColor: "#000", borderRadius: "12px", overflow: "hidden" }}>
                         <video
