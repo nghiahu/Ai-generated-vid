@@ -88,12 +88,21 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                   {/* Left Column: Vertical 9:16 Video Player/Thumbnail */}
                   <div style={{ width: "300px", height: "533px", flexShrink: 0 }}>
                     {playingProjectId === project.id ? (
-                      <div style={{ width: "100%", height: "100%", backgroundColor: "#000", borderRadius: "12px", overflow: "hidden" }}>
-                        <video
-                          src={`http://localhost:5000/downloads/output_${project.id}.mp4`}
-                          controls
-                          autoPlay
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      <div style={{ width: "100%", height: "100%", backgroundColor: "#000", borderRadius: "12px", overflow: "hidden", position: "relative" }}>
+                        <Player
+                          component={MainComposition}
+                          inputProps={{
+                            scenes: project.scenes || [],
+                            config: project.config || {}
+                          }}
+                          durationInFrames={Math.max(30, Math.round((project.scenes || []).reduce((sum, s) => sum + safeParseFloat(s.duration || 6.0), 0) * 30))}
+                          fps={30}
+                          compositionWidth={1080}
+                          compositionHeight={1920}
+                          style={{ width: "100%", height: "100%" }}
+                          controls={true}
+                          autoPlay={true}
+                          loop={false}
                         />
                       </div>
                     ) : (
