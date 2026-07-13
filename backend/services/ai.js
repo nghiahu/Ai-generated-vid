@@ -97,7 +97,7 @@ const STORYBOARD_SCHEMA = {
       },
       theme: {
         type: SchemaType.STRING,
-        description: "Visual overlay theme: 'default', 'tech', 'japan', 'finance', 'rikkei'"
+        description: "Visual overlay theme: 'default', 'tech', 'japan', 'finance', 'rikkei', 'ai_hub_grid'"
       },
       accentColor: {
         type: SchemaType.STRING,
@@ -194,8 +194,8 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
           "duration": 7.5, // Estimated duration in seconds (number, e.g. 7.5)
           "placement": "Full", // Allowed values: "Full", "Split"
           "keywords": "1-3 English keywords for Unsplash photo search based on visual context, e.g., 'coding laptop'",
-          "theme": "japan", // Allowed values: "japan", "tech", "finance", "nature", "default", "rikkei"
-          "accentColor": "A vibrant HEX color matching the theme, e.g., '#FFB7C5' for japan, '#A8232A' for rikkei"
+          "theme": "japan", // Allowed values: "japan", "tech", "finance", "nature", "default", "rikkei", "ai_hub_grid"
+          "accentColor": "A vibrant HEX color matching the theme, e.g., '#FFB7C5' for japan, '#A8232A' for rikkei, '#3b82f6' for ai_hub_grid"
         }
       ]
       
