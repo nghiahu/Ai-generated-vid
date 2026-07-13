@@ -66,7 +66,7 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                     backdropFilter: "blur(16px)",
                     border: "1px solid rgba(15, 23, 42, 0.08)",
                     borderRadius: "var(--radius-lg)",
-                    padding: "24px",
+                    padding: "24px 16px",
                     boxShadow: "var(--shadow)",
                     display: "flex",
                     gap: "24px",
