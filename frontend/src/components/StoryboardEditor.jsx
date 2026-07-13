@@ -199,27 +199,17 @@ const LAYOUTS_BY_FAMILY = {
     { value: "FearGreedHook", label: "Fear Greed Hook" },
     { value: "FeedScrollHook", label: "Feed Scroll Hook" },
     { value: "FlowchartTitle", label: "Flowchart Title" },
-    { value: "Hero", label: "Hero Title" },
     { value: "IntroBriefingCard", label: "Intro Briefing Card" },
     { value: "IntroBubbleImage", label: "Intro Bubble Image" },
     { value: "IntroChapterStack", label: "Intro Chapter Stack Image" },
     { value: "IntroCutoutHeadlineImage", label: "Intro Cutout Headline Image" },
     { value: "IntroEvidenceReadlineImage", label: "Intro Evidence Readline Image" },
     { value: "IntroEvidenceScanlineImage", label: "Intro Evidence Scanline Image" },
-    { value: "IntroEvidenceTagsImage", label: "Intro Evidence Tags Image" },
     { value: "IntroEvidenceTimelineImage", label: "Intro Evidence Timeline Image" },
     { value: "IntroFullImage", label: "Intro Full Image" },
-    { value: "IntroFullImageBreakingStack", label: "Intro Full Image Breaking Stack" },
-    { value: "IntroFullImageCaptionLockup", label: "Intro Full Image Caption Lockup" },
-    { value: "IntroFullImageDataBroadcast", label: "Intro Full Image Data Broadcast" },
-    { value: "IntroFullImageReporterOverlay", label: "Intro Full Image Reporter Overlay" },
     { value: "IntroFullImageSplitHeadline", label: "Intro Full Image Split Headline" },
-    { value: "IntroFullImageSpotlightSubject", label: "Intro Full Image Spotlight Subject" },
-    { value: "IntroHalfImage", label: "Intro Half Image" },
     { value: "IntroKineticCountdownImage", label: "Intro Kinetic Countdown Image" },
-    { value: "IntroKineticImage", label: "Intro Kinetic Image" },
     { value: "IntroMapPinsImage", label: "Intro MAP Pins Image" },
-    { value: "IntroMediaCard", label: "Intro Media Card" },
     { value: "IntroMediaHero", label: "Intro Media Hero" },
     { value: "IntroMediaPoster", label: "Intro Media Poster" },
     { value: "IntroMetricConstellationImage", label: "Intro Metric Constellation Image" },
@@ -227,10 +217,8 @@ const LAYOUTS_BY_FAMILY = {
     { value: "IntroMetricKpiBoardImage", label: "Intro Metric KPI Board Image" },
     { value: "IntroMetricOrbitImage", label: "Intro Metric Orbit Image" },
     { value: "IntroMetricPillImage", label: "Intro Metric Pill Image" },
-    { value: "IntroMetricPulseStackImage", label: "Intro Metric Pulse Stack Image" },
     { value: "IntroNumberLede", label: "Intro Number Lede" },
     { value: "IntroProfile", label: "Intro Profile" },
-    { value: "IntroProfileDossier", label: "Intro Profile Dossier" },
     { value: "IntroRadarSignalImage", label: "Intro Radar Signal Image" },
     { value: "IntroSignalStepsImages", label: "Intro Signal Steps Images" },
     { value: "IntroStampStackImage", label: "Intro Stamp Stack Image" },
@@ -1350,7 +1338,7 @@ export const StoryboardEditor = ({
                         onChange={(e) => {
                           const newFamily = e.target.value;
                           const layouts = LAYOUTS_BY_FAMILY[newFamily] || [];
-                          const defaultLayout = layouts[0]?.value || "Hero";
+                          const defaultLayout = layouts[0]?.value || "IntroMediaHero";
                           
                           onUpdateScene(scene.id, {
                             ...scene,
