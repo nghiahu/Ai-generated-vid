@@ -252,6 +252,8 @@ const LAYOUTS_BY_FAMILY = {
     { value: "XPostHook", label: "X Post Hook" }
   ],
   "List / Steps": [
+    { value: "AIHubGrid1", label: "AI Hub Grid 1 (Emotion Column)" },
+    { value: "AIHubGrid3", label: "AI Hub Grid 3 (Benefits Stack)" },
     { value: "AuditTrailChecklist", label: "Audit Trail Checklist" },
     { value: "Feature Grid", label: "Bento Feature Grid" },
     { value: "DebateTriangleBullet", label: "Debate Triangle Bullet" },
@@ -340,6 +342,7 @@ const LAYOUTS_BY_FAMILY = {
     { value: "VignelliQuote", label: "Vignelli Quote" }
   ],
   "Timeline": [
+    { value: "AIHubGrid2", label: "AI Hub Grid 2 (Winding Roadmap)" },
     { value: "Timeline", label: "Staggered Pill Timeline" },
     { value: "TimelineBeamRail", label: "Timeline Beam Rail" },
     { value: "TimelineChapters", label: "Timeline Chapters" },
