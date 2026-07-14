@@ -419,8 +419,30 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
         const userImg = selectedMedia[i % selectedMedia.length];
         mediaList = [userImg];
       } else {
-        const searchQuery = visualStyle ? `${scene.keywords} ${visualStyle}` : scene.keywords;
-        mediaList = await media.searchImages(searchQuery);
+        if (Array.isArray(scene.keywords)) {
+          for (const kw of scene.keywords) {
+            try {
+              const searchQuery = visualStyle ? `${kw} ${visualStyle}` : kw;
+              mediaList = await media.searchImages(searchQuery);
+              if (mediaList && mediaList.length > 0) {
+                break;
+              }
+            } catch (err) {
+              console.warn(`[Unsplash] Search failed for keyword "${kw}":`, err.message);
+            }
+          }
+          if (mediaList.length === 0) {
+            try {
+              mediaList = await media.searchImages(visualStyle || "technology");
+            } catch (err) {
+              console.error("[Unsplash] Safe fallback search failed:", err.message);
+            }
+          }
+        } else {
+          const kw = scene.keywords || "technology";
+          const searchQuery = visualStyle ? `${kw} ${visualStyle}` : kw;
+          mediaList = await media.searchImages(searchQuery);
+        }
       }
 
       // Generate TTS Voiceover audio

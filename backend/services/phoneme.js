@@ -4,30 +4,30 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const db = require("./db");
 
 const TECH_TERMS_TRANSLITERATION = {
-  'react': 'ri-éc',
+  'react': 'ri-ắc',
   'api': 'a-pi-ai',
   'vite': 'vít',
-  'nextjs': 'néch-chây-ét',
-  'next.js': 'néch-chây-ét',
-  'nodejs': 'nốt-chây-ét',
-  'node.js': 'nốt-chây-ét',
+  'nextjs': 'lếch-gi-ét',
+  'next.js': 'lếch-gi-ét',
+  'nodejs': 'nốt-gi-ét',
+  'node.js': 'nốt-gi-ét',
   'javascript': 'gia-va-sờ-cờ-ríp',
-  'typescript': 'tháp-sờ-cờ-ríp',
+  'typescript': 'tai-sờ-cờ-ríp',
   'css': 'xê-ét-ét',
-  'html': 'át-tê-em-lờ',
+  'html': 'hắt-ty-em-eo',
   'npm': 'en-pi-em',
   'json': 'giây-xơn',
-  'sql': 'ét-quờ-en',
+  'sql': 'ét-quy-eo',
   'cli': 'xê-lờ-ai',
   'git': 'gít',
   'github': 'gít-hắp',
   'docker': 'đốc-cơ',
-  'aws': 'a-vê-ét',
+  'aws': 'ây-dub-lờ-ét',
   'vercel': 'vơ-xen',
-  'remotion': 'ri-mô-sơn',
+  'remotion': 'ri-mô-sần',
   'video': 'vi-đê-ô',
   'marketing': 'mác-két-tinh',
-  'dashboard': 'đáp-bo',
+  'dashboard': 'đát-bót',
   'animation': 'a-ni-mei-sơn',
   'avatar': 'a-va-ta',
   'website': 'oét-sai',
@@ -47,10 +47,12 @@ const TECH_TERMS_TRANSLITERATION = {
   'deploy': 'đi-ploi',
   'code': 'cốt',
   'database': 'đê-ta-bây',
-  'ai': 'ai',
+  'ai': 'ây-ai',
+  'AI': 'ây-ai',
+  'Ai': 'ây-ai',
   'gpt': 'gi-pi-ti',
   'llm': 'en-en-em',
-  'agent': 'ây-giơnt',
+  'agent': 'ây-giừn',
   'premiere': 'pờ-re-mi-e',
   'capcut': 'cáp-cắt',
   'photoshop': 'phô-tô-thóp',
@@ -68,7 +70,9 @@ const TECH_TERMS_TRANSLITERATION = {
   'serverless': 'sơ-vơ-lét',
   'verceljs': 'vơ-xen-chây-ét',
   'supabase': 'xu-pa-bây',
-  'tailwind': 'teo-uin'
+  'tailwind': 'teo-uin',
+  'RAG': 'rác',
+  'rag': 'rác'
 };
 
 const cmuDict = new Map();
@@ -80,7 +84,7 @@ function loadCmuDict() {
     console.warn("[Phoneme Engine] File cmudict.dict không tồn tại tại: " + filePath);
     return;
   }
-  
+
   console.log("[Phoneme Engine] Đang nạp từ điển CMU vào bộ nhớ...");
   const start = Date.now();
   const content = fs.readFileSync(filePath, "utf8");
@@ -90,13 +94,13 @@ function loadCmuDict() {
     if (!trimmed || trimmed.startsWith("#")) continue;
     const firstSpace = trimmed.indexOf(" ");
     if (firstSpace === -1) continue;
-    
+
     let word = trimmed.substring(0, firstSpace).toLowerCase();
     const phonemes = trimmed.substring(firstSpace + 1).trim();
-    
+
     // Remove variants like (2), (3) from terms
     word = word.replace(/\(\d+\)$/, "");
-    
+
     // Set default pronunciation (first one encountered)
     if (!cmuDict.has(word)) {
       cmuDict.set(word, phonemes);
@@ -124,10 +128,10 @@ const ADDITIONAL_VIETNAMESE_WORDS = [
 ADDITIONAL_VIETNAMESE_WORDS.forEach(w => VIETNAMESE_STOP_WORDS.add(w));
 
 const TECH_TERMS_WHITELIST = new Set([
-  'react', 'api', 'vite', 'nextjs', 'next.js', 'nodejs', 'node.js', 'javascript', 'typescript', 
-  'css', 'html', 'npm', 'json', 'sql', 'cli', 'git', 'github', 'docker', 'aws', 'vercel', 
-  'remotion', 'video', 'marketing', 'dashboard', 'animation', 'avatar', 'website', 'logo', 
-  'brand', 'component', 'framework', 'timeline', 'audio', 'mp4', 'mp3', 'client', 'server', 
+  'react', 'api', 'vite', 'nextjs', 'next.js', 'nodejs', 'node.js', 'javascript', 'typescript',
+  'css', 'html', 'npm', 'json', 'sql', 'cli', 'git', 'github', 'docker', 'aws', 'vercel',
+  'remotion', 'video', 'marketing', 'dashboard', 'animation', 'avatar', 'website', 'logo',
+  'brand', 'component', 'framework', 'timeline', 'audio', 'mp4', 'mp3', 'client', 'server',
   'app', 'dev', 'build', 'deploy', 'code', 'database', 'ai', 'gpt', 'llm', 'agent', 'premiere',
   'capcut', 'photoshop', 'illustrator', 'canva', 'figma', 'ui', 'ux', 'front-end', 'back-end',
   'native', 'gateway', 'service', 'cloud', 'serverless'
@@ -209,14 +213,16 @@ async function extractTerms(text) {
     return localExtractTerms(text);
   }
 
-  let modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  if (modelName.includes("3.5")) modelName = "gemini-2.5-flash";
+  let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+  if (modelName.includes("2.5") || modelName.includes("2.0") || modelName.includes("1.5")) {
+    modelName = "gemini-3.5-flash";
+  }
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: modelName,
-      generationConfig: { 
+      generationConfig: {
         responseMimeType: "application/json",
         thinkingConfig: {
           thinkingBudget: 0
@@ -237,7 +243,7 @@ async function extractTerms(text) {
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text().trim();
-    
+
     let terms;
     try {
       terms = JSON.parse(responseText);
@@ -266,7 +272,7 @@ async function getPhonemesForTerms(terms) {
 
   for (const term of terms) {
     const cleanTerm = term.toLowerCase().trim();
-    
+
     // 1. Kiểm tra từ điển dịch tĩnh TECH_TERMS_TRANSLITERATION
     if (TECH_TERMS_TRANSLITERATION[cleanTerm]) {
       const transliterated = TECH_TERMS_TRANSLITERATION[cleanTerm];
@@ -280,7 +286,7 @@ async function getPhonemesForTerms(terms) {
           source: "static_dict",
           confidence: 1.0
         });
-      } catch (saveErr) {}
+      } catch (saveErr) { }
       continue;
     }
 
@@ -313,14 +319,16 @@ async function getPhonemesForTerms(terms) {
       return mapping;
     }
 
-    let modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-    if (modelName.includes("3.5")) modelName = "gemini-2.5-flash";
+    let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+    if (modelName.includes("2.5") || modelName.includes("2.0") || modelName.includes("1.5")) {
+      modelName = "gemini-3.5-flash";
+    }
 
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({
         model: modelName,
-        generationConfig: { 
+        generationConfig: {
           responseMimeType: "application/json",
           thinkingConfig: {
             thinkingBudget: 0
@@ -353,7 +361,7 @@ async function getPhonemesForTerms(terms) {
       console.log(`[Phoneme Agent] Gọi Gemini G2P Fallback dịch sang tiếng Việt cho ${unknownTerms.length} từ:`, unknownTerms);
       const result = await model.generateContent(prompt);
       const responseText = result.response.text().trim();
-      
+
       let newPhonemes;
       try {
         newPhonemes = JSON.parse(responseText);
@@ -365,10 +373,10 @@ async function getPhonemesForTerms(terms) {
       if (Array.isArray(newPhonemes)) {
         for (const item of newPhonemes) {
           if (!item.term || !item.phoneme) continue;
-          
+
           const confidence = parseFloat(item.confidence) || 1.0;
           const reviewRequired = confidence < 0.8;
-          
+
           const dbItem = {
             term: item.term.toLowerCase().trim(),
             display_term: item.display_term || item.term,
@@ -417,7 +425,7 @@ async function optimizeTextForPhonemes(text) {
 
     // 3. Thực hiện thay thế từ tiếng Anh bằng từ phiên âm tiếng Việt tương đương
     let optimizedText = text;
-    
+
     // Sắp xếp các từ theo độ dài giảm dần để thay thế từ dài trước (tránh lỗi thay thế chuỗi con trước, vd: "ReactJS" trước "React")
     const sortedTerms = Object.keys(mapping).sort((a, b) => b.length - a.length);
 
@@ -425,12 +433,17 @@ async function optimizeTextForPhonemes(text) {
       const phoneme = mapping[term];
       if (!phoneme) continue;
 
-      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      
-      // Tạo Regex khớp từ gốc (phân biệt hoa thường) được bao quanh bởi khoảng trắng, dấu câu hoặc bắt đầu/kết thúc chuỗi
-      // Việc phân biệt hoa thường giúp tránh thay thế nhầm các từ tiếng Việt như pronoun "ai" (khi ta cần thay thế viết tắt "AI")
-      const regex = new RegExp(`(?<=^|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])(${escaped})(?=$|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])`, "g");
-      
+      const isStopWord = VIETNAMESE_STOP_WORDS.has(term.toLowerCase());
+      // Nếu là từ trùng với stopword tiếng Việt (như 'ai', 'ba', 'an'), ta ép buộc tìm kiếm dạng VIẾT HOA TOÀN BỘ (AI, BA, AN)
+      // Điều này giúp tránh việc Gemini trích xuất dạng viết thường 'ai' làm lệch so khớp hoặc thay thế nhầm từ tiếng Việt thường
+      const searchPattern = isStopWord ? term.toUpperCase() : term;
+      const escaped = searchPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+      const regex = new RegExp(
+        `(?<=^|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])(${escaped})(?=$|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])`,
+        isStopWord ? "g" : "gi"
+      );
+
       optimizedText = optimizedText.replace(regex, phoneme);
     }
 

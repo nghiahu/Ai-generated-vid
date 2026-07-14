@@ -2,15 +2,20 @@ const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const vde = require("./vde");
 const phoneme = require("./phoneme");
 
-const STORYBOARD_SCHEMA = {
+// Define Phase 1 Schema: Scene Planner
+const PLANNER_SCHEMA = {
   type: SchemaType.ARRAY,
-  description: "List of visual scenes parsed from the script",
+  description: "List of planned scenes with headings, voiceovers, and intents",
   items: {
     type: SchemaType.OBJECT,
     properties: {
+      sceneIndex: {
+        type: SchemaType.INTEGER,
+        description: "Zero-based index of the scene"
+      },
       sceneIntent: {
         type: SchemaType.OBJECT,
-        description: "The visual intent and context descriptors for the scene layout selection",
+        description: "The visual intent and context descriptors",
         properties: {
           type: {
             type: SchemaType.STRING,
@@ -31,13 +36,42 @@ const STORYBOARD_SCHEMA = {
         },
         required: ["type", "importance", "density", "emotion"]
       },
+      visualIntent: {
+        type: SchemaType.STRING,
+        description: "Must be one of: 'opening_hook', 'comparison_table', 'terminal_demo', 'metric_dashboard', 'timeline', 'quote', 'media', 'architecture', 'workflow', 'before_after', 'code_walkthrough', 'list', 'feature_grid', 'process', 'warning', 'cta'"
+      },
       heading: {
         type: SchemaType.STRING,
         description: "A short, engaging heading for the scene in Vietnamese"
       },
+      voiceover: {
+        type: SchemaType.STRING,
+        description: "Vietnamese speech text read aloud. Technical English terms (html, css, react, api) must remain lowercase English, EXCEPT for acronyms that conflict with Vietnamese stop-words (like 'AI', 'BA', 'AN') which must be UPPERCASE."
+      }
+    },
+    required: ["sceneIndex", "sceneIntent", "visualIntent", "heading", "voiceover"]
+  }
+};
+
+// Define Phase 2 Schema: Storyboard UI Renderer
+const GENERATOR_SCHEMA = {
+  type: SchemaType.ARRAY,
+  description: "List of detailed layouts rendering the points and keywords for each scene",
+  items: {
+    type: SchemaType.OBJECT,
+    properties: {
+      sceneIndex: {
+        type: SchemaType.INTEGER,
+        description: "Zero-based index of the scene"
+      },
+      keywords: {
+        type: SchemaType.ARRAY,
+        description: "Exactly 3 concrete English visual nouns representing the scene context (e.g. ['react developer', 'server rack'])",
+        items: { type: SchemaType.STRING }
+      },
       points: {
         type: SchemaType.ARRAY,
-        description: "List of bullet points or interactive items shown on the layout",
+        description: "List of visual points rendered on the slide",
         items: {
           type: SchemaType.OBJECT,
           properties: {
@@ -47,20 +81,12 @@ const STORYBOARD_SCHEMA = {
             },
             text: {
               type: SchemaType.STRING,
-              description: "SHORT label for this point in Vietnamese. MAXIMUM 80 characters. No paragraphs, no repeating sentences. E.g.: 'RAG = 3 bước', 'Tốc độ phản hồi: 2ms'."
-            },
-            animation: {
-              type: SchemaType.STRING,
-              description: "Must be one of: 'slide-up', 'scale-in', 'fade-in', 'blur-in', 'slide-left', 'slide-right'"
-            },
-            delay: {
-              type: SchemaType.NUMBER,
-              description: "Float value representing the second offset at which the point appears (e.g. 0.5, 2.0)"
+              description: "Short label for this point in Vietnamese. MAXIMUM 80 characters. E.g. 'RAG = 3 bước'."
             },
             logos: {
               type: SchemaType.ARRAY,
               items: { type: SchemaType.STRING },
-              description: "Optional array of logo strings, e.g., ['claude', 'react'] (only for logo_row type)"
+              description: "Optional array of logo strings, e.g. ['claude', 'react'] (only for logo_row type)"
             },
             badges: {
               type: SchemaType.ARRAY,
@@ -69,48 +95,192 @@ const STORYBOARD_SCHEMA = {
             },
             value: {
               type: SchemaType.STRING,
-              description: "SHORT metric value string (only for metric type). MAXIMUM 20 characters. E.g.: '+85%', '2.5x', '#1'. NEVER put full sentences here."
+              description: "SHORT metric value string (only for metric type). MAXIMUM 20 characters. E.g.: '+85%', '2.5x'."
             },
             subtext: {
               type: SchemaType.STRING,
-              description: "SHORT metric subtext (only for metric type). MAXIMUM 40 characters. E.g.: 'tăng tốc', 'hiệu quả'. NEVER put full sentences here."
+              description: "SHORT metric subtext (only for metric type). MAXIMUM 40 characters. E.g.: 'tăng tốc'."
             }
           },
           required: ["type"]
         }
-      },
-      voiceover: {
-        type: SchemaType.STRING,
-        description: "Vietnamese speech text read aloud. Technical English terms (html, css, react, api) must remain lowercase English."
-      },
-      duration: {
-        type: SchemaType.NUMBER,
-        description: "Estimated duration in seconds (float)"
-      },
-      placement: {
-        type: SchemaType.STRING,
-        description: "Must be 'Full' or 'Split'"
-      },
-      keywords: {
-        type: SchemaType.STRING,
-        description: "1-3 English keywords for Unsplash search based on the visual layout"
-      },
-      theme: {
-        type: SchemaType.STRING,
-        description: "Visual overlay theme: 'default', 'tech', 'japan', 'finance', 'rikkei'"
-      },
-      accentColor: {
-        type: SchemaType.STRING,
-        description: "Vibrant HEX color (e.g., '#FFB7C5', '#A8232A')"
       }
     },
-    required: [
-      "sceneIntent", "heading", "points", "voiceover",
-      "duration", "placement", "keywords", "theme", "accentColor"
-    ]
+    required: ["sceneIndex", "keywords", "points"]
   }
 };
 
+// Backward-compatible export
+const STORYBOARD_SCHEMA = GENERATOR_SCHEMA;
+
+function countVietnameseWords(text) {
+  if (!text) return 0;
+  const cleaned = text.trim().replace(/[\s\n\r]+/g, " ");
+  return cleaned.split(" ").filter(w => w.length > 0).length;
+}
+
+// -------------------------------------------------------------
+// Phase 1: Scene Planner
+// -------------------------------------------------------------
+async function generateScenePlan(genAI, modelName, scriptText, targetLength) {
+  const model = genAI.getGenerativeModel({
+    model: modelName,
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: PLANNER_SCHEMA,
+      maxOutputTokens: 4096,
+      temperature: 0.2,
+      thinkingConfig: { thinkingBudget: 0 }
+    }
+  });
+
+  const systemInstruction = `
+# ROLE
+You are a Scene Planner for video production.
+
+# MISSION
+Convert a raw script into a structured list of chronological scenes (scene plan).
+
+# HARD CONSTRAINTS
+1. Output MUST be a valid JSON array matching the provided Schema.
+2. Do not write markdown formatting, code blocks, or preamble. Just return raw JSON.
+3. Every scene's voiceover must consist of complete sentences. Do not split a single sentence across scenes.
+4. Keep all technical and English terms in "voiceover" in their original lowercase English form (e.g. "html", "css", "react", "node.js"). EXCEPT for acronyms and terms that conflict with common Vietnamese words (like "AI", "BA", "AN"), which MUST be written in ALL CAPS (uppercase) to distinguish them from Vietnamese words.
+5. Never use mathematical symbols (like ">", "<", "=") or long dashes ("—", "--") in the "voiceover" field. Instead, write them out in natural words (e.g., "lớn hơn", "nhỏ hơn", "bằng") or use standard punctuation (like commas ",", colons ":", or periods ".") to ensure the TTS reads it smoothly without dropping words.
+
+# SCENE FLOW STRUCTURE (Decision Tree)
+Structure the sequence of scenes logically to build a story:
+- Scene 1: Opening (Hook the viewer)
+- Scene 2..N-1: Problem -> Explanation -> Example -> Takeaway (Core value)
+- Scene N: Ending (Call to action / Outro)
+
+# VISUAL INTENT TYPES
+For each scene, choose the most appropriate \`visualIntent\` based on the semantic content:
+- \`opening_hook\`: Introduce the topic with a clean visual.
+- \`comparison_table\`: Compare two technologies, methods, or pros/cons.
+- \`terminal_demo\`: Display code command executions or shell usage.
+- \`metric_dashboard\`: Display key statistics or metrics.
+- \`timeline\`: Show step-by-step progress, timeline milestones, or sequential steps.
+- \`quote\`: Highlight a testimonial, warning, or expert quote.
+- \`media\`: Display an image/video showcase.
+- \`architecture\`: Display code structure, backend architecture, or API flows.
+- \`workflow\`: Display step-by-step connection flow diagrams.
+- \`before_after\`: Contrast a problem status with its resolved solution.
+- \`code_walkthrough\`: Showcase a block of source code or instructions.
+- \`list\`: Show a bullet-point list of details.
+- \`feature_grid\`: Show a grid of core features.
+- \`process\`: Display execution logs or procedural steps.
+- \`warning\`: Show error logs, pitfalls, or warnings.
+- \`cta\`: Call to action / outro.
+  `;
+
+  const userPrompt = `
+Script: "${scriptText}"
+Target Length: "${targetLength}"
+
+CRITICAL TARGET LENGTH GUIDELINES:
+- "Short (~60s)": Keep the storyboard concise. Limit to 4-6 scenes. Total voiceover words should be around 130-150 words.
+- "Medium (~120s)": Allow more elaboration. Limit to 9-11 scenes. Total voiceover words should be around 280-320 words.
+- "Long (~180s)": Provide detailed explanation. Limit to 14-16 scenes. Total voiceover words should be around 420-480 words.
+
+If the script is too long, condense and summarize the voiceover text in each scene. Do not exceed the word limit.
+  `;
+
+  console.log(`[Gemini API] Phase 1 Scene Planner starting with model: ${modelName}`);
+  
+  let result = await model.generateContent({
+    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+    systemInstruction: systemInstruction
+  });
+
+  const text = result.response.text().trim();
+  console.log("Phase 1 Raw Response:", text);
+  return JSON.parse(repairTruncatedJson(text));
+}
+
+// -------------------------------------------------------------
+// Phase 2: Storyboard UI Renderer
+// -------------------------------------------------------------
+async function generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack) {
+  const model = genAI.getGenerativeModel({
+    model: modelName,
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: GENERATOR_SCHEMA,
+      maxOutputTokens: 8192,
+      temperature: 0.2,
+      thinkingConfig: { thinkingBudget: 0 }
+    }
+  });
+
+  const systemInstruction = `
+# ROLE
+You are a Storyboard UI Renderer.
+
+# MISSION
+Convert planned scenes into a detailed UI Storyboard by rendering point components and keywords matching the requested style tokens.
+
+# HARD CONSTRAINTS
+1. Output MUST be a valid JSON array matching the provided Schema.
+2. Focus ONLY on generating points (their types, texts, values, badges, and logos) and unsplash search keywords.
+3. Every point "text" must be a short, unique label (max 80 chars). No paragraph text in point values.
+4. Do not generate layout placement, theme, accentColor, delays, or durations (these are injected by the backend).
+
+# VISUAL INTENT TO COMPONENTS DECISION TREE
+IF visualIntent == "terminal_demo"
+    points = [{"type": "terminal", "text": "terminal command line (e.g. npm run dev)"}]
+ELSE IF visualIntent == "comparison_table"
+    points = [{"type": "card", "text": "option A detail"}, {"type": "card", "text": "option B detail"}]
+ELSE IF visualIntent == "metric_dashboard"
+    points = [{"type": "metric", "value": "+85%", "subtext": "tăng tốc"}]
+ELSE IF visualIntent == "opening_hook" OR "quote"
+    points = [{"type": "card", "text": "key hook phrase or quote"}]
+ELSE IF visualIntent == "list" OR "feature_grid" OR "workflow" OR "architecture"
+    points = [2-4 card objects with type "card"]
+ELSE IF visualIntent == "code_walkthrough"
+    points = [{"type": "terminal", "text": "code snippet"}, {"type": "subheader", "text": "explanation title"}]
+ELSE IF visualIntent == "warning"
+    points = [{"type": "badge_row", "badges": ["Cảnh báo"]}, {"type": "card", "text": "warning description"}]
+ELSE IF visualIntent == "cta"
+    points = [{"type": "button", "text": "CTA Button Label"}]
+ELSE
+    points = [{"type": "card", "text": "default text content"}]
+
+# UNSPLASH KEYWORDS RULE
+For Unsplash search keywords, choose 3 concrete visual nouns instead of generic concepts:
+- Good nouns: ["react developer", "server rack", "financial chart", "startup office"]
+- Bad concepts: ["technology", "coding", "software", "computer"]
+
+# SELF CHECK
+Before returning the JSON, silently verify:
+✓ No placeholder texts.
+✓ points array contains valid components for the specified visualIntent.
+✓ keywords contains exactly 3 concrete English nouns.
+  `;
+
+  const userPrompt = `
+Scene Plan:
+${JSON.stringify(scenePlan, null, 2)}
+
+Style Pack:
+${JSON.stringify(stylePack, null, 2)}
+  `;
+
+  console.log(`[Gemini API] Phase 2 Storyboard Generator starting with model: ${modelName}`);
+
+  let result = await model.generateContent({
+    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+    systemInstruction: systemInstruction
+  });
+
+  const text = result.response.text().trim();
+  console.log("Phase 2 Raw Response:", text);
+  return JSON.parse(repairTruncatedJson(text));
+}
+
+// -------------------------------------------------------------
+// Orchestration & Fallback handling
+// -------------------------------------------------------------
 async function generateStoryboard(scriptText, visualStyle = "minimal", traits = [], targetLength = "Short (~60s)") {
   const apiKey = process.env.GEMINI_API_KEY;
 
@@ -118,295 +288,123 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
     throw new Error("GEMINI_API_KEY chưa được cấu hình trong tệp .env. Vui lòng kiểm tra lại cấu hình Backend.");
   }
 
-  let modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
-  // Safe fallback: Gemini 3.5 doesn't exist on Google AI Studio API yet.
-  // Fallback to gemini-2.5-flash which is free, fast, and has higher rate limits.
-  if (modelName.includes("3.5")) {
-    console.warn(`[Gemini API] Model "${modelName}" không tồn tại. Tự động chuyển về "gemini-2.5-flash" để chạy ổn định.`);
-    modelName = "gemini-2.5-flash";
+  // Fallback deprecated 2.5 models to gemini-3.5-flash
+  if (modelName.includes("2.5") || modelName.includes("2.0") || modelName.includes("1.5")) {
+    console.warn(`[Gemini API] Model "${modelName}" đã bị Google khai tử hoặc không hỗ trợ. Tự động chuyển về "gemini-3.5-flash" để chạy ổn định.`);
+    modelName = "gemini-3.5-flash";
   }
 
-  // Retrieve Design DNA and guidelines for the selected visual style
-  const stylePrompt = vde.getStylePrompt(visualStyle, traits);
+  const genAI = new GoogleGenerativeAI(apiKey);
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    console.log(`[Gemini API] Khởi tạo model: ${modelName} cho phong cách thiết kế VDE: ${visualStyle} với thời lượng mục tiêu: ${targetLength}`);
-    let model = genAI.getGenerativeModel({
-      model: modelName,
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: STORYBOARD_SCHEMA,
-        maxOutputTokens: 8192,
-        temperature: 0.2,
-        thinkingConfig: {
-          thinkingBudget: 0
-        }
-      }
+    // --- Step 1: Run Phase 1 (Scene Planner) ---
+    let scenePlan;
+    try {
+      scenePlan = await generateScenePlan(genAI, modelName, scriptText, targetLength);
+    } catch (err) {
+      console.error("[Gemini API] Phase 1 failed, attempting fallback to gemini-3.5-flash:", err.message);
+      modelName = "gemini-3.5-flash";
+      scenePlan = await generateScenePlan(genAI, modelName, scriptText, targetLength);
+    }
+
+    if (!Array.isArray(scenePlan)) {
+      throw new Error("Dữ liệu Scene Plan không phải là một mảng JSON.");
+    }
+
+    // --- Step 2: Backend Normalizer (Calculate Durations) ---
+    scenePlan.forEach((scene, index) => {
+      // Ensure index matches sequential positions
+      scene.sceneIndex = index;
+      
+      // Calculate duration: words / 2.7, with min 4.0s
+      const wordCount = countVietnameseWords(scene.voiceover);
+      const calculatedDuration = wordCount / 2.7;
+      scene.duration = Number(Math.max(4.0, calculatedDuration).toFixed(1));
     });
 
-    const prompt = `
-      You are an expert AI video producer. Parse the following raw script text into a structured storyboard (scenes).
-      
-      CRITICAL TARGET LENGTH: The user has requested a video of length: "${targetLength}".
-      - "Short (~60s)": Keep the storyboard concise. Total speech across all scenes should be around 50-60 seconds. Average voiceover speed is 2.5 - 3 words per second, so total words should be around 130-150 words.
-      - "Medium (~120s)": Allow more elaboration. Total speech across all scenes should be around 110-120 seconds. Total words should be around 280-320 words.
-      - "Long (~180s)": Provide detailed explanation. Total speech across all scenes should be around 170-180 seconds. Total words should be around 420-480 words.
-      
-      If the raw script is too long for the chosen length, you MUST summarize and condense the voiceover text in each scene to fit within the word budget corresponding to the requested "${targetLength}" length. Do NOT exceed the word limit.
-      
-      CRITICAL: You must follow the visual design rules of the chosen style "${visualStyle}" described in the Visual Design Engine rulebook below:
+    // --- Step 3: Load Design Tokens & Build Style Pack ---
+    const styleData = vde.getStyle(visualStyle, traits);
+    const stylePack = {
+      styleId: styleData.styleId || visualStyle,
+      theme: styleData.tokens?.colors?.background ? visualStyle : "default",
+      accentColor: styleData.tokens?.colors?.accent || "#3b82f6",
+      motion: styleData.motion || { energy: "low", style: ["fade-in", "slide-up"] }
+    };
 
-      =========================================
-      [VISUAL DESIGN ENGINE RULEBOOK - ${visualStyle.toUpperCase()}]
-      ${stylePrompt}
-      =========================================
-
-      For each scene, determine the visual intent (sceneIntent), theme, accent color, and estimate duration (assume 2.7 Vietnamese words per second).
-      
-      Raw Script:
-      "${scriptText}"
-      
-      You must respond with a JSON array of scene objects matching this JSON Schema:
-      [
-        {
-          "sceneIntent": {
-            "type": "opening" | "comparison" | "metric" | "list" | "quote" | "timeline" | "media" | "ending",
-            "importance": "high" | "medium" | "low",
-            "density": "dense" | "medium" | "sparse",
-            "emotion": "exciting" | "serious" | "informative" | "neutral"
-          },
-          "heading": "Scene title/heading in Vietnamese",
-          "points": [
-            {
-              "type": "card", // Required type. Allowed values: "card", "terminal", "metric", "logo_row", "badge_row", "button", "subheader"
-              "text": "The main text content, or terminal command, or button label, or subheader label. Keep it simple and descriptive in Vietnamese.",
-              "animation": "slide-up", // Required animation. Allowed values: "slide-up", "scale-in", "fade-in", "blur-in", "slide-left", "slide-right"
-              "delay": 0.5, // Estimated offset in seconds from the start of this scene (number, e.g. 1.8) indicating when the voice speaks this point. Delays should be spaced out (e.g., 0.5, 2.0, 3.5) and strictly less than the scene duration. Ensure the first point starts around 0.5s.
-              "logos": ["claude"], // Optional array of strings (ONLY for "logo_row" type). Allowed: "claude", "remotion", "youtube", "tiktok", "react", "nodejs", "python", "aws", "gemini", "openai"
-              "badges": ["Mẹo"], // Optional array of strings (ONLY for "badge_row" type)
-              "value": "+85%", // Optional string (ONLY for "metric" type)
-              "subtext": "tăng tốc" // Optional string (ONLY for "metric" type)
-            }
-          ],
-          "voiceover": "The subset of the script text read aloud in this scene, in Vietnamese. CRITICAL: Keep ALL technical/English terms (HTML, CSS, JavaScript, React, Node.js, Next.js, API, MP4, MP3, npm, JSON, SQL, etc.) in their ORIGINAL LOWERCASE ENGLISH form (e.g., write 'html', 'css', 'javascript'). NEVER phonetically translate them into Vietnamese pronunciation (e.g., NEVER write 'Hát Tê Em Lờ' for HTML, or 'Xê Ét Ét' for CSS).",
-          "duration": 7.5, // Estimated duration in seconds (number, e.g. 7.5)
-          "placement": "Full", // Allowed values: "Full", "Split"
-          "keywords": "1-3 English keywords for Unsplash photo search based on visual context, e.g., 'coding laptop'",
-          "theme": "japan", // Allowed values: "japan", "tech", "finance", "nature", "default", "rikkei"
-          "accentColor": "A vibrant HEX color matching the theme, e.g., '#FFB7C5' for japan, '#A8232A' for rikkei"
-        }
-      ]
-      
-      CRITICAL BLOCK STYLE SELECTION RULES FOR THE THEME:
-      ${vde.getStylePrompt(visualStyle)}
-      
-      CRITICAL SCHEMA RULE FOR POINTS:
-      For each point in "points", you must ONLY include the properties that match its "type". 
-      - If "type" is NOT "metric", do NOT generate "value" or "subtext".
-      - If "type" is NOT "logo_row", do NOT generate "logos".
-      - If "type" is NOT "badge_row", do NOT generate "badges".
-      - Do NOT put conversational paragraphs or repeating sentences inside "text" or "value" or "heading". Keep them strictly brief and concise.
-      
-      ABSOLUTE ANTI-REPETITION RULE FOR "text" AND "value":
-      EVERY "text" field MUST be a short, unique label (max 80 chars). EVERY "value" field MUST be a short metric (max 20 chars, e.g. '+85%').
-      NEVER repeat the same sentence or phrase multiple times within any single field.
-      NEVER write paragraph-length content inside a points "text" or "value" field.
-      If you feel the urge to explain something in "text", put it in "voiceover" instead.
-      
-      GLOBAL CRITICAL RULE FOR VOICEOVER TEXT:
-      Technical and English terms in the "voiceover" field MUST remain as lowercase English words.
-      Examples of CORRECT voiceover text: "html, css, và javascript là nền tảng của web."
-      Examples of WRONG voiceover text: "Hát Tê Em Lờ, Xê Ét Ét, và Gia va sờ cờ ríp là nền tảng của web."
-      Apply this rule to: html, css, javascript, react, node.js, next.js, api, mp4, mp3, npm, json, sql, typescript, python, github, docker, aws, gpt.
-      
-      CRITICAL SENTENCE BOUNDARY RULE:
-      Each scene's "voiceover" text MUST consist of complete sentences. Never split a single sentence or a clause across multiple scenes. If the script has a long sentence, keep it entirely within one scene. The boundaries between scenes must always align with natural sentence endings (periods '.', question marks '?', exclamation marks '!').
-      
-      CRITICAL JSON SYNTAX RULE:
-      Any double quotes inside string values (such as "heading" or "voiceover") MUST be escaped as \\" (e.g., \\"tin vui\\") or replaced with single quotes to keep the JSON syntax valid.
-      
-      Return ONLY the raw JSON array. Do not include markdown formatting or wrapping.
-    `;
-
-
-    let result;
-    const maxRetries = 4;
-    let retryDelay = 3000; // Start with 3 seconds delay
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        result = await model.generateContent(prompt);
-        break; // Success, exit retry loop
-      } catch (err) {
-        const isModelError =
-          err.message.toLowerCase().includes("not found") ||
-          err.message.toLowerCase().includes("not_found") ||
-          err.message.includes("404") ||
-          err.message.toLowerCase().includes("invalid model");
-
-        const isServerError =
-          err.message.includes("503") ||
-          err.message.includes("500") ||
-          err.message.toLowerCase().includes("experiencing high demand") ||
-          err.message.toLowerCase().includes("service unavailable") ||
-          err.message.toLowerCase().includes("overloaded") ||
-          err.message.toLowerCase().includes("temporary");
-
-        if (isModelError || (isServerError && attempt > 1)) {
-          // Cascading fallback: custom -> 2.5-flash -> 1.5-flash-latest -> gemini-pro
-          let nextFallback = "gemini-2.5-flash";
-          if (modelName === "gemini-2.5-flash") nextFallback = "gemini-1.5-flash-latest";
-          else if (modelName === "gemini-1.5-flash-latest") nextFallback = "gemini-pro";
-
-          console.warn(`[Gemini API] Lỗi model "${modelName}" (${err.message}). Tự động chuyển đổi sang model dự phòng "${nextFallback}" để tiếp tục.`);
-          modelName = nextFallback;
-          model = genAI.getGenerativeModel({
-            model: modelName,
-            generationConfig: {
-              responseMimeType: "application/json",
-              responseSchema: STORYBOARD_SCHEMA,
-              maxOutputTokens: 8192,
-              temperature: 0.2,
-              thinkingConfig: {
-                thinkingBudget: 0
-              }
-            }
-          });
-          attempt--; // Reset attempt index to retry with the fallback model
-          continue;
-        }
-
-        const isRateLimit =
-          err.message.includes("429") ||
-          err.message.toLowerCase().includes("quota") ||
-          err.message.toLowerCase().includes("too many requests");
-
-        if ((isRateLimit || isServerError) && attempt < maxRetries) {
-          const errType = isRateLimit ? "Rate Limit (429)" : "Server Overloaded (503/500)";
-          console.warn(`[Gemini API] Gặp lỗi ${errType}. Đang thử lại lần ${attempt}/${maxRetries} sau ${retryDelay / 1000}s...`);
-          await new Promise(resolve => setTimeout(resolve, retryDelay));
-          retryDelay *= 2; // Double the wait time
-        } else {
-          // If it's another error, or we ran out of retries, throw detailed message
-          if (isRateLimit) {
-            throw new Error(
-              "Tài khoản Gemini API của bạn đã hết Quota (Rate Limit 429). \n\n" +
-              "👉 Hướng dẫn khắc phục:\n" +
-              "1. Đợi khoảng 1 phút rồi nhấn nút tạo lại.\n" +
-              "2. Hoặc truy cập Google AI Studio, vào mục Billing, nhấn 'Upgrade to Pay-as-you-go' (vẫn được miễn phí hạn mức cơ bản nhưng tăng giới hạn request từ 15 RPM lên 2000 RPM)."
-            );
-          }
-          if (isServerError) {
-            throw new Error(
-              `Gemini API Server gặp sự cố quá tải liên tục (503/500).\n` +
-              `Chi tiết lỗi: ${err.message}\n` +
-              `👉 Vui lòng thử lại sau vài giây hoặc kiểm tra trạng thái dịch vụ của Google.`
-            );
-          }
-          throw err;
-        }
-      }
+    // --- Step 4: Run Phase 2 (Storyboard UI Renderer) ---
+    let uiResults;
+    try {
+      uiResults = await generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack);
+    } catch (err) {
+      console.error("[Gemini API] Phase 2 failed, attempting fallback to gemini-3.5-flash:", err.message);
+      modelName = "gemini-3.5-flash";
+      uiResults = await generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack);
     }
 
-    const response = await result.response;
-    const text = response.text().trim();
+    if (!Array.isArray(uiResults)) {
+      throw new Error("Dữ liệu UI Storyboard không phải là một mảng JSON.");
+    }
 
-    console.log("Gemini raw response:", text);
+    // Map UI results into a lookup for fast merging
+    const uiLookup = {};
+    uiResults.forEach(res => {
+      uiLookup[res.sceneIndex] = res;
+    });
 
-    let scenes;
-    let cleanedText = repairTruncatedJson(text);
-    try {
-      // Fix unterminated fractional numbers like "duration": 4. which break JSON parsing
-      cleanedText = cleanedText.replace(/(:\s*\d+)\.(?=\s*[,\}\]])/g, "$1.0");
-      // Fix missing leading zero like "duration": .5 -> "duration": 0.5
-      cleanedText = cleanedText.replace(/(:\s*)\.(\d+)(?=\s*[,\}\]])/g, "$10.$2");
-      // ANTI-HALLUCINATION LOOP GUARD: Truncate any string values that are suspiciously long
-      // (indicates the model is stuck in a repetition loop). Limit string values to 500 chars.
-      cleanedText = cleanedText.replace(/: "([^"\\]{500,})"/g, (match, p1) => {
-        console.warn(`[Gemini API] Truncating suspiciously long string value (${p1.length} chars) to 500 chars.`);
-        return `: "${p1.substring(0, 500).replace(/[^\u0000-\uFFFF]*$/, '')}..."`;
+    // --- Step 5: Backend Auto-Fix & Enricher ---
+    const finalScenes = scenePlan.map((scene, index) => {
+      const uiData = uiLookup[index] || { points: [], keywords: ["technology"] };
+      const points = Array.isArray(uiData.points) ? uiData.points : [];
+
+      // 1. Calculate Delays dynamically
+      const usable = scene.duration - 1.0;
+      const step = points.length > 0 ? usable / points.length : 0;
+      const enrichedPoints = points.map((pt, idx) => {
+        const computedDelay = Number((0.5 + idx * step).toFixed(1));
+        return {
+          type: pt.type || "card",
+          text: pt.text || "",
+          animation: pt.animation || (stylePack.motion.style[0] || "slide-up"),
+          delay: computedDelay,
+          logos: Array.isArray(pt.logos) ? pt.logos : [],
+          badges: Array.isArray(pt.badges) ? pt.badges : [],
+          value: pt.value || "",
+          subtext: pt.subtext || ""
+        };
       });
 
-      scenes = JSON.parse(cleanedText);
-    } catch (e) {
-      console.warn("[Gemini API] JSON.parse failed. Attempting quote repair...", e.message);
-      let repaired = cleanedText;
-      try {
-        const lines = cleanedText.split('\n');
-        const repairedLines = lines.map(line => {
-          const match = line.match(/^(\s*"[^"]+"\s*:\s*")([\s\S]*)"(,?)\s*$/);
-          if (match) {
-            const prefix = match[1];
-            const value = match[2];
-            const suffix = match[3];
-            const escapedValue = value.replace(/(?<!\\)"/g, '\\"');
-            return `${prefix}${escapedValue}"${suffix}`;
-          }
-          return line;
-        });
-        repaired = repairedLines.join('\n');
-        scenes = JSON.parse(repaired);
-      } catch (repairErr) {
-        console.error("[Gemini API] Failed to parse JSON even after repair.");
-        console.error("[Gemini API] Cleaned text:", cleanedText);
-        console.error("[Gemini API] Repaired text:", repaired);
-        console.error("[Gemini API] Repair error:", repairErr.message);
-        try {
-          const fs = require('fs');
-          const path = require('path');
-          fs.writeFileSync(path.join(__dirname, '../gemini_error_response.json'), JSON.stringify({
-            message: e.message,
-            repairError: repairErr.message,
-            rawText: text,
-            cleanedText,
-            repaired
-          }, null, 2));
-        } catch (fsErr) {
-          console.error("Failed to write error response log:", fsErr);
-        }
-        throw new Error(`Expected valid JSON from Gemini but got parse error: ${e.message}`);
-      }
-    }
+      // 2. Determine Placement logically
+      const splitIntents = ["comparison", "timeline", "list", "media"];
+      const placement = splitIntents.includes(scene.sceneIntent?.type) ? "Split" : "Full";
 
-    if (!Array.isArray(scenes)) {
-      throw new Error("Dữ liệu Gemini trả về không phải là một mảng JSON.");
-    }
+      // 3. Normalize keywords (use first string, fallback if empty)
+      const keywordArr = Array.isArray(uiData.keywords) ? uiData.keywords : [uiData.keywords || "technology"];
+      const cleanKeywords = keywordArr.filter(k => typeof k === "string" && k.trim().length > 0);
 
-    // Format and sanitize scenes
-    const mappedScenes = scenes.map((scene, index) => ({
-      id: `scene_${Date.now()}_${index}`,
-      sceneIndex: index,
-      duration: Number(scene.duration) || 6.0,
-      sceneIntent: scene.sceneIntent || {
-        type: "opening",
-        importance: "medium",
-        density: "medium",
-        emotion: "neutral"
-      },
-      heading: scene.heading || `Phân cảnh ${index + 1}`,
-      points: Array.isArray(scene.points) ? scene.points.map((pt, idx) => {
-        if (typeof pt === 'string') {
-          return { type: 'card', text: pt, animation: 'slide-up', delay: Number((idx * 1.5).toFixed(1)) };
-        }
-        return {
-          ...pt,
-          type: pt.type || 'card',
-          text: pt.text || '',
-          animation: pt.animation || 'slide-up',
-          delay: typeof pt.delay === 'number' ? pt.delay : Number((idx * 1.5).toFixed(1))
-        };
-      }) : [],
-      voiceover: scene.voiceover || "",
-      placement: scene.placement || "Full",
-      keywords: scene.keywords || "technology",
-      theme: scene.theme || "default",
-      accentColor: scene.accentColor || "#FFB7C5"
-    }));
+      return {
+        id: `scene_${Date.now()}_${index}`,
+        sceneIndex: index,
+        duration: scene.duration,
+        sceneIntent: scene.sceneIntent || {
+          type: "opening",
+          importance: "medium",
+          density: "medium",
+          emotion: "neutral"
+        },
+        heading: scene.heading || `Phân cảnh ${index + 1}`,
+        points: enrichedPoints,
+        voiceover: scene.voiceover || "",
+        placement: placement,
+        keywords: cleanKeywords, // Store as array for server.js
+        theme: stylePack.theme,
+        accentColor: stylePack.accentColor
+      };
+    });
 
-    // Process phoneme optimization for all scenes
-    for (const scene of mappedScenes) {
+    // Process phoneme optimization for all scenes (same as current backend requirement)
+    for (const scene of finalScenes) {
       if (scene.voiceover) {
         scene.voiceoverTts = await phoneme.optimizeTextForPhonemes(scene.voiceover);
       } else {
@@ -414,10 +412,10 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
       }
     }
 
-    return mappedScenes;
+    return finalScenes;
 
   } catch (error) {
-    console.error("Error calling Gemini API:", error);
+    console.error("Error in 2-phase storyboard pipeline:", error);
     throw new Error(`Lỗi kết nối Gemini API: ${error.message}`);
   }
 }

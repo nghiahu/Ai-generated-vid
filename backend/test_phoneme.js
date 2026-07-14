@@ -13,7 +13,7 @@ async function runTest() {
     console.log("Đã khởi tạo xong cơ sở dữ liệu mới.");
 
     // 2. Chạy thử văn bản mẫu qua Phoneme Agent
-    const sampleText = "Hôm nay chúng ta học React Native và Docker để xây dựng API Gateway. Không ai phủ nhận sức mạnh của AI. Sau đó triển khai lên Vercel.";
+    const sampleText = "Hôm nay chúng ta học React Native và Docker để xây dựng API Gateway. Không ai phủ nhận sức mạnh của AI. Chúng ta dùng Agent và RAG. Sau đó triển khai lên Vercel.";
     console.log(`\n2. Văn bản mẫu đầu vào:\n"${sampleText}"`);
     
     console.log("\nĐang gọi Phoneme Agent...");
@@ -40,7 +40,9 @@ async function runTest() {
       { name: "Docker (Vietnamese phonetic)", pattern: /đốc-cơ/i },
       { name: "API Gateway (Vietnamese phonetic)", pattern: /ây-pi-ai|a-pi-ai/i },
       { name: "Vercel (Vietnamese phonetic)", pattern: /vơ-xen/i },
-      { name: "AI (Vietnamese phonetic)", pattern: /\bai\b/i } // AI must be replaced
+      { name: "AI (Vietnamese phonetic)", pattern: /ây-ai/i },
+      { name: "Agent (Vietnamese phonetic)", pattern: /ây-giừn/i },
+      { name: "RAG (Vietnamese phonetic)", pattern: /rác/i }
     ];
 
     console.log("\n4. Chạy các khẳng định kiểm tra (Assertions)...");

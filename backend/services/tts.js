@@ -42,8 +42,8 @@ function addSilentPadding(filePath) {
     // Rename original file to temp
     fs.renameSync(filePath, tempPath);
 
-    // Trim all start/end silence, then pad exactly 150ms at start and 150ms at end
-    const filter = "silenceremove=start_periods=1:start_threshold=-50dB:detection=peak,areverse,silenceremove=start_periods=1:start_threshold=-50dB:detection=peak,areverse,adelay=150|150,apad=pad_dur=0.15";
+    // Trim all start/end silence, then pad exactly 150ms at start and 150ms at end, boost volume by 1.6x, and apply highpass filter at 80Hz to increase clarity
+    const filter = "silenceremove=start_periods=1:start_threshold=-50dB:detection=peak,areverse,silenceremove=start_periods=1:start_threshold=-50dB:detection=peak,areverse,adelay=150|150,apad=pad_dur=0.15,volume=1.6,highpass=f=80";
     
     execSync(`ffmpeg -y -i "${tempPath}" -af "${filter}" "${filePath}"`, { stdio: 'ignore' });
 
@@ -72,6 +72,11 @@ function normalizeTextForTTS(text) {
   
   // Chuyển đổi dấu gạch ngang dài (em-dash, en-dash) thành dấu phẩy để tạo điểm nghỉ tự nhiên
   temp = temp.replace(/[—–]/g, ', ');
+  
+  // Thay thế các ký tự toán học bằng chữ viết tương đương để không bị mất chữ khi đọc
+  temp = temp.replace(/>/g, ' lớn hơn ');
+  temp = temp.replace(/</g, ' nhỏ hơn ');
+  temp = temp.replace(/=/g, ' bằng ');
   
   // Thay thế các chuỗi nhiều dấu chấm liên tục (ellipsis) bằng một dấu chấm duy nhất
   temp = temp.replace(/\.{2,}/g, '. ');
@@ -299,6 +304,17 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
 
   try {
     console.log(`Calling ElevenLabs TTS for scene ${sceneId} with voice ${voiceKey}...`);
+    
+    // Clean mathematical symbols and long dashes to prevent ElevenLabs from skipping them
+    const cleanText = text
+      .replace(/[—–]/g, ', ')
+      .replace(/>/g, ' lớn hơn ')
+      .replace(/</g, ' nhỏ hơn ')
+      .replace(/=/g, ' bằng ')
+      .replace(/["'“”‘’]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {
@@ -307,7 +323,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         'accept': 'audio/mpeg'
       },
       body: JSON.stringify({
-        text: text,
+        text: cleanText,
         model_id: "eleven_multilingual_v2",
         voice_settings: {
           stability: 0.5,

@@ -1,48 +1,14 @@
-# Task Tracker — Layout Engine V2
+# Tasks Tracker
 
-| # | Task | Status |
-|---|---|---|
-| 1.1 | Định nghĩa Intent Schema mới cho AI (`ai.js`) | ✅ done |
-| 1.2 | Cập nhật DB Layer để lưu Intent (`db.js`, `server.js`) | ✅ done |
-| 1.3 | Tạo Layout Scoring Engine (`layoutScorer.ts`) | ✅ done |
-| 1.4 | Xóa Regex Parser — dùng Typed Points (`layoutResolver.ts`) | ✅ done |
-| 2.1 | Adaptive Layout Engine — 5 giai đoạn (`layoutResolver.ts`) | ✅ done |
-| 2.2 | Area Resolver — Semantic Layout Support (`areaResolver.ts`) | ✅ done |
-| 3.1 | Design Tokens tập trung (`tokens.ts`) | ✅ done |
-| 3.2 | Auto-registration via Vite Glob Import (`index.ts`) | ✅ done |
-| 3.3 | Animation Metadata trong JSON Layout | ✅ done |
-
-# Task Tracker — Layout Restructure & Studio Flow
-
-| # | Task | Status |
-|---|---|---|
-| 4.1 | Restructure App Layout with navigation Sidebar & `kisafes` logo | ✅ done |
-| 4.2 | Implement new View States in `App.jsx` and handle draft mode for Studio | ✅ done |
-| 4.3 | Update `Dashboard.jsx` to remove old navigation and creation buttons | ✅ done |
-| 4.4 | Implement Studio auto-creation and generation flow | ✅ done |
-
-# Task Tracker — Project Card Redesign
-
-| # | Task | Status |
-|---|---|---|
-| 5.1 | Extend backend `/api/projects` endpoint to return full project schema | ✅ done |
-| 5.2 | Redesign Project Card in `Dashboard.jsx` with vertical player preview and downloads section | ✅ done |
-
-# Task Tracker — Fixing JSON Parse Failures
-
-| # | Task | Status |
-|---|---|---|
-| 6.1 | Cập nhật hàm sửa quote và log lỗi trong `ai.js` | ✅ done |
-| 6.2 | Chạy kiểm tra regex repair (`test_regex_repair.js`) | ✅ done |
-| 6.3 | Chạy tích hợp Gemini storyboard (`test_ai_storyboard.js`) | ✅ done |
-
-# Task Tracker — AI Hub Grid Theme Integration
-
-| # | Task | Status |
-|---|---|---|
-| 7.1 | Add automated compiler test & register AI Hub Grid style | ✅ done |
-| 7.2 | Create AIHubGridOverlay Component & Integrate in Scenes | ✅ done |
-| 7.3 | Implement Bottom Scrubber Progress Bar and Watermark | ✅ done |
-| 7.4 | Add Theme Selection UI & Preview Mockup in Web Editor | ⏳ not_started |
-| 7.5 | Register Theme in Backend Gemini Prompt Schema | ⏳ not_started |
-
+| Task ID | Task Description | Status | Verification Status |
+| :--- | :--- | :--- | :--- |
+| `task_1` | Implement Phase 1 `generateScenePlan` and Phase 2 `generateDetailedStoryboard` in `backend/services/ai.js` with Backend Normalizer & Auto-Fix | `completed` | `verified` |
+| `task_2` | Modify Unsplash image lookup in `backend/server.js` to search keyword lists sequentially | `completed` | `verified` |
+| `task_3` | Create design document `docs/plans/2026-07-14-storyboard-pipeline-vde-design.md` | `completed` | `verified` |
+| `task_4` | Brainstorming, design and implementation for English pronunciation (AI, Agent, RAG) and voice volume/clarity | `completed` | `verified` |
+| `task_5` | Explore project context (VDE, schema, layouts, and AI generator flow) | `completed` | `verified` |
+| `task_6` | Ask clarifying questions to the user about AI code generation requirements | `completed` | `verified` |
+| `task_7` | Propose 2-3 approaches for AI scene generation via code | `completed` | `verified` |
+| `task_8` | Present design sections for the AI-generated scenes via code | `in_progress` | `pending` |
+| `task_9` | Write design doc `docs/plans/2026-07-14-ai-scene-code-generation-design.md` | `pending` | `pending` |
+| `task_10` | Transition to implementation (create implementation plan) | `pending` | `pending` |
