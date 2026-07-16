@@ -382,6 +382,7 @@ const LAYOUTS_BY_FAMILY = {
     { value: "BottomAnchorOutro", label: "Bottom Anchor Outro" },
     { value: "BrandOutro", label: "Brand Outro" },
     { value: "CenterLineOutro", label: "Center Line Outro" },
+    { value: "HustXRikkei", label: "HUST X RIKKEI" },
     { value: "ContactCardEnding", label: "Contact Card Ending" },
     { value: "Ending", label: "Ending / CTA Screen" },
     { value: "Launch", label: "Launch" },
