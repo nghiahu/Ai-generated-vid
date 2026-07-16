@@ -92,7 +92,12 @@ const TECH_TERMS_TRANSLITERATION = {
   'wi-fi': "uai-fai",
   'arm': "a-r-m",
   'of': "ợp",
-  'thinks': 'thinh'
+  'thinks': 'thinh',
+  'engineering': 'en-ri-lia-ring',
+  'memory': "mem-mo-ri",
+  'hub': "hắp",
+  'follow': "fo-lâu",
+  'course': "cót",
 };
 
 const cmuDict = new Map();
@@ -521,8 +526,18 @@ async function optimizeTextForPhonemes(text) {
   if (!text) return "";
 
   try {
-    // 1. Trích xuất thuật ngữ tiếng Anh
-    const terms = await extractTerms(text);
+    // 1. Trích xuất thuật ngữ tiếng Anh bằng Gemini/AI
+    const aiTerms = await extractTerms(text);
+
+    // 1.1. Tự động quét và thêm tất cả các từ khóa tĩnh trong TECH_TERMS_TRANSLITERATION xuất hiện trong văn bản
+    const staticTerms = Object.keys(TECH_TERMS_TRANSLITERATION).filter(term => {
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp(`(?<=^|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])${escaped}(?=$|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])`, "i");
+      return regex.test(text);
+    });
+
+    // Gộp cả 2 danh sách lại và loại bỏ trùng lặp
+    const terms = [...new Set([...aiTerms, ...staticTerms])];
     if (terms.length === 0) return text;
 
     // 2. Tra cứu/dịch âm vị CMU
