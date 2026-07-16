@@ -93,7 +93,6 @@ const TECH_TERMS_TRANSLITERATION = {
   'arm': "a-r-m",
   'of': "ợp",
   'thinks': 'thinh',
-  'engineering': 'en-ri-lia-ring',
   'memory': "mem-mo-ri",
   'hub': "hắp",
   'follow': "fo-lâu",
