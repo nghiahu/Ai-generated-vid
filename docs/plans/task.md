@@ -17,3 +17,9 @@
 | `task_14` | Remotion MainComposition and Ending Layout Updates | `completed` | `verified` |
 | `task_15` | Frontend Player Sync | `completed` | `verified` |
 | `task_16` | Implement Blank Layout Family and Option | `completed` | `verified` |
+| `task_17` | Install `redesign-existing-projects` skill locally in the workspace | `completed` | `verified` |
+| `task_18` | Create `CenteredTextMode.tsx` layout mode component | `completed` | `verified` |
+| `task_19` | Map `centered_text` layout in `TemplateLayout.tsx` | `completed` | `verified` |
+| `task_20` | Refactor and beautify `IntroEvidenceScanlineMode.tsx` with premium design tokens | `completed` | `verified` |
+| `task_21` | Verify layout rendering in browser/Remotion Preview | `completed` | `verified` |
+
