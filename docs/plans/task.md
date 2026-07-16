@@ -8,4 +8,12 @@
 | `task_4` | Brainstorming, design and implementation for English pronunciation (AI, Agent, RAG) and voice volume/clarity | `completed` | `verified` |
 | `task_5` | Implement AI Hub Grid 1 Layout Template (List Column Callout) | `completed` | `verified` |
 | `task_6` | Implement AI Hub Grid 2 Layout Template (Winding Roadmap) with animated SVG Bezier path and numbered step markers | `completed` | `verified` |
-| `task_7` | Implement AI Hub Grid 3 Layout Template (Benefits Card Stack) | `completed` | `verified` |
+| `task_8` | Fix Remotion rendering hang / timeout by implementing local BGM staticFile serving and resolving BGM "None" truthy condition | `completed` | `verified` |
+| `task_9` | Implement robust retry with exponential backoff and automatic model fallback (gemini-1.5-flash / gemini-2.5-flash / gemini-1.5-pro) for Gemini API | `completed` | `verified` |
+| `task_10` | Force Node.js IPv4 DNS resolution priority (`setDefaultResultOrder`) in `backend/server.js` to prevent Windows `fetch failed` errors | `completed` | `verified` |
+| `task_11` | Backend TTS Audio Generation for Ending | `completed` | `verified` |
+| `task_12` | Frontend Sidebar Configuration Panel Update | `completed` | `verified` |
+| `task_13` | Remotion Root Configuration Updates | `completed` | `verified` |
+| `task_14` | Remotion MainComposition and Ending Layout Updates | `completed` | `verified` |
+| `task_15` | Frontend Player Sync | `completed` | `verified` |
+| `task_16` | Implement Blank Layout Family and Option | `completed` | `verified` |

@@ -104,9 +104,13 @@ const GENERATOR_SCHEMA = {
           },
           required: ["type"]
         }
+      },
+      category: {
+        type: SchemaType.STRING,
+        description: "A short Vietnamese category/label tag for this scene (max 20 chars), e.g. 'GIỚI THIỆU', 'KỸ SƯ NHÚNG', 'TRÍ TUỆ NHÂN TẠO', matching the scene content topic."
       }
     },
-    required: ["sceneIndex", "keywords", "points"]
+    required: ["sceneIndex", "keywords", "points", "category"]
   }
 };
 
@@ -119,11 +123,67 @@ function countVietnameseWords(text) {
   return cleaned.split(" ").filter(w => w.length > 0).length;
 }
 
+// Generic helper to generate content with exponential backoff retries and model fallbacks
+async function generateContentWithRetryAndFallback(genAI, options, promptData, fallbackModels = []) {
+  const modelsToTry = [options.model, ...fallbackModels];
+  let lastError = new Error("No models tried");
+
+  for (const modelName of modelsToTry) {
+    let attempt = 0;
+    const maxRetries = 3;
+    const initialDelay = 1500;
+
+    const model = genAI.getGenerativeModel({
+      model: modelName,
+      generationConfig: options.generationConfig
+    });
+
+    console.log(`[Gemini API] Đang thử sử dụng model: ${modelName}`);
+
+    while (attempt <= maxRetries) {
+      try {
+        const result = await model.generateContent({
+          contents: [{ role: "user", parts: [{ text: promptData.userPrompt }] }],
+          systemInstruction: promptData.systemInstruction
+        });
+        
+        if (result && result.response) {
+          console.log(`[Gemini API] Thành công với model: ${modelName}`);
+          return result;
+        }
+        throw new Error("Phản hồi rỗng từ API");
+      } catch (err) {
+        lastError = err;
+        attempt++;
+        const status = err.status || (err.response ? err.response.status : null);
+        const isTransient = status === 503 || status === 429 || 
+                            err.message?.includes("503") || err.message?.includes("429") ||
+                            err.message?.includes("high demand") || err.message?.includes("Service Unavailable") ||
+                            err.message?.includes("overloaded") || err.message?.includes("ResourceExhausted") ||
+                            err.message?.includes("fetch failed");
+
+        const isApiKeyError = err.message?.includes("API_KEY") || status === 400;
+
+        if (isTransient && !isApiKeyError && attempt <= maxRetries) {
+          const backoff = initialDelay * Math.pow(2, attempt - 1);
+          console.warn(`[Gemini API] Gặp lỗi tạm thời (${status || 'unknown'}) với model ${modelName}: ${err.message}. Thử lại lần ${attempt}/${maxRetries} sau ${backoff}ms...`);
+          await new Promise(resolve => setTimeout(resolve, backoff));
+        } else {
+          console.error(`[Gemini API] Thất bại với model ${modelName} (không thử lại model này): ${err.message}`);
+          break; // Thử model tiếp theo
+        }
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 // -------------------------------------------------------------
 // Phase 1: Scene Planner
 // -------------------------------------------------------------
 async function generateScenePlan(genAI, modelName, scriptText, targetLength) {
-  const model = genAI.getGenerativeModel({
+  const options = {
     model: modelName,
     generationConfig: {
       responseMimeType: "application/json",
@@ -132,7 +192,7 @@ async function generateScenePlan(genAI, modelName, scriptText, targetLength) {
       temperature: 0.2,
       thinkingConfig: { thinkingBudget: 0 }
     }
-  });
+  };
 
   const systemInstruction = `
 # ROLE
@@ -186,13 +246,12 @@ CRITICAL TARGET LENGTH GUIDELINES:
 If the script is too long, condense and summarize the voiceover text in each scene. Do not exceed the word limit.
   `;
 
+  const promptData = { systemInstruction, userPrompt };
+  const fallbacks = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-1.5-pro", "gemini-3.5-flash"].filter(m => m !== modelName);
+
   console.log(`[Gemini API] Phase 1 Scene Planner starting with model: ${modelName}`);
   
-  let result = await model.generateContent({
-    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-    systemInstruction: systemInstruction
-  });
-
+  const result = await generateContentWithRetryAndFallback(genAI, options, promptData, fallbacks);
   const text = result.response.text().trim();
   console.log("Phase 1 Raw Response:", text);
   return JSON.parse(repairTruncatedJson(text));
@@ -202,7 +261,7 @@ If the script is too long, condense and summarize the voiceover text in each sce
 // Phase 2: Storyboard UI Renderer
 // -------------------------------------------------------------
 async function generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack) {
-  const model = genAI.getGenerativeModel({
+  const options = {
     model: modelName,
     generationConfig: {
       responseMimeType: "application/json",
@@ -211,7 +270,7 @@ async function generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack
       temperature: 0.2,
       thinkingConfig: { thinkingBudget: 0 }
     }
-  });
+  };
 
   const systemInstruction = `
 # ROLE
@@ -222,9 +281,10 @@ Convert planned scenes into a detailed UI Storyboard by rendering point componen
 
 # HARD CONSTRAINTS
 1. Output MUST be a valid JSON array matching the provided Schema.
-2. Focus ONLY on generating points (their types, texts, values, badges, and logos) and unsplash search keywords.
+2. Focus ONLY on generating points (their types, texts, values, badges, and logos), unsplash search keywords, and a dynamic category tag.
 3. Every point "text" must be a short, unique label (max 80 chars). No paragraph text in point values.
 4. Do not generate layout placement, theme, accentColor, delays, or durations (these are injected by the backend).
+5. Every scene must have a short, relevant Vietnamese category/label tag in the "category" field representing the context (max 20 chars), e.g. "LẬP TRÌNH NHÚNG" for programming, "SO SÁNH" for comparison, "KẾT LUẬN" for ending, or "GIỚI THIỆU" for hooks. Match the scene context topic. Never use placeholders.
 
 # VISUAL INTENT TO COMPONENTS DECISION TREE
 IF visualIntent == "terminal_demo"
@@ -233,7 +293,9 @@ ELSE IF visualIntent == "comparison_table"
     points = [{"type": "card", "text": "option A detail"}, {"type": "card", "text": "option B detail"}]
 ELSE IF visualIntent == "metric_dashboard"
     points = [{"type": "metric", "value": "+85%", "subtext": "tăng tốc"}]
-ELSE IF visualIntent == "opening_hook" OR "quote"
+ELSE IF visualIntent == "opening_hook"
+    points = [Exactly 6 card objects with type "card" (the first 3 card objects represent the main hook concepts/stages, and the next 3 represent additional supporting key takeaways or reinforcing notes from the script)]
+ELSE IF visualIntent == "quote"
     points = [{"type": "card", "text": "key hook phrase or quote"}]
 ELSE IF visualIntent == "list" OR "feature_grid" OR "workflow" OR "architecture"
     points = [2-4 card objects with type "card"]
@@ -256,6 +318,7 @@ Before returning the JSON, silently verify:
 ✓ No placeholder texts.
 ✓ points array contains valid components for the specified visualIntent.
 ✓ keywords contains exactly 3 concrete English nouns.
+✓ category field contains a short, dynamic Vietnamese label tag representing the scene's topic.
   `;
 
   const userPrompt = `
@@ -266,13 +329,12 @@ Style Pack:
 ${JSON.stringify(stylePack, null, 2)}
   `;
 
+  const promptData = { systemInstruction, userPrompt };
+  const fallbacks = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-1.5-pro", "gemini-3.5-flash"].filter(m => m !== modelName);
+
   console.log(`[Gemini API] Phase 2 Storyboard Generator starting with model: ${modelName}`);
 
-  let result = await model.generateContent({
-    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-    systemInstruction: systemInstruction
-  });
-
+  const result = await generateContentWithRetryAndFallback(genAI, options, promptData, fallbacks);
   const text = result.response.text().trim();
   console.log("Phase 2 Raw Response:", text);
   return JSON.parse(repairTruncatedJson(text));
@@ -290,9 +352,9 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
 
   let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
-  // Fallback deprecated 2.5 models to gemini-3.5-flash
-  if (modelName.includes("2.5") || modelName.includes("2.0") || modelName.includes("1.5")) {
-    console.warn(`[Gemini API] Model "${modelName}" đã bị Google khai tử hoặc không hỗ trợ. Tự động chuyển về "gemini-3.5-flash" để chạy ổn định.`);
+  // Tự động chuyển model sang gemini-3.5-flash nếu sử dụng các model cũ đã bị khai tử
+  if (modelName.includes("2.0") && !modelName.includes("exp")) {
+    console.warn(`[Gemini API] Model "${modelName}" không hợp lệ. Tự động chuyển về "gemini-3.5-flash" để chạy ổn định.`);
     modelName = "gemini-3.5-flash";
   }
 
@@ -300,14 +362,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
 
   try {
     // --- Step 1: Run Phase 1 (Scene Planner) ---
-    let scenePlan;
-    try {
-      scenePlan = await generateScenePlan(genAI, modelName, scriptText, targetLength);
-    } catch (err) {
-      console.error("[Gemini API] Phase 1 failed, attempting fallback to gemini-3.5-flash:", err.message);
-      modelName = "gemini-3.5-flash";
-      scenePlan = await generateScenePlan(genAI, modelName, scriptText, targetLength);
-    }
+    const scenePlan = await generateScenePlan(genAI, modelName, scriptText, targetLength);
 
     if (!Array.isArray(scenePlan)) {
       throw new Error("Dữ liệu Scene Plan không phải là một mảng JSON.");
@@ -334,14 +389,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
     };
 
     // --- Step 4: Run Phase 2 (Storyboard UI Renderer) ---
-    let uiResults;
-    try {
-      uiResults = await generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack);
-    } catch (err) {
-      console.error("[Gemini API] Phase 2 failed, attempting fallback to gemini-3.5-flash:", err.message);
-      modelName = "gemini-3.5-flash";
-      uiResults = await generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack);
-    }
+    const uiResults = await generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack);
 
     if (!Array.isArray(uiResults)) {
       throw new Error("Dữ liệu UI Storyboard không phải là một mảng JSON.");
@@ -399,7 +447,8 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
         placement: placement,
         keywords: cleanKeywords, // Store as array for server.js
         theme: stylePack.theme,
-        accentColor: stylePack.accentColor
+        accentColor: stylePack.accentColor,
+        category: uiData.category || ""
       };
     });
 

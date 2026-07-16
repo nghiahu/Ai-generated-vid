@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 export const SidebarConfig = ({ config = {}, onChange }) => {
   const handleConfigChange = (field, value) => {
@@ -292,6 +293,101 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
                   value={config.ending?.website || ""}
                   onChange={(e) => handleEndingChange("website", e.target.value)}
                   placeholder="hyperframes.ai"
+                />
+              </div>
+
+              {/* Background Image Upload */}
+              <div>
+                <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: "4px", display: "block" }}>Background Image</label>
+                {config.ending?.imageUrl ? (
+                  <div style={{ position: "relative", marginTop: "4px" }}>
+                    <img 
+                      src={config.ending.imageUrl} 
+                      alt="Ending background" 
+                      style={{ width: "100%", height: "120px", objectFit: "cover", borderRadius: "4px", border: "2px solid #000000" }} 
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleEndingChange("imageUrl", "")}
+                      style={{
+                        position: "absolute",
+                        top: "5px",
+                        right: "5px",
+                        backgroundColor: "#000000",
+                        color: "#ffffff",
+                        border: "2px solid #ffffff",
+                        padding: "4px 8px",
+                        fontSize: "11px",
+                        fontWeight: "bold",
+                        fontFamily: "Space Grotesk",
+                        cursor: "pointer"
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      id="ending-image-upload"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onloadend = async () => {
+                          try {
+                            const res = await axios.post("http://localhost:5000/api/upload", { file: reader.result });
+                            handleEndingChange("imageUrl", res.data.url);
+                          } catch (err) {
+                            console.error("Failed to upload ending image:", err);
+                            alert("Không thể tải ảnh lên!");
+                          }
+                        };
+                      }}
+                    />
+                    <div 
+                      className="border-strict" 
+                      onClick={() => document.getElementById("ending-image-upload").click()}
+                      style={{ borderStyle: "dashed", padding: "18px", textAlign: "center", cursor: "pointer", backgroundColor: "#fafafa" }}
+                    >
+                      <span style={{ fontSize: "20px", display: "block" }}>🖼️</span>
+                      <span style={{ fontSize: "13px", fontWeight: "bold", fontFamily: "Space Grotesk", display: "block", marginTop: "4px" }}>Upload Background</span>
+                      <span style={{ fontSize: "11px", color: "#666666" }}>PNG, JPG (Max 5MB)</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Ending BGM Selection */}
+              <div>
+                <label className="form-label-mono" style={{ fontSize: "11px" }}>Background Music (BGM)</label>
+                <select
+                  className="form-input-mono"
+                  value={config.ending?.backgroundMusic || "None"}
+                  onChange={(e) => handleEndingChange("backgroundMusic", e.target.value)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <option value="None">None (Follow main BGM or Silent)</option>
+                  <option value="Chill Lofi Beats">Chill Lofi Beats</option>
+                  <option value="Tech Ambient">Tech Ambient</option>
+                  <option value="Energy Beats">Energy Beats</option>
+                </select>
+              </div>
+
+              {/* Ending Voiceover Text */}
+              <div>
+                <label className="form-label-mono" style={{ fontSize: "11px" }}>Voiceover Text</label>
+                <textarea
+                  className="form-input-mono"
+                  value={config.ending?.voiceover || ""}
+                  onChange={(e) => handleEndingChange("voiceover", e.target.value)}
+                  placeholder="Nhập nội dung giọng đọc kết thúc..."
+                  rows={3}
+                  style={{ resize: "vertical", fontFamily: "Inter", fontSize: "13px", padding: "10px" }}
                 />
               </div>
             </div>

@@ -14,10 +14,13 @@ export const MasterPlayer = ({
 }) => {
   const fps = 30;
   const endingEnabled = config?.ending?.enabled;
+  const endingDuration = config?.ending?.voiceoverDuration
+    ? Math.max(4.0, safeParseFloat(config.ending.voiceoverDuration))
+    : 4.0;
   const totalSeconds = scenes.reduce((sum, scene) => sum + safeParseFloat(scene.duration), 0);
   const totalFrames = Math.max(
     30,
-    Math.round((totalSeconds + (endingEnabled ? 4.0 : 0)) * fps)
+    Math.round((totalSeconds + (endingEnabled ? endingDuration : 0)) * fps)
   );
 
   return (

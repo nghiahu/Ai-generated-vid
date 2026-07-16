@@ -71,8 +71,28 @@ const TECH_TERMS_TRANSLITERATION = {
   'verceljs': 'vơ-xen-chây-ét',
   'supabase': 'xu-pa-bây',
   'tailwind': 'teo-uin',
-  'RAG': 'rác',
-  'rag': 'rác'
+  'rag': 'rác',
+  'hust': "hớt",
+  'seee': "se",
+  'rikkei': "rì-kây",
+  'academy': "a-ka-đê-mi",
+  'mcp': "em-ci-pi",
+  'usb-c': "ui-ét-bi-ci",
+  'drive': "đì-vai",
+  'google': "gu-gồ",
+  'database': "đa-ta-bây",
+  'model': "mo-đồ",
+  'context': "con-tếch",
+  'protocol': "pô-tô-cô",
+  'paper': "bây-bờ",
+  'abstract': "áp-trách",
+  'iot': "ai-ô-ti",
+  'internet': "in-tơ-nét",
+  'zoom': "rum",
+  'wi-fi': "uai-fai",
+  'arm': "a-r-m",
+  'of': "ợp",
+  'thinks': 'thinh'
 };
 
 const cmuDict = new Map();
@@ -145,6 +165,7 @@ function isEnglishWord(word) {
   if (/[^\x00-\x7F]/.test(word)) return false;
   if (!/[a-zA-Z]/.test(word)) return false;
   const lower = word.toLowerCase();
+  if (TECH_TERMS_TRANSLITERATION[lower]) return true;
   const isAllCaps = word === word.toUpperCase() && word.length >= 2;
   if (VIETNAMESE_STOP_WORDS.has(lower) && !isAllCaps) return false;
   if (TECH_TERMS_WHITELIST.has(lower)) return true;
@@ -201,6 +222,58 @@ function localExtractTerms(text) {
   return [...new Set(terms)];
 }
 
+// Generic helper to generate content with exponential backoff retries and model fallbacks
+async function generateContentWithRetryAndFallback(genAI, options, promptText, fallbackModels = []) {
+  const modelsToTry = [options.model, ...fallbackModels];
+  let lastError = new Error("No models tried");
+
+  for (const modelName of modelsToTry) {
+    let attempt = 0;
+    const maxRetries = 3;
+    const initialDelay = 1500;
+
+    const model = genAI.getGenerativeModel({
+      model: modelName,
+      generationConfig: options.generationConfig
+    });
+
+    console.log(`[Phoneme API] Đang thử sử dụng model: ${modelName}`);
+
+    while (attempt <= maxRetries) {
+      try {
+        const result = await model.generateContent(promptText);
+        if (result && result.response) {
+          console.log(`[Phoneme API] Thành công với model: ${modelName}`);
+          return result;
+        }
+        throw new Error("Phản hồi rỗng từ API");
+      } catch (err) {
+        lastError = err;
+        attempt++;
+        const status = err.status || (err.response ? err.response.status : null);
+        const isTransient = status === 503 || status === 429 ||
+          err.message?.includes("503") || err.message?.includes("429") ||
+          err.message?.includes("high demand") || err.message?.includes("Service Unavailable") ||
+          err.message?.includes("overloaded") || err.message?.includes("ResourceExhausted") ||
+          err.message?.includes("fetch failed");
+
+        const isApiKeyError = err.message?.includes("API_KEY") || status === 400;
+
+        if (isTransient && !isApiKeyError && attempt <= maxRetries) {
+          const backoff = initialDelay * Math.pow(2, attempt - 1);
+          console.warn(`[Phoneme API] Gặp lỗi tạm thời (${status || 'unknown'}) với model ${modelName}: ${err.message}. Thử lại lần ${attempt}/${maxRetries} sau ${backoff}ms...`);
+          await new Promise(resolve => setTimeout(resolve, backoff));
+        } else {
+          console.error(`[Phoneme API] Thất bại với model ${modelName} (không thử lại model này): ${err.message}`);
+          break; // Thử model tiếp theo
+        }
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 /**
  * Trích xuất các thuật ngữ tiếng Anh từ văn bản tiếng Việt sử dụng Gemini.
  */
@@ -214,13 +287,13 @@ async function extractTerms(text) {
   }
 
   let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-  if (modelName.includes("2.5") || modelName.includes("2.0") || modelName.includes("1.5")) {
+  if (modelName.includes("2.0") && !modelName.includes("exp")) {
     modelName = "gemini-3.5-flash";
   }
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
+    const options = {
       model: modelName,
       generationConfig: {
         responseMimeType: "application/json",
@@ -228,7 +301,7 @@ async function extractTerms(text) {
           thinkingBudget: 0
         }
       }
-    });
+    };
 
     const prompt = `
       Analyze the following Vietnamese script. Extract all English words, technical terms, technology/product names, acronyms, or versions that should be pronounced in English.
@@ -241,7 +314,9 @@ async function extractTerms(text) {
       "${text}"
     `;
 
-    const result = await model.generateContent(prompt);
+    const fallbacks = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-1.5-pro", "gemini-3.5-flash"].filter(m => m !== modelName);
+    console.log(`[Phoneme Agent] Gọi Gemini G2P Extract với model ${modelName}...`);
+    const result = await generateContentWithRetryAndFallback(genAI, options, prompt, fallbacks);
     const responseText = result.response.text().trim();
 
     let terms;
@@ -253,7 +328,6 @@ async function extractTerms(text) {
     }
 
     if (Array.isArray(terms)) {
-      // Filter out duplicate or empty terms
       return [...new Set(terms.map(t => t.trim()).filter(Boolean))];
     }
     return [];
@@ -263,6 +337,7 @@ async function extractTerms(text) {
     return localExtractTerms(text);
   }
 }
+
 
 async function getPhonemesForTerms(terms) {
   const mapping = {};
@@ -288,6 +363,35 @@ async function getPhonemesForTerms(terms) {
         });
       } catch (saveErr) { }
       continue;
+    }
+
+    // 1.1. Nếu là cụm từ (có khoảng trắng), thử dịch từng từ riêng lẻ nếu chúng có trong static dict hoặc cache
+    if (cleanTerm.includes(" ")) {
+      const words = cleanTerm.split(/\s+/);
+      let allResolved = true;
+      const resolvedWords = [];
+      for (const w of words) {
+        if (TECH_TERMS_TRANSLITERATION[w]) {
+          resolvedWords.push(TECH_TERMS_TRANSLITERATION[w]);
+        } else {
+          // Thử check cache DB
+          try {
+            const cached = await db.getPhonemeFromCache(w);
+            if (cached && cached.phoneme && !/[A-Z0-9]/.test(cached.phoneme)) {
+              resolvedWords.push(cached.phoneme);
+              continue;
+            }
+          } catch (e) { }
+          allResolved = false;
+          break;
+        }
+      }
+      if (allResolved) {
+        const transliterated = resolvedWords.join(" ");
+        mapping[term] = transliterated;
+        console.log(`[Phoneme Engine] Tra cứu thành công cụm từ từ Static Dict/Cache: "${term}" -> "${transliterated}"`);
+        continue;
+      }
     }
 
     // 2. Kiểm tra database cache (bỏ qua nếu cache chứa CMU cũ hoặc không hợp lệ)
@@ -320,13 +424,13 @@ async function getPhonemesForTerms(terms) {
     }
 
     let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-    if (modelName.includes("2.5") || modelName.includes("2.0") || modelName.includes("1.5")) {
+    if (modelName.includes("2.0") && !modelName.includes("exp")) {
       modelName = "gemini-3.5-flash";
     }
 
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({
+      const options = {
         model: modelName,
         generationConfig: {
           responseMimeType: "application/json",
@@ -334,7 +438,7 @@ async function getPhonemesForTerms(terms) {
             thinkingBudget: 0
           }
         }
-      });
+      };
 
       const prompt = `
         Translate this list of technical English terms or proper nouns into natural, easy-to-read Vietnamese phonetic pronunciations.
@@ -358,8 +462,9 @@ async function getPhonemesForTerms(terms) {
         ${JSON.stringify(unknownTerms)}
       `;
 
+      const fallbacks = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-1.5-pro", "gemini-3.5-flash"].filter(m => m !== modelName);
       console.log(`[Phoneme Agent] Gọi Gemini G2P Fallback dịch sang tiếng Việt cho ${unknownTerms.length} từ:`, unknownTerms);
-      const result = await model.generateContent(prompt);
+      const result = await generateContentWithRetryAndFallback(genAI, options, prompt, fallbacks);
       const responseText = result.response.text().trim();
 
       let newPhonemes;

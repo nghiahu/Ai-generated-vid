@@ -229,17 +229,34 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
         args.push("--instruct", instruct);
       }
 
-      await runOmniVoiceSequentially(async () => {
-        await execFileAsync(omnivoiceExe, args, {
-          timeout: 300000,
-          maxBuffer: 10 * 1024 * 1024, // 10MB để tránh tràn buffer do progress bars
-          env: {
-            ...process.env,
-            PYTHONUTF8: "1",
-            PYTHONIOENCODING: "utf-8"
+      let success = false;
+      let attempts = 0;
+      const maxAttempts = 2;
+
+      while (!success && attempts < maxAttempts) {
+        try {
+          attempts++;
+          await runOmniVoiceSequentially(async () => {
+            await execFileAsync(omnivoiceExe, args, {
+              timeout: 300000,
+              maxBuffer: 10 * 1024 * 1024, // 10MB để tránh tràn buffer do progress bars
+              env: {
+                ...process.env,
+                PYTHONUTF8: "1",
+                PYTHONIOENCODING: "utf-8"
+              }
+            });
+          });
+          success = true;
+        } catch (execErr) {
+          console.warn(`[TTS Engine] Lỗi tiến trình OmniVoice (Lần thử ${attempts}/${maxAttempts}): ${execErr.message}`);
+          if (attempts >= maxAttempts) {
+            throw execErr;
           }
-        });
-      });
+          console.log("[TTS Engine] Đang chờ 2.5 giây trước khi tự động chạy lại...");
+          await new Promise(resolve => setTimeout(resolve, 2500));
+        }
+      }
 
       if (!fs.existsSync(wavOutputPath)) {
         throw new Error("omnivoice-infer không tạo được file đầu ra");

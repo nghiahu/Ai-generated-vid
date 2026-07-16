@@ -186,6 +186,9 @@ const resolveEditorComponents = (scene, currentImg, layoutType) => {
 };
 
 const LAYOUTS_BY_FAMILY = {
+  "Blank": [
+    { value: "Blank", label: "Blank / Subtitles Only" }
+  ],
   "Opening / Headline": [
     { value: "AppCardConcept", label: "APP Card Concept" },
     { value: "AppShowcaseTitle", label: "APP Showcase Title" },
