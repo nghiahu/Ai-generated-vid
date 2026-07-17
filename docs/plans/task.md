@@ -22,4 +22,7 @@
 | `task_19` | Map `centered_text` layout in `TemplateLayout.tsx` | `completed` | `verified` |
 | `task_20` | Refactor and beautify `IntroEvidenceScanlineMode.tsx` with premium design tokens | `completed` | `verified` |
 | `task_21` | Verify layout rendering in browser/Remotion Preview | `completed` | `verified` |
-
+| `task_22` | Fix pronunciation smoothness and "model" pronunciation by replacing hyphens with spaces in TTS service, and implement a TTS regeneration button in the MasterPlayer UI | `completed` | `verified` |
+| `task_23` | Log the number of tokens spent after each video finishes into a file | `completed` | `verified` |
+| `task_24` | Implement voice selection modal upon clicking regenerate voiceover button | `completed` | `verified` |
+| `task_25` | Brainstorming and designing font rendering fix in exported videos | `completed` | `verified` |
