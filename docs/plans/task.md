@@ -28,3 +28,5 @@
 | `task_25` | Brainstorming and designing font rendering fix in exported videos | `completed` | `verified` |
 | `task_26` | Update Remotion Watermark rendering in MainComposition.tsx to be dynamic | `completed` | `verified` |
 | `task_27` | Verify end-to-end integration in the Editor UI | `completed` | `verified` |
+| `task_28` | Fix text clipping error in Intro Map Pins Image layout by increasing card dimensions, reducing padding, and adjusting Y coordinates | `completed` | `verified` |
+
