@@ -1,6 +1,8 @@
 const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const vde = require("./vde");
 const phoneme = require("./phoneme");
+const db = require("./db");
+
 
 // Define Phase 1 Schema: Scene Planner
 const PLANNER_SCHEMA = {
@@ -32,9 +34,14 @@ const PLANNER_SCHEMA = {
           emotion: {
             type: SchemaType.STRING,
             description: "Must be one of: 'exciting', 'serious', 'informative', 'neutral'"
+          },
+          highlightWords: {
+            type: SchemaType.ARRAY,
+            description: "Exactly 1 or 2 key words or phrases (Vietnamese or English) from the heading of this scene that should be highlighted/accented in the visual design. E.g. ['Vendor'] or ['AI Agent', 'khai tử']. If no words should be highlighted, return an empty array.",
+            items: { type: SchemaType.STRING }
           }
         },
-        required: ["type", "importance", "density", "emotion"]
+        required: ["type", "importance", "density", "emotion", "highlightWords"]
       },
       visualIntent: {
         type: SchemaType.STRING,
@@ -124,7 +131,7 @@ function countVietnameseWords(text) {
 }
 
 // Generic helper to generate content with exponential backoff retries and model fallbacks
-async function generateContentWithRetryAndFallback(genAI, options, promptData, fallbackModels = []) {
+async function generateContentWithRetryAndFallback(genAI, options, promptData, fallbackModels = [], projectId = null) {
   const modelsToTry = [options.model, ...fallbackModels];
   let lastError = new Error("No models tried");
 
@@ -149,6 +156,12 @@ async function generateContentWithRetryAndFallback(genAI, options, promptData, f
         
         if (result && result.response) {
           console.log(`[Gemini API] Thành công với model: ${modelName}`);
+          if (projectId && result.response.usageMetadata) {
+            const usage = result.response.usageMetadata;
+            const promptTokens = usage.promptTokenCount || 0;
+            const completionTokens = usage.candidatesTokenCount || 0;
+            await db.accumulateTokens(projectId, promptTokens, completionTokens);
+          }
           return result;
         }
         throw new Error("Phản hồi rỗng từ API");
@@ -182,7 +195,7 @@ async function generateContentWithRetryAndFallback(genAI, options, promptData, f
 // -------------------------------------------------------------
 // Phase 1: Scene Planner
 // -------------------------------------------------------------
-async function generateScenePlan(genAI, modelName, scriptText, targetLength) {
+async function generateScenePlan(genAI, modelName, scriptText, targetLength, projectId = null) {
   const options = {
     model: modelName,
     generationConfig: {
@@ -251,7 +264,7 @@ If the script is too long, condense and summarize the voiceover text in each sce
 
   console.log(`[Gemini API] Phase 1 Scene Planner starting with model: ${modelName}`);
   
-  const result = await generateContentWithRetryAndFallback(genAI, options, promptData, fallbacks);
+  const result = await generateContentWithRetryAndFallback(genAI, options, promptData, fallbacks, projectId);
   const text = result.response.text().trim();
   console.log("Phase 1 Raw Response:", text);
   return JSON.parse(repairTruncatedJson(text));
@@ -260,7 +273,7 @@ If the script is too long, condense and summarize the voiceover text in each sce
 // -------------------------------------------------------------
 // Phase 2: Storyboard UI Renderer
 // -------------------------------------------------------------
-async function generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack) {
+async function generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack, projectId = null) {
   const options = {
     model: modelName,
     generationConfig: {
@@ -334,7 +347,7 @@ ${JSON.stringify(stylePack, null, 2)}
 
   console.log(`[Gemini API] Phase 2 Storyboard Generator starting with model: ${modelName}`);
 
-  const result = await generateContentWithRetryAndFallback(genAI, options, promptData, fallbacks);
+  const result = await generateContentWithRetryAndFallback(genAI, options, promptData, fallbacks, projectId);
   const text = result.response.text().trim();
   console.log("Phase 2 Raw Response:", text);
   return JSON.parse(repairTruncatedJson(text));
@@ -343,7 +356,7 @@ ${JSON.stringify(stylePack, null, 2)}
 // -------------------------------------------------------------
 // Orchestration & Fallback handling
 // -------------------------------------------------------------
-async function generateStoryboard(scriptText, visualStyle = "minimal", traits = [], targetLength = "Short (~60s)") {
+async function generateStoryboard(projectId, scriptText, visualStyle = "minimal", traits = [], targetLength = "Short (~60s)") {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -362,7 +375,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
 
   try {
     // --- Step 1: Run Phase 1 (Scene Planner) ---
-    const scenePlan = await generateScenePlan(genAI, modelName, scriptText, targetLength);
+    const scenePlan = await generateScenePlan(genAI, modelName, scriptText, targetLength, projectId);
 
     if (!Array.isArray(scenePlan)) {
       throw new Error("Dữ liệu Scene Plan không phải là một mảng JSON.");
@@ -389,7 +402,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
     };
 
     // --- Step 4: Run Phase 2 (Storyboard UI Renderer) ---
-    const uiResults = await generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack);
+    const uiResults = await generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack, projectId);
 
     if (!Array.isArray(uiResults)) {
       throw new Error("Dữ liệu UI Storyboard không phải là một mảng JSON.");
@@ -455,7 +468,7 @@ async function generateStoryboard(scriptText, visualStyle = "minimal", traits = 
     // Process phoneme optimization for all scenes (same as current backend requirement)
     for (const scene of finalScenes) {
       if (scene.voiceover) {
-        scene.voiceoverTts = await phoneme.optimizeTextForPhonemes(scene.voiceover);
+        scene.voiceoverTts = await phoneme.optimizeTextForPhonemes(scene.voiceover, projectId);
       } else {
         scene.voiceoverTts = "";
       }

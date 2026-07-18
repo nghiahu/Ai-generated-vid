@@ -29,6 +29,19 @@ function App() {
   const [renderedFrames, setRenderedFrames] = useState(0);
   const [renderTotalFrames, setRenderTotalFrames] = useState(0);
   const [videoUrl, setVideoUrl] = useState(null);
+  const [regeneratingTts, setRegeneratingTts] = useState(false);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
+  const [modalVoice, setModalVoice] = useState("rachel");
+  const [modalCustomVoiceId, setModalCustomVoiceId] = useState("");
+
+  // Sync modal voice when project updates
+  useEffect(() => {
+    if (currentProject?.config) {
+      setModalVoice(currentProject.config.voice || "rachel");
+      setModalCustomVoiceId(currentProject.config.customVoiceId || "");
+    }
+  }, [currentProject]);
+
 
   // Load projects list on mount
   useEffect(() => {
@@ -117,6 +130,44 @@ function App() {
     }
   };
 
+  const handleRegenerateTts = () => {
+    if (!currentProject) return;
+    setShowVoiceModal(true);
+  };
+
+  const confirmRegenerateTts = async () => {
+    setShowVoiceModal(false);
+    setRegeneratingTts(true);
+    setLoading(true);
+    setLoadingMessage("Đang làm mới toàn bộ giọng thoại...");
+    try {
+      // 1. Save config first to set the chosen voice in backend
+      const updatedConfig = {
+        ...currentProject.config,
+        voice: modalVoice,
+        customVoiceId: modalCustomVoiceId
+      };
+      const savedConfig = await api.updateProjectConfig(currentProject.id, updatedConfig);
+      
+      // Update local state config
+      setCurrentProject(prev => ({
+        ...prev,
+        config: savedConfig
+      }));
+
+      // 2. Trigger regeneration
+      await api.regenerateTts(currentProject.id);
+      await fetchProjectDetail(currentProject.id);
+      alert("Đã làm mới tất cả giọng đọc thành công!");
+    } catch (error) {
+      console.error("Failed to regenerate TTS:", error);
+      alert(`Không thể làm mới giọng đọc: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setRegeneratingTts(false);
+      setLoading(false);
+    }
+  };
+
   const handleUpdateScene = async (sceneId, sceneData) => {
     if (!currentProject) return;
 
@@ -137,6 +188,28 @@ function App() {
     } catch (error) {
       console.error("Failed to update scene:", error);
       alert(`Không thể cập nhật phân cảnh: ${error.response?.data?.error || error.message}`);
+    }
+  };
+
+  const handleRegenerateSceneTts = async (sceneId) => {
+    if (!currentProject) return;
+    setLoading(true);
+    setLoadingMessage("Đang tái tạo giọng thoại cho phân cảnh...");
+    try {
+      const updatedScene = await api.regenerateSceneTts(currentProject.id, sceneId);
+      
+      // Update local state with the exact updated scene
+      setCurrentProject(prev => {
+        const newScenes = prev.scenes.map(s => s.id === sceneId ? { ...s, ...updatedScene } : s);
+        return { ...prev, scenes: newScenes };
+      });
+      
+      alert("Đã tái tạo giọng đọc phân cảnh thành công!");
+    } catch (error) {
+      console.error("Failed to regenerate scene TTS:", error);
+      alert(`Không thể tái tạo giọng đọc: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -581,6 +654,7 @@ function App() {
                 projectId={currentProject?.id}
                 onGenerateStoryboard={handleGenerateStoryboard}
                 onUpdateScene={handleUpdateScene}
+                onRegenerateSceneTts={handleRegenerateSceneTts}
                 loading={loading}
                 loadingMessage={loadingMessage}
                 selectedSceneId={selectedSceneId}
@@ -599,11 +673,101 @@ function App() {
                 renderedFrames={renderedFrames}
                 renderTotalFrames={renderTotalFrames}
                 videoUrl={videoUrl}
+                onRegenerateTts={handleRegenerateTts}
+                regeneratingTts={regeneratingTts}
               />
             </div>
           </div>
         )}
       </div>
+
+      {showVoiceModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(15, 23, 42, 0.4)",
+          backdropFilter: "blur(8px)",
+          zIndex: 1000,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}>
+          <div className="border-strict" style={{
+            backgroundColor: "#ffffff",
+            padding: "30px",
+            width: "420px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px"
+          }}>
+            <div>
+              <h3 style={{ fontSize: "20px", fontFamily: "Space Grotesk", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "-0.01em", margin: 0, color: "#000000" }}>
+                Chọn Giọng Đọc Tái Tạo
+              </h3>
+              <p style={{ fontSize: "13px", color: "#555555", marginTop: "4px", fontFamily: "Inter" }}>
+                Chọn giọng đọc AI bạn muốn sử dụng để làm mới toàn bộ video này.
+              </p>
+            </div>
+
+            <div>
+              <label className="form-label-mono" style={{ display: "block", marginBottom: "6px" }}>AI Voice</label>
+              <select
+                className="form-input-mono"
+                value={modalVoice}
+                onChange={(e) => setModalVoice(e.target.value)}
+                style={{ cursor: "pointer", width: "100%" }}
+              >
+                <option value="omnivoice_duythanh">OmniVoice - Giọng Duy Thanh (Offline Clone)</option>
+                <option value="microsoft_hoaimy">Microsoft Hoài My (Free, Fluent Female)</option>
+                <option value="microsoft_namminh">Microsoft Nam Minh (Free, Fluent Male)</option>
+                <option value="rachel">Hoai My (Rachel - English Accent)</option>
+                <option value="antonio">Tuan Dung (Antoni - English Accent)</option>
+                <option value="bella">Bella (English Accent)</option>
+                <option value="domic">Domic (English Accent)</option>
+                <option value="custom">-- Giọng đọc tự chọn (Nhập ID) --</option>
+              </select>
+            </div>
+
+            {modalVoice === "custom" && (
+              <div>
+                <label className="form-label-mono" style={{ fontSize: "11px", color: "#555555", display: "block", marginBottom: "6px" }}>
+                  Custom ElevenLabs Voice ID
+                </label>
+                <input
+                  type="text"
+                  className="form-input-mono"
+                  value={modalCustomVoiceId}
+                  onChange={(e) => setModalCustomVoiceId(e.target.value)}
+                  placeholder="Ví dụ: pNInz6obpgq5paqqJ155..."
+                  style={{ fontSize: "12px", width: "100%", boxSizing: "border-box" }}
+                />
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
+              <button
+                type="button"
+                className="secondary"
+                style={{ flex: 1, padding: "12px", borderRadius: "20px", cursor: "pointer" }}
+                onClick={() => setShowVoiceModal(false)}
+              >
+                Hủy bỏ
+              </button>
+              <button
+                type="button"
+                className="primary"
+                style={{ flex: 1, padding: "12px", borderRadius: "20px", cursor: "pointer" }}
+                onClick={confirmRegenerateTts}
+              >
+                Xác nhận tái tạo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

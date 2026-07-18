@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const db = require('./db');
 
 const activeRenders = {};
 
@@ -90,6 +91,33 @@ async function renderVideo(projectId, projectData) {
       activeRenders[renderId].progress = 1.0;
       activeRenders[renderId].videoUrl = `/downloads/output_${projectId}.mp4`;
       console.log(`Render complete! Video output: /downloads/output_${projectId}.mp4`);
+
+      // Log token usage to video_token_usage.log at workspace root
+      (async () => {
+        try {
+          const project = await db.getProjectById(projectId);
+          if (project) {
+            const usage = project.config?.tokenUsage || { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const timestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+            const logLine = `[${timestamp}] Video: "${project.title}" | Token prompt: ${usage.promptTokens} | Token completion: ${usage.completionTokens} | Tổng: ${usage.totalTokens}\n`;
+            
+            // Path to project root video_token_usage.log
+            const logFilePath = path.join(__dirname, '../../video_token_usage.log');
+            fs.appendFileSync(logFilePath, logLine);
+            console.log(`[Token Log] Ghi log token thành công vào ${logFilePath}`);
+          }
+        } catch (logErr) {
+          console.error("[Token Log] Lỗi khi ghi log token:", logErr.message);
+        }
+      })();
     } else {
       activeRenders[renderId].status = 'failed';
       console.error(`Render failed with code ${code}`);

@@ -538,5 +538,35 @@ module.exports = {
     } finally {
       client.release();
     }
+  },
+  accumulateTokens: async (projectId, promptTokens, completionTokens) => {
+    if (!projectId || !promptTokens) return;
+    try {
+      await initDb();
+      const projectRes = await pool.query('SELECT config FROM projects WHERE id = $1', [projectId]);
+      if (projectRes.rowCount === 0) return;
+
+      const currentConfig = projectRes.rows[0].config || {};
+      const currentUsage = currentConfig.tokenUsage || { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
+      
+      const promptCount = (currentUsage.promptTokens || 0) + promptTokens;
+      const completionCount = (currentUsage.completionTokens || 0) + completionTokens;
+      const totalCount = promptCount + completionCount;
+
+      const updatedConfig = {
+        ...currentConfig,
+        tokenUsage: {
+          promptTokens: promptCount,
+          completionTokens: completionCount,
+          totalTokens: totalCount
+        }
+      };
+
+      await pool.query('UPDATE projects SET config = $1 WHERE id = $2', [JSON.stringify(updatedConfig), projectId]);
+      console.log(`[Token Log] Accumulated tokens for project ${projectId}: +${promptTokens} prompt, +${completionTokens} completion. Total: ${totalCount}`);
+    } catch (err) {
+      console.error("[db.js] Error accumulating tokens:", err.message);
+    }
   }
 };
+

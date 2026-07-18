@@ -5,7 +5,7 @@ const db = require("./db");
 
 const TECH_TERMS_TRANSLITERATION = {
   'react': 'ri-ắc',
-  'api': 'a-pi-ai',
+  'api': 'ây-pi-ai',
   'vite': 'vít',
   'nextjs': 'lếch-gi-ét',
   'next.js': 'lếch-gi-ét',
@@ -52,7 +52,7 @@ const TECH_TERMS_TRANSLITERATION = {
   'Ai': 'ây-ai',
   'gpt': 'gi-pi-ti',
   'llm': 'en-en-em',
-  'agent': 'ây-giừn',
+  'agent': 'ây-dừn',
   'premiere': 'pờ-re-mi-e',
   'capcut': 'cáp-cắt',
   'photoshop': 'phô-tô-thóp',
@@ -97,6 +97,15 @@ const TECH_TERMS_TRANSLITERATION = {
   'hub': "hắp",
   'follow': "fo-lâu",
   'course': "cót",
+  'trend': "chen",
+  'open': 'âu-bần',
+  'openai': 'âu-bần-ây-ai',
+  'reinforcement': "ri-in-pho-mừn",
+  'learning': "lơn-ing",
+  'meta': "mê-ta",
+  'backend': "bách-en",
+  'software': "sóp-woe",
+  'engineer': "en-rin-nia"
 };
 
 const cmuDict = new Map();
@@ -227,7 +236,7 @@ function localExtractTerms(text) {
 }
 
 // Generic helper to generate content with exponential backoff retries and model fallbacks
-async function generateContentWithRetryAndFallback(genAI, options, promptText, fallbackModels = []) {
+async function generateContentWithRetryAndFallback(genAI, options, promptText, fallbackModels = [], projectId = null) {
   const modelsToTry = [options.model, ...fallbackModels];
   let lastError = new Error("No models tried");
 
@@ -248,6 +257,12 @@ async function generateContentWithRetryAndFallback(genAI, options, promptText, f
         const result = await model.generateContent(promptText);
         if (result && result.response) {
           console.log(`[Phoneme API] Thành công với model: ${modelName}`);
+          if (projectId && result.response.usageMetadata) {
+            const usage = result.response.usageMetadata;
+            const promptTokens = usage.promptTokenCount || 0;
+            const completionTokens = usage.candidatesTokenCount || 0;
+            await db.accumulateTokens(projectId, promptTokens, completionTokens);
+          }
           return result;
         }
         throw new Error("Phản hồi rỗng từ API");
@@ -281,7 +296,7 @@ async function generateContentWithRetryAndFallback(genAI, options, promptText, f
 /**
  * Trích xuất các thuật ngữ tiếng Anh từ văn bản tiếng Việt sử dụng Gemini.
  */
-async function extractTerms(text) {
+async function extractTerms(text, projectId = null) {
   if (!text) return [];
 
   const apiKey = process.env.GEMINI_API_KEY;
@@ -320,7 +335,7 @@ async function extractTerms(text) {
 
     const fallbacks = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-1.5-pro", "gemini-3.5-flash"].filter(m => m !== modelName);
     console.log(`[Phoneme Agent] Gọi Gemini G2P Extract với model ${modelName}...`);
-    const result = await generateContentWithRetryAndFallback(genAI, options, prompt, fallbacks);
+    const result = await generateContentWithRetryAndFallback(genAI, options, prompt, fallbacks, projectId);
     const responseText = result.response.text().trim();
 
     let terms;
@@ -343,7 +358,7 @@ async function extractTerms(text) {
 }
 
 
-async function getPhonemesForTerms(terms) {
+async function getPhonemesForTerms(terms, projectId = null) {
   const mapping = {};
   if (!terms || terms.length === 0) return mapping;
 
@@ -468,7 +483,7 @@ async function getPhonemesForTerms(terms) {
 
       const fallbacks = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-1.5-pro", "gemini-3.5-flash"].filter(m => m !== modelName);
       console.log(`[Phoneme Agent] Gọi Gemini G2P Fallback dịch sang tiếng Việt cho ${unknownTerms.length} từ:`, unknownTerms);
-      const result = await generateContentWithRetryAndFallback(genAI, options, prompt, fallbacks);
+      const result = await generateContentWithRetryAndFallback(genAI, options, prompt, fallbacks, projectId);
       const responseText = result.response.text().trim();
 
       let newPhonemes;
@@ -521,12 +536,12 @@ async function getPhonemesForTerms(terms) {
 /**
  * Hàm tối ưu hóa chính: Nhận câu thoại gốc tiếng Việt và chèn các thẻ âm vị [PHONEME] cho tiếng Anh.
  */
-async function optimizeTextForPhonemes(text) {
+async function optimizeTextForPhonemes(text, projectId = null) {
   if (!text) return "";
 
   try {
     // 1. Trích xuất thuật ngữ tiếng Anh bằng Gemini/AI
-    const aiTerms = await extractTerms(text);
+    const aiTerms = await extractTerms(text, projectId);
 
     // 1.1. Tự động quét và thêm tất cả các từ khóa tĩnh trong TECH_TERMS_TRANSLITERATION xuất hiện trong văn bản
     const staticTerms = Object.keys(TECH_TERMS_TRANSLITERATION).filter(term => {
@@ -540,7 +555,7 @@ async function optimizeTextForPhonemes(text) {
     if (terms.length === 0) return text;
 
     // 2. Tra cứu/dịch âm vị CMU
-    const mapping = await getPhonemesForTerms(terms);
+    const mapping = await getPhonemesForTerms(terms, projectId);
 
     // 3. Thực hiện thay thế từ tiếng Anh bằng từ phiên âm tiếng Việt tương đương
     let optimizedText = text;

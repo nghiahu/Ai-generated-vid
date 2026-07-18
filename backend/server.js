@@ -378,7 +378,7 @@ app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
     // If voiceover text has changed, regenerate TTS using currently configured voice
     if (sceneData.voiceover !== undefined && sceneData.voiceover !== oldScene.voiceover) {
       // Regenerate optimized TTS phonetic script (CMU phonemes)
-      const voiceoverTts = await phoneme.optimizeTextForPhonemes(sceneData.voiceover);
+      const voiceoverTts = await phoneme.optimizeTextForPhonemes(sceneData.voiceover, projectId);
       sceneData.voiceoverTts = voiceoverTts;
 
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
@@ -445,7 +445,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
     }
 
     // Step 1: Call Gemini to parse and split script text using VDE rules
-    const rawScenes = await ai.generateStoryboard(scriptText, currentStyle, activeTraits, project.config.length);
+    const rawScenes = await ai.generateStoryboard(projectId, scriptText, currentStyle, activeTraits, project.config.length);
 
     // Step 2: For each scene, fetch images and generate voiceover TTS
     const scenes = [];
@@ -556,6 +556,125 @@ app.delete('/api/projects/:id/scenes/:sceneId', async (req, res) => {
     await db.deleteScene(req.params.id, req.params.sceneId);
     res.status(204).end();
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 7d. POST /api/projects/:id/scenes/:sceneId/regenerate-tts: Regenerate TTS for a single scene
+app.post('/api/projects/:id/scenes/:sceneId/regenerate-tts', async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    const sceneId = req.params.sceneId;
+    const project = await db.getProjectById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const scene = project.scenes.find(s => s.id === sceneId);
+    if (!scene) {
+      return res.status(404).json({ error: 'Scene not found' });
+    }
+
+    if (!scene.voiceover) {
+      return res.status(400).json({ error: 'Scene has no voiceover text to generate' });
+    }
+
+    console.log(`[Regenerate Scene TTS] Optimizing text phonemes for scene ${sceneId}...`);
+    // 1. Regenerate optimized TTS phonetic script (CMU phonemes)
+    const voiceoverTts = await phoneme.optimizeTextForPhonemes(scene.voiceover, projectId);
+
+    // 2. Get active voice configuration
+    const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
+      ? project.config.customVoiceId 
+      : (project.config.voice || 'rachel');
+
+    console.log(`[Regenerate Scene TTS] Generating TTS for scene ${sceneId} using voice ${voiceKey}...`);
+    const voiceoverText = voiceoverTts || scene.voiceover;
+    const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
+
+    // 3. Compute subtitles word timestamps
+    const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
+    const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, scene.voiceover, ttsResult.duration);
+
+    // 4. Save updated scene to DB
+    const updatedScene = await db.updateScene(projectId, sceneId, {
+      voiceoverTts,
+      voiceoverAudioUrl: ttsResult.url,
+      voiceoverDuration: ttsResult.duration,
+      duration: ttsResult.duration, // Sync scene duration with voiceover duration
+      subtitlesJson
+    });
+
+    res.json(updatedScene);
+  } catch (error) {
+    console.error("Scene TTS regeneration error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 7e. POST /api/projects/:id/regenerate-tts: Regenerate TTS for all scenes and ending card
+app.post('/api/projects/:id/regenerate-tts', async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    const project = await db.getProjectById(projectId);
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const voiceKey = project.config?.voice === 'custom' && project.config.customVoiceId 
+      ? project.config.customVoiceId 
+      : (project.config?.voice || 'rachel');
+
+    const updatedScenes = [];
+    
+    // Regenerate TTS for each scene
+    for (const scene of project.scenes) {
+      if (scene.voiceover) {
+        console.log(`[Regenerate TTS] Generating TTS for scene ${scene.id} using previous voiceover text...`);
+        const voiceoverText = scene.voiceoverTts || scene.voiceover;
+        const ttsResult = await tts.generateTTS(voiceoverText, projectId, scene.id, voiceKey);
+        
+        const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
+        const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, scene.voiceover, ttsResult.duration);
+
+        updatedScenes.push({
+          ...scene,
+          duration: ttsResult.duration,
+          voiceoverAudioUrl: ttsResult.url,
+          voiceoverDuration: ttsResult.duration,
+          subtitlesJson
+        });
+      } else {
+        updatedScenes.push(scene);
+      }
+    }
+
+    // Save updated scenes to DB
+    await db.updateProjectScenes(projectId, updatedScenes);
+
+    // Regenerate TTS for ending card if present
+    const endingVoiceover = project.config?.ending?.voiceover || '';
+    if (endingVoiceover) {
+      console.log(`[Regenerate TTS] Generating ending voiceover TTS...`);
+      try {
+        const ttsResult = await tts.generateTTS(endingVoiceover, projectId, 'ending', voiceKey);
+        const endingConfig = {
+          ...project.config.ending,
+          voiceoverAudioUrl: ttsResult.url,
+          voiceoverDuration: ttsResult.duration
+        };
+        await db.updateProjectConfig(projectId, { ending: endingConfig });
+      } catch (ttsErr) {
+        console.error(`Failed to generate ending voiceover TTS:`, ttsErr.message);
+      }
+    }
+
+    // Get final project with updated config and scenes
+    const finalProject = await db.getProjectById(projectId);
+    res.json({ message: 'TTS regenerated successfully', project: finalProject });
+  } catch (error) {
+    console.error("TTS regeneration error:", error);
     res.status(500).json({ error: error.message });
   }
 });

@@ -27,4 +27,4 @@
 | `task_24` | Implement voice selection modal upon clicking regenerate voiceover button | `completed` | `verified` |
 | `task_25` | Brainstorming and designing font rendering fix in exported videos | `completed` | `verified` |
 | `task_26` | Update Remotion Watermark rendering in MainComposition.tsx to be dynamic | `completed` | `verified` |
-| `task_27` | Verify end-to-end integration in the Editor UI | `in_progress` | `not_verified` |
+| `task_27` | Verify end-to-end integration in the Editor UI | `completed` | `verified` |

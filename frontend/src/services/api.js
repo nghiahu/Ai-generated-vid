@@ -38,5 +38,13 @@ export const api = {
   getRenderStatus: async (projectId, renderId) => {
     const response = await axios.get(`${API_BASE}/projects/${projectId}/render/status/${renderId}`);
     return response.data;
+  },
+  regenerateTts: async (projectId) => {
+    const response = await axios.post(`${API_BASE}/projects/${projectId}/regenerate-tts`);
+    return response.data;
+  },
+  regenerateSceneTts: async (projectId, sceneId) => {
+    const response = await axios.post(`${API_BASE}/projects/${projectId}/scenes/${sceneId}/regenerate-tts`);
+    return response.data;
   }
 };

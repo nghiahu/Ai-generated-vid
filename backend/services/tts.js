@@ -72,6 +72,9 @@ function normalizeTextForTTS(text) {
   
   // Chuyển đổi dấu gạch ngang dài (em-dash, en-dash) thành dấu phẩy để tạo điểm nghỉ tự nhiên
   temp = temp.replace(/[—–]/g, ', ');
+
+  // Chuyển đổi dấu gạch ngang ngắn (-) thành khoảng trắng để đọc mượt mà, tránh lỗi vấp và lỗi kết nối TTS
+  temp = temp.replace(/-/g, ' ');
   
   // Thay thế các ký tự toán học bằng chữ viết tương đương để không bị mất chữ khi đọc
   temp = temp.replace(/>/g, ' lớn hơn ');
@@ -152,6 +155,11 @@ async function runOmniVoiceSequentially(fn) {
 }
 
 async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
+  console.log("[generateTTS DEBUG] Arguments length:", arguments.length);
+  console.log("[generateTTS DEBUG] arg 0 (text) =", text ? text.substring(0, 30) : text);
+  console.log("[generateTTS DEBUG] arg 1 (projectId) =", projectId);
+  console.log("[generateTTS DEBUG] arg 2 (sceneId) =", sceneId);
+  console.log("[generateTTS DEBUG] arg 3 (voiceKey) =", voiceKey);
   const apiKey = process.env.ELEVENLABS_API_KEY;
   const version = Math.random().toString(36).substr(2, 4);
   const outputDir = path.join(__dirname, '../public/tts');
@@ -232,12 +240,13 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       let success = false;
       let attempts = 0;
       const maxAttempts = 2;
+      let lastExecResult = null;
 
       while (!success && attempts < maxAttempts) {
         try {
           attempts++;
-          await runOmniVoiceSequentially(async () => {
-            await execFileAsync(omnivoiceExe, args, {
+          lastExecResult = await runOmniVoiceSequentially(async () => {
+            return await execFileAsync(omnivoiceExe, args, {
               timeout: 300000,
               maxBuffer: 10 * 1024 * 1024, // 10MB để tránh tràn buffer do progress bars
               env: {
@@ -259,7 +268,12 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       }
 
       if (!fs.existsSync(wavOutputPath)) {
-        throw new Error("omnivoice-infer không tạo được file đầu ra");
+        const errorDetails = new Error("omnivoice-infer không tạo được file đầu ra");
+        if (lastExecResult) {
+          errorDetails.stdout = lastExecResult.stdout;
+          errorDetails.stderr = lastExecResult.stderr;
+        }
+        throw errorDetails;
       }
 
       console.log(`Successfully saved Local OmniVoice WAV file: ${wavFileName}`);
@@ -325,6 +339,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
     // Clean mathematical symbols and long dashes to prevent ElevenLabs from skipping them
     const cleanText = text
       .replace(/[—–]/g, ', ')
+      .replace(/-/g, ' ')
       .replace(/>/g, ' lớn hơn ')
       .replace(/</g, ' nhỏ hơn ')
       .replace(/=/g, ' bằng ')

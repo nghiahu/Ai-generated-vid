@@ -10,7 +10,9 @@ export const MasterPlayer = ({
   renderProgress, 
   renderedFrames,
   renderTotalFrames,
-  videoUrl 
+  videoUrl,
+  onRegenerateTts,
+  regeneratingTts
 }) => {
   const fps = 30;
   const endingEnabled = config?.ending?.enabled;
@@ -186,10 +188,48 @@ export const MasterPlayer = ({
             <button className="secondary" style={{ width: "100%", padding: "10px", fontSize: "11px", borderRadius: "var(--radius-pill)" }} onClick={onRender}>
               Xuất lại video
             </button>
+            <button 
+              type="button"
+              className="secondary" 
+              style={{ 
+                width: "100%", 
+                padding: "10px", 
+                fontSize: "11px", 
+                borderRadius: "var(--radius-pill)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "6px",
+                cursor: regeneratingTts ? "not-allowed" : "pointer"
+              }} 
+              disabled={rendering || regeneratingTts}
+              onClick={onRegenerateTts}
+            >
+              {regeneratingTts ? "🔄 Đang tái tạo..." : "🔄 Làm mới giọng đọc (TTS)"}
+            </button>
           </div>
         ) : (
           /* Trigger Render State */
-          <div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <button 
+              type="button"
+              className="secondary"
+              style={{ 
+                width: "100%", 
+                padding: "10px", 
+                fontSize: "12px", 
+                borderRadius: "var(--radius-pill)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "6px",
+                cursor: regeneratingTts ? "not-allowed" : "pointer"
+              }}
+              disabled={scenes.length === 0 || rendering || regeneratingTts}
+              onClick={onRegenerateTts}
+            >
+              {regeneratingTts ? "🔄 Đang tái tạo..." : "🔄 Làm mới giọng đọc (TTS)"}
+            </button>
             <button 
               className="primary" 
               style={{ width: "100%", padding: "14px", fontSize: "12px", borderRadius: "var(--radius-pill)" }}

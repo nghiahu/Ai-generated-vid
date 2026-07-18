@@ -517,6 +517,7 @@ export const StoryboardEditor = ({
   projectId,
   onGenerateStoryboard,
   onUpdateScene,
+  onRegenerateSceneTts,
   loading,
   loadingMessage,
   selectedSceneId,
@@ -525,6 +526,7 @@ export const StoryboardEditor = ({
 }) => {
   const [topicText, setTopicText] = useState("");
   const [scriptText, setScriptText] = useState("");
+  const [localTexts, setLocalTexts] = useState({});
   const [uploadingScenes, setUploadingScenes] = useState({});
   const [playingSceneId, setPlayingSceneId] = useState(null);
   const [showStyleModal, setShowStyleModal] = useState(false);
@@ -1982,8 +1984,59 @@ export const StoryboardEditor = ({
                     <input
                       className="form-input-mono"
                       type="text"
-                      value={scene.heading}
-                      onChange={(e) => handleFieldChange(scene.id, "heading", e.target.value)}
+                      value={localTexts[`${scene.id}_heading`] !== undefined ? localTexts[`${scene.id}_heading`] : scene.heading}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setLocalTexts(prev => ({ ...prev, [`${scene.id}_heading`]: val }));
+                      }}
+                      onBlur={() => {
+                        const val = localTexts[`${scene.id}_heading`];
+                        if (val !== undefined && val !== scene.heading) {
+                          handleFieldChange(scene.id, "heading", val);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.target.blur();
+                        }
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="form-label-mono" style={{ fontSize: "11px" }}>Từ khóa nổi bật (cách nhau bằng dấu phẩy)</label>
+                    <input
+                      className="form-input-mono"
+                      type="text"
+                      placeholder="Ví dụ: Vendor, AI Agent"
+                      value={
+                        localTexts[`${scene.id}_highlightWords`] !== undefined 
+                          ? localTexts[`${scene.id}_highlightWords`] 
+                          : (scene.sceneIntent?.highlightWords || []).join(", ")
+                      }
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setLocalTexts(prev => ({ ...prev, [`${scene.id}_highlightWords`]: val }));
+                      }}
+                      onBlur={() => {
+                        const val = localTexts[`${scene.id}_highlightWords`];
+                        if (val !== undefined) {
+                          const wordsArray = val.split(",").map(w => w.trim()).filter(w => w.length > 0);
+                          const currentHighlightWords = scene.sceneIntent?.highlightWords || [];
+                          if (JSON.stringify(wordsArray) !== JSON.stringify(currentHighlightWords)) {
+                            const updatedIntent = {
+                              ...(scene.sceneIntent || {}),
+                              highlightWords: wordsArray
+                            };
+                            handleFieldChange(scene.id, "sceneIntent", updatedIntent);
+                          }
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.target.blur();
+                        }
+                      }}
                     />
                   </div>
 
@@ -2016,8 +2069,22 @@ export const StoryboardEditor = ({
                         <input
                           className="form-input-mono"
                           type="text"
-                          value={scene.accentColor || "#FFB7C5"}
-                          onChange={(e) => handleFieldChange(scene.id, "accentColor", e.target.value)}
+                          value={localTexts[`${scene.id}_accentColor`] !== undefined ? localTexts[`${scene.id}_accentColor`] : (scene.accentColor || "#FFB7C5")}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setLocalTexts(prev => ({ ...prev, [`${scene.id}_accentColor`]: val }));
+                          }}
+                          onBlur={() => {
+                            const val = localTexts[`${scene.id}_accentColor`];
+                            if (val !== undefined && val !== (scene.accentColor || "#FFB7C5")) {
+                              handleFieldChange(scene.id, "accentColor", val);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.target.blur();
+                            }
+                          }}
                           style={{ padding: "8px", fontSize: "12px", flex: 1 }}
                         />
                       </div>
@@ -2076,8 +2143,22 @@ export const StoryboardEditor = ({
                               <input
                                 type="text"
                                 className="form-input-mono"
-                                value={pt.text}
-                                onChange={(e) => handlePointChange(scene.id, scene.points, idx, "text", e.target.value)}
+                                value={localTexts[`${scene.id}_point_${idx}`] !== undefined ? localTexts[`${scene.id}_point_${idx}`] : pt.text}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setLocalTexts(prev => ({ ...prev, [`${scene.id}_point_${idx}`]: val }));
+                                }}
+                                onBlur={() => {
+                                  const val = localTexts[`${scene.id}_point_${idx}`];
+                                  if (val !== undefined && val !== pt.text) {
+                                    handlePointChange(scene.id, scene.points, idx, "text", val);
+                                  }
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.target.blur();
+                                  }
+                                }}
                                 placeholder="Nhập nội dung hiển thị..."
                                 style={{ padding: "6px 8px", fontSize: "12px", flex: 1 }}
                               />
@@ -2139,11 +2220,41 @@ export const StoryboardEditor = ({
                   </div>
 
                   <div>
-                    <label className="form-label-mono" style={{ fontSize: "11px" }}>Voiceover Script</label>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                      <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Voiceover Script</label>
+                      {onRegenerateSceneTts && scene.voiceover && (
+                        <button
+                          type="button"
+                          onClick={() => onRegenerateSceneTts(scene.id)}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            fontSize: "11px",
+                            color: "var(--color-primary, #2563eb)",
+                            textDecoration: "underline",
+                            cursor: "pointer",
+                            fontFamily: "Space Grotesk, sans-serif",
+                            fontWeight: "bold",
+                            padding: 0
+                          }}
+                        >
+                          🔊 Tái tạo giọng đọc
+                        </button>
+                      )}
+                    </div>
                     <textarea
                       className="form-input-mono"
-                      value={scene.voiceover}
-                      onChange={(e) => handleFieldChange(scene.id, "voiceover", e.target.value)}
+                      value={localTexts[`${scene.id}_voiceover`] !== undefined ? localTexts[`${scene.id}_voiceover`] : scene.voiceover}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setLocalTexts(prev => ({ ...prev, [`${scene.id}_voiceover`]: val }));
+                      }}
+                      onBlur={() => {
+                        const val = localTexts[`${scene.id}_voiceover`];
+                        if (val !== undefined && val !== scene.voiceover) {
+                          handleFieldChange(scene.id, "voiceover", val);
+                        }
+                      }}
                       style={{ height: "60px", fontSize: "13px", resize: "none" }}
                     />
                   </div>
