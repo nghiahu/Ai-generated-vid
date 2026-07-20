@@ -1,7 +1,6 @@
-# Checklist Progress Tracker
+# Checklist Progress Tracker (Signal Rail Bullet Fix)
 
 | Task | Status | Description |
 | --- | --- | --- |
-| Task 1 | [x] | Stacking Exemption (`resolvePositions` in `areaResolver.ts`) |
-| Task 2 | [x] | Fix Coordinate Positions in JSON (`selector_wheel_radio.json`) |
-| Task 3 | [x] | Implement Wheel & Radio Render Logic (`AbsoluteCardsMode.tsx`) |
+| Task 1 | [x] | Implement Custom Rail and Bullet layout in `VerticalListMode.tsx` |
+| Task 2 | [x] | Type check and verify compilation |
