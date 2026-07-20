@@ -105,7 +105,15 @@ const TECH_TERMS_TRANSLITERATION = {
   'meta': "mê-ta",
   'backend': "bách-en",
   'software': "sóp-woe",
-  'engineer': "en-rin-nia"
+  'engineer': "en-rin-nia",
+  'programmer': "pro-gram-mơ",
+  'developer': "đi-vơ-lốp-bơ",
+  'cursor': "cơ-sờ",
+  'c': 'xi',
+  'c++': 'xi cộng cộng',
+  'cplusplus': 'xi cộng cộng',
+  'c#': 'xi sáp',
+  'csharp': 'xi sáp'
 };
 
 const cmuDict = new Map();
