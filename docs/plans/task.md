@@ -31,6 +31,7 @@
 | Task 28 | Implement Dedicated Intro Radar Signal Mode (`IntroRadarSignalMode.tsx`, `intro_radar_signal_image.json`, `TemplateLayout.tsx`) | [x] Completed |
 | Task 29 | Implement Radar Sweep Trailing Trail Effect (`IntroRadarSignalMode.tsx`) | [x] Completed |
 | Task 30 | Implement Seamless Conic Radar Trail & Fluid Rotation (`IntroRadarSignalMode.tsx`) | [x] Completed |
+| Task 31 | Implement Dedicated Intro Signal Steps Mode (`IntroSignalStepsMode.tsx`, `intro_signal_steps_images.json`, `TemplateLayout.tsx`) | [x] Completed |
 
 
 
