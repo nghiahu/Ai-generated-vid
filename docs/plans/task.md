@@ -32,6 +32,7 @@
 | Task 29 | Implement Radar Sweep Trailing Trail Effect (`IntroRadarSignalMode.tsx`) | [x] Completed |
 | Task 30 | Implement Seamless Conic Radar Trail & Fluid Rotation (`IntroRadarSignalMode.tsx`) | [x] Completed |
 | Task 31 | Implement Dedicated Intro Signal Steps Mode (`IntroSignalStepsMode.tsx`, `intro_signal_steps_images.json`, `TemplateLayout.tsx`) | [x] Completed |
+| Task 32 | Enlarge Step Cards & Remove Voiceover Block (`IntroSignalStepsMode.tsx`) | [x] Completed |
 
 
 
