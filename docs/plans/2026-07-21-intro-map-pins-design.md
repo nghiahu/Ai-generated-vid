@@ -33,17 +33,16 @@ This design introduces a dedicated mode renderer **`IntroMapPinsMode`** to displ
 
 ### 3.1 Layout & Component Mechanics
 - **Header Area**: Title (`HeadlineText`) and category pill (`CategoryPill`).
-- **Main Location Path Window Frame**:
-  - Dark glassmorphic container (~860px max width, 580px height).
-  - Header bar: `● LOCATION PATH` red dot status indicator on left, `pins` badge on right.
-  - Background SVG grid mesh.
-  - Curved dashed bezier route path (`strokeDasharray="10 8"`) drawn dynamically using Remotion `frame`.
-  - **3 Location Pins**:
-    - **Pin 1 (Left)**: Glowing teardrop pin icon + red path anchor dot + `PIN-1` badge card.
-    - **Pin 2 (Middle-Top)**: Glowing teardrop pin icon + `PIN-2` badge card.
-    - **Pin 3 (Right-Bottom)**: Glowing teardrop pin icon + `PIN-3` badge card.
-- **Bottom Summary Bar**:
-  - 3 horizontal cards aligned at the bottom: `LOCATION 1`, `LOCATION 2`, `LOCATION 3` displaying point texts.
+- **Single Pin Set Location Path Window Frame**:
+  - Dark glassmorphic container (~880px max width, 560px height).
+  - Header bar: `● LOCATION PATH` red status indicator on left, `pins` badge on right.
+  - Expanded grid mesh background canvas (480px height).
+  - Curved dashed bezier route path (`strokeDasharray="14 10"`) drawn dynamically using Remotion `frame`.
+  - **3 Enlarged Location Pins**:
+    - **Pin 1 (Left)**: Glowing teardrop pin icon + red path anchor dot + enlarged `PIN-1` badge card.
+    - **Pin 2 (Middle-Top)**: Glowing teardrop pin icon + enlarged `PIN-2` badge card.
+    - **Pin 3 (Right-Bottom)**: Glowing teardrop pin icon + enlarged `PIN-3` badge card.
+- **Clean Single Layout**: Duplicate bottom location summary cards are removed to eliminate repetitive text and maximize space for prominent map pin cards.
 
 ### 3.2 Theme Adaptability
 - Uses `accentColor`, `darkAccentColor`, `isLight`, and `rgb` tokens for seamless dark/light/custom theme rendering.
