@@ -31,14 +31,15 @@ This design introduces a dedicated mode renderer **`IntroSignalStepsMode`** to d
 
 ### 3.1 Layout & Component Mechanics
 - **Top Header**: Title (`HeadlineText`) and category pill (`CategoryPill`).
-- **Bottom Voiceover Subtitle**: Voiceover text displayed near bottom.
-- **Center Staggered Step Group**:
-  - **Step 1**: Round badge `01` with vibrant accent background + Card 1 with accent gradient, aligned left.
-  - **Step 2**: Round badge `02` with dark/neutral background + Card 2 indented right (`marginLeft: 60px`).
-  - **Step 3**: Round badge `03` with glowing border + Card 3 aligned left.
+- **Enlarged Staggered Step Group**:
+  - Container width ~840px, centered horizontally.
+  - **Step 1**: Round badge `01` (56px size, 22px font) + Card 1 with accent gradient (`28px * fontScale` font size, `22px 32px` padding), aligned left.
+  - **Step 2**: Round badge `02` + Card 2 indented right (`marginLeft: 60px`).
+  - **Step 3**: Round badge `03` + Card 3 aligned left.
 - **Vertical Signal Rail**:
   - SVG vertical beam linking badge centers (01 -> 02 -> 03).
   - Progressive strokeDashoffset animation based on Remotion `frame`.
+- **Clean Bottom Area**: Voiceover text block inside step renderer is removed so step cards remain prominent and avoid overlapping with bottom subtitles.
 
 ### 3.2 Theme Adaptability
 - Uses `accentColor`, `darkAccentColor`, `isLight`, and `rgb` tokens for seamless dark/light/custom theme rendering.
