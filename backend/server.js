@@ -380,6 +380,15 @@ app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
   }
 });
 
+// In-memory real-time progress map for Storyboard generation
+const storyboardProgressMap = new Map();
+
+// 7a. GET /api/projects/:id/generate-storyboard/status: Get real-time storyboard generation status
+app.get('/api/projects/:id/generate-storyboard/status', (req, res) => {
+  const status = storyboardProgressMap.get(req.params.id) || { percent: 0, stage: "Đang khởi tạo AI..." };
+  res.json(status);
+});
+
 // 7. POST /api/projects/:id/generate-storyboard: Process script text with AI
 app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
   try {
@@ -394,6 +403,8 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
     if (!scriptText) {
       return res.status(400).json({ error: 'Script text is required' });
     }
+
+    storyboardProgressMap.set(projectId, { percent: 15, stage: "Đang dùng AI phân tích kịch bản & trích xuất phân cảnh..." });
 
     // Persist the selected visual style and traits in the project configuration database
     if (visualStyle || traits) {
@@ -420,9 +431,19 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
     // Step 1: Call Gemini to parse and split script text using VDE rules
     const rawScenes = await ai.generateStoryboard(projectId, scriptText, currentStyle, activeTraits, project.config.length);
 
+    storyboardProgressMap.set(projectId, { 
+      percent: 35, 
+      stage: `Đã phân tích ${rawScenes.length} phân cảnh. Đang xử lý âm thanh & hình ảnh...` 
+    });
+
     // Step 2: For each scene, fetch images and generate voiceover TTS
     const scenes = [];
     for (let i = 0; i < rawScenes.length; i++) {
+      const scenePct = Math.round(35 + ((i + 1) / rawScenes.length) * 55);
+      storyboardProgressMap.set(projectId, { 
+        percent: scenePct, 
+        stage: `Đang tạo giọng đọc TTS & trích xuất hình ảnh cho phân cảnh ${i + 1}/${rawScenes.length}...` 
+      });
       const scene = rawScenes[i];
       const sceneId = `scene_${projectId}_${i}_${Math.random().toString(36).substr(2, 4)}`;
       
@@ -502,6 +523,8 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       }
       updatedProject.config.vdeTokens = vde.getStyle(activeStyle, activeTraits);
     }
+
+    storyboardProgressMap.set(projectId, { percent: 100, stage: "Hoàn tất kịch bản Storyboard!" });
 
     res.json({ 
       scenes: updatedProject.scenes, 

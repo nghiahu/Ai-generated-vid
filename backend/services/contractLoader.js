@@ -409,15 +409,27 @@ function getContractForLayout(layoutId, family = 'opening') {
   return FAMILY_FALLBACKS[cleanFamily] || FAMILY_FALLBACKS.opening;
 }
 
+function smartTrimWordBoundary(text, maxChars) {
+  if (!text || typeof text !== 'string') return '';
+  const trimmed = text.trim();
+  if (trimmed.length <= maxChars) return trimmed;
+  const sliced = trimmed.substring(0, maxChars);
+  const lastSpace = sliced.lastIndexOf(' ');
+  if (lastSpace > 10) {
+    return sliced.substring(0, lastSpace).trim();
+  }
+  return sliced.trim();
+}
+
 function validateAndFormatSceneContent(scene, contract) {
   const warnings = [];
-  const maxHeadingChars = contract.headingMaxChars || 40;
-  const maxPointChars = contract.pointMaxChars || 50;
+  const maxHeadingChars = Math.max(80, contract.headingMaxChars || 80);
+  const maxPointChars = contract.pointMaxChars || 60;
 
-  // 1. Heading Validation & Trimming
+  // 1. Heading Validation & Trimming (Word-boundary safe, no mid-word cuts)
   if (scene.heading && scene.heading.length > maxHeadingChars) {
     console.warn(`[Contract Validator] Trimming heading for layout "${contract.layoutId}": "${scene.heading}" -> max ${maxHeadingChars} chars`);
-    scene.heading = scene.heading.substring(0, maxHeadingChars).trim();
+    scene.heading = smartTrimWordBoundary(scene.heading, maxHeadingChars);
     warnings.push('heading_trimmed');
   }
 
@@ -477,7 +489,7 @@ function validateAndFormatSceneContent(scene, contract) {
       seenTexts.add(text.toLowerCase());
       cleanPoints.push({
         type: defaultPointType,
-        text: text.substring(0, maxPointChars).trim(),
+        text: smartTrimWordBoundary(text, maxPointChars),
         animation: 'slide-up'
       });
     }
@@ -488,7 +500,7 @@ function validateAndFormatSceneContent(scene, contract) {
       const text = scene.heading ? `${scene.heading} (${idx})` : `Ý chính ${idx}`;
       cleanPoints.push({
         type: defaultPointType,
-        text: text.substring(0, maxPointChars).trim(),
+        text: smartTrimWordBoundary(text, maxPointChars),
         animation: 'slide-up'
       });
     }
@@ -514,7 +526,7 @@ function validateAndFormatSceneContent(scene, contract) {
   scene.points = cleanPoints.map((pt, idx) => {
     let text = (pt.text || '').trim();
     if (text.length > maxPointChars) {
-      text = text.substring(0, maxPointChars).trim();
+      text = smartTrimWordBoundary(text, maxPointChars);
       warnings.push('point_text_trimmed');
     }
 

@@ -43,6 +43,15 @@ function App() {
   const [renderTotalFrames, setRenderTotalFrames] = useState(0);
   const [videoUrl, setVideoUrl] = useState(null);
   const [regeneratingTts, setRegeneratingTts] = useState(false);
+  const [regeneratingSceneId, setRegeneratingSceneId] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, 3500);
+  };
   const [showVoiceModal, setShowVoiceModal] = useState(false);
   const [modalVoice, setModalVoice] = useState("rachel");
   const [modalCustomVoiceId, setModalCustomVoiceId] = useState("");
@@ -96,6 +105,10 @@ function App() {
   const fetchProjectDetail = async (id) => {
     try {
       const project = await api.getProjectById(id);
+      if (project) {
+        project.config = { visualStyle: "rikkei", ...(project.config || {}) };
+        if (!project.config.visualStyle) project.config.visualStyle = "rikkei";
+      }
       setCurrentProject(project);
       if (project.scenes && project.scenes.length > 0) {
         setSelectedSceneId(project.scenes[0].id);
@@ -183,10 +196,10 @@ function App() {
       // 2. Trigger regeneration
       await api.regenerateTts(currentProject.id);
       await fetchProjectDetail(currentProject.id);
-      alert("Đã làm mới tất cả giọng đọc thành công!");
+      showToast("Đã làm mới tất cả giọng đọc thành công!", "success");
     } catch (error) {
       console.error("Failed to regenerate TTS:", error);
-      alert(`Không thể làm mới giọng đọc: ${error.response?.data?.error || error.message}`);
+      showToast(`Không thể làm mới giọng đọc: ${error.response?.data?.error || error.message}`, "error");
     } finally {
       setRegeneratingTts(false);
       setLoading(false);
@@ -212,14 +225,13 @@ function App() {
       });
     } catch (error) {
       console.error("Failed to update scene:", error);
-      alert(`Không thể cập nhật phân cảnh: ${error.response?.data?.error || error.message}`);
+      showToast(`Không thể cập nhật phân cảnh: ${error.response?.data?.error || error.message}`, "error");
     }
   };
 
   const handleRegenerateSceneTts = async (sceneId) => {
     if (!currentProject) return;
-    setLoading(true);
-    setLoadingMessage("Đang tái tạo giọng thoại cho phân cảnh...");
+    setRegeneratingSceneId(sceneId);
     try {
       const updatedScene = await api.regenerateSceneTts(currentProject.id, sceneId);
       
@@ -229,12 +241,12 @@ function App() {
         return { ...prev, scenes: newScenes };
       });
       
-      alert("Đã tái tạo giọng đọc phân cảnh thành công!");
+      showToast("Đã tái tạo giọng đọc phân cảnh thành công!", "success");
     } catch (error) {
       console.error("Failed to regenerate scene TTS:", error);
-      alert(`Không thể tái tạo giọng đọc: ${error.response?.data?.error || error.message}`);
+      showToast(`Không thể tái tạo giọng đọc: ${error.response?.data?.error || error.message}`, "error");
     } finally {
-      setLoading(false);
+      setRegeneratingSceneId(null);
     }
   };
 
@@ -321,10 +333,16 @@ function App() {
         try {
           const statusRes = await api.getRenderStatus(currentProject.id, renderId);
           
-          const progressPercent = Math.round((statusRes.progress || 0) * 100);
+          const totalF = statusRes.totalFrames || 0;
+          const renderedF = statusRes.renderedFrames || 0;
+          const rawPct = statusRes.progress || 0;
+
+          const computedPct = totalF > 0 ? (renderedF / totalF) : rawPct;
+          const progressPercent = Math.min(100, Math.max(0, Math.round(computedPct * 100)));
+
           setRenderProgress(progressPercent);
-          setRenderedFrames(statusRes.renderedFrames || 0);
-          setRenderTotalFrames(statusRes.totalFrames || 0);
+          setRenderedFrames(renderedF);
+          setRenderTotalFrames(totalF);
 
           if (statusRes.status === "completed") {
             setVideoUrl(statusRes.videoUrl);
@@ -340,7 +358,7 @@ function App() {
           setRendering(false);
           clearInterval(pollInterval);
         }
-      }, 1000);
+      }, 300);
 
     } catch (error) {
       console.error("Failed to start video rendering:", error);
@@ -638,6 +656,7 @@ function App() {
                 onGenerateStoryboard={handleGenerateStoryboard}
                 onUpdateScene={handleUpdateScene}
                 onRegenerateSceneTts={handleRegenerateSceneTts}
+                regeneratingSceneId={regeneratingSceneId}
                 loading={loading}
                 loadingMessage={loadingMessage}
                 selectedSceneId={selectedSceneId}
@@ -650,6 +669,7 @@ function App() {
               <MasterPlayer
                 scenes={currentProject?.scenes || []}
                 config={currentProject?.config || {}}
+                projectTitle={currentProject?.title}
                 onRender={handleRenderVideo}
                 rendering={rendering}
                 renderProgress={renderProgress}
@@ -750,6 +770,35 @@ function App() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Floating Bottom-Right Toast Notification */}
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            zIndex: 9999,
+            background: toast.type === "error" 
+              ? "linear-gradient(135deg, #ef4444, #dc2626)" 
+              : "linear-gradient(135deg, #059669, #10b981)",
+            color: "#ffffff",
+            padding: "14px 22px",
+            borderRadius: "14px",
+            boxShadow: "0 12px 32px rgba(0, 0, 0, 0.25)",
+            fontSize: "14px",
+            fontWeight: "700",
+            fontFamily: "Space Grotesk, sans-serif",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            animation: "slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+          }}
+        >
+          <span>{toast.type === "error" ? "❌" : "✨"}</span>
+          <span>{toast.message}</span>
         </div>
       )}
     </div>

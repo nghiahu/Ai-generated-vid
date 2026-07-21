@@ -5,6 +5,7 @@ import { MainComposition, safeParseFloat } from "../../../my-video/src/compositi
 export const MasterPlayer = ({ 
   scenes = [], 
   config = {}, 
+  projectTitle = "",
   onRender, 
   rendering, 
   renderProgress, 
@@ -20,6 +21,56 @@ export const MasterPlayer = ({
     30,
     Math.round(totalSeconds * fps)
   );
+
+  const handleDownloadVideo = async () => {
+    if (!videoUrl) return;
+    const fullUrl = `http://localhost:5000${videoUrl}`;
+    
+    // Determine title for default filename
+    const rawTitle = projectTitle || scenes[0]?.heading || "Video_Hyperframe";
+    // Sanitize title for valid OS filename
+    const safeTitle = rawTitle.replace(/[/\\?%*:|"<>]/g, "_").trim().replace(/\s+/g, "_");
+    const defaultFilename = `${safeTitle}.mp4`;
+
+    // 1. Native File System Access API (allows custom filename + folder selection)
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: defaultFilename,
+          types: [{
+            description: "Video MP4",
+            accept: { "video/mp4": [".mp4"] }
+          }]
+        });
+        const response = await fetch(fullUrl);
+        const blob = await response.blob();
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        return;
+      } catch (err) {
+        if (err.name === "AbortError") return; // User cancelled dialog
+        console.warn("File System Access API error / fallback:", err);
+      }
+    }
+
+    // 2. Fallback Anchor Download
+    try {
+      const response = await fetch(fullUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = defaultFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (fallbackErr) {
+      console.error("Download fallback error:", fallbackErr);
+      window.open(fullUrl, "_blank");
+    }
+  };
 
   return (
     <aside className="custom-scrollbar" style={{
@@ -162,25 +213,21 @@ export const MasterPlayer = ({
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
               KẾT XUẤT HOÀN TẤT!
             </div>
-            <a 
-              href={`http://localhost:5000${videoUrl}`} 
-              target="_blank" 
-              rel="noreferrer"
-              style={{ textDecoration: "none", width: "100%" }}
+            <button 
+              type="button"
+              className="primary" 
+              onClick={handleDownloadVideo}
+              style={{ 
+                width: "100%", 
+                padding: "12px", 
+                borderRadius: "var(--radius-pill)",
+                background: "linear-gradient(135deg, var(--color-secondary), #f97316)",
+                boxShadow: "0 4px 15px rgba(249, 115, 22, 0.25)",
+                cursor: "pointer"
+              }}
             >
-              <button 
-                className="primary" 
-                style={{ 
-                  width: "100%", 
-                  padding: "12px", 
-                  borderRadius: "var(--radius-pill)",
-                  background: "linear-gradient(135deg, var(--color-secondary), #f97316)",
-                  boxShadow: "0 4px 15px rgba(249, 115, 22, 0.25)"
-                }}
-              >
-                📥 Tải Video MP4
-              </button>
-            </a>
+              📥 Tải Video MP4
+            </button>
             <button className="secondary" style={{ width: "100%", padding: "10px", fontSize: "11px", borderRadius: "var(--radius-pill)" }} onClick={onRender}>
               Xuất lại video
             </button>

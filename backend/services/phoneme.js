@@ -53,6 +53,7 @@ const TECH_TERMS_TRANSLITERATION = {
   'gpt': 'gi-pi-ti',
   'llm': 'en-en-em',
   'agent': 'ây-dừn',
+  'agents': "ây-dừn",
   'premiere': 'pờ-re-mi-e',
   'capcut': 'cáp-cắt',
   'photoshop': 'phô-tô-thóp',
@@ -115,7 +116,10 @@ const TECH_TERMS_TRANSLITERATION = {
   'c#': 'xi sáp',
   'csharp': 'xi sáp',
   'real-time': "riu-tham",
-  'Spacex': "sờ-pây-ích"
+  'Spacex': "sờ-pây-ích",
+  'realtime': 'riu-tham',
+  'selfie': "seo-phi",
+  'photo': "Phô-tô"
 };
 
 const cmuDict = new Map();

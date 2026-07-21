@@ -24,21 +24,21 @@ const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => 
     };
   }, [playerRef]);
 
-  // On initial mount, seek to last frame to show fully-rendered preview
+  const peakFrame = Math.max(1, Math.min(sceneDurationFrames - 1, 60));
+
+  // On scene change or mount, seek to peak frame to show fully-rendered preview
   useEffect(() => {
     const { current } = localPlayerRef;
-    if (!current) return;
-    // Small delay to let Player fully initialize before seeking
+    if (!current || isPlaying) return;
     const t = setTimeout(() => {
       try {
-        current.seekTo(lastFrame);
+        current.seekTo(peakFrame);
       } catch (err) {
-        console.warn("Initial seek to last frame failed:", err);
+        console.warn("Seek to peak frame failed:", err);
       }
-    }, 100);
+    }, 80);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [scene?.id, scene?.duration, scene?.layoutType, isPlaying, peakFrame]);
 
   // Handle play/pause sync when isPlaying state changes
   useEffect(() => {
@@ -113,7 +113,7 @@ const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => 
       fps={30}
       compositionWidth={1080}
       compositionHeight={1920}
-      initialFrame={lastFrame}
+      initialFrame={peakFrame}
       style={{
         width: "100%",
         height: "100%",
@@ -315,28 +315,41 @@ const VDE_PRESET_STYLES = [
   }
 ];
 
-const CircularProgressLoader = ({ loadingMessage }) => {
+const CircularProgressLoader = ({ loadingMessage, projectId }) => {
   const [progress, setProgress] = useState(5);
+  const [stageMessage, setStageMessage] = useState(loadingMessage || "Đang dùng AI phân tích kịch bản & trích xuất phân cảnh...");
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 95) return 95;
-        const diff = Math.max(1, Math.floor((95 - prev) * 0.08));
-        return prev + diff;
-      });
-    }, 250);
+    if (!projectId) return;
 
-    return () => clearInterval(timer);
-  }, []);
+    let isMounted = true;
+    const pollStatus = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/projects/${projectId}/generate-storyboard/status`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted) {
+            if (typeof data.percent === "number" && data.percent > 0) {
+              setProgress(data.percent);
+            }
+            if (data.stage) {
+              setStageMessage(data.stage);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("[Progress Polling] Status fetch error:", err);
+      }
+    };
 
-  const getPhaseText = (pct) => {
-    if (loadingMessage) return loadingMessage;
-    if (pct < 30) return "Phân tích kịch bản & trích xuất ý chính...";
-    if (pct < 65) return "Lựa chọn Layout & áp dụng phong cách thiết kế...";
-    if (pct < 90) return "Tải quy chuẩn phân cảnh & phối hợp giọng đọc...";
-    return "Hoàn tất không gian biên tập Storyboard...";
-  };
+    pollStatus();
+    const interval = setInterval(pollStatus, 500);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [projectId]);
 
   const radius = 48;
   const strokeWidth = 8;
@@ -411,11 +424,11 @@ const CircularProgressLoader = ({ loadingMessage }) => {
       </div>
 
       <p style={{ marginTop: "24px", fontSize: "15px", fontFamily: "var(--font-heading)", fontWeight: "700", color: "#1e293b", textAlign: "center" }}>
-        {getPhaseText(progress)}
+        {stageMessage}
       </p>
 
       <span style={{ marginTop: "6px", fontSize: "12px", color: "var(--text-secondary)", fontFamily: "Inter", fontWeight: "500" }}>
-        Vui lòng đợi trong giây lát, AI đang xử lý...
+        Tiến trình cập nhật theo thời gian thực từ Backend AI...
       </span>
     </div>
   );
@@ -429,6 +442,7 @@ export const StoryboardEditor = ({
   onGenerateStoryboard,
   onUpdateScene,
   onRegenerateSceneTts,
+  regeneratingSceneId,
   loading,
   loadingMessage,
   selectedSceneId,
@@ -1178,7 +1192,7 @@ export const StoryboardEditor = ({
       <div className="custom-scrollbar" style={{ flex: 1, padding: "30px", display: "flex", flexDirection: "column", gap: "25px", overflowY: "auto", boxSizing: "border-box" }}>
 
         {loading ? (
-          <CircularProgressLoader loadingMessage={loadingMessage} />
+          <CircularProgressLoader loadingMessage={loadingMessage} projectId={projectId} />
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: 1 }}>
 
@@ -2115,19 +2129,38 @@ export const StoryboardEditor = ({
                         <button
                           type="button"
                           onClick={() => onRegenerateSceneTts(scene.id)}
+                          disabled={regeneratingSceneId === scene.id}
                           style={{
                             background: "none",
                             border: "none",
                             fontSize: "11px",
-                            color: "var(--color-primary, #2563eb)",
-                            textDecoration: "underline",
-                            cursor: "pointer",
+                            color: regeneratingSceneId === scene.id ? "#94a3b8" : "var(--color-primary, #2563eb)",
+                            textDecoration: regeneratingSceneId === scene.id ? "none" : "underline",
+                            cursor: regeneratingSceneId === scene.id ? "not-allowed" : "pointer",
                             fontFamily: "Space Grotesk, sans-serif",
                             fontWeight: "bold",
-                            padding: 0
+                            padding: 0,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px"
                           }}
                         >
-                          🔊 Tái tạo giọng đọc
+                          {regeneratingSceneId === scene.id ? (
+                            <>
+                              <span style={{
+                                display: "inline-block",
+                                width: "10px",
+                                height: "10px",
+                                border: "2px solid #2563eb",
+                                borderTopColor: "transparent",
+                                borderRadius: "50%",
+                                animation: "spin 0.8s linear infinite"
+                              }} />
+                              <span>⏳ Đang tạo giọng đọc...</span>
+                            </>
+                          ) : (
+                            "🔊 Tái tạo giọng đọc"
+                          )}
                         </button>
                       )}
                     </div>

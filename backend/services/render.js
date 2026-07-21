@@ -51,21 +51,27 @@ async function renderVideo(projectId, projectData) {
   });
 
   remotionProcess.stdout.on('data', (data) => {
-    const text = data.toString();
-    console.log(`[Remotion CLI]: ${text.trim()}`);
+    const rawText = data.toString();
+    const cleanText = rawText.replace(/\u001b\[[0-9;]*m/g, "");
+    console.log(`[Remotion CLI]: ${cleanText.trim()}`);
     
-    // Parse frames e.g., "Rendering frame 45/300"
-    const frameMatch = text.match(/frame (\d+)\/(\d+)/i);
+    // Parse frames e.g., "Rendering frame 45/300" or "Rendered 45/300"
+    const frameMatch = cleanText.match(/(?:frame|rendered|\b)(\d+)\/(\d+)/i);
     if (frameMatch) {
-      activeRenders[renderId].renderedFrames = parseInt(frameMatch[1], 10);
-      activeRenders[renderId].totalFrames = parseInt(frameMatch[2], 10);
+      const rendered = parseInt(frameMatch[1], 10);
+      const total = parseInt(frameMatch[2], 10);
+      if (total > 0 && rendered <= total) {
+        activeRenders[renderId].renderedFrames = rendered;
+        activeRenders[renderId].totalFrames = total;
+        activeRenders[renderId].progress = Math.min(1.0, rendered / total);
+      }
     }
 
-    // Parse progress e.g., "Rendering frame 34/300 (11%)"
-    const match = text.match(/\((\d+)%\)/);
+    // Parse progress percentage e.g., "(11%)"
+    const match = cleanText.match(/\((\d+)%\)/);
     if (match) {
       const percentage = parseInt(match[1], 10);
-      activeRenders[renderId].progress = percentage / 100;
+      activeRenders[renderId].progress = Math.min(1.0, percentage / 100);
     }
   });
 

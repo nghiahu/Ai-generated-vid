@@ -44,6 +44,24 @@
 | Task 41 | Clone & Register Quang Anh Voice (`omnivoice_quanganh`) in TTS Service & UI Dropdowns | [x] Completed |
 | Task 42 | Fix Layout Intent Auto-Matching & Strict 50% Delay Hard Clamp (`ai.js`, `contractLoader.js`) | [x] Completed |
 | Task 43 | Fix Blank Layout Render Bug & Complete Layout Family Dropdown Mapping (`modes/*.tsx`, `StoryboardEditor.jsx`) | [x] Completed |
+| Task 44 | Rikkei Light Theme Default Fix & Dark Overlay Exclusion (`MainComposition.tsx`, `vdeTokens.ts`, `App.jsx`) | [x] Completed |
+| Task 45 | Redesign Versus Arena Layout (`SplitHorizontalMode.tsx`) | [x] Completed |
+| Task 46 | Implement Split Verdict Table & Fix Blank Render (`split_proof_bullet.json`, `BeforeAfterPanelMode.tsx`, `before_after_panel.json`) | [x] Completed |
+| Task 47 | Redesign Split Verdict Table 2-Row Layout & Enlarged Right Card (`BeforeAfterPanelMode.tsx`) | [x] Completed |
+| Task 48 | Implement Versus Timeline Shift Layout (`split_band_checklist.json`, `TimelineShiftMode.tsx`, `TemplateLayout.tsx`) | [x] Completed |
+| Task 49 | Apply 3D Spatial Depth & Compact Diagonal Stacking (`TimelineShiftMode.tsx`) | [x] Completed |
+| Task 50 | Theme-aware Refactor for Intro MAP Pins Image (`IntroMapPinsMode.tsx`) | [x] Completed |
+| Task 51 | Theme-aware High-Contrast Text Refactor for Before After Panel (`BeforeAfterPanelMode.tsx`) | [x] Completed |
+| Task 52 | Implement Real-Time Backend Storyboard Progress Tracking (`server.js`, `StoryboardEditor.jsx`) | [x] Completed |
+| Task 53 | Implement Inline Spinner & Toast Notification System (`App.jsx`, `StoryboardEditor.jsx`) | [x] Completed |
+| Task 54 | Fix Audio Silence Bug on Regenerated TTS (`MainComposition.tsx`) | [x] Completed |
+| Task 55 | Fix Mid-Word Heading Truncation Bug with `smartTrimWordBoundary` (`contractLoader.js`) | [x] Completed |
+| Task 56 | Restore `IntroBubbleImage` (`OrbitalBubblesMode.tsx`) & Separate `IntroMetricPillImage` (`VennSpheresMode.tsx`) | [x] Completed |
+| Task 57 | Register & Link `IntroMetricPillImage` (`venn_spheres`) across Registry, Layouts Dropdown & Contract Loader | [x] Completed |
+| Task 58 | Theme-aware Dynamic Color Palette Refactor for Venn Spheres & Orbital Bubbles (`VennSpheresMode.tsx`, `OrbitalBubblesMode.tsx`) | [x] Completed |
+| Task 59 | Real-Time Video Render Progress Upgrade with ANSI-Clean stdout Parsing & 300ms Fast Polling (`render.js`, `App.jsx`) | [x] Completed |
+| Task 60 | Custom Video Download Filename & Save Location Picker (`MasterPlayer.jsx`, `App.jsx`) | [x] Completed |
+| Task 61 | Fix Video Export Progress Percentage Calculation Bug (`render.js`, `App.jsx`) | [x] Completed |
 
 
 
