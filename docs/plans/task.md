@@ -42,8 +42,8 @@
 | Task 39 | Persist Active Project & View State Across F5 Page Reloads (`App.jsx`) | [x] Completed |
 | Task 40 | Replace Simple Loader with SVG Circular Progress Ring & Phase Steps (`StoryboardEditor.jsx`) | [x] Completed |
 | Task 41 | Clone & Register Quang Anh Voice (`omnivoice_quanganh`) in TTS Service & UI Dropdowns | [x] Completed |
-| Task 42 | Fix Layout Intent Auto-Matching & Strict 50% Delay Hard Clamp (`ai.js`, `contractLoader.js`) | [ ] In Progress |
-| Task 43 | Fix Blank Layout Render Bug & Complete Layout Family Dropdown Mapping (`modes/*.tsx`, `StoryboardEditor.jsx`) | [ ] In Progress |
+| Task 42 | Fix Layout Intent Auto-Matching & Strict 50% Delay Hard Clamp (`ai.js`, `contractLoader.js`) | [x] Completed |
+| Task 43 | Fix Blank Layout Render Bug & Complete Layout Family Dropdown Mapping (`modes/*.tsx`, `StoryboardEditor.jsx`) | [x] Completed |
 
 
 
