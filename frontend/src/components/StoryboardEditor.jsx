@@ -210,174 +210,24 @@ const LAYOUTS_BY_FAMILY = {
     { value: "IntroEvidenceScanlineImage", label: "Intro Evidence Scanline Image" },
     { value: "IntroEvidenceTimelineImage", label: "Intro Evidence Timeline Image" },
     { value: "IntroFullImage", label: "Intro Full Image" },
-    { value: "IntroFullImageSplitHeadline", label: "Intro Full Image Split Headline" },
-    { value: "IntroKineticCountdownImage", label: "Intro Kinetic Countdown Image" },
     { value: "IntroMapPinsImage", label: "Intro MAP Pins Image" },
-    { value: "IntroMediaHero", label: "Intro Media Hero" },
-    { value: "IntroMediaPoster", label: "Intro Media Poster" },
-    { value: "IntroMetricConstellationImage", label: "Intro Metric Constellation Image" },
-    { value: "IntroMetricGyroscopeImage", label: "Intro Metric Gyroscope Image" },
-    { value: "IntroMetricKpiBoardImage", label: "Intro Metric KPI Board Image" },
-    { value: "IntroMetricOrbitImage", label: "Intro Metric Orbit Image" },
     { value: "IntroMetricPillImage", label: "Intro Metric Pill Image" },
-    { value: "IntroNumberLede", label: "Intro Number Lede" },
-    { value: "IntroProfile", label: "Intro Profile" },
     { value: "IntroRadarSignalImage", label: "Intro Radar Signal Image" },
     { value: "IntroSignalStepsImages", label: "Intro Signal Steps Images" },
-    { value: "IntroStampStackImage", label: "Intro Stamp Stack Image" },
-    { value: "KineticType", label: "Kinetic Type" },
-    { value: "LowerThirdNews", label: "Lower Third News" },
     { value: "MapPinsHook", label: "MAP Pins Hook" },
-    { value: "ManifestoConcept", label: "Manifesto Concept" },
-    { value: "MediaCardHook", label: "Media Card Hook" },
-    { value: "MediaHeadlineHook", label: "Media Headline Hook" },
-    { value: "NeonStackTitle", label: "Neon Stack Title" },
-    { value: "NotificationHook", label: "Notification Hook" },
-    { value: "OpsMonitorHook", label: "OPS Monitor Hook" },
-    { value: "OrbitMetricsHook", label: "Orbit Metrics Hook" },
-    { value: "PosterTitle", label: "Poster Title" },
-    { value: "PriceAlertHook", label: "Price Alert Hook" },
-    { value: "ProcessStrip", label: "Process Strip" },
-    { value: "Quote", label: "Quote Insight" },
-    { value: "RedditPostHook", label: "Reddit Post Hook" },
-    { value: "SplitEditorial", label: "Split Editorial" },
-    { value: "SporlightOutcome", label: "Sporlight Outcome" },
-    { value: "SpotlightConcept", label: "Spotlight Concept" },
-    { value: "StatusGridHook", label: "Status Grid Hook" },
-    { value: "SwissGrid", label: "Swiss Grid" },
-    { value: "SysteamAlertHook", label: "Systeam Alert Hook" },
-    { value: "TerminalCommandHook", label: "Terminal Command Hook" },
-    { value: "Terminal", label: "Terminal Console" },
-    { value: "TickerTapeHook", label: "Ticker Tape Hook" },
-    { value: "VignelliTitle", label: "Vignelli Title" },
-    { value: "WalkthroughPhoneExample", label: "Walkthrough Phone Example" },
-    { value: "WarmGrainHook", label: "Warm Grain Hook" },
-    { value: "XPostHook", label: "X Post Hook" }
+    { value: "OpsMonitorHook", label: "OPS Monitor Hook" }
   ],
   "List / Steps": [
     { value: "AIHubGrid1", label: "AI Hub Grid 1 (Emotion Column)" },
-    { value: "AIHubGrid3", label: "AI Hub Grid 3 (Benefits Stack)" },
-    { value: "AuditTrailChecklist", label: "Audit Trail Checklist" },
-    { value: "Feature Grid", label: "Bento Feature Grid" },
-    { value: "DebateTriangleBullet", label: "Debate Triangle Bullet" },
-    { value: "DecisionCardRadio", label: "Decision Card Radio" },
-    { value: "DecisionTree", label: "Decision Tree" },
-    { value: "DossierProofBullet", label: "Dossier Proof Bullet" },
-    { value: "KanbanChecklist", label: "Kanban Checklist" },
-    { value: "LogoWall", label: "Logo Wall" },
-    { value: "OpsBriefBullef", label: "OPS Brief Bullef" },
-    { value: "OptionSelectorRadio", label: "Option Selector Radio" },
-    { value: "ProgressGateChecklist", label: "Progress Gate Checklist" },
     { value: "RankedImpactBullet", label: "Ranked Impact Bullet" },
     { value: "SelectorWheelRadio", label: "Selector Wheel Radio" },
-    { value: "SignalCheckpointsBullet", label: "Signal Checkpoints Bullet" },
-    { value: "SignalRailBullet", label: "Signal Rail Bullet" },
-    { value: "SocialPost", label: "Social Post" },
-    { value: "SoftBoardChecklist", label: "Soft Board Checklist" },
-    { value: "SplitBandChecklist", label: "Split Band Checklist" },
-    { value: "SplitProofBullet", label: "Split Proof Bullet" },
-    { value: "StampCheklist", label: "Stamp Cheklist" },
-    { value: "SwitchboardRadio", label: "Switchboard Radio" },
-    { value: "Three Columns", label: "Three Pricing Cards" },
-    { value: "VersusChoiceRadio", label: "Versus Choice Radio" }
+    { value: "SignalRailBullet", label: "Signal Rail Bullet" }
   ],
-  "Data / Metrics": [
-    { value: "EditorialChart", label: "Editorial Chart" },
-    { value: "GaugeStat", label: "Gauge Stat" },
-    { value: "HeroMetricCards", label: "Hero Metric Cards" },
-    { value: "MarketBoard", label: "Market Board" },
-    { value: "MetricCards", label: "Metric Cards" },
-    { value: "ProgressBars", label: "Progress Bars" },
-    { value: "RadialMetricCards", label: "Radial Metric Cards" },
-    { value: "Stats Banner", label: "SaaS Live Chart" },
-    { value: "ScoreboardMeticCards", label: "Scoreboard Metic Cards" },
-    { value: "SingleStat", label: "Single Stat" },
-    { value: "SplitClaimStat", label: "Split Claim Stat" },
-    { value: "SpotlightStat", label: "Spotlight Stat" },
-    { value: "StackedProofMetrics", label: "Stacked Proof Metrics" },
-    { value: "StampStat", label: "Stamp Stat" },
-    { value: "Dashboard", label: "Stats Dashboard" },
-    { value: "TickerMetricCards", label: "Ticker Metric Cards" }
-  ],
-  "Comparison / Table": [
-    { value: "ComparisionScoreboard", label: "Comparision Scoreboard" },
-    { value: "ComparisonBoard", label: "Comparison Board" },
-    { value: "DecisionMatrix", label: "Decision Matrix" },
-    { value: "GlassStatTable", label: "Glass Stat Table" },
-    { value: "ImpactLadderTable", label: "Impact Ladder Table" },
-    { value: "NeonPlanVersus", label: "Neon Plan Versus" },
-    { value: "OldVsNews", label: "OLD VS News" },
-    { value: "Ranked", label: "Ranked" },
-    { value: "SomparisonTable", label: "Somparison Table" },
-    { value: "SplitScreenInterview", label: "Split Screen Interview" },
-    { value: "SplitVerdictTable", label: "Split Verdict Table" },
-    { value: "VersusArena", label: "Versus Arena" },
-    { value: "Comparison", label: "Versus Arena Split" },
-    { value: "VersusBrightDiagonalPoster", label: "Versus Bright Diagonal Poster" },
-    { value: "VersusDiagonalDetailsPoster", label: "Versus Diagonal Details Poster" },
-    { value: "VersusDiagonalSpotlight", label: "Versus Diagonal Spotlight" },
-    { value: "VersusScale", label: "Versus Scale" },
-    { value: "VersusSplitBands", label: "Versus Split Bands" },
-    { value: "VersusSplitCards", label: "Versus Split Cards" },
-    { value: "VersusTimelineShift", label: "Versus Timeline Shift" },
-    { value: "VersusTugline", label: "Versus Tugline" },
-    { value: "VersusVerdict", label: "Versus Verdict" }
-  ],
-  "Quote / Insight": [
-    { value: "ConversationQuote", label: "Conversation Quote" },
-    { value: "DiffReceiptQuote", label: "Diff Receipt Quote" },
-    { value: "DossierQuestion", label: "Dossier Question" },
-    { value: "EditorialQuestion", label: "Editorial Question" },
-    { value: "ForumQuote", label: "Forum Quote" },
-    { value: "HotTakeQuote", label: "HOT Take Quote" },
-    { value: "HeartQuestion", label: "Heart Question" },
-    { value: "LabelwriterQuote", label: "Labelwriter Quote" },
-    { value: "LessonHightlightQuote", label: "Lesson Hightlight Quote" },
-    { value: "ManifestoQuote", label: "Manifesto Quote" },
-    { value: "MessageQuote", label: "Message Quote" },
-    { value: "NewsTicker", label: "News Ticker" },
-    { value: "PinnedMessageQuote", label: "Pinned Message Quote" },
-    { value: "PollStackQuesion", label: "Poll Stack Quesion" },
-    { value: "Pullquote", label: "Pullquote" },
-    { value: "QuoteColumnQuestion", label: "Quote Column Question" },
-    { value: "Quote", label: "Quote Insight" },
-    { value: "SpeakerAvatarQuote", label: "Speaker Avatar Quote" },
-    { value: "VignelliQuote", label: "Vignelli Quote" }
-  ],
-  "Timeline": [
-    { value: "AIHubGrid2", label: "AI Hub Grid 2 (Winding Roadmap)" },
-    { value: "Timeline", label: "Staggered Pill Timeline" },
-    { value: "TimelineBeamRail", label: "Timeline Beam Rail" },
-    { value: "TimelineChapters", label: "Timeline Chapters" },
-    { value: "TimelineCheckFlow", label: "Timeline Check Flow" },
-    { value: "TimelineEditorial", label: "Timeline Editorial" },
-    { value: "TimelineMapPins", label: "Timeline MAP Pins" },
-    { value: "TimelineNewswire", label: "Timeline Newswire" },
-    { value: "TimelineRadar", label: "Timeline Radar" },
-    { value: "TimelineRoadmap", label: "Timeline Roadmap" },
-    { value: "TimelineStaircase", label: "Timeline Staircase" }
-  ],
-  "Media": [
-    { value: "Gallery", label: "3D Glass Stack Gallery" },
-    { value: "Laptop Mockup", label: "Double Device Mockup" },
-    { value: "ImageBackbroundPoster", label: "Image Backbround Poster" },
-    { value: "ImageBackgroundBadge", label: "Image Background Badge" },
-    { value: "ImageBackgroundDefault", label: "Image Background Default" },
-    { value: "ImageBackgroundGlobe", label: "Image Background Globe" },
-    { value: "Integration Cloud", label: "Integration Cloud Graph" },
-    { value: "MediaCard", label: "Media Card" },
-    { value: "MediaImageBottomBrief", label: "Media Image Bottom Brief" },
-    { value: "MediaImageFloatingPoints", label: "Media Image Floating Points" },
-    { value: "MediaImageFocusWindow", label: "Media Image Focus Window" },
-    { value: "MediaImageHorizontalPan", label: "Media Image Horizontal PAN" },
-    { value: "MediaImageLandscapeZoomOut", label: "Media Image Landscape Zoom OUT" },
-    { value: "MediaImageMapCallout", label: "Media Image MAP Callout" },
-    { value: "MediaImageNewsLowerThird", label: "Media Image News Lower Third" },
-    { value: "MediaImagePinBoard", label: "Media Image PIN Board" },
-    { value: "MediaImageTopBrief", label: "Media Image TOP Brief" },
-    { value: "MediaImageWideCardStack", label: "Media Image Wide Card Stack" },
-    { value: "Split Screen", label: "Split Screen Media" }
-  ],
+  "Data / Metrics": [],
+  "Comparison / Table": [],
+  "Quote / Insight": [],
+  "Timeline": [],
+  "Media": [],
   "Ending": [
     { value: "BottomAnchorOutro", label: "Bottom Anchor Outro" },
     { value: "BrandOutro", label: "Brand Outro" },
@@ -387,111 +237,34 @@ const LAYOUTS_BY_FAMILY = {
     { value: "Ending", label: "Ending / CTA Screen" },
     { value: "Launch", label: "Launch" },
     { value: "Minimal", label: "Minimal" },
-    { value: "NextStepEnding", label: "Next Step Ending" },
-    { value: "Product", label: "Product" },
-    { value: "QuietLogoMark", label: "Quiet Logo Mark" },
-    { value: "SocialFollowEnding", label: "Social Follow Ending" },
-    { value: "Subscribe", label: "Subscribe" }
+    { value: "NextStepEnding", label: "Next Step Ending" }
   ]
 };
 
+const normalizeFamily = (fam, visualLayout) => {
+  if (visualLayout) {
+    for (const [familyKey, layouts] of Object.entries(LAYOUTS_BY_FAMILY)) {
+      if (Array.isArray(layouts) && layouts.some(l => l.value === visualLayout)) {
+        return familyKey;
+      }
+    }
+  }
+  if (!fam) return "Opening / Headline";
+  if (LAYOUTS_BY_FAMILY[fam]) return fam;
+  const f = fam.toLowerCase();
+  if (f.includes("opening") || f === "opening") return "Opening / Headline";
+  if (f.includes("list") || f.includes("step") || f === "list") return "List / Steps";
+  if (f.includes("ending") || f.includes("outro") || f === "ending") return "Ending";
+  if (f.includes("data") || f.includes("metric") || f === "metric") return "Data / Metrics";
+  if (f.includes("comparison") || f.includes("table") || f === "comparison") return "Comparison / Table";
+  if (f.includes("quote") || f.includes("insight") || f === "quote") return "Quote / Insight";
+  if (f.includes("timeline") || f === "timeline") return "Timeline";
+  if (f.includes("media") || f === "media") return "Media";
+  if (f === "blank") return "Blank";
+  return "Opening / Headline";
+};
+
 const VDE_PRESET_STYLES = [
-  {
-    id: "minimal",
-    name: "Minimalist Dark",
-    description: "Nền tối chàm, các thẻ kính mờ phát sáng nhẹ, thanh lịch và tập trung.",
-    tokens: {
-      background: "#080b11",
-      cardBg: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)",
-      border: "1.5px solid rgba(255,255,255,0.12)",
-      text: "#ffffff",
-      textSecondary: "rgba(255,255,255,0.6)",
-      accent: "#3b82f6",
-      radius: "16px",
-      shadow: "0 10px 30px rgba(0,0,0,0.5)",
-      fontFamily: "Space Grotesk, sans-serif"
-    }
-  },
-  {
-    id: "apple",
-    name: "Apple Keynote",
-    description: "Nền đen tuyền, chữ trắng cực lớn, tối giản và cao cấp tuyệt đối.",
-    tokens: {
-      background: "#000000",
-      cardBg: "rgba(255, 255, 255, 0.03)",
-      border: "1.5px solid rgba(255,255,255,0.08)",
-      text: "#ffffff",
-      textSecondary: "#86868b",
-      accent: "#ffffff",
-      radius: "24px",
-      shadow: "none",
-      fontFamily: "Space Grotesk, sans-serif"
-    }
-  },
-  {
-    id: "claude",
-    name: "Claude Editorial",
-    description: "Nền cát ấm, chữ có chân sang trọng, cam đất sét gạch ấm áp.",
-    tokens: {
-      background: "#FBF9F4",
-      cardBg: "rgba(217, 107, 67, 0.03)",
-      border: "1.5px solid rgba(217, 107, 67, 0.15)",
-      text: "#191919",
-      textSecondary: "#6b655f",
-      accent: "#d96b43",
-      radius: "16px",
-      shadow: "none",
-      fontFamily: "Georgia, serif"
-    }
-  },
-  {
-    id: "light",
-    name: "Minimalist Light",
-    description: "Nền trắng tinh, xám sáng hiện đại, màu xanh nhấn đầy năng lượng.",
-    tokens: {
-      background: "#ffffff",
-      cardBg: "#f8fafc",
-      border: "1.5px solid #e2e8f0",
-      text: "#0f172a",
-      textSecondary: "#475569",
-      accent: "#2563eb",
-      radius: "12px",
-      shadow: "0 10px 20px rgba(0,0,0,0.03)",
-      fontFamily: "Space Grotesk, sans-serif"
-    }
-  },
-  {
-    id: "cyberpunk",
-    name: "Cyberpunk Grid",
-    description: "Giao diện kỹ thuật số tương lai, neon hồng/xanh lam rực rỡ.",
-    tokens: {
-      background: "#030008",
-      cardBg: "linear-gradient(135deg, rgba(255,0,128,0.08) 0%, rgba(0,229,255,0.03) 100%)",
-      border: "1.5px solid rgba(0,229,255,0.25)",
-      text: "#ffffff",
-      textSecondary: "rgba(255,255,255,0.7)",
-      accent: "#ff007f",
-      radius: "6px",
-      shadow: "0 0 15px rgba(0,229,255,0.2)",
-      fontFamily: "monospace"
-    }
-  },
-  {
-    id: "anime",
-    name: "Anime Sketch",
-    description: "Phong cách comic thô nét viền đen đậm đầy sáng tạo.",
-    tokens: {
-      background: "#fdf8f5",
-      cardBg: "#ffffff",
-      border: "3px solid #000000",
-      text: "#1e1e24",
-      textSecondary: "#5a5a66",
-      accent: "#ff6b6b",
-      radius: "14px",
-      shadow: "5px 5px 0px #000000",
-      fontFamily: "Space Grotesk, sans-serif"
-    }
-  },
   {
     id: "rikkei",
     name: "Rikkei Academic",
@@ -507,8 +280,128 @@ const VDE_PRESET_STYLES = [
       shadow: "0 8px 24px rgba(168, 35, 42, 0.03)",
       fontFamily: "Be Vietnam Pro, sans-serif"
     }
+  },
+  {
+    id: "ai_hub_grid",
+    name: "AI Hub Grid",
+    description: "Nền chàm tối với lưới tọa độ kỹ thuật số, quầng sáng xanh dương và các thẻ kính mờ phát sáng viền cyan.",
+    tokens: {
+      background: "#030712",
+      cardBg: "linear-gradient(135deg, rgba(8, 17, 37, 0.7) 0%, rgba(3, 7, 18, 0.4) 100%)",
+      border: "1px solid rgba(59, 130, 246, 0.35)",
+      text: "#ffffff",
+      textSecondary: "rgba(255, 255, 255, 0.65)",
+      accent: "#3b82f6",
+      radius: "16px",
+      shadow: "0 0 25px rgba(59, 130, 246, 0.15)",
+      fontFamily: "Be Vietnam Pro, sans-serif"
+    }
   }
-];
+const CircularProgressLoader = ({ loadingMessage }) => {
+  const [progress, setProgress] = useState(5);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 95) return 95;
+        const diff = Math.max(1, Math.floor((95 - prev) * 0.08));
+        return prev + diff;
+      });
+    }, 250);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const getPhaseText = (pct) => {
+    if (loadingMessage) return loadingMessage;
+    if (pct < 30) return "Phân tích kịch bản & trích xuất ý chính...";
+    if (pct < 65) return "Lựa chọn Layout & áp dụng phong cách thiết kế...";
+    if (pct < 90) return "Tải quy chuẩn phân cảnh & phối hợp giọng đọc...";
+    return "Hoàn tất không gian biên tập Storyboard...";
+  };
+
+  const radius = 48;
+  const strokeWidth = 8;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "380px",
+        backgroundColor: "#ffffff",
+        borderRadius: "16px",
+        border: "1px solid rgba(15, 23, 42, 0.08)",
+        boxShadow: "0 12px 32px rgba(15, 23, 42, 0.05)",
+        padding: "40px 20px",
+        boxSizing: "border-box"
+      }}
+    >
+      <div style={{ position: "relative", width: "120px", height: "120px" }}>
+        <svg width="120" height="120" viewBox="0 0 120 120" style={{ transform: "rotate(-90deg)" }}>
+          <defs>
+            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#2563eb" />
+              <stop offset="100%" stopColor="#a855f7" />
+            </linearGradient>
+          </defs>
+          <circle
+            cx="60"
+            cy="60"
+            r={radius}
+            stroke="rgba(15, 23, 42, 0.08)"
+            strokeWidth={strokeWidth}
+            fill="none"
+          />
+          <circle
+            cx="60"
+            cy="60"
+            r={radius}
+            stroke="url(#progressGradient)"
+            strokeWidth={strokeWidth}
+            fill="none"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            style={{
+              transition: "stroke-dashoffset 0.3s ease-in-out"
+            }}
+          />
+        </svg>
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <span style={{ fontSize: "24px", fontFamily: "var(--font-heading)", fontWeight: "900", color: "#0f172a", letterSpacing: "-0.03em" }}>
+            {`${progress}%`}
+          </span>
+        </div>
+      </div>
+
+      <p style={{ marginTop: "24px", fontSize: "15px", fontFamily: "var(--font-heading)", fontWeight: "700", color: "#1e293b", textAlign: "center" }}>
+        {getPhaseText(progress)}
+      </p>
+
+      <span style={{ marginTop: "6px", fontSize: "12px", color: "var(--text-secondary)", fontFamily: "Inter", fontWeight: "500" }}>
+        Vui lòng đợi trong giây lát, AI đang xử lý...
+      </span>
+    </div>
+  );
+};
 
 export const StoryboardEditor = ({
 
@@ -548,7 +441,9 @@ export const StoryboardEditor = ({
     if (showMediaModal) {
       axios.get("http://localhost:5000/api/media/previous")
         .then(res => {
-          setPreviousMedia(res.data || []);
+          const list = res.data || [];
+          const uniqueList = Array.from(new Set(list.map(u => typeof u === "string" ? u.trim() : u)));
+          setPreviousMedia(uniqueList);
         })
         .catch(err => console.error("Failed to fetch previous media:", err));
     }
@@ -652,8 +547,9 @@ export const StoryboardEditor = ({
       try {
         const res = await axios.post("http://localhost:5000/api/upload", { file: reader.result });
         if (res.data && res.data.url) {
-          setSelectedMedia(prev => [...prev, res.data.url]);
-          setPreviousMedia(prev => [res.data.url, ...prev]);
+          const uploadedUrl = res.data.url.trim();
+          setSelectedMedia(prev => Array.from(new Set([...prev, uploadedUrl])));
+          setPreviousMedia(prev => Array.from(new Set([uploadedUrl, ...prev])));
           setMediaTab("YOUR_MEDIA");
         }
       } catch (err) {
@@ -1264,25 +1160,7 @@ export const StoryboardEditor = ({
       <div className="custom-scrollbar" style={{ flex: 1, padding: "30px", display: "flex", flexDirection: "column", gap: "25px", overflowY: "auto", boxSizing: "border-box" }}>
 
         {loading ? (
-          <div className="border-strict" style={{ display: "flex", flex: 1, flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "350px", backgroundColor: "#ffffff", boxShadow: "4px 4px 0px 0px #000000" }}>
-            <div style={{
-              width: "40px",
-              height: "40px",
-              border: "4px solid #f3f3f3",
-              borderTop: "4px solid #000000",
-              borderRadius: "50%",
-              animation: "spin 1s linear infinite"
-            }} />
-            <style>{`
-              @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-              }
-            `}</style>
-            <p style={{ marginTop: "20px", fontFamily: "Space Grotesk", fontWeight: "bold" }}>
-              {loadingMessage || "AI đang phân tách kịch bản..."}
-            </p>
-          </div>
+          <CircularProgressLoader loadingMessage={loadingMessage} />
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: 1 }}>
 
@@ -1458,39 +1336,15 @@ export const StoryboardEditor = ({
                           justifyContent: "space-between",
                           position: "relative",
                           overflow: "hidden",
-                          backgroundImage: style.id === "cyberpunk" ? "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)" : "none",
-                          backgroundSize: "15px 15px",
                           color: style.tokens.text
                         }}>
                           {/* 1. Header decoration */}
-                          {style.id === "claude" && (
-                            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
-                              {/* Grid dots */}
-                              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 3px)", gap: "2px" }}>
-                                {Array.from({ length: 15 }).map((_, i) => (
-                                  <div key={i} style={{ width: "3px", height: "3px", borderRadius: "50%", backgroundColor: "#d9d2c9" }} />
-                                ))}
-                              </div>
-                              {/* Sun symbol */}
-                              <div style={{ color: "#d96b43", fontSize: "14px", fontWeight: "bold" }}>☀️</div>
-                            </div>
-                          )}
-
-                          {style.id === "cyberpunk" && (
-                            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontSize: "8px", fontFamily: "monospace", color: "rgba(0,229,255,0.4)" }}>
-                              <span>SYS.LOC // 0x48a</span>
-                              <span>GRID_ACTIVE</span>
-                            </div>
-                          )}
-
-                          {style.id === "rikkei" && (
+                          {style.id === "rikkei" ? (
                             <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
                               <span style={{ fontSize: "8px", fontWeight: "bold", color: "#A8232A", fontFamily: "sans-serif" }}>Hệ thống học tập</span>
                               <span style={{ fontSize: "8px", color: "#555555", fontWeight: "500", fontFamily: "sans-serif" }}>Rikkei Edu</span>
                             </div>
-                          )}
-
-                          {style.id !== "claude" && style.id !== "cyberpunk" && style.id !== "apple" && style.id !== "rikkei" && (
+                          ) : (
                             <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
                               <div style={{ fontSize: "8px", textTransform: "uppercase", padding: "2px 6px", border: `1px solid ${style.tokens.accent}50`, borderRadius: "10px", color: style.tokens.accent, fontWeight: "bold" }}>
                                 Kỷ nguyên AI
@@ -1498,65 +1352,8 @@ export const StoryboardEditor = ({
                             </div>
                           )}
 
-                          {/* Spacer for Apple center placement */}
-                          {style.id === "apple" && <div />}
-
                           {/* 2. Main Content Card / Block */}
-                          {style.id === "apple" ? (
-                            <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
-                              <h4 style={{
-                                margin: 0,
-                                fontSize: "15px",
-                                fontWeight: "900",
-                                fontFamily: "sans-serif",
-                                textTransform: "uppercase",
-                                color: "#ffffff",
-                                letterSpacing: "-0.5px",
-                                lineHeight: "1.15"
-                              }}>
-                                AI BƯỚC SANG KỶ NGUYÊN MỚI
-                              </h4>
-                              <p style={{
-                                margin: 0,
-                                fontSize: "9px",
-                                color: "#86868b",
-                                lineHeight: "1.3"
-                              }}>
-                                Giờ đây nó có thể phát triển cả một dự án phần mềm.
-                              </p>
-                            </div>
-                          ) : style.id === "cyberpunk" ? (
-                            <div style={{
-                              backgroundColor: style.tokens.cardBg.includes("gradient") ? undefined : style.tokens.cardBg,
-                              backgroundImage: style.tokens.cardBg.includes("gradient") ? style.tokens.cardBg : undefined,
-                              border: style.tokens.border,
-                              borderRadius: style.tokens.radius,
-                              boxShadow: style.tokens.shadow,
-                              padding: "10px",
-                              boxSizing: "border-box",
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "6px",
-                              width: "100%"
-                            }}>
-                              <div style={{ fontSize: "7px", fontFamily: "monospace", color: "rgba(0,229,255,0.5)" }}>
-                                $ npm run dev --ai-agent
-                              </div>
-                              <h4 style={{
-                                margin: 0,
-                                fontSize: "10px",
-                                fontWeight: "bold",
-                                fontFamily: "monospace",
-                                color: "#ffffff",
-                                lineHeight: "1.2"
-                              }}>
-                                &gt; KỶ NGUYÊN AI MỚI
-                              </h4>
-                              <div style={{ fontSize: "8px", color: "#00e5ff", fontFamily: "monospace" }}>
-                                [X] CODE PROJECT IN PROGRESS
-                              </div>
-                            </div>
-                          ) : style.id === "rikkei" ? (
+                          {style.id === "rikkei" ? (
                             <div style={{
                               backgroundColor: "#FAF5F5",
                               border: "1px solid #F1E2E3",
@@ -1612,7 +1409,6 @@ export const StoryboardEditor = ({
                               }}>
                                 AI THAY ĐỔI TOÀN DIỆN
                               </h4>
-
                               <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                                 <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
                                   <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: style.tokens.accent }} />
@@ -1630,47 +1426,12 @@ export const StoryboardEditor = ({
                             </div>
                           )}
 
-                          {/* 3. Footer decoration / buttons */}
-                          {style.id === "claude" ? (
-                            <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%" }}>
-                              {/* Claude pill buttons matching screenshot */}
-                              <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
-                                <span style={{ fontSize: "7px", padding: "3px 6px", border: "1px solid rgba(217, 107, 67, 0.25)", borderRadius: "10px", display: "flex", alignItems: "center", gap: "3px", backgroundColor: "#F7F2EB", color: "#6b655f" }}>
-                                  <span style={{ color: "#d96b43" }}>×</span> Không tự quay
-                                </span>
-                                <span style={{ fontSize: "7px", padding: "3px 6px", border: "1px solid rgba(217, 107, 67, 0.25)", borderRadius: "10px", display: "flex", alignItems: "center", gap: "3px", backgroundColor: "#F7F2EB", color: "#6b655f" }}>
-                                  <span style={{ color: "#d96b43" }}>×</span> Không cầm máy
-                                </span>
-                              </div>
-                              {/* Bottom branding */}
-                              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "7px", color: "#6b655f", borderTop: "1px solid rgba(0,0,0,0.05)", paddingTop: "4px" }}>
-                                <span>✴ TỔNG TÀI AI</span>
-                                <span>@tongtaiai</span>
-                              </div>
-                            </div>
-                          ) : style.id === "anime" ? (
-                            <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                              <button style={{
-                                width: "100%",
-                                padding: "4px",
-                                backgroundColor: "#ff6b6b",
-                                color: "#ffffff",
-                                border: "2px solid #000000",
-                                borderRadius: "8px",
-                                fontSize: "8px",
-                                fontWeight: "bold",
-                                boxShadow: "2px 2px 0px #000000"
-                              }}>
-                                XEM AI LÀM A-Z
-                              </button>
-                            </div>
-                          ) : style.id === "rikkei" ? (
+                          {/* 3. Footer decoration */}
+                          {style.id === "rikkei" ? (
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "7px", color: "#A8232A", fontWeight: "bold", borderTop: "1px solid rgba(0,0,0,0.05)", paddingTop: "4px", width: "100%", fontFamily: "Be Vietnam Pro, sans-serif" }}>
                               <span>Rikkei Education</span>
                               <span style={{ color: "#595959" }}>@rikkeiedu</span>
                             </div>
-                          ) : style.id === "apple" ? (
-                            <div />
                           ) : (
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "7px", color: style.tokens.textSecondary }}>
                               <span>• HYPERFRAMES</span>
@@ -1836,7 +1597,7 @@ export const StoryboardEditor = ({
                 </div>
 
                 {/* Left Side: 9:16 Layout Preview Card */}
-                <div style={{ width: "192px", flexShrink: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
+                <div style={{ width: "280px", flexShrink: 0, display: "flex", flexDirection: "column", gap: "16px" }}>
                   <label className="form-label-mono" style={{ fontSize: "11px" }}>Preview (9:16)</label>
                   <div
                     className="border-strict"
@@ -1925,6 +1686,96 @@ export const StoryboardEditor = ({
                       )}
                     </button>
                   </div>
+
+                  {/* Unsplash Search & Suggestion Panel */}
+                  <div style={{ borderTop: "1px solid #000000", paddingTop: "15px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                      <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Background Media</label>
+                      <button
+                        type="button"
+                        onClick={() => handleImageUploadClick(scene.id)}
+                        disabled={uploadingScenes[scene.id]}
+                        style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
+                      >
+                        {uploadingScenes[scene.id] ? "⏳ Uploading..." : "📁 Upload"}
+                      </button>
+                    </div>
+
+                    <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
+                      <input
+                        className="form-input-mono"
+                        type="text"
+                        placeholder="Search English keywords (e.g., code, zen)..."
+                        value={searchQueries[scene.id] || ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setSearchQueries(prev => ({ ...prev, [scene.id]: val }));
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSearchImages(scene.id);
+                        }}
+                        style={{ padding: "8px", fontSize: "12px" }}
+                      />
+                      <button
+                        className="btn-mono btn-mono-secondary"
+                        style={{ padding: "8px 15px", whiteSpace: "nowrap", height: "auto" }}
+                        disabled={searchingImages[scene.id]}
+                        onClick={() => handleSearchImages(scene.id)}
+                      >
+                        {searchingImages[scene.id] ? "..." : "Tìm"}
+                      </button>
+                    </div>
+
+                    {/* Image Suggestions Grid */}
+                    <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
+                      {/* Default Accent HEX Gradient choice */}
+                      <div
+                        onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", -1)}
+                        style={{
+                          width: "48px",
+                          height: "48px",
+                          flexShrink: 0,
+                          borderRadius: "4px",
+                          border: scene.selectedMediaIndex === -1 ? "3px solid #000000" : "1px solid #cccccc",
+                          background: `linear-gradient(135deg, ${scene.accentColor || "#FFB7C5"}aa 0%, #060813 100%)`,
+                          cursor: "pointer",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "8px",
+                          fontWeight: "bold",
+                          color: "#ffffff",
+                          textAlign: "center",
+                          padding: "2px",
+                          fontFamily: "Space Grotesk, sans-serif",
+                          lineHeight: "1.1",
+                          boxSizing: "border-box",
+                          textTransform: "uppercase"
+                        }}
+                      >
+                        Nền màu nhấn
+                      </div>
+
+                      {scene.mediaList && scene.mediaList.map((imgUrl, imgIdx) => (
+                        <div
+                          key={imgIdx}
+                          onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", imgIdx)}
+                          style={{
+                            width: "48px",
+                            height: "48px",
+                            flexShrink: 0,
+                            borderRadius: "4px",
+                            border: scene.selectedMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
+                            overflow: "hidden",
+                            cursor: "pointer"
+                          }}
+                        >
+                          <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Right Side: Editing Inputs */}
@@ -1934,11 +1785,11 @@ export const StoryboardEditor = ({
                       <label className="form-label-mono" style={{ fontSize: "11px" }}>Layout Family</label>
                       <select
                         className="form-input-mono"
-                        value={scene.layoutFamily || "Opening / Headline"}
+                        value={normalizeFamily(scene.layoutFamily, scene.visualLayout)}
                         onChange={(e) => {
                           const newFamily = e.target.value;
                           const layouts = LAYOUTS_BY_FAMILY[newFamily] || [];
-                          const defaultLayout = layouts[0]?.value || "IntroMediaHero";
+                          const defaultLayout = layouts[0]?.value || "AppCardConcept";
 
                           onUpdateScene(scene.id, {
                             ...scene,
@@ -1961,7 +1812,7 @@ export const StoryboardEditor = ({
                         onChange={(e) => handleFieldChange(scene.id, "visualLayout", e.target.value)}
                         style={{ padding: "8px", fontSize: "12px" }}
                       >
-                        {(LAYOUTS_BY_FAMILY[scene.layoutFamily || "Opening / Headline"] || LAYOUTS_BY_FAMILY["Opening / Headline"]).map((lay) => (
+                        {(LAYOUTS_BY_FAMILY[normalizeFamily(scene.layoutFamily, scene.visualLayout)] || LAYOUTS_BY_FAMILY["Opening / Headline"]).map((lay) => (
                           <option key={lay.value} value={lay.value}>{lay.label}</option>
                         ))}
                       </select>
@@ -2010,8 +1861,8 @@ export const StoryboardEditor = ({
                       type="text"
                       placeholder="Ví dụ: Vendor, AI Agent"
                       value={
-                        localTexts[`${scene.id}_highlightWords`] !== undefined 
-                          ? localTexts[`${scene.id}_highlightWords`] 
+                        localTexts[`${scene.id}_highlightWords`] !== undefined
+                          ? localTexts[`${scene.id}_highlightWords`]
                           : (scene.sceneIntent?.highlightWords || []).join(", ")
                       }
                       onChange={(e) => {
@@ -2116,13 +1967,13 @@ export const StoryboardEditor = ({
                     <div style={{
                       display: "flex",
                       flexDirection: "column",
-                      gap: "10px",
+                      gap: "4px",
                       maxHeight: "260px",
                       overflowY: "auto",
-                      paddingRight: "6px",
+                      paddingRight: "4px",
                       border: "1px solid rgba(255,255,255,0.08)",
                       borderRadius: "6px",
-                      padding: "8px",
+                      padding: "6px",
                       backgroundColor: "rgba(0, 0, 0, 0.15)"
                     }}>
                       {getNormalizedPoints(scene.points).length === 0 ? (
@@ -2131,88 +1982,108 @@ export const StoryboardEditor = ({
                         getNormalizedPoints(scene.points).map((pt, idx) => (
                           <div key={idx} style={{
                             display: "flex",
-                            flexDirection: "column",
-                            gap: "8px",
-                            padding: "8px",
-                            borderRadius: "6px",
-                            backgroundColor: "rgba(255, 255, 255, 0.02)",
-                            border: "1px solid rgba(255, 255, 255, 0.05)"
+                            alignItems: "center",
+                            gap: "6px",
+                            padding: "5px 6px",
+                            borderRadius: "5px",
+                            backgroundColor: "rgba(255,255,255,0.03)",
+                            border: "1px solid rgba(255,255,255,0.06)"
                           }}>
-                            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                              <span style={{ fontSize: "11px", opacity: 0.4, fontFamily: "monospace" }}>#{idx + 1}</span>
+                            {/* Index badge */}
+                            <span style={{
+                              fontSize: "10px",
+                              fontFamily: "monospace",
+                              opacity: 0.35,
+                              flexShrink: 0,
+                              width: "18px",
+                              textAlign: "right"
+                            }}>#{idx + 1}</span>
+
+                            {/* Text input */}
+                            <input
+                              type="text"
+                              className="form-input-mono"
+                              value={localTexts[`${scene.id}_point_${idx}`] !== undefined ? localTexts[`${scene.id}_point_${idx}`] : pt.text}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setLocalTexts(prev => ({ ...prev, [`${scene.id}_point_${idx}`]: val }));
+                              }}
+                              onBlur={() => {
+                                const val = localTexts[`${scene.id}_point_${idx}`];
+                                if (val !== undefined && val !== pt.text) {
+                                  handlePointChange(scene.id, scene.points, idx, "text", val);
+                                }
+                              }}
+                              onKeyDown={(e) => { if (e.key === "Enter") e.target.blur(); }}
+                              placeholder="Nội dung hiển thị..."
+                              style={{ flex: 1, padding: "4px 7px", fontSize: "12px", minWidth: 0 }}
+                            />
+
+                            {/* Animation select — compact */}
+                            <select
+                              className="form-input-mono"
+                              value={pt.animation}
+                              onChange={(e) => handlePointChange(scene.id, scene.points, idx, "animation", e.target.value)}
+                              title="Hiệu ứng xuất hiện"
+                              style={{ padding: "4px 4px", fontSize: "11px", height: "auto", width: "110px", flexShrink: 0 }}
+                            >
+                              <option value="slide-up">↑ Slide Up</option>
+                              <option value="scale-in">⊕ Scale In</option>
+                              <option value="fade-in">◎ Fade In</option>
+                              <option value="blur-in">✦ Blur In</option>
+                              <option value="slide-left">← Slide Left</option>
+                              <option value="slide-right">→ Slide Right</option>
+                            </select>
+
+                            {/* Delay slider + value */}
+                            <div style={{ display: "flex", alignItems: "center", gap: "5px", flexShrink: 0, width: "110px" }}>
                               <input
-                                type="text"
-                                className="form-input-mono"
-                                value={localTexts[`${scene.id}_point_${idx}`] !== undefined ? localTexts[`${scene.id}_point_${idx}`] : pt.text}
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  setLocalTexts(prev => ({ ...prev, [`${scene.id}_point_${idx}`]: val }));
-                                }}
-                                onBlur={() => {
-                                  const val = localTexts[`${scene.id}_point_${idx}`];
-                                  if (val !== undefined && val !== pt.text) {
-                                    handlePointChange(scene.id, scene.points, idx, "text", val);
-                                  }
-                                }}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter") {
-                                    e.target.blur();
-                                  }
-                                }}
-                                placeholder="Nhập nội dung hiển thị..."
-                                style={{ padding: "6px 8px", fontSize: "12px", flex: 1 }}
+                                type="range"
+                                min="0"
+                                max={scene.duration || 10}
+                                step="0.1"
+                                value={pt.delay}
+                                onChange={(e) => handlePointChange(scene.id, scene.points, idx, "delay", parseFloat(e.target.value))}
+                                style={{ flex: 1, height: "3px", accentColor: "#00E5FF", cursor: "pointer" }}
                               />
-                              <button
-                                type="button"
-                                onClick={() => handleRemovePoint(scene.id, scene.points, idx)}
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  color: "#ff4d4d",
-                                  cursor: "pointer",
-                                  fontSize: "14px",
-                                  padding: "0 4px"
-                                }}
-                                title="Xóa ý này"
-                              >
-                                🗑️
-                              </button>
+                              <span style={{
+                                fontSize: "11px",
+                                fontWeight: "700",
+                                fontFamily: "Space Grotesk, monospace",
+                                width: "32px",
+                                textAlign: "center",
+                                flexShrink: 0,
+                                color: "#111111",
+                                backgroundColor: "#ffffff",
+                                borderRadius: "4px",
+                                padding: "1px 3px",
+                                letterSpacing: "-0.3px"
+                              }}>
+                                {pt.delay}s
+                              </span>
                             </div>
-                            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                              {/* Animation Select */}
-                              <div style={{ display: "flex", flexDirection: "column", gap: "2px", flex: 1 }}>
-                                <span style={{ fontSize: "9px", opacity: 0.4, fontFamily: "Space Grotesk" }}>Hiệu ứng</span>
-                                <select
-                                  className="form-input-mono"
-                                  value={pt.animation}
-                                  onChange={(e) => handlePointChange(scene.id, scene.points, idx, "animation", e.target.value)}
-                                  style={{ padding: "4px 6px", fontSize: "11px", height: "auto" }}
-                                >
-                                  <option value="slide-up">Slide Up (Trượt lên)</option>
-                                  <option value="scale-in">Scale In (Phóng to nảy)</option>
-                                  <option value="fade-in">Fade In (Mờ dần)</option>
-                                  <option value="blur-in">Blur In (Làm nét)</option>
-                                  <option value="slide-left">Slide Left (Trượt trái)</option>
-                                  <option value="slide-right">Slide Right (Trượt phải)</option>
-                                </select>
-                              </div>
-                              {/* Delay Range Slider */}
-                              <div style={{ display: "flex", flexDirection: "column", gap: "2px", flex: 1 }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9px" }}>
-                                  <span style={{ opacity: 0.4, fontFamily: "Space Grotesk" }}>Độ trễ xuất hiện</span>
-                                  <span style={{ color: "#00E5FF", fontWeight: "bold" }}>{pt.delay}s</span>
-                                </div>
-                                <input
-                                  type="range"
-                                  min="0"
-                                  max={scene.duration || 10}
-                                  step="0.1"
-                                  value={pt.delay}
-                                  onChange={(e) => handlePointChange(scene.id, scene.points, idx, "delay", parseFloat(e.target.value))}
-                                  style={{ width: "100%", height: "4px", accentColor: "#00E5FF", cursor: "pointer" }}
-                                />
-                              </div>
-                            </div>
+
+                            {/* Delete button */}
+                            <button
+                              type="button"
+                              onClick={() => handleRemovePoint(scene.id, scene.points, idx)}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                color: "rgba(255,77,77,0.6)",
+                                cursor: "pointer",
+                                fontSize: "13px",
+                                padding: "0 2px",
+                                flexShrink: 0,
+                                lineHeight: 1,
+                                transition: "color 0.15s"
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.color = "#ff4d4d"}
+                              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255,77,77,0.6)"}
+                              title="Xóa ý này"
+                            >
+                              ✕
+                            </button>
                           </div>
                         ))
                       )}
@@ -2258,97 +2129,6 @@ export const StoryboardEditor = ({
                       style={{ height: "60px", fontSize: "13px", resize: "none" }}
                     />
                   </div>
-
-                  {/* Unsplash Search & Suggestion Panel */}
-                  <div style={{ borderTop: "1px solid #000000", paddingTop: "15px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                      <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Background Media</label>
-                      <button
-                        type="button"
-                        onClick={() => handleImageUploadClick(scene.id)}
-                        disabled={uploadingScenes[scene.id]}
-                        style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
-                      >
-                        {uploadingScenes[scene.id] ? "⏳ Uploading..." : "📁 Upload"}
-                      </button>
-                    </div>
-
-                    <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
-                      <input
-                        className="form-input-mono"
-                        type="text"
-                        placeholder="Search English keywords (e.g., code, zen)..."
-                        value={searchQueries[scene.id] || ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setSearchQueries(prev => ({ ...prev, [scene.id]: val }));
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleSearchImages(scene.id);
-                        }}
-                        style={{ padding: "8px", fontSize: "12px" }}
-                      />
-                      <button
-                        className="btn-mono btn-mono-secondary"
-                        style={{ padding: "8px 15px", whiteSpace: "nowrap", height: "auto" }}
-                        disabled={searchingImages[scene.id]}
-                        onClick={() => handleSearchImages(scene.id)}
-                      >
-                        {searchingImages[scene.id] ? "..." : "Tìm"}
-                      </button>
-                    </div>
-
-                    {/* Image Suggestions Grid */}
-                    <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
-                      {/* Default Accent HEX Gradient choice */}
-                      <div
-                        onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", -1)}
-                        style={{
-                          width: "48px",
-                          height: "48px",
-                          flexShrink: 0,
-                          borderRadius: "4px",
-                          border: scene.selectedMediaIndex === -1 ? "3px solid #000000" : "1px solid #cccccc",
-                          background: `linear-gradient(135deg, ${scene.accentColor || "#FFB7C5"}aa 0%, #060813 100%)`,
-                          cursor: "pointer",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "8px",
-                          fontWeight: "bold",
-                          color: "#ffffff",
-                          textAlign: "center",
-                          padding: "2px",
-                          fontFamily: "Space Grotesk, sans-serif",
-                          lineHeight: "1.1",
-                          boxSizing: "border-box",
-                          textTransform: "uppercase"
-                        }}
-                      >
-                        Nền màu nhấn
-                      </div>
-
-                      {scene.mediaList && scene.mediaList.map((imgUrl, imgIdx) => (
-                        <div
-                          key={imgIdx}
-                          onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", imgIdx)}
-                          style={{
-                            width: "48px",
-                            height: "48px",
-                            flexShrink: 0,
-                            borderRadius: "4px",
-                            border: scene.selectedMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
-                            overflow: "hidden",
-                            cursor: "pointer"
-                          }}
-                        >
-                          <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
                 </div>
               </article>
             );
