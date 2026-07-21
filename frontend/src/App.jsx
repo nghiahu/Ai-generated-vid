@@ -7,8 +7,21 @@ import { MasterPlayer } from "./components/MasterPlayer";
 import "./App.css";
 
 function App() {
+  const getInitialProjectId = () => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlProjectId = urlParams.get("projectId");
+      if (urlProjectId) return urlProjectId;
+      const storedProjectId = localStorage.getItem("activeProjectId");
+      if (storedProjectId) return storedProjectId;
+    } catch (e) {
+      console.warn("Failed to read initial project id:", e);
+    }
+    return null;
+  };
+
   const [projects, setProjects] = useState([]);
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [selectedProjectId, setSelectedProjectId] = useState(getInitialProjectId);
   const [currentProject, setCurrentProject] = useState(null);
   const [selectedSceneId, setSelectedSceneId] = useState(null);
   const [view, setView] = useState("PROJECTS"); // "PROJECTS", "STUDIO", "BATCH", "WORKSPACE_EDITOR"
@@ -17,8 +30,8 @@ function App() {
     language: "Vietnamese",
     voice: "rachel",
     watermark: { enabled: true, text: "yupclip.com", position: "top-right", color: "#000000" },
-    ending: { enabled: true, logoText: "YupVid", website: "yupvid.com" },
-    backgroundMusic: "Chill Lofi Beats"
+    backgroundMusic: "Chill Lofi Beats",
+    backgroundMusicVolume: 0.025
   });
 
   // States for generation & rendering loading
@@ -57,11 +70,23 @@ function App() {
     }
   };
 
-  // Fetch full project details when one is selected
+  // Fetch full project details when one is selected & sync URL / localStorage
   useEffect(() => {
     if (selectedProjectId) {
+      try {
+        localStorage.setItem("activeProjectId", selectedProjectId);
+        const url = new URL(window.location.href);
+        url.searchParams.set("projectId", selectedProjectId);
+        window.history.replaceState({}, "", url.toString());
+      } catch (e) {}
       fetchProjectDetail(selectedProjectId);
     } else {
+      try {
+        localStorage.removeItem("activeProjectId");
+        const url = new URL(window.location.href);
+        url.searchParams.delete("projectId");
+        window.history.replaceState({}, "", url.pathname);
+      } catch (e) {}
       setCurrentProject(null);
       setSelectedSceneId(null);
       setVideoUrl(null);
@@ -602,48 +627,6 @@ function App() {
           </div>
         ) : (
           <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-            {/* Left Column: SideNavBar */}
-            <nav style={{ width: "256px", backgroundColor: "rgba(255, 255, 255, 0.65)", backdropFilter: "blur(16px)", height: "100%", display: "flex", flexDirection: "column", padding: "24px 20px", flexShrink: 0, borderRight: "1px solid rgba(15, 23, 42, 0.08)" }}>
-              <div style={{ paddingBottom: "15px", borderBottom: "1px solid rgba(15, 23, 42, 0.08)", marginBottom: "15px" }}>
-                <span style={{ fontSize: "14px", fontFamily: "var(--font-heading)", fontWeight: "800", display: "block", color: "var(--text-primary)" }}>{currentProject?.title || "Dự án hiện tại"}</span>
-                <span style={{ fontSize: "11px", color: "var(--text-secondary)", fontWeight: 500 }}>v1.0.4-alpha</span>
-              </div>
-              <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", flex: 1 }}>
-                <li>
-                  <a href="#" style={{ textDecoration: "none", color: "var(--text-primary)", fontWeight: "600", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", padding: "8px 12px" }}>
-                    📂 Projects
-                  </a>
-                </li>
-                <li>
-                  <a href="#" style={{ textDecoration: "none", color: "var(--text-secondary)", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", padding: "8px 12px" }}>
-                    🎥 Media
-                  </a>
-                </li>
-                <li>
-                  <a href="#" style={{ textDecoration: "none", color: "var(--color-primary)", backgroundColor: "rgba(37, 99, 235, 0.08)", padding: "8px 12px", borderRadius: "8px", fontWeight: "700", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center" }}>
-                    📈 Timeline
-                  </a>
-                </li>
-                <li>
-                  <a href="#" style={{ textDecoration: "none", color: "var(--text-secondary)", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", padding: "8px 12px" }}>
-                    ✨ Effects
-                  </a>
-                </li>
-                <li>
-                  <a href="#" style={{ textDecoration: "none", color: "var(--text-secondary)", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", padding: "8px 12px" }}>
-                    🔊 Audio
-                  </a>
-                </li>
-              </ul>
-              <div style={{ borderTop: "1px solid rgba(15, 23, 42, 0.08)", paddingTop: "15px" }}>
-                <a href="#" style={{ textDecoration: "none", color: "var(--text-secondary)", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", marginBottom: "10px", padding: "4px 12px" }}>
-                  ❓ Help
-                </a>
-                <a href="#" onClick={() => { setSelectedProjectId(null); setView("DASHBOARD"); }} style={{ textDecoration: "none", color: "var(--text-secondary)", fontSize: "13px", display: "flex", gap: "8px", alignItems: "center", padding: "4px 12px" }}>
-                  🚪 Logout
-                </a>
-              </div>
-            </nav>
 
             {/* Middle Column: Storyboard cards list */}
             <div style={{ flex: 1, overflowY: "auto", borderRight: "1px solid rgba(15, 23, 42, 0.08)" }}>
