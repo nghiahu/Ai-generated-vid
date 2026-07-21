@@ -33,9 +33,9 @@ This design introduces a dedicated mode renderer **`IntroRadarSignalMode`** with
 - **Header Area**: Top title (`HeadlineText`) and category pill (`CategoryPill`).
 - **Center Radar Display**:
   - SVG radar matrix with 3 concentric sonar rings, crosshair axes, and degree tick marks.
-  - 360° rotating radar sweep beam with **Trailing Trail Effect**:
-    - Leading edge scanline is bright neon accent color with high opacity & SVG glow filter.
-    - 50° trailing sector arc attached behind the scanline with multi-stop opacity gradient fading from 50% down to 0% to create an authentic radar screen trailing ghost effect.
+  - 360° rotating radar sweep beam with **Seamless Conic-Gradient Trailing Trail**:
+    - Uses CSS `conic-gradient` hardware-accelerated angular fade (`55% opacity` -> `25%` -> `6%` -> `0%` over 75°) clipped to the radar radius via radial mask, eliminating 100% of visible banding lines.
+    - Leading edge scanline is bright neon accent color with high-intensity SVG glow filter.
   - Dynamic radar blip nodes with pulsing rings.
 - **Signal Cards**:
   - Glassmorphic info cards positioned cleanly around the radar with leader lines connecting to the target blips.
