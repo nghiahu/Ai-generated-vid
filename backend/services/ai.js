@@ -2,6 +2,7 @@ const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const vde = require("./vde");
 const phoneme = require("./phoneme");
 const db = require("./db");
+const contractLoader = require("./contractLoader");
 
 
 // Define Phase 1 Schema: Scene Planner
@@ -47,6 +48,10 @@ const PLANNER_SCHEMA = {
         type: SchemaType.STRING,
         description: "Must be one of: 'opening_hook', 'comparison_table', 'terminal_demo', 'metric_dashboard', 'timeline', 'quote', 'media', 'architecture', 'workflow', 'before_after', 'code_walkthrough', 'list', 'feature_grid', 'process', 'warning', 'cta'"
       },
+      layoutId: {
+        type: SchemaType.STRING,
+        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'Ending'."
+      },
       heading: {
         type: SchemaType.STRING,
         description: "A short, engaging heading for the scene in Vietnamese"
@@ -56,7 +61,7 @@ const PLANNER_SCHEMA = {
         description: "Vietnamese speech text read aloud. Technical English terms (html, css, react, api) must remain lowercase English, EXCEPT for acronyms that conflict with Vietnamese stop-words (like 'AI', 'BA', 'AN') which must be UPPERCASE."
       }
     },
-    required: ["sceneIndex", "sceneIntent", "visualIntent", "heading", "voiceover"]
+    required: ["sceneIndex", "sceneIntent", "visualIntent", "layoutId", "heading", "voiceover"]
   }
 };
 
@@ -88,7 +93,7 @@ const GENERATOR_SCHEMA = {
             },
             text: {
               type: SchemaType.STRING,
-              description: "Short label for this point in Vietnamese. MAXIMUM 80 characters. E.g. 'RAG = 3 bước'."
+              description: "Ultra-short visual headline for this point in Vietnamese. MAXIMUM 6-8 words or 45 characters. E.g. 'RAG = 3 bước', 'Học nhiều vẫn im'."
             },
             logos: {
               type: SchemaType.ARRAY,
@@ -285,41 +290,37 @@ async function generateDetailedStoryboard(genAI, modelName, scenePlan, stylePack
     }
   };
 
+  const sceneContracts = scenePlan.map(scene => {
+    const contract = contractLoader.getContractForLayout(scene.layoutId, scene.sceneIntent?.type);
+    return {
+      sceneIndex: scene.sceneIndex,
+      layoutId: scene.layoutId || contract.layoutId,
+      contractConstraints: {
+        headingMaxChars: contract.headingMaxChars,
+        pointsCount: contract.pointsCount,
+        pointMaxChars: contract.pointMaxChars,
+        allowedPointTypes: contract.allowedPointTypes,
+        aiHint: contract.aiHint
+      }
+    };
+  });
+
   const systemInstruction = `
 # ROLE
 You are a Storyboard UI Renderer.
 
 # MISSION
-Convert planned scenes into a detailed UI Storyboard by rendering point components and keywords matching the requested style tokens.
+Convert planned scenes into a detailed UI Storyboard by rendering point components and keywords matching the requested style tokens and explicit Layout Contracts.
 
 # HARD CONSTRAINTS
 1. Output MUST be a valid JSON array matching the provided Schema.
 2. Focus ONLY on generating points (their types, texts, values, badges, and logos), unsplash search keywords, and a dynamic category tag.
-3. Every point "text" must be a short, unique label (max 80 chars). No paragraph text in point values.
-4. Do not generate layout placement, theme, accentColor, delays, or durations (these are injected by the backend).
-5. Every scene must have a short, relevant Vietnamese category/label tag in the "category" field representing the context (max 20 chars), e.g. "LẬP TRÌNH NHÚNG" for programming, "SO SÁNH" for comparison, "KẾT LUẬN" for ending, or "GIỚI THIỆU" for hooks. Match the scene context topic. Never use placeholders.
-
-# VISUAL INTENT TO COMPONENTS DECISION TREE
-IF visualIntent == "terminal_demo"
-    points = [{"type": "terminal", "text": "terminal command line (e.g. npm run dev)"}]
-ELSE IF visualIntent == "comparison_table"
-    points = [{"type": "card", "text": "option A detail"}, {"type": "card", "text": "option B detail"}]
-ELSE IF visualIntent == "metric_dashboard"
-    points = [{"type": "metric", "value": "+85%", "subtext": "tăng tốc"}]
-ELSE IF visualIntent == "opening_hook"
-    points = [Exactly 6 card objects with type "card" (the first 3 card objects represent the main hook concepts/stages, and the next 3 represent additional supporting key takeaways or reinforcing notes from the script)]
-ELSE IF visualIntent == "quote"
-    points = [{"type": "card", "text": "key hook phrase or quote"}]
-ELSE IF visualIntent == "list" OR "feature_grid" OR "workflow" OR "architecture"
-    points = [2-4 card objects with type "card"]
-ELSE IF visualIntent == "code_walkthrough"
-    points = [{"type": "terminal", "text": "code snippet"}, {"type": "subheader", "text": "explanation title"}]
-ELSE IF visualIntent == "warning"
-    points = [{"type": "badge_row", "badges": ["Cảnh báo"]}, {"type": "card", "text": "warning description"}]
-ELSE IF visualIntent == "cta"
-    points = [{"type": "button", "text": "CTA Button Label"}]
-ELSE
-    points = [{"type": "card", "text": "default text content"}]
+3. Every point "text" MUST be a non-empty, ultra-concise visual headline (MAXIMUM 6-8 words / 45 characters). Never write full long sentences, narrative paragraphs, or wordy explanations.
+   - ❌ BAD: "Học nhiều nhưng trong quá trình làm việc thực tế vẫn giữ thái độ im lặng không chịu giao tiếp"
+   - ✅ GOOD: "Học nhiều vẫn im"
+4. The number of items in the "points" array MUST be strictly between contractConstraints.pointsCount.min and contractConstraints.pointsCount.max. If default is specified, aim for that exact count.
+5. Do not generate layout placement, theme, accentColor, delays, or durations (these are injected by the backend).
+6. Every scene must have a short, relevant Vietnamese category/label tag in the "category" field representing the context (max 20 chars), e.g. "LẬP TRÌNH NHÚNG" for programming, "SO SÁNH" for comparison, "KẾT LUẬN" for ending, or "GIỚI THIỆU" for hooks. Match the scene context topic. Never use placeholders.
 
 # UNSPLASH KEYWORDS RULE
 For Unsplash search keywords, choose 3 concrete visual nouns instead of generic concepts:
@@ -328,8 +329,10 @@ For Unsplash search keywords, choose 3 concrete visual nouns instead of generic 
 
 # SELF CHECK
 Before returning the JSON, silently verify:
-✓ No placeholder texts.
-✓ points array contains valid components for the specified visualIntent.
+✓ Point text is ultra-concise (max 6-8 words / 45 chars) and acts as a visual headline.
+✓ No empty point text ("") or placeholder texts.
+✓ points array count strictly obeys the min/max range in contractConstraints.pointsCount.
+✓ point text lengths strictly <= contractConstraints.pointMaxChars.
 ✓ keywords contains exactly 3 concrete English nouns.
 ✓ category field contains a short, dynamic Vietnamese label tag representing the scene's topic.
   `;
@@ -340,6 +343,11 @@ ${JSON.stringify(scenePlan, null, 2)}
 
 Style Pack:
 ${JSON.stringify(stylePack, null, 2)}
+
+Scene Layout Contracts & Constraints:
+${JSON.stringify(sceneContracts, null, 2)}
+
+CRITICAL: You MUST strictly generate points with non-empty text that comply with pointsCount (min, max, default) and pointMaxChars in each scene's Layout Contract!
   `;
 
   const promptData = { systemInstruction, userPrompt };
@@ -356,7 +364,7 @@ ${JSON.stringify(stylePack, null, 2)}
 // -------------------------------------------------------------
 // Orchestration & Fallback handling
 // -------------------------------------------------------------
-async function generateStoryboard(projectId, scriptText, visualStyle = "minimal", traits = [], targetLength = "Short (~60s)") {
+async function generateStoryboard(projectId, scriptText, visualStyle = "rikkei", traits = [], targetLength = "Short (~60s)") {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -419,11 +427,13 @@ async function generateStoryboard(projectId, scriptText, visualStyle = "minimal"
       const uiData = uiLookup[index] || { points: [], keywords: ["technology"] };
       const points = Array.isArray(uiData.points) ? uiData.points : [];
 
-      // 1. Calculate Delays dynamically
-      const usable = scene.duration - 1.0;
-      const step = points.length > 0 ? usable / points.length : 0;
+      // 1. Calculate Delays dynamically (all elements appear within first 50% of scene duration)
+      const sceneDuration = parseFloat(scene.duration) || 5.0;
+      const maxLastDelay = sceneDuration * 0.5;
+      const effectiveUsable = Math.max(0.4, maxLastDelay - 0.4);
+      const step = points.length > 1 ? effectiveUsable / (points.length - 1) : 0;
       const enrichedPoints = points.map((pt, idx) => {
-        const computedDelay = Number((0.5 + idx * step).toFixed(1));
+        const computedDelay = Number((0.4 + idx * step).toFixed(1));
         return {
           type: pt.type || "card",
           text: pt.text || "",
@@ -444,25 +454,66 @@ async function generateStoryboard(projectId, scriptText, visualStyle = "minimal"
       const keywordArr = Array.isArray(uiData.keywords) ? uiData.keywords : [uiData.keywords || "technology"];
       const cleanKeywords = keywordArr.filter(k => typeof k === "string" && k.trim().length > 0);
 
-      return {
+      // 4. Contract resolution & Validation
+      const targetLayoutId = scene.layoutId || "IntroBriefingCard";
+      const contract = contractLoader.getContractForLayout(targetLayoutId, scene.sceneIntent?.type);
+
+      // Validate & Auto-extract highlightWords (must exist in heading)
+      const headingStr = scene.heading || `Phân cảnh ${index + 1}`;
+      const rawHighlightWords = Array.isArray(scene.sceneIntent?.highlightWords)
+        ? scene.sceneIntent.highlightWords
+        : [];
+      let validHighlightWords = rawHighlightWords.filter(w => typeof w === "string" && w.trim() && headingStr.toLowerCase().includes(w.trim().toLowerCase()));
+
+      if (validHighlightWords.length === 0 && headingStr) {
+        if (headingStr.includes(":")) {
+          const partAfter = headingStr.split(":")[1]?.trim();
+          if (partAfter) {
+            const wordCandidates = partAfter.split(/\s+/).filter(w => w.length >= 2);
+            if (wordCandidates.length > 0) {
+              validHighlightWords = [wordCandidates.join(" ")];
+            }
+          }
+        }
+        
+        if (validHighlightWords.length === 0) {
+          const headingWords = headingStr.split(/\s+/).filter(w => w.length >= 3 && !["cho", "với", "như", "này", "được"].includes(w.toLowerCase()));
+          if (headingWords.length >= 2) {
+            validHighlightWords = [headingWords.slice(-2).join(" ")];
+          } else if (headingWords.length === 1) {
+            validHighlightWords = [headingWords[0]];
+          }
+        }
+      }
+
+      const sceneIntentObj = scene.sceneIntent ? { ...scene.sceneIntent, highlightWords: validHighlightWords } : {
+        type: "opening",
+        importance: "medium",
+        density: "medium",
+        emotion: "neutral",
+        highlightWords: validHighlightWords
+      };
+
+      const rawScene = {
         id: `scene_${Date.now()}_${index}`,
         sceneIndex: index,
         duration: scene.duration,
-        sceneIntent: scene.sceneIntent || {
-          type: "opening",
-          importance: "medium",
-          density: "medium",
-          emotion: "neutral"
-        },
-        heading: scene.heading || `Phân cảnh ${index + 1}`,
+        layoutId: targetLayoutId,
+        visualLayout: targetLayoutId,
+        layoutFamily: contract.family || "opening",
+        sceneIntent: sceneIntentObj,
+        heading: headingStr,
         points: enrichedPoints,
         voiceover: scene.voiceover || "",
         placement: placement,
-        keywords: cleanKeywords, // Store as array for server.js
+        keywords: cleanKeywords,
         theme: stylePack.theme,
         accentColor: stylePack.accentColor,
         category: uiData.category || ""
       };
+
+      const { scene: validatedScene } = contractLoader.validateAndFormatSceneContent(rawScene, contract);
+      return validatedScene;
     });
 
     // Process phoneme optimization for all scenes (same as current backend requirement)
