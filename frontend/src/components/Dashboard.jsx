@@ -178,6 +178,7 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                                 config: project.config || {}
                               }}
                               durationInFrames={Math.round(safeParseFloat(firstScene.duration || 6.0) * 30)}
+                              initialFrame={Math.min(60, Math.round(safeParseFloat(firstScene.duration || 6.0) * 15))}
                               fps={30}
                               compositionWidth={1080}
                               compositionHeight={1920}
