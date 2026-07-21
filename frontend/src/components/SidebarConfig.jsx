@@ -19,16 +19,6 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
     });
   };
 
-  const handleEndingChange = (field, value) => {
-    onChange({
-      ...config,
-      ending: {
-        ...config.ending,
-        [field]: value
-      }
-    });
-  };
-
   const currentLength = config.length
     ? (config.length.includes("Short") ? "Short" : config.length.includes("Medium") ? "Medium" : "Long")
     : "Short";
@@ -144,44 +134,21 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
           <div style={{ position: "relative", marginBottom: "8px" }}>
             <select
               className="form-input-mono"
-              value={config.voice || "rachel"}
+              value={config.voice || "omnivoice_duythanh"}
               onChange={(e) => handleConfigChange("voice", e.target.value)}
               style={{ cursor: "pointer" }}
             >
               <option value="omnivoice_duythanh">OmniVoice - Giọng Duy Thanh (Offline Clone)</option>
-              <option value="microsoft_hoaimy">Microsoft Hoài My (Free, Fluent Female)</option>
-              <option value="microsoft_namminh">Microsoft Nam Minh (Free, Fluent Male)</option>
-              <option value="rachel">Hoai My (Rachel - English Accent)</option>
-              <option value="antonio">Tuan Dung (Antoni - English Accent)</option>
-              <option value="bella">Bella (English Accent)</option>
-              <option value="domic">Domic (English Accent)</option>
-              <option value="custom">-- Giọng đọc tự chọn (Nhập ID) --</option>
+              <option value="omnivoice_quanganh">OmniVoice - Giọng Quang Anh (Offline Clone)</option>
             </select>
           </div>
-          {config.voice === "custom" && (
-            <div style={{ marginTop: "10px" }}>
-              <label className="form-label-mono" style={{ fontSize: "11px", color: "#555555", textTransform: "uppercase" }}>
-                Custom ElevenLabs Voice ID
-              </label>
-              <input
-                type="text"
-                className="form-input-mono"
-                value={config.customVoiceId || ""}
-                onChange={(e) => handleConfigChange("customVoiceId", e.target.value)}
-                placeholder="Ví dụ: pNInz6obpgq5paqqJ155..."
-                style={{ fontSize: "12px", padding: "8px 12px" }}
-              />
-              <span style={{ fontSize: "11px", color: "#666666", display: "block", marginTop: "4px", lineHeight: "1.4" }}>
-                Mẹo: Hãy thêm giọng đọc tiếng Việt bạn thích từ ElevenLabs Voice Library vào tài khoản của bạn, sao chép Voice ID của nó và dán vào đây.
-              </span>
-            </div>
-          )}
+
         </div>
 
         {/* BGM select */}
         <div>
           <label className="form-label-mono">Background Music (BGM)</label>
-          <div style={{ position: "relative" }}>
+          <div style={{ position: "relative", marginBottom: config.backgroundMusic && config.backgroundMusic !== "None" ? "8px" : "0" }}>
             <select
               className="form-input-mono"
               value={config.backgroundMusic || "Chill Lofi Beats"}
@@ -194,6 +161,28 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
               <option value="None">None (No Background Music)</option>
             </select>
           </div>
+
+          {config.backgroundMusic && config.backgroundMusic !== "None" && (
+            <div style={{ background: "#f8fafc", padding: "10px 12px", border: "1px solid #e2e8f0", borderRadius: "6px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                <span className="form-label-mono" style={{ fontSize: "12px", margin: 0, color: "#475569" }}>
+                  BGM Volume
+                </span>
+                <span style={{ fontFamily: "monospace", fontSize: "12px", fontWeight: "600", color: "#0f172a" }}>
+                  {((config.backgroundMusicVolume ?? 0.025) * 100).toFixed(1)}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="0.20"
+                step="0.005"
+                value={config.backgroundMusicVolume ?? 0.025}
+                onChange={(e) => handleConfigChange("backgroundMusicVolume", parseFloat(e.target.value))}
+                style={{ width: "100%", accentColor: "#000000", cursor: "pointer" }}
+              />
+            </div>
+          )}
         </div>
 
 
@@ -256,139 +245,6 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
                     style={{ width: "100%", accentColor: "#000000", marginTop: "8px", cursor: "pointer" }}
                   />
                 </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Ending Scene Section */}
-        <div className="border-strict" style={{ padding: "20px", backgroundColor: "#ffffff" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-            <label className="form-label-mono" style={{ marginBottom: 0 }}>Ending Card</label>
-            <input
-              type="checkbox"
-              style={{ width: "20px", height: "20px", accentColor: "#000000", cursor: "pointer" }}
-              checked={config.ending?.enabled ?? true}
-              onChange={(e) => handleEndingChange("enabled", e.target.checked)}
-            />
-          </div>
-
-          {(config.ending?.enabled ?? true) && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <div>
-                <label className="form-label-mono" style={{ fontSize: "11px" }}>Call to Action</label>
-                <input
-                  className="form-input-mono"
-                  type="text"
-                  value={config.ending?.logoText || ""}
-                  onChange={(e) => handleEndingChange("logoText", e.target.value)}
-                  placeholder="e.g. Follow for more daily tips"
-                />
-              </div>
-              <div>
-                <label className="form-label-mono" style={{ fontSize: "11px" }}>Website / Link</label>
-                <input
-                  className="form-input-mono"
-                  type="text"
-                  value={config.ending?.website || ""}
-                  onChange={(e) => handleEndingChange("website", e.target.value)}
-                  placeholder="hyperframes.ai"
-                />
-              </div>
-
-              {/* Background Image Upload */}
-              <div>
-                <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: "4px", display: "block" }}>Background Image</label>
-                {config.ending?.imageUrl ? (
-                  <div style={{ position: "relative", marginTop: "4px" }}>
-                    <img 
-                      src={config.ending.imageUrl} 
-                      alt="Ending background" 
-                      style={{ width: "100%", height: "120px", objectFit: "cover", borderRadius: "4px", border: "2px solid #000000" }} 
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleEndingChange("imageUrl", "")}
-                      style={{
-                        position: "absolute",
-                        top: "5px",
-                        right: "5px",
-                        backgroundColor: "#000000",
-                        color: "#ffffff",
-                        border: "2px solid #ffffff",
-                        padding: "4px 8px",
-                        fontSize: "11px",
-                        fontWeight: "bold",
-                        fontFamily: "Space Grotesk",
-                        cursor: "pointer"
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      id="ending-image-upload"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        const reader = new FileReader();
-                        reader.readAsDataURL(file);
-                        reader.onloadend = async () => {
-                          try {
-                            const res = await axios.post("http://localhost:5000/api/upload", { file: reader.result });
-                            handleEndingChange("imageUrl", res.data.url);
-                          } catch (err) {
-                            console.error("Failed to upload ending image:", err);
-                            alert("Không thể tải ảnh lên!");
-                          }
-                        };
-                      }}
-                    />
-                    <div 
-                      className="border-strict" 
-                      onClick={() => document.getElementById("ending-image-upload").click()}
-                      style={{ borderStyle: "dashed", padding: "18px", textAlign: "center", cursor: "pointer", backgroundColor: "#fafafa" }}
-                    >
-                      <span style={{ fontSize: "20px", display: "block" }}>🖼️</span>
-                      <span style={{ fontSize: "13px", fontWeight: "bold", fontFamily: "Space Grotesk", display: "block", marginTop: "4px" }}>Upload Background</span>
-                      <span style={{ fontSize: "11px", color: "#666666" }}>PNG, JPG (Max 5MB)</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Ending BGM Selection */}
-              <div>
-                <label className="form-label-mono" style={{ fontSize: "11px" }}>Background Music (BGM)</label>
-                <select
-                  className="form-input-mono"
-                  value={config.ending?.backgroundMusic || "None"}
-                  onChange={(e) => handleEndingChange("backgroundMusic", e.target.value)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <option value="None">None (Follow main BGM or Silent)</option>
-                  <option value="Chill Lofi Beats">Chill Lofi Beats</option>
-                  <option value="Tech Ambient">Tech Ambient</option>
-                  <option value="Energy Beats">Energy Beats</option>
-                </select>
-              </div>
-
-              {/* Ending Voiceover Text */}
-              <div>
-                <label className="form-label-mono" style={{ fontSize: "11px" }}>Voiceover Text</label>
-                <textarea
-                  className="form-input-mono"
-                  value={config.ending?.voiceover || ""}
-                  onChange={(e) => handleEndingChange("voiceover", e.target.value)}
-                  placeholder="Nhập nội dung giọng đọc kết thúc..."
-                  rows={3}
-                  style={{ resize: "vertical", fontFamily: "Inter", fontSize: "13px", padding: "10px" }}
-                />
               </div>
             </div>
           )}

@@ -704,6 +704,7 @@ function App() {
                 style={{ cursor: "pointer", width: "100%" }}
               >
                 <option value="omnivoice_duythanh">OmniVoice - Giọng Duy Thanh (Offline Clone)</option>
+                <option value="omnivoice_quanganh">OmniVoice - Giọng Quang Anh (Offline Clone)</option>
                 <option value="microsoft_hoaimy">Microsoft Hoài My (Free, Fluent Female)</option>
                 <option value="microsoft_namminh">Microsoft Nam Minh (Free, Fluent Male)</option>
                 <option value="rachel">Hoai My (Rachel - English Accent)</option>

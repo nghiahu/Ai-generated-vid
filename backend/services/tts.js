@@ -1,15 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { EdgeTTS } = require('edge-tts-universal');
 const { execSync } = require('child_process');
-
-// Voice mapping for ElevenLabs
-const VOICE_IDS = {
-  rachel: "21m00Tcm4TlvDq8ikWAM",
-  antonio: "ErXwobaYiN019PkySvjV",
-  bella: "EXAVITQu4vr4xnSDxMaL",
-  domic: "AZnzlk1XvdvUeBnXmlld"
-};
 
 function getAudioDuration(filePath) {
   try {
@@ -154,7 +145,7 @@ async function runOmniVoiceSequentially(fn) {
   return resultPromise;
 }
 
-async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
+async function generateTTS(text, projectId, sceneId, voiceKey = "omnivoice_duythanh") {
   console.log("[generateTTS DEBUG] Arguments length:", arguments.length);
   console.log("[generateTTS DEBUG] arg 0 (text) =", text ? text.substring(0, 30) : text);
   console.log("[generateTTS DEBUG] arg 1 (projectId) =", projectId);
@@ -183,8 +174,14 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
   const fileName = `tts_${projectId}_${sceneId}_${version}.mp3`;
   const outputPath = path.join(outputDir, fileName);
 
+  let effectiveVoice = voiceKey;
+  if (!effectiveVoice || !effectiveVoice.toLowerCase().startsWith("omnivoice_")) {
+    console.warn(`[generateTTS] Legacy or unsupported voice "${voiceKey}" detected. Auto-fallback to "omnivoice_duythanh".`);
+    effectiveVoice = "omnivoice_duythanh";
+  }
+
   // Nhánh xử lý OmniVoice (Chạy offline cục bộ qua omnivoice-infer CLI)
-  if (voiceKey.toLowerCase().startsWith("omnivoice_")) {
+  if (effectiveVoice.toLowerCase().startsWith("omnivoice_")) {
     try {
       const { execFile } = require("child_process");
       const { promisify } = require("util");
@@ -194,9 +191,14 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       const omnivoiceExe = process.env.OMNIVOICE_INFER_PATH ||
         "C:\\Users\\nghia\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\omnivoice-infer.exe";
 
-      // Xác định file giọng tham chiếu Duy Thanh để clone
+      // Xác định file giọng tham chiếu để clone
       let refAudioPath = path.join(__dirname, '../../mp3/duy_thanh_nguyen/voice_duy_thanh.mp3');
-      const refText = "Khoảng một hai năm trở lại đây, một ngày mình thức dậy là hàng tá những nội dung về AI đập vào mắt. Bỗng dưng từ đâu xuất hiện rất nhiều chuyên gia, am hiểu tường tận mọi lĩnh vực, cái gì cũng phân tích được. Rồi nhiều khóa học xuất hiện hơn, nhiều video xuất hiện hơn, dạy về cách sử dụng, cách tối ưu hóa AI, mà mình thấy tần xuất nó ngày càng dày đặc hơn.";
+      let refText = "Khoảng một hai năm trở lại đây, một ngày mình thức dậy là hàng tá những nội dung về AI đập vào mắt. Bỗng dưng từ đâu xuất hiện rất nhiều chuyên gia, am hiểu tường tận mọi lĩnh vực, cái gì cũng phân tích được. Rồi nhiều khóa học xuất hiện hơn, nhiều video xuất hiện hơn, dạy về cách sử dụng, cách tối ưu hóa AI, mà mình thấy tần xuất nó ngày càng dày đặc hơn.";
+
+      if (effectiveVoice.toLowerCase() === "omnivoice_quanganh" || effectiveVoice.toLowerCase() === "omnivoice_quang_anh") {
+        refAudioPath = path.join(__dirname, '../../mp3/quang_anh/voice_quang_anh.mp3');
+        refText = "Năm nay thế giới chi khoảng hai nghìn năm trăm chín mươi tỷ đô cho AI con số này lớn hơn GDP của phần lớn quốc gia trên thế giới nhưng phần thú vị nằm ở chỗ số tiền đó đang kẹt vài con số cho thấy AI không còn là chuyện tương lai chat GPT giờ có chín trăm triệu người dùng mỗi tuần";
+      }
 
       // Đảm bảo file giọng tham chiếu luôn ở dạng WAV 16kHz Mono sạch để tránh lỗi giải mã gây tiếng xì xồ
       if (fs.existsSync(refAudioPath)) {
@@ -214,8 +216,9 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
 
       console.log(`Calling Local OmniVoice CLI for scene ${sceneId} (Cloning reference voice)... Normalized text: "${cleanText}"`);
 
-      const relativeWavOutputPath = path.relative(process.cwd(), wavOutputPath);
-      const relativeRefAudioPath = path.relative(process.cwd(), refAudioPath);
+      const backendDir = path.resolve(__dirname, '..');
+      const relativeWavOutputPath = path.relative(backendDir, wavOutputPath).replace(/\\/g, '/');
+      const relativeRefAudioPath = path.relative(backendDir, refAudioPath).replace(/\\/g, '/');
 
       const speed = parseFloat(process.env.OMNIVOICE_SPEED) || 0.95;
       const args = [
@@ -247,6 +250,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
           attempts++;
           lastExecResult = await runOmniVoiceSequentially(async () => {
             return await execFileAsync(omnivoiceExe, args, {
+              cwd: backendDir,
               timeout: 300000,
               maxBuffer: 10 * 1024 * 1024, // 10MB để tránh tràn buffer do progress bars
               env: {
@@ -299,108 +303,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "rachel") {
       throw new Error(`Lỗi OmniVoice TTS: ${error.message}`);
     }
   }
-
-  // Nhánh xử lý Microsoft Edge TTS (Miễn phí, giọng đọc tiếng Việt siêu tự nhiên)
-  if (voiceKey.toLowerCase().startsWith("microsoft_")) {
-    try {
-      const msVoice = voiceKey.toLowerCase() === "microsoft_namminh"
-        ? "vi-VN-NamMinhNeural"
-        : "vi-VN-HoaiMyNeural";
-      console.log(`Calling Microsoft Edge TTS for scene ${sceneId} using voice ${msVoice}...`);
-      const cleanText = normalizeTextForTTS(text);
-      const tts = new EdgeTTS(cleanText, msVoice);
-      const result = await tts.synthesize();
-      if (!result || !result.audio) {
-        throw new Error("Không nhận được dữ liệu âm thanh từ Edge TTS");
-      }
-      const arrayBuffer = await result.audio.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      fs.writeFileSync(outputPath, buffer);
-      console.log(`Successfully saved Microsoft Edge TTS file: ${fileName}`);
-      addSilentPadding(outputPath);
-      const duration = getAudioDuration(outputPath);
-      return { url: `/tts/${fileName}`, duration };
-    } catch (error) {
-      console.error("Microsoft Edge TTS failed:", error);
-      throw new Error(`Lỗi Microsoft Edge TTS: ${error.message}`);
-    }
-  }
-
-  // Sử dụng voice ID đã được ánh xạ, hoặc dùng trực tiếp voiceKey nếu đó là Custom Voice ID
-  const voiceId = VOICE_IDS[voiceKey.toLowerCase()] || voiceKey;
-
-  if (!apiKey) {
-    throw new Error("ELEVENLABS_API_KEY chưa được cấu hình trong tệp .env. Vui lòng kiểm tra lại cấu hình Backend.");
-  }
-
-  try {
-    console.log(`Calling ElevenLabs TTS for scene ${sceneId} with voice ${voiceKey}...`);
-    
-    // Clean mathematical symbols and long dashes to prevent ElevenLabs from skipping them
-    const cleanText = text
-      .replace(/[—–]/g, ', ')
-      .replace(/-/g, ' ')
-      .replace(/>/g, ' lớn hơn ')
-      .replace(/</g, ' nhỏ hơn ')
-      .replace(/=/g, ' bằng ')
-      .replace(/["'“”‘’]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
-      method: 'POST',
-      headers: {
-        'xi-api-key': apiKey,
-        'Content-Type': 'application/json',
-        'accept': 'audio/mpeg'
-      },
-      body: JSON.stringify({
-        text: cleanText,
-        model_id: "eleven_multilingual_v2",
-        voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.75
-        }
-      })
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`ElevenLabs API returned status ${response.status}: ${errText}`);
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    fs.writeFileSync(outputPath, buffer);
-    console.log(`Successfully saved TTS file: ${fileName}`);
-    addSilentPadding(outputPath);
-    const duration = getAudioDuration(outputPath);
-    return { url: `/tts/${fileName}`, duration };
-
-  } catch (error) {
-    console.warn(`ElevenLabs TTS failed: ${error.message}. Falling back to Microsoft Edge TTS...`);
-    try {
-      const isMale = ["antonio", "domic"].includes(voiceKey.toLowerCase());
-      const msVoice = isMale ? "vi-VN-NamMinhNeural" : "vi-VN-HoaiMyNeural";
-      console.log(`[TTS Fallback] Calling Microsoft Edge TTS for scene ${sceneId} using voice ${msVoice}...`);
-      const cleanText = normalizeTextForTTS(text);
-      const ttsFallback = new EdgeTTS(cleanText, msVoice);
-      const result = await ttsFallback.synthesize();
-      if (!result || !result.audio) {
-        throw new Error("Không nhận được dữ liệu âm thanh từ Edge TTS");
-      }
-      const arrayBuffer = await result.audio.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      fs.writeFileSync(outputPath, buffer);
-      console.log(`[TTS Fallback] Successfully saved Microsoft Edge TTS file: ${fileName}`);
-      addSilentPadding(outputPath);
-      const duration = getAudioDuration(outputPath);
-      return { url: `/tts/${fileName}`, duration };
-    } catch (fallbackError) {
-      console.error("TTS Fallback failed:", fallbackError);
-      throw new Error(`Lỗi ElevenLabs TTS (${error.message}) và Fallback Edge TTS cũng thất bại: ${fallbackError.message}`);
-    }
-  }
+  throw new Error(`Giọng đọc không được hỗ trợ: "${voiceKey}". Chỉ sử dụng OmniVoice Duy Thanh.`);
 }
 
 module.exports = {
