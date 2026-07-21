@@ -232,24 +232,14 @@ Structure the sequence of scenes logically to build a story:
 - Scene 2..N-1: Problem -> Explanation -> Example -> Takeaway (Core value)
 - Scene N: Ending (Call to action / Outro)
 
-# VISUAL INTENT TYPES
-For each scene, choose the most appropriate \`visualIntent\` based on the semantic content:
-- \`opening_hook\`: Introduce the topic with a clean visual.
-- \`comparison_table\`: Compare two technologies, methods, or pros/cons.
-- \`terminal_demo\`: Display code command executions or shell usage.
-- \`metric_dashboard\`: Display key statistics or metrics.
-- \`timeline\`: Show step-by-step progress, timeline milestones, or sequential steps.
-- \`quote\`: Highlight a testimonial, warning, or expert quote.
-- \`media\`: Display an image/video showcase.
-- \`architecture\`: Display code structure, backend architecture, or API flows.
-- \`workflow\`: Display step-by-step connection flow diagrams.
-- \`before_after\`: Contrast a problem status with its resolved solution.
-- \`code_walkthrough\`: Showcase a block of source code or instructions.
-- \`list\`: Show a bullet-point list of details.
-- \`feature_grid\`: Show a grid of core features.
-- \`process\`: Display execution logs or procedural steps.
-- \`warning\`: Show error logs, pitfalls, or warnings.
-- \`cta\`: Call to action / outro.
+# LAYOUT SELECTION RULES (CRITICAL)
+Choose layoutId strictly according to scene content semantics:
+- **Comparison / Versus / Distinguish** (heading/voiceover contains "không phải là", "so sánh", "khác biệt", "vs", "versus", "so với"): MUST select BeforeAfterPanel or SplitProofBullet or VersusArena or SplitBandChecklist.
+- **Metrics / Statistics / Numbers** (heading/voiceover contains "%", "tỷ đô", "con số", "tăng", "giảm", "doanh thu"): MUST select HeroMetricCards, MetricCards, GridMetrics, or OpsMonitorHook.
+- **Timeline / Milestones / Steps** (heading/voiceover contains "bước 1", "quy trình", "thời gian", "lộ trình"): MUST select TimelineBeamRail, IntroSignalStepsImages, or FlowchartTitle.
+- **Radar / Monitoring / Scanning**: MUST select IntroRadarSignalImage or IntroMapPinsImage.
+- **Intro Hooks / Headlines**: Select IntroBriefingCard, IntroBubbleImage, IntroCutoutHeadlineImage, or IntroFullImage.
+- **Ending / CTA**: Select Ending, NextStepEnding, BrandOutro, or ContactCardEnding.
   `;
 
   const userPrompt = `

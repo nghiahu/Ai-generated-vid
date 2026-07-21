@@ -157,12 +157,7 @@ function getStyle(styleId, traits = []) {
   // Determine normalized style key matching available styles
   let targetStyleId = styleId.toLowerCase();
   // Handle complex Unsplash style queries mapping back to main VDE keys
-  if (targetStyleId.includes("cyberpunk") || targetStyleId.includes("neon")) targetStyleId = "cyberpunk";
-  else if (targetStyleId.includes("anime") || targetStyleId.includes("manga")) targetStyleId = "anime";
-  else if (targetStyleId.includes("apple") || targetStyleId.includes("keynote")) targetStyleId = "apple";
-  else if (targetStyleId.includes("claude")) targetStyleId = "claude";
-  else if (targetStyleId.includes("light") || targetStyleId.includes("white")) targetStyleId = "light";
-  else if (!styleExists(targetStyleId)) targetStyleId = "minimal"; // Default fallback
+  if (!styleExists(targetStyleId)) targetStyleId = "rikkei"; // Default fallback
 
   // Load inheritance base if specified
   const baseStyleId = getStyleExtends(targetStyleId);

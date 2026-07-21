@@ -494,9 +494,20 @@ function validateAndFormatSceneContent(scene, contract) {
     }
   }
 
+  // Semantic Layout Auto-Correction (e.g. Comparison scenes mis-assigned to single app card)
+  const fullText = ((scene.heading || '') + ' ' + (scene.voiceover || '')).toLowerCase();
+  const isComparisonText = fullText.includes('không phải là') || fullText.includes('so với') || fullText.includes('khác biệt') || fullText.includes('versus') || fullText.includes(' so sánh ');
+  if (isComparisonText && (contract.layoutId === 'AppCardConcept' || contract.layoutId === 'IntroBriefingCard')) {
+    console.warn(`[Contract Validator] Auto-correcting comparison scene layout: "${contract.layoutId}" -> "BeforeAfterPanel"`);
+    scene.layoutId = 'BeforeAfterPanel';
+    scene.visualLayout = 'BeforeAfterPanel';
+    contract = LAYOUT_CONTRACTS['BeforeAfterPanel'] || contract;
+    warnings.push('layout_auto_corrected');
+  }
+
   // Trim texts and calculate delays (all elements appear within first 50% of scene duration)
   const sceneDuration = parseFloat(scene.duration) || 5.0;
-  const maxLastDelay = sceneDuration * 0.5;
+  const maxLastDelay = Number((sceneDuration * 0.5).toFixed(1));
   const effectiveUsable = Math.max(0.4, maxLastDelay - 0.4);
   const step = cleanPoints.length > 1 ? effectiveUsable / (cleanPoints.length - 1) : 0;
 
@@ -508,12 +519,14 @@ function validateAndFormatSceneContent(scene, contract) {
     }
 
     const computedDelay = Number((0.4 + idx * step).toFixed(1));
+    const rawDelay = pt.delay !== undefined ? pt.delay : computedDelay;
+    const clampedDelay = Number(Math.min(rawDelay, maxLastDelay).toFixed(1));
 
     const updatedPoint = {
       ...pt,
       type: pt.type || defaultPointType,
       text: text,
-      delay: pt.delay !== undefined ? pt.delay : computedDelay,
+      delay: clampedDelay,
       animation: pt.animation || 'slide-up'
     };
 

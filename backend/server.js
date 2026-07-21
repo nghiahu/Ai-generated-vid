@@ -199,45 +199,13 @@ app.put('/api/projects/:id/config', async (req, res) => {
 
     const updatedProject = await db.updateProjectConfig(projectId, req.body);
     
-    // Check if voice config has changed or ending voiceover has changed
-    const oldVoice = oldProject.config?.voice || 'rachel';
+    // Check if voice config has changed
+    const oldVoice = oldProject.config?.voice || 'omnivoice_duythanh';
     const oldCustomId = oldProject.config?.customVoiceId || '';
-    const newVoice = updatedProject.config?.voice || 'rachel';
+    const newVoice = updatedProject.config?.voice || 'omnivoice_duythanh';
     const newCustomId = updatedProject.config?.customVoiceId || '';
 
-    const oldEndingVoiceover = oldProject.config?.ending?.voiceover || '';
-    const newEndingVoiceover = updatedProject.config?.ending?.voiceover || '';
-
     const voiceChanged = oldVoice !== newVoice || oldCustomId !== newCustomId;
-    const endingVoiceoverChanged = oldEndingVoiceover !== newEndingVoiceover;
-
-    if (newEndingVoiceover && (endingVoiceoverChanged || voiceChanged)) {
-      console.log(`Generating ending voiceover TTS for project ${projectId}...`);
-      const voiceKey = newVoice === 'custom' && newCustomId ? newCustomId : newVoice;
-      try {
-        const ttsResult = await tts.generateTTS(newEndingVoiceover, projectId, 'ending', voiceKey);
-        
-        // Merge into ending config
-        const endingConfig = {
-          ...updatedProject.config.ending,
-          voiceoverAudioUrl: ttsResult.url,
-          voiceoverDuration: ttsResult.duration
-        };
-        const finalProject = await db.updateProjectConfig(projectId, { ending: endingConfig });
-        updatedProject.config = finalProject.config;
-      } catch (ttsErr) {
-        console.error(`Failed to generate ending voiceover TTS:`, ttsErr.message);
-      }
-    } else if (!newEndingVoiceover && oldEndingVoiceover) {
-      // Clear audio fields if voiceover was cleared
-      const endingConfig = {
-        ...updatedProject.config.ending,
-        voiceoverAudioUrl: "",
-        voiceoverDuration: 0
-      };
-      const finalProject = await db.updateProjectConfig(projectId, { ending: endingConfig });
-      updatedProject.config = finalProject.config;
-    }
 
     if (voiceChanged) {
       console.log(`Voice configuration changed from "${oldVoice}" to "${newVoice}". Regenerating TTS for all scenes...`);
@@ -341,7 +309,12 @@ app.get('/api/media/previous', async (req, res) => {
           if (Array.isArray(scene.mediaList)) {
             for (const url of scene.mediaList) {
               if (url && typeof url === 'string') {
-                allUrls.add(url);
+                const trimmed = url.trim();
+                // Filter out generic Unsplash stock auto-searched images
+                const isUnsplash = trimmed.includes('images.unsplash.com') || trimmed.includes('unsplash.com');
+                if (!isUnsplash && trimmed.length > 0) {
+                  allUrls.add(trimmed);
+                }
               }
             }
           }
@@ -383,7 +356,7 @@ app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
 
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
-        : (project.config.voice || 'rachel');
+        : (project.config.voice || 'omnivoice_duythanh');
       const voiceoverText = voiceoverTts || sceneData.voiceover;
       const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
       voiceoverAudioUrl = ttsResult.url;
@@ -488,7 +461,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       // Generate TTS Voiceover audio
       const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
         ? project.config.customVoiceId 
-        : (project.config.voice || 'rachel');
+        : (project.config.voice || 'omnivoice_duythanh');
       const voiceoverText = scene.voiceoverTts || scene.voiceover;
       const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
 
@@ -587,7 +560,7 @@ app.post('/api/projects/:id/scenes/:sceneId/regenerate-tts', async (req, res) =>
     // 2. Get active voice configuration
     const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
       ? project.config.customVoiceId 
-      : (project.config.voice || 'rachel');
+      : (project.config.voice || 'omnivoice_duythanh');
 
     console.log(`[Regenerate Scene TTS] Generating TTS for scene ${sceneId} using voice ${voiceKey}...`);
     const voiceoverText = voiceoverTts || scene.voiceover;
@@ -624,7 +597,7 @@ app.post('/api/projects/:id/regenerate-tts', async (req, res) => {
 
     const voiceKey = project.config?.voice === 'custom' && project.config.customVoiceId 
       ? project.config.customVoiceId 
-      : (project.config?.voice || 'rachel');
+      : (project.config?.voice || 'omnivoice_duythanh');
 
     const updatedScenes = [];
     
@@ -652,23 +625,6 @@ app.post('/api/projects/:id/regenerate-tts', async (req, res) => {
 
     // Save updated scenes to DB
     await db.updateProjectScenes(projectId, updatedScenes);
-
-    // Regenerate TTS for ending card if present
-    const endingVoiceover = project.config?.ending?.voiceover || '';
-    if (endingVoiceover) {
-      console.log(`[Regenerate TTS] Generating ending voiceover TTS...`);
-      try {
-        const ttsResult = await tts.generateTTS(endingVoiceover, projectId, 'ending', voiceKey);
-        const endingConfig = {
-          ...project.config.ending,
-          voiceoverAudioUrl: ttsResult.url,
-          voiceoverDuration: ttsResult.duration
-        };
-        await db.updateProjectConfig(projectId, { ending: endingConfig });
-      } catch (ttsErr) {
-        console.error(`Failed to generate ending voiceover TTS:`, ttsErr.message);
-      }
-    }
 
     // Get final project with updated config and scenes
     const finalProject = await db.getProjectById(projectId);

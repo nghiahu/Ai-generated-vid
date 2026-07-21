@@ -189,9 +189,8 @@ module.exports = {
     const defaultConfig = {
       length: "Short (~60s)",
       language: "Vietnamese",
-      voice: "rachel",
+      voice: "omnivoice_duythanh",
       watermark: { enabled: true, text: "yupclip.com", position: "top-right", color: "#000000" },
-      ending: { enabled: true, logoText: "YupVid", website: "yupvid.com" },
       backgroundMusic: "Chill Lofi Beats"
     };
 

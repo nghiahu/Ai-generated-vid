@@ -190,32 +190,38 @@ const LAYOUTS_BY_FAMILY = {
     { value: "Blank", label: "Blank / Subtitles Only" }
   ],
   "Opening / Headline": [
+    { value: "IntroBriefingCard", label: "Intro Briefing Card" },
+    { value: "IntroBubbleImage", label: "Intro Bubble Image" },
+    { value: "IntroCutoutHeadlineImage", label: "Intro Cutout Headline Image" },
+    { value: "IntroFullImage", label: "Intro Full Image" },
+    { value: "IntroMapPinsImage", label: "Intro MAP Pins Image" },
+    { value: "IntroRadarSignalImage", label: "Intro Radar Signal Image" },
     { value: "AppCardConcept", label: "APP Card Concept" },
     { value: "AppShowcaseTitle", label: "APP Showcase Title" },
-    { value: "BeforeAfterPanel", label: "Before After Panel" },
     { value: "BroadcastLowerThirdTitle", label: "Broadcast Lower Third Title" },
-    { value: "CandlestickBreakoutHook", label: "Candlestick Breakout Hook" },
     { value: "CaseStudyEditorial", label: "Case Study Editorial" },
     { value: "DossierNotes", label: "Dossier Notes" },
-    { value: "EarningsSnapshotHook", label: "Earnings Snapshot Hook" },
     { value: "EvidenceBoardConcept", label: "Evidence Board Concept" },
     { value: "FearGreedHook", label: "Fear Greed Hook" },
     { value: "FeedScrollHook", label: "Feed Scroll Hook" },
-    { value: "FlowchartTitle", label: "Flowchart Title" },
-    { value: "IntroBriefingCard", label: "Intro Briefing Card" },
-    { value: "IntroBubbleImage", label: "Intro Bubble Image" },
     { value: "IntroChapterStack", label: "Intro Chapter Stack Image" },
-    { value: "IntroCutoutHeadlineImage", label: "Intro Cutout Headline Image" },
     { value: "IntroEvidenceReadlineImage", label: "Intro Evidence Readline Image" },
-    { value: "IntroEvidenceScanlineImage", label: "Intro Evidence Scanline Image" },
-    { value: "IntroEvidenceTimelineImage", label: "Intro Evidence Timeline Image" },
-    { value: "IntroFullImage", label: "Intro Full Image" },
-    { value: "IntroMapPinsImage", label: "Intro MAP Pins Image" },
-    { value: "IntroMetricPillImage", label: "Intro Metric Pill Image" },
-    { value: "IntroRadarSignalImage", label: "Intro Radar Signal Image" },
-    { value: "IntroSignalStepsImages", label: "Intro Signal Steps Images" },
-    { value: "MapPinsHook", label: "MAP Pins Hook" },
-    { value: "OpsMonitorHook", label: "OPS Monitor Hook" }
+    { value: "IntroEvidenceScanlineImage", label: "Intro Evidence Scanline Image" }
+  ],
+  "Comparison / Table": [
+    { value: "BeforeAfterPanel", label: "Before After Panel (So sánh Trước / Sau)" },
+    { value: "VersusArena", label: "Versus Arena (So sánh Đối đầu)" },
+    { value: "SplitProofBullet", label: "Split Proof Bullet" },
+    { value: "SplitBandChecklist", label: "Split Band Checklist" }
+  ],
+  "Data / Metrics": [
+    { value: "OpsMonitorHook", label: "OPS Monitor Hook (Bảng giám sát)" },
+    { value: "HeroMetricCards", label: "Hero Metric Cards" },
+    { value: "MetricCards", label: "Metric Cards" },
+    { value: "GridMetrics", label: "Grid Metrics" },
+    { value: "EarningsSnapshotHook", label: "Earnings Snapshot Hook" },
+    { value: "CandlestickBreakoutHook", label: "Candlestick Breakout Hook" },
+    { value: "IntroMetricPillImage", label: "Intro Metric Pill Image" }
   ],
   "List / Steps": [
     { value: "AIHubGrid1", label: "AI Hub Grid 1 (Emotion Column)" },
@@ -223,11 +229,21 @@ const LAYOUTS_BY_FAMILY = {
     { value: "SelectorWheelRadio", label: "Selector Wheel Radio" },
     { value: "SignalRailBullet", label: "Signal Rail Bullet" }
   ],
-  "Data / Metrics": [],
-  "Comparison / Table": [],
-  "Quote / Insight": [],
-  "Timeline": [],
-  "Media": [],
+  "Timeline / Steps": [
+    { value: "TimelineBeamRail", label: "Timeline Beam Rail" },
+    { value: "TimelineChapters", label: "Timeline Chapters" },
+    { value: "IntroSignalStepsImages", label: "Intro Signal Steps Images" },
+    { value: "IntroEvidenceTimelineImage", label: "Intro Evidence Timeline Image" },
+    { value: "FlowchartTitle", label: "Flowchart Title" }
+  ],
+  "Quote / Insight": [
+    { value: "Pullquote", label: "Pullquote Highlight" },
+    { value: "VignelliQuote", label: "Vignelli Quote" }
+  ],
+  "Media": [
+    { value: "IntroMediaHero", label: "Intro Media Hero" },
+    { value: "MediaCard", label: "Media Showcase Card" }
+  ],
   "Ending": [
     { value: "BottomAnchorOutro", label: "Bottom Anchor Outro" },
     { value: "BrandOutro", label: "Brand Outro" },
@@ -258,7 +274,7 @@ const normalizeFamily = (fam, visualLayout) => {
   if (f.includes("data") || f.includes("metric") || f === "metric") return "Data / Metrics";
   if (f.includes("comparison") || f.includes("table") || f === "comparison") return "Comparison / Table";
   if (f.includes("quote") || f.includes("insight") || f === "quote") return "Quote / Insight";
-  if (f.includes("timeline") || f === "timeline") return "Timeline";
+  if (f.includes("timeline") || f === "timeline") return "Timeline / Steps";
   if (f.includes("media") || f === "media") return "Media";
   if (f === "blank") return "Blank";
   return "Opening / Headline";

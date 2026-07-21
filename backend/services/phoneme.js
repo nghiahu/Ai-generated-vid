@@ -113,7 +113,9 @@ const TECH_TERMS_TRANSLITERATION = {
   'c++': 'xi cộng cộng',
   'cplusplus': 'xi cộng cộng',
   'c#': 'xi sáp',
-  'csharp': 'xi sáp'
+  'csharp': 'xi sáp',
+  'real-time': "riu-tham",
+  'Spacex': "sờ-pây-ích"
 };
 
 const cmuDict = new Map();
