@@ -35,6 +35,7 @@
 | Task 32 | Enlarge Step Cards & Remove Voiceover Block (`IntroSignalStepsMode.tsx`) | [x] Completed |
 | Task 33 | Make Step Cards 100% Equal Width & Uniform Size (`IntroSignalStepsMode.tsx`) | [x] Completed |
 | Task 34 | Implement Dedicated Intro MAP Pins Mode (`IntroMapPinsMode.tsx`, `map_pins_hook.json`, `intro_map_pins_image.json`, `TemplateLayout.tsx`) | [x] Completed |
+| Task 35 | Remove Duplicate Bottom Cards & Enlarge Map Pins (`IntroMapPinsMode.tsx`) | [x] Completed |
 
 
 
