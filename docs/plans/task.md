@@ -40,6 +40,7 @@
 | Task 37 | Optimize AI Text Length Limits & Early Stagger Delays (`ai.js`, `contractLoader.js`) | [x] Completed |
 | Task 38 | Set Peak Frame (2.0s) for Static Thumbnail Previews (`Dashboard.jsx`) | [x] Completed |
 | Task 39 | Persist Active Project & View State Across F5 Page Reloads (`App.jsx`) | [x] Completed |
+| Task 40 | Replace Simple Loader with SVG Circular Progress Ring & Phase Steps (`StoryboardEditor.jsx`) | [x] Completed |
 
 
 
