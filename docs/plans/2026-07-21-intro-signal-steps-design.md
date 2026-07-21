@@ -31,11 +31,12 @@ This design introduces a dedicated mode renderer **`IntroSignalStepsMode`** to d
 
 ### 3.1 Layout & Component Mechanics
 - **Top Header**: Title (`HeadlineText`) and category pill (`CategoryPill`).
-- **Enlarged Staggered Step Group**:
-  - Container width ~840px, centered horizontally.
-  - **Step 1**: Round badge `01` (56px size, 22px font) + Card 1 with accent gradient (`28px * fontScale` font size, `22px 32px` padding), aligned left.
-  - **Step 2**: Round badge `02` + Card 2 indented right (`marginLeft: 60px`).
-  - **Step 3**: Round badge `03` + Card 3 aligned left.
+- **Equal Uniform Staggered Step Group**:
+  - Container width ~860px, centered horizontally.
+  - **100% Equal Card Dimensions**: All 3 cards share identical width, padding (`20px 28px`), `minHeight: "88px"`, and dynamic font sizing (`getDynamicFontSize`) so cards are visually uniform in size.
+  - **Step 1**: Badge `01` (56px) + Card 1 with accent gradient, aligned left.
+  - **Step 2**: Badge `02` + Card 2 with dark theme background, indented right while preserving 100% card width.
+  - **Step 3**: Badge `03` + Card 3 with glowing border, aligned left.
 - **Vertical Signal Rail**:
   - SVG vertical beam linking badge centers (01 -> 02 -> 03).
   - Progressive strokeDashoffset animation based on Remotion `frame`.
