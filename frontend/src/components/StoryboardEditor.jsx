@@ -297,6 +297,8 @@ const VDE_PRESET_STYLES = [
       fontFamily: "Be Vietnam Pro, sans-serif"
     }
   }
+];
+
 const CircularProgressLoader = ({ loadingMessage }) => {
   const [progress, setProgress] = useState(5);
 
