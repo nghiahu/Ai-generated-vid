@@ -29,6 +29,7 @@
 | Task 26 | Fix 3-Circle Interlocked Overlap Coordinates for Intro Metric Pill Image (`BubbleMode.tsx`: set tight overlapping coordinates `left: 245/100/390`, `top: 0/155/155`, `size: 350px`) | [x] Completed |
 | Task 27 | Fix Text Overlap & Implement Dynamic Theme-Harmonious Color Palette in BubbleMode (`BubbleMode.tsx`: derived RGB theme analogous palette, set `padding: 45px 36px` to lock text inside inner core) | [x] Completed |
 | Task 28 | Implement Dedicated Intro Radar Signal Mode (`IntroRadarSignalMode.tsx`, `intro_radar_signal_image.json`, `TemplateLayout.tsx`) | [x] Completed |
+| Task 29 | Implement Radar Sweep Trailing Trail Effect (`IntroRadarSignalMode.tsx`) | [x] Completed |
 
 
 
