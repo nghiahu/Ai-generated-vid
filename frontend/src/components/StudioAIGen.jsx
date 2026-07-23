@@ -44,12 +44,12 @@ async function loadComponentFromJS(compiledJS) {
       return `const Remotion = window.Remotion;`;
     });
 
-    // Match any import from "lucide-react" (including named imports)
+    // Match any import from "lucide-react" (including named imports with aliases)
     rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]lucide-react['"];?/g, (match, imports) => {
       if (imports.includes("{")) {
         const named = imports.match(/\{([\s\S]*?)\}/);
         if (named && named[1]) {
-          const cleanImports = named[1].replace(/[\r\n]+/g, " ").trim();
+          const cleanImports = named[1].replace(/[\r\n]+/g, " ").replace(/\s+as\s+/g, ": ").trim();
           return `const { ${cleanImports} } = window.LucideIcons;`;
         }
       }
@@ -81,7 +81,7 @@ async function loadComponentFromJS(compiledJS) {
 }
 
 // Wrapper component for Remotion Player
-const SceneWrapper = ({ Component, audioUrl, loadError, isEmpty, heading, visualPattern, fps = 30, isGenerating = false, isRegenerating = false, onRegenerate = null }) => {
+const SceneWrapper = ({ Component, audioUrl, loadError, isEmpty, heading, visualPattern, scene = {}, subtitlesJson = [], fps = 30, isGenerating = false, isRegenerating = false, onRegenerate = null }) => {
   // Skeleton / Spinner when scene is pending generation
   if ((isGenerating || isRegenerating) && (!Component || isEmpty)) {
     return (
@@ -211,7 +211,11 @@ const SceneWrapper = ({ Component, audioUrl, loadError, isEmpty, heading, visual
 
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden", background: "#030712" }}>
-      {Component ? <Component fps={fps} /> : (
+      {Component ? (
+        <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
+          <Component fps={fps} scene={scene} subtitlesJson={subtitlesJson} />
+        </div>
+      ) : (
         <div style={{ color: "#fff", display: "grid", placeItems: "center", height: "100%", fontFamily: "sans-serif" }}>
           Đang tải giao diện...
         </div>
@@ -1388,6 +1392,8 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                       isEmpty: currentScene.isEmpty,
                       heading: currentScene.heading,
                       visualPattern: currentScene.visualPattern,
+                      scene: currentScene,
+                      subtitlesJson: currentScene.voiceoverTtsJson,
                       fps: 30,
                       isGenerating: loading,
                       isRegenerating: regeneratingIndex === activeSceneIndex,
