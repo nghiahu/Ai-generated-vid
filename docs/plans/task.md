@@ -72,8 +72,8 @@
 | Task 68 | Change generation loop to sequential and handle API errors cleanly | [x] Completed |
 | Task 69 | Implement split generator API (/plan, /generate-scene) and update frontend React flow | [x] Completed |
 | Task 70 | Fix scene loading skeleton state & add single scene regenerate button (`StudioAIGen.jsx`) | [x] Completed |
-| Task 71 | Parallelize TTS & TSX Code Gen, Optimize Gemini Retries (`aiGen.js`) | [ ] Pending |
-| Task 72 | Add Inter-Scene Pacing Delay (`StudioAIGen.jsx`) | [ ] Pending |
+| Task 71 | Parallelize TTS & TSX Code Gen, Optimize Gemini Retries (`aiGen.js`) | [x] Completed |
+| Task 72 | Add Inter-Scene Pacing Delay (`StudioAIGen.jsx`) | [x] Completed |
 
 
 

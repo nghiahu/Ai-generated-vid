@@ -550,6 +550,11 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
         } else {
           throw new Error(`Lỗi nhận dữ liệu tại phân cảnh ${i + 1}.`);
         }
+
+        // Pacing delay between scenes to protect Gemini API rate limits
+        if (i < currentScenes.length - 1) {
+          await new Promise((r) => setTimeout(r, 2500));
+        }
       }
 
       setStatusText("✅ Hoàn tất sinh video Studio AI Gen!");
