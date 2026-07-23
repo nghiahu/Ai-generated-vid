@@ -4,6 +4,7 @@ import { Dashboard } from "./components/Dashboard";
 import { SidebarConfig } from "./components/SidebarConfig";
 import { StoryboardEditor } from "./components/StoryboardEditor";
 import { MasterPlayer } from "./components/MasterPlayer";
+import { StudioAIGen } from "./components/StudioAIGen";
 import "./App.css";
 
 function App() {
@@ -105,16 +106,25 @@ function App() {
   const fetchProjectDetail = async (id) => {
     try {
       const project = await api.getProjectById(id);
-      if (project) {
+      if (project && project.type !== "AIGEN") {
         project.config = { visualStyle: "rikkei", ...(project.config || {}) };
         if (!project.config.visualStyle) project.config.visualStyle = "rikkei";
       }
       setCurrentProject(project);
-      if (project.scenes && project.scenes.length > 0) {
-        setSelectedSceneId(project.scenes[0].id);
-        setView("WORKSPACE_EDITOR");
+      if (project && project.type === "AIGEN") {
+        if (project.scenes && project.scenes.length > 0) {
+          setSelectedSceneId(project.scenes[0].id);
+          setView("WORKSPACE_EDITOR");
+        } else {
+          setView("STUDIO_AI_GEN");
+        }
       } else {
-        setView("WORKSPACE_SETUP");
+        if (project && project.scenes && project.scenes.length > 0) {
+          setSelectedSceneId(project.scenes[0].id);
+          setView("WORKSPACE_EDITOR");
+        } else {
+          setView("WORKSPACE_SETUP");
+        }
       }
     } catch (error) {
       console.error("Failed to fetch project detail:", error);
@@ -456,6 +466,33 @@ function App() {
             </li>
             <li>
               <button
+                onClick={() => { setSelectedProjectId(null); setView("STUDIO_AI_GEN"); }}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  background: view === "STUDIO_AI_GEN" ? "rgba(37, 99, 235, 0.08)" : "none",
+                  border: "none",
+                  boxShadow: "none",
+                  color: view === "STUDIO_AI_GEN" ? "var(--color-primary)" : "var(--text-secondary)",
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: view === "STUDIO_AI_GEN" ? "700" : "600",
+                  textTransform: "none",
+                  letterSpacing: "0",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  cursor: "pointer"
+                }}
+                onMouseEnter={(e) => { if (view !== "STUDIO_AI_GEN") e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.04)"; }}
+                onMouseLeave={(e) => { if (view !== "STUDIO_AI_GEN") e.currentTarget.style.backgroundColor = "transparent"; }}
+              >
+                ✨ Studio AI Gen
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={() => { setSelectedProjectId(null); setView("BATCH"); }}
                 style={{
                   width: "100%",
@@ -513,7 +550,19 @@ function App() {
 
         {/* Content Area */}
         <div style={{ flex: 1, overflowY: "auto", position: "relative" }}>
-          {view === "STUDIO" ? (
+          {view === "STUDIO_AI_GEN" ? (
+            <StudioAIGen
+              projectId={selectedProjectId}
+              onBack={() => { setSelectedProjectId(null); setView("PROJECTS"); }}
+              onUpdateProjectsList={fetchProjects}
+              onComplete={async (projId) => {
+                await fetchProjects();
+                setSelectedProjectId(projId);
+                await fetchProjectDetail(projId);
+                setView("WORKSPACE_EDITOR");
+              }}
+            />
+          ) : view === "STUDIO" ? (
             <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
               <div style={{ flex: "0 0 58.33%", borderRight: "1px solid rgba(15, 23, 42, 0.08)", overflowY: "auto", display: "flex" }}>
                 <StoryboardEditor
