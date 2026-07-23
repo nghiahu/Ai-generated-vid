@@ -255,7 +255,7 @@ If the script is too long, condense and summarize the voiceover text in each sce
   `;
 
   const promptData = { systemInstruction, userPrompt };
-  const fallbacks = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-1.5-pro", "gemini-3.5-flash"].filter(m => m !== modelName);
+  const fallbacks = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash"].filter(m => m !== modelName);
 
   console.log(`[Gemini API] Phase 1 Scene Planner starting with model: ${modelName}`);
   
@@ -341,7 +341,7 @@ CRITICAL: You MUST strictly generate points with non-empty text that comply with
   `;
 
   const promptData = { systemInstruction, userPrompt };
-  const fallbacks = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-1.5-pro", "gemini-3.5-flash"].filter(m => m !== modelName);
+  const fallbacks = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash"].filter(m => m !== modelName);
 
   console.log(`[Gemini API] Phase 2 Storyboard Generator starting with model: ${modelName}`);
 

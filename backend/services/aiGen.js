@@ -351,7 +351,7 @@ Target Length: "${targetLength}"
 Generate a scene plan array following the schema and visualPattern rules.
   `;
 
-  const fallbacks = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-1.5-pro"].filter(m => m !== modelName);
+  const fallbacks = ["gemini-2.5-flash", "gemini-2.0-flash"].filter(m => m !== modelName);
   const result = await generateContentWithFallback(genAI, options, { systemInstruction, userPrompt }, fallbacks);
   const text = result.response.text().trim();
   
@@ -654,7 +654,7 @@ Theme: "${theme}"
 Background Image: "${bgImage ? 'YES' : 'NO'}"${referenceInstruction}
   `;
 
-  const fallbacks = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-1.5-pro"].filter(m => m !== modelName);
+  const fallbacks = ["gemini-2.5-flash", "gemini-2.0-flash"].filter(m => m !== modelName);
   const result = await generateContentWithFallback(genAI, options, { systemInstruction, userPrompt, imageParts }, fallbacks);
   let text = result.response.text().trim();
   text = cleanAndExtractCode(text);
@@ -785,7 +785,7 @@ Do not output any introductory or conversational text, output only the corrected
           }
         };
 
-        const fallbacks = ["gemini-1.5-flash"];
+        const fallbacks = ["gemini-2.5-flash"].filter(m => m !== modelName);
         const correctionResult = await generateContentWithFallback(
           genAI,
           options,
