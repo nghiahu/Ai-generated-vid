@@ -19,7 +19,7 @@ async function loadComponentFromJS(compiledJS) {
   try {
     // Rewrite React, Remotion, and Lucide React imports robustly to global window variables
     let rewrittenJS = compiledJS;
-    
+
     // Match any import from "react" (including multiline, default, and named imports)
     rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]react['"];?/g, (match, imports) => {
       let result = "const React = window.React;";
@@ -66,9 +66,9 @@ async function loadComponentFromJS(compiledJS) {
     setTimeout(() => {
       try {
         URL.revokeObjectURL(url);
-      } catch (_) {}
+      } catch (_) { }
     }, 5000);
-    
+
     const comp = mod.default || mod.GeneratedScene;
     if (!comp) {
       return { Component: null, error: "Could not find exported default or GeneratedScene component", isEmpty: false };
@@ -223,7 +223,7 @@ const SceneWrapper = ({ Component, audioUrl, loadError, isEmpty, heading, visual
   );
 };
 
-export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsList = null, onComplete = null }) => {
+export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsList = null }) => {
   const [script, setScript] = useState("");
   const [theme, setTheme] = useState("ai_hub_grid");
   const [targetLength, setTargetLength] = useState("Short (~60s)");
@@ -234,11 +234,11 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
   const [mediaModalMode, setMediaModalMode] = useState("background"); // "background" or "references"
   const [bgm, setBgm] = useState("Chill Lofi Beats");
   const [bgmVolume, setBgmVolume] = useState(0.025);
-  
+
   // UI View Modes
   const [editorMode, setEditorMode] = useState("setup"); // "setup" or "preview"
   const [previewType, setPreviewType] = useState("SCENE"); // "SCENE" or "MASTER"
-  
+
   // VDE Themes state & Theme Modal
   const [vdeThemes, setVdeThemes] = useState([]);
   const [showThemeModal, setShowThemeModal] = useState(false);
@@ -540,7 +540,7 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
     try {
       // Step 1: Request scene plan
       const planRes = await api.planStudioAiGen(script, targetLength, theme, voice, bgImage, refImages, projectId);
-      
+
       if (!planRes || !planRes.scenes || planRes.scenes.length === 0) {
         throw new Error("Không lập được kế hoạch phân cảnh từ kịch bản.");
       }
@@ -594,10 +594,6 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
 
       if (onUpdateProjectsList) {
         onUpdateProjectsList();
-      }
-
-      if (onComplete) {
-        onComplete(activeProjId);
       }
     } catch (err) {
       console.error("Studio AI Gen Error:", err);
@@ -1337,7 +1333,7 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <span style={{ fontSize: "15px", fontWeight: 800, color: "#0f172a" }}>
-                {previewType === "SCENE" 
+                {previewType === "SCENE"
                   ? `Cảnh ${activeSceneIndex + 1} / ${loadedScenes.length} (${currentScene?.visualPattern})`
                   : `Video Tổng Hợp (${loadedScenes.length} Phân cảnh)`}
               </span>

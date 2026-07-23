@@ -260,10 +260,9 @@ function normalizeVisualPattern(pattern) {
 // Compile TSX component string to plain JS via Sucrase
 function compileTSX(tsxCode) {
   try {
-    // Sanitize imports if model adds unsupported imports
+    // Sanitize imports if model adds markdown code block wrappers
     let cleanedCode = tsxCode
-      .replace(/import\s+React\s*,\s*\{[^}]*\}\s*from\s*['"]react['"];?/g, "import React from 'react';")
-      .replace(/```tsx?/g, "")
+      .replace(/```tsx?/gi, "")
       .replace(/```/g, "")
       .trim();
 
@@ -458,6 +457,14 @@ You are an expert React / Remotion TSX component code generator.
 Generate a complete, self-contained React functional component for a 9:16 vertical video scene.
 The component MUST follow Remotion physics animations and high-end glassmorphism aesthetic.
 
+# CRITICAL REAL DATA BINDING RULE (MANDATORY & ABSOLUTE - DO NOT VIOLATE)
+1. ABSOLUTE BAN ON EXAMPLE TEXT: You MUST NEVER copy, hardcode, or reuse example text strings found in the design reference documentation (such as "NEXT-GEN INFRASTRUCTURE", "Engineered for Scale", "HIGH PERFORMANCE 99.9%", "AES-256", "GraphQL", "$2.590 TỶ ĐÔ", "900tr", "88%", "Chỉ ~6% tổ chức").
+2. MANDATORY REAL DATA INJECTION: 100% of all rendered text, headings, statistics, card items, labels, and subtitles in your output TSX MUST come dynamically from the scene payload passed in the user prompt:
+   - Main Headline / Title: Use \`scene.heading\` (e.g. \`const headingText = "${scene.heading || "Tiêu đề phân cảnh"}"\`)
+   - Card Items / Bullet Points / Metrics: Use \`scene.points\` array (e.g. \`scene.points[0]\`, \`scene.points[1]\`, \`scene.points[2]\`). Render the exact text, title, and values provided in \`scene.points\`.
+   - Voiceover & Karaoke Subtitles: Use \`scene.voiceover\`
+3. NEVER output generic English infrastructure labels (like "AES-256", "GraphQL", "99.9% Uptime") unless they explicitly appear inside \`scene.heading\`, \`scene.points\`, or \`scene.voiceover\`.
+
 # DESIGN REFERENCE FRAME SPECIFICATIONS (MANDATORY TO READ AND ADHERE TO)
 ${designReferenceText}
 
@@ -512,21 +519,26 @@ ${designReferenceText}
      * Inner lists/bullets/badges: staggered dynamically by index * 8 frames.
      * Bottom subtitle line: starts at frame 40.
 
-9. Prevent Overlaps & Layering (CRITICAL):
-   - The bottom subtitle line is absolute positioned at bottom: 8% with zIndex: 5.
-   - Force Vertical Centering Container: To prevent all content from crowding at the top and leaving the bottom half empty, you MUST wrap all core visual components (badges row, main heading, and cards/gauge/terminal) inside a single vertical Flexbox container that centers the entire block vertically on the screen.
+9. Prevent Overlaps & Layering (CRITICAL - 80% TOP BOUNDARY RULE):
+   - Content Height Boundary: All main visual content (headings, badges, cards, split columns, terminal boxes) MUST fit strictly within the TOP 78% of the viewport (y = 0 to 1497px). The bottom 22% (y = 1498px to 1920px) is strictly reserved as the Subtitle Safe Zone.
+   - Force Vertical Centering Container: Wrap all core visual components inside a single vertical Flexbox container:
      * Use exactly this style pattern for the main centering wrapper:
-       \`display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%", padding: "0 80px", paddingBottom: "18%", boxSizing: "border-box", zIndex: 10\`
-     * The \`paddingBottom: "18%"\` (roughly 350px) is critical to leave a clean bottom safe space for the subtitles, preventing overlay.
-     * Inside this container, enforce a vertical spacing \`gap\` between \`40px\` and \`60px\` to spread the elements elegantly across the vertical axis.
+       display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "78%", maxHeight: "1497px", padding: "60px 60px 0 60px", boxSizing: "border-box", zIndex: 10
+   - Card/Panel Height Limits: All cards, columns, and grid items MUST use maxHeight: "920px" or maxHeight: "50vh" (never unconstrained height: "100%" that bleeds down into the subtitle zone).
    - Prohibit Absolute Component Overlaps: Every content element (headings, sub-labels, cards, gauges, buttons, terminals) must have its own dedicated, non-overlapping layout space. Do not place elements absolute on top of each other.
    - Safe Margin & Clipping Avoidance: Enforce a minimum horizontal padding/margin of at least 80px on the left and right sides of the screen for all text and card containers. No component or text block should extend beyond these boundaries to prevent horizontal clipping.
 
+10. Mandatory Glass Cards & Ambient Glowing Background (NO BLACK SCREENS):
+    - Absolute Ban on Plain Black Screens: Every generated TSX component MUST render a rich ambient background (e.g., \`background: "radial-gradient(circle at 50% 25%, rgba(59, 130, 246, 0.2), transparent 70%), #030712"\`) AND 2 floating blurred glowing ambient orbs (\`filter: "blur(80px)"\`, \`opacity: 0.15\`, animated float/pan).
+    - Mandatory Glass Cards: For \`BULLET_GLASS\`, \`DUAL_METRIC_CARDS\`, or \`HERO_METRIC_GLOW\`, you MUST render 2 to 3 glassmorphic cards (\`background: THEME.cardBg\`, \`border: THEME.border\`, \`backdropFilter: "blur(16px)"\`, \`borderRadius: THEME.radius\`). Never render a solitary text heading in the center of an empty screen!
+
 # HARD RULES
-1. ONLY import from "remotion":
+1. ALLOWED IMPORTS (React, Remotion, and Lucide React Icons):
    import React from "react";
    import { useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
-   Do NOT import any other external packages or local relative paths.
+   import { Zap, Cpu, Shield, Sparkles, TrendingUp, Award, Layers, Terminal, Database, Activity, CheckCircle, Flame, Star, Rocket, Target, BarChart2 } from "lucide-react";
+   You ARE ALLOWED and ENCOURAGED to use Lucide React icons! Place them inside glass cards, pills, badges, and metric counters (e.g. <Zap size={28} color={THEME.orange} /> or <Shield size={24} color={THEME.accent} />).
+   Do NOT import any other unlisted external packages or local relative paths.
 
 2. Component Signature MUST be EXACTLY:
    export const GeneratedScene: React.FC<{ fps?: number }> = ({ fps = 30 }) => {
@@ -707,6 +719,16 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
 async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages, voiceKey, projectId, genAI, modelName }) {
   scene.sceneIndex = index;
   scene.visualPattern = normalizeVisualPattern(scene.visualPattern);
+
+  // Auto-backfill points if missing or empty for BULLET_GLASS or DUAL_METRIC_CARDS
+  if ((!scene.points || scene.points.length === 0) && scene.voiceover) {
+    const clauses = scene.voiceover.split(/[,.;?!]+/).map(s => s.trim()).filter(s => s.length > 5);
+    if (clauses.length > 1) {
+      scene.points = clauses.slice(0, 3);
+    } else {
+      scene.points = [scene.heading || "Kỷ nguyên AI-Native", "Tự động hóa 70% quy trình mã nguồn"];
+    }
+  }
 
   // Calculate duration frames (word count / 2.7 * 30 fps, min 120 frames = 4s)
   const wordCount = (scene.voiceover || "").trim().split(/\s+/).length;

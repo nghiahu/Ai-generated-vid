@@ -119,7 +119,8 @@ const TECH_TERMS_TRANSLITERATION = {
   'Spacex': "sờ-pây-ích",
   'realtime': 'riu-tham',
   'selfie': "seo-phi",
-  'photo': "Phô-tô"
+  'photo': "Phô-tô",
+  'aI-native': "ây-ai-lây-típ"
 };
 
 const cmuDict = new Map();

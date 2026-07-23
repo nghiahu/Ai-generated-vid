@@ -88,6 +88,11 @@ async function initDb() {
       alias VARCHAR(150) NOT NULL,
       UNIQUE(alias)
     );
+
+    CREATE TABLE IF NOT EXISTS uploaded_media (
+      url VARCHAR(500) PRIMARY KEY,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
   `;
 
   try {
@@ -96,6 +101,7 @@ async function initDb() {
     
     await pool.query(createTablesQuery);
     // Alter existing tables if they don't have the columns
+    await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS type VARCHAR(50) DEFAULT 'STORYBOARD'`);
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS theme VARCHAR(100) DEFAULT 'default'`);
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS accent_color VARCHAR(50) DEFAULT '#FFB7C5'`);
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS voiceover_tts TEXT`);
@@ -153,6 +159,18 @@ module.exports = {
     if (projectRes.rowCount === 0) return null;
 
     const project = projectRes.rows[0];
+    if (project.type === 'AIGEN') {
+      return {
+        id: project.id,
+        title: project.title,
+        status: project.status,
+        createdAt: project.created_at,
+        type: project.type,
+        config: project.config,
+        scenes: project.config?.scenes || []
+      };
+    }
+
     const scenesRes = await pool.query('SELECT * FROM scenes WHERE project_id = $1 ORDER BY scene_index ASC', [id]);
 
     return {
@@ -160,6 +178,7 @@ module.exports = {
       title: project.title,
       status: project.status,
       createdAt: project.created_at,
+      type: project.type,
       config: project.config,
       scenes: scenesRes.rows.map(s => ({
         id: s.id,
@@ -565,6 +584,40 @@ module.exports = {
       console.log(`[Token Log] Accumulated tokens for project ${projectId}: +${promptTokens} prompt, +${completionTokens} completion. Total: ${totalCount}`);
     } catch (err) {
       console.error("[db.js] Error accumulating tokens:", err.message);
+    }
+  },
+  saveAIGenProject: async (id, title, config) => {
+    await initDb();
+    const query = `
+      INSERT INTO projects (id, title, status, config, type)
+      VALUES ($1, $2, 'DRAFT', $3, 'AIGEN')
+      ON CONFLICT (id) DO UPDATE
+      SET title = $2, config = $3
+      RETURNING *
+    `;
+    const res = await pool.query(query, [id, title, JSON.stringify(config)]);
+    return res.rows[0];
+  },
+  saveUploadedMedia: async (url) => {
+    if (!url) return;
+    await initDb();
+    try {
+      await pool.query(
+        'INSERT INTO uploaded_media (url) VALUES ($1) ON CONFLICT (url) DO NOTHING',
+        [url]
+      );
+    } catch (err) {
+      console.error("[db.js] Error saving uploaded media:", err.message);
+    }
+  },
+  getUploadedMedia: async () => {
+    await initDb();
+    try {
+      const res = await pool.query('SELECT url FROM uploaded_media ORDER BY created_at DESC');
+      return res.rows.map(r => r.url);
+    } catch (err) {
+      console.error("[db.js] Error getting uploaded media:", err.message);
+      return [];
     }
   }
 };

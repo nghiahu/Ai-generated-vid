@@ -48,7 +48,10 @@ app.use('/downloads', express.static(path.join(__dirname, 'public/downloads'), {
 
 // Serve other static assets (voiceover audio, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/tts', express.static(path.join(__dirname, 'public/tts')));
+const studioAiGenRoute = require('./routes/studioAiGenRoute');
+
+// Mount Studio AI Gen Route
+app.use('/api/studio-ai-gen', studioAiGenRoute);
 
 // Temporary in-memory renders store
 const activeRenders = {};
@@ -287,7 +290,11 @@ app.post('/api/upload', async (req, res) => {
       resource_type: 'auto'
     });
 
-    res.json({ url: result.secure_url });
+    const secureUrl = result.secure_url;
+    // Persist uploaded image in database so it appears in Your Media tab
+    await db.saveUploadedMedia(secureUrl);
+
+    res.json({ url: secureUrl });
   } catch (error) {
     console.error('Cloudinary upload failure:', error);
     res.status(500).json({ error: `Cloudinary upload failed: ${error.message}` });
@@ -303,8 +310,24 @@ app.get('/api/media/previous', async (req, res) => {
     );
 
     const allUrls = new Set();
+
+    // 1. Fetch explicitly recorded uploaded media from database
+    try {
+      const uploadedMedia = await db.getUploadedMedia();
+      for (const url of uploadedMedia) {
+        if (url && typeof url === 'string') {
+          allUrls.add(url.trim());
+        }
+      }
+    } catch (dbErr) {
+      console.error('Failed to get uploaded media from db:', dbErr.message);
+    }
+
+    // 2. Fetch media from all existing project scenes and config values
     for (const project of fullProjects) {
-      if (project && project.scenes) {
+      if (!project) continue;
+
+      if (project.scenes) {
         for (const scene of project.scenes) {
           if (Array.isArray(scene.mediaList)) {
             for (const url of scene.mediaList) {
@@ -315,6 +338,28 @@ app.get('/api/media/previous', async (req, res) => {
                 if (!isUnsplash && trimmed.length > 0) {
                   allUrls.add(trimmed);
                 }
+              }
+            }
+          }
+        }
+      }
+
+      // Check config for background image and references (multimodal Studio AI Gen)
+      if (project.config) {
+        if (project.config.bgImage && typeof project.config.bgImage === 'string') {
+          const trimmed = project.config.bgImage.trim();
+          const isUnsplash = trimmed.includes('images.unsplash.com') || trimmed.includes('unsplash.com');
+          if (!isUnsplash && trimmed.length > 0) {
+            allUrls.add(trimmed);
+          }
+        }
+        if (Array.isArray(project.config.refImages)) {
+          for (const url of project.config.refImages) {
+            if (url && typeof url === 'string') {
+              const trimmed = url.trim();
+              const isUnsplash = trimmed.includes('images.unsplash.com') || trimmed.includes('unsplash.com');
+              if (!isUnsplash && trimmed.length > 0) {
+                allUrls.add(trimmed);
               }
             }
           }

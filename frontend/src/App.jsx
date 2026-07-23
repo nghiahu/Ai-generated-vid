@@ -88,7 +88,7 @@ function App() {
         const url = new URL(window.location.href);
         url.searchParams.set("projectId", selectedProjectId);
         window.history.replaceState({}, "", url.toString());
-      } catch (e) {}
+      } catch (e) { }
       fetchProjectDetail(selectedProjectId);
     } else {
       try {
@@ -96,7 +96,7 @@ function App() {
         const url = new URL(window.location.href);
         url.searchParams.delete("projectId");
         window.history.replaceState({}, "", url.pathname);
-      } catch (e) {}
+      } catch (e) { }
       setCurrentProject(null);
       setSelectedSceneId(null);
       setVideoUrl(null);
@@ -112,12 +112,7 @@ function App() {
       }
       setCurrentProject(project);
       if (project && project.type === "AIGEN") {
-        if (project.scenes && project.scenes.length > 0) {
-          setSelectedSceneId(project.scenes[0].id);
-          setView("WORKSPACE_EDITOR");
-        } else {
-          setView("STUDIO_AI_GEN");
-        }
+        setView("STUDIO_AI_GEN");
       } else {
         if (project && project.scenes && project.scenes.length > 0) {
           setSelectedSceneId(project.scenes[0].id);
@@ -196,7 +191,7 @@ function App() {
         customVoiceId: modalCustomVoiceId
       };
       const savedConfig = await api.updateProjectConfig(currentProject.id, updatedConfig);
-      
+
       // Update local state config
       setCurrentProject(prev => ({
         ...prev,
@@ -227,7 +222,7 @@ function App() {
 
     try {
       const updatedScene = await api.updateScene(currentProject.id, sceneId, sceneData);
-      
+
       // Update with exact backend details (including voiceoverAudioUrl path)
       setCurrentProject(prev => {
         const newScenes = prev.scenes.map(s => s.id === sceneId ? { ...s, ...updatedScene } : s);
@@ -244,13 +239,13 @@ function App() {
     setRegeneratingSceneId(sceneId);
     try {
       const updatedScene = await api.regenerateSceneTts(currentProject.id, sceneId);
-      
+
       // Update local state with the exact updated scene
       setCurrentProject(prev => {
         const newScenes = prev.scenes.map(s => s.id === sceneId ? { ...s, ...updatedScene } : s);
         return { ...prev, scenes: newScenes };
       });
-      
+
       showToast("Đã tái tạo giọng đọc phân cảnh thành công!", "success");
     } catch (error) {
       console.error("Failed to regenerate scene TTS:", error);
@@ -286,7 +281,7 @@ function App() {
         const newProj = await api.createProject(title);
         projectId = newProj.id;
         setSelectedProjectId(newProj.id);
-        
+
         // Save the settings from the draft config
         await api.updateProjectConfig(newProj.id, draftConfig);
         traits = draftConfig.traits || [];
@@ -308,11 +303,11 @@ function App() {
 
     try {
       const result = await api.generateStoryboard(projectId, scriptText, visualStyle, traits, selectedMedia);
-      
+
       // Update the current project details
       const detailedProj = await api.getProjectById(projectId);
       setCurrentProject(detailedProj);
-      
+
       if (detailedProj.scenes && detailedProj.scenes.length > 0) {
         setSelectedSceneId(detailedProj.scenes[0].id);
       }
@@ -342,7 +337,7 @@ function App() {
       const pollInterval = setInterval(async () => {
         try {
           const statusRes = await api.getRenderStatus(currentProject.id, renderId);
-          
+
           const totalF = statusRes.totalFrames || 0;
           const renderedF = statusRes.renderedFrames || 0;
           const rawPct = statusRes.progress || 0;
@@ -555,12 +550,6 @@ function App() {
               projectId={selectedProjectId}
               onBack={() => { setSelectedProjectId(null); setView("PROJECTS"); }}
               onUpdateProjectsList={fetchProjects}
-              onComplete={async (projId) => {
-                await fetchProjects();
-                setSelectedProjectId(projId);
-                await fetchProjectDetail(projId);
-                setView("WORKSPACE_EDITOR");
-              }}
             />
           ) : view === "STUDIO" ? (
             <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
@@ -571,11 +560,11 @@ function App() {
                   config={{}}
                   projectId={null}
                   onGenerateStoryboard={handleGenerateStoryboard}
-                  onUpdateScene={() => {}}
+                  onUpdateScene={() => { }}
                   loading={loading}
                   loadingMessage={loadingMessage}
                   selectedSceneId={null}
-                  onSelectScene={() => {}}
+                  onSelectScene={() => { }}
                 />
               </div>
               <div style={{ flex: "0 0 41.67%", overflowY: "auto" }}>
@@ -635,16 +624,16 @@ function App() {
           >
             HYPERFRAMES
           </span>
-          
+
           <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-            <button 
-              className="secondary" 
-              style={{ padding: "6px 14px", fontSize: "11px", borderRadius: "20px" }} 
+            <button
+              className="secondary"
+              style={{ padding: "6px 14px", fontSize: "11px", borderRadius: "20px" }}
               onClick={() => { setSelectedProjectId(null); setView("DASHBOARD"); }}
             >
               &larr; Projects
             </button>
-            
+
             <button
               className={view === "WORKSPACE_SETUP" ? "tab-active" : "tab-inactive"}
               style={{ background: "none", border: "none", fontSize: "14px", cursor: "pointer", paddingBottom: "4px" }}
@@ -661,7 +650,7 @@ function App() {
             </button>
           </div>
         </div>
-        
+
       </header>
 
       {/* Main Workspace content */}
@@ -830,8 +819,8 @@ function App() {
             bottom: "24px",
             right: "24px",
             zIndex: 9999,
-            background: toast.type === "error" 
-              ? "linear-gradient(135deg, #ef4444, #dc2626)" 
+            background: toast.type === "error"
+              ? "linear-gradient(135deg, #ef4444, #dc2626)"
               : "linear-gradient(135deg, #059669, #10b981)",
             color: "#ffffff",
             padding: "14px 22px",

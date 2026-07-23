@@ -62,6 +62,16 @@ const DashboardProjectPlayer = ({ scenes, config, totalDurationFrames }) => {
 
 export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) => {
   const [playingProjectId, setPlayingProjectId] = useState(null);
+  const [activeTab, setActiveTab] = useState("STORYBOARD");
+
+  // Filter projects by type: STORYBOARD vs AIGEN
+  const filteredProjects = projects.filter(p => {
+    if (activeTab === "AIGEN") {
+      return p.type === "AIGEN";
+    } else {
+      return p.type !== "AIGEN";
+    }
+  });
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative" }}>
@@ -71,15 +81,61 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
 
       {/* Main Content Area */}
       <div style={{ padding: "50px 40px", maxWidth: "1080px", width: "100%", margin: "0 auto", flex: 1, zIndex: 10 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "36px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "26px" }}>
           <h2 style={{ fontSize: "30px", fontFamily: "var(--font-heading)", fontWeight: "800", letterSpacing: "-0.02em" }}>
             Dự án của tôi
           </h2>
-          <span style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: 600 }}>{projects.length} Video</span>
+          <span style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: 600 }}>{filteredProjects.length} Video</span>
         </div>
 
-        {/* Project horizontal card list */}
-        {projects.length === 0 ? (
+        {/* Tag Selector at the Top */}
+        <div style={{
+          display: "flex",
+          background: "rgba(15, 23, 42, 0.04)",
+          padding: "5px",
+          borderRadius: "12px",
+          width: "max-content",
+          marginBottom: "32px",
+          border: "1px solid rgba(15, 23, 42, 0.07)"
+        }}>
+          <button
+            onClick={() => { setActiveTab("STORYBOARD"); setPlayingProjectId(null); }}
+            style={{
+              padding: "10px 24px",
+              borderRadius: "8px",
+              border: "none",
+              background: activeTab === "STORYBOARD" ? "#ffffff" : "transparent",
+              color: activeTab === "STORYBOARD" ? "#0f172a" : "#64748b",
+              fontWeight: 700,
+              fontSize: "14px",
+              cursor: "pointer",
+              boxShadow: activeTab === "STORYBOARD" ? "0 2px 10px rgba(0,0,0,0.06)" : "none",
+              transition: "all 0.15s ease"
+            }}
+          >
+            🎬 Biên tập Storyboard
+          </button>
+          <button
+            onClick={() => { setActiveTab("AIGEN"); setPlayingProjectId(null); }}
+            style={{
+              padding: "10px 24px",
+              borderRadius: "8px",
+              border: "none",
+              background: activeTab === "AIGEN" ? "#ffffff" : "transparent",
+              color: activeTab === "AIGEN" ? "#0f172a" : "#64748b",
+              fontWeight: 700,
+              fontSize: "14px",
+              cursor: "pointer",
+              boxShadow: activeTab === "AIGEN" ? "0 2px 10px rgba(0,0,0,0.06)" : "none",
+              transition: "all 0.15s ease"
+            }}
+          >
+            ⚡ Video AI Gen
+          </button>
+        </div>
+
+        {/* Project list rendering */}
+        {filteredProjects.length === 0 ? (
           <div
             style={{
               border: "2.5px dashed rgba(15, 23, 42, 0.12)",
@@ -92,12 +148,14 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
             }}
           >
             <p style={{ color: "var(--text-secondary)", fontSize: "16px", fontWeight: "600" }}>
-              Chưa có dự án nào được tạo. Hãy nhấn vào mục <strong>Studio</strong> trên thanh điều hướng để sản xuất video mới!
+              {activeTab === "AIGEN" 
+                ? "Chưa có video AI Gen nào được tạo. Hãy sang mục Studio AI Gen để trải nghiệm sức mạnh trí tuệ nhân tạo!" 
+                : "Chưa có dự án Storyboard nào được tạo. Hãy nhấn vào nút sản xuất để bắt đầu!"}
             </p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-            {projects.map((project) => {
+            {filteredProjects.map((project) => {
               // Extract concatenated script excerpt
               const scriptExcerpt = project.scenes && project.scenes.length > 0
                 ? project.scenes.map(s => s.voiceover).filter(Boolean).join(" ")
@@ -106,11 +164,16 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                 ? scriptExcerpt.substring(0, 247) + "..."
                 : scriptExcerpt || "Chưa có kịch bản chi tiết cho dự án này.";
 
-              // Extract thumbnail from first scene
               const firstScene = project.scenes && project.scenes[0];
-              const thumbnailUrl = firstScene && firstScene.mediaList && firstScene.mediaList.length > 0
-                ? firstScene.mediaList[firstScene.selectedMediaIndex !== -1 ? (firstScene.selectedMediaIndex || 0) : 0]
-                : "";
+              // Extract thumbnail from first scene or project background image
+              let thumbnailUrl = "";
+              if (project.type === "AIGEN" && project.config?.bgImage) {
+                thumbnailUrl = project.config.bgImage;
+              } else {
+                thumbnailUrl = firstScene && firstScene.mediaList && firstScene.mediaList.length > 0
+                  ? firstScene.mediaList[firstScene.selectedMediaIndex !== -1 ? (firstScene.selectedMediaIndex || 0) : 0]
+                  : "";
+              }
 
               // Format date: done - MM/DD/YYYY, HH:MM GMT+7
               const dateObj = new Date(project.createdAt);
