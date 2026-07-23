@@ -60,10 +60,18 @@
 | Task 57 | Register & Link `IntroMetricPillImage` (`venn_spheres`) across Registry, Layouts Dropdown & Contract Loader | [x] Completed |
 | Task 58 | Theme-aware Dynamic Color Palette Refactor for Venn Spheres & Orbital Bubbles (`VennSpheresMode.tsx`, `OrbitalBubblesMode.tsx`) | [x] Completed |
 | Task 59 | Real-Time Video Render Progress Upgrade with ANSI-Clean stdout Parsing & 300ms Fast Polling (`render.js`, `App.jsx`) | [x] Completed |
+| Task 60 | Studio AI Gen: Live Remotion Codegen Pipeline, Background Image Upload, Full Video Setup & Sucrase Compilation | [x] Completed |
 | Task 60 | Custom Video Download Filename & Save Location Picker (`MasterPlayer.jsx`, `App.jsx`) | [x] Completed |
 | Task 61 | Fix Video Export Progress Percentage Calculation Bug (`render.js`, `App.jsx`) | [x] Completed |
-
-
+| Task 62 | Implement dynamic subtitle sentence-by-sentence splitting and prevent layout overlapping | [x] Completed |
+| Task 63 | Prevent Component Overlapping and Text Clipping (Flexbox badges & 80px margins) | [x] Completed |
+| Task 64 | Prevent Mock Terminal Box Abuse (Trigger keywords and metaphorical constraints) | [x] Completed |
+| Task 65 | Force vertical layout centering and spacing gaps for core visual components | [x] Completed |
+| Task 66 | Implement robust TSX code extraction to prevent black screen compiles | [x] Completed |
+| Task 67 | Implement layout-only reference image adaptation rules (protect theme colors) | [x] Completed |
+| Task 68 | Change generation loop to sequential and handle API errors cleanly | [x] Completed |
+| Task 69 | Implement split generator API (/plan, /generate-scene) and update frontend React flow | [x] Completed |
+| Task 70 | Fix scene loading skeleton state & add single scene regenerate button (`StudioAIGen.jsx`) | [ ] Pending |
 
 
 
