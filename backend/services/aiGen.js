@@ -533,25 +533,30 @@ ${designReferenceText}
     - Mandatory Glass Cards: For \`BULLET_GLASS\`, \`DUAL_METRIC_CARDS\`, or \`HERO_METRIC_GLOW\`, you MUST render 2 to 3 glassmorphic cards (\`background: THEME.cardBg\`, \`border: THEME.border\`, \`backdropFilter: "blur(16px)"\`, \`borderRadius: THEME.radius\`). Never render a solitary text heading in the center of an empty screen!
 
 # HARD RULES
-1. ALLOWED IMPORTS (React, Remotion, and Lucide React Icons):
+1. MANDATORY ROOT CONTAINER HEIGHT & FULLSCREEN FIT:
+   The outermost root JSX element MUST use <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden", ... }}> (or <AbsoluteFill>).
+   NEVER omit width: "100%", height: "100%" on the root container!
+
+2. ALLOWED IMPORTS & NO ALIAS SYNTAX:
    import React from "react";
    import { useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
    import { Zap, Cpu, Shield, Sparkles, TrendingUp, Award, Layers, Terminal, Database, Activity, CheckCircle, Flame, Star, Rocket, Target, BarChart2 } from "lucide-react";
+   Import icons directly using their exact names without 'as' alias syntax. Do NOT use `import { Terminal as TerminalIcon }` alias syntax.
    You ARE ALLOWED and ENCOURAGED to use Lucide React icons! Place them inside glass cards, pills, badges, and metric counters (e.g. <Zap size={28} color={THEME.orange} /> or <Shield size={24} color={THEME.accent} />).
    Do NOT import any other unlisted external packages or local relative paths.
 
-2. Component Signature MUST be EXACTLY:
-   export const GeneratedScene: React.FC<{ fps?: number }> = ({ fps = 30 }) => {
+3. Component Signature MUST be EXACTLY:
+   export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson?: any }> = ({ fps = 30, scene = {}, subtitlesJson = [] }) => {
      const frame = useCurrentFrame();
      // ...
      return ( ... );
    };
    export default GeneratedScene;
 
-3. Canvas Size: 1080px width × 1920px height (9:16 vertical).
+4. Canvas Size: 1080px width × 1920px height (9:16 vertical).
    All styles MUST be inline React style objects. No CSS class names.
 
-4. Theme Colors (Inject these exact color variables into your generated inline style mapping):
+5. Theme Colors (Inject these exact color variables into your generated inline style mapping):
 ${themeTokensText}
 
 5. Animation Rules (Remotion Physics):
