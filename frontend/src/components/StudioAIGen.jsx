@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Player } from "@remotion/player";
 import * as Remotion from "remotion";
+import * as LucideIcons from "lucide-react";
 import { api } from "../services/api";
 import axios from "axios";
 import { MainComposition } from "../../../my-video/src/compositions/MainComposition";
@@ -8,6 +9,7 @@ import { MainComposition } from "../../../my-video/src/compositions/MainComposit
 // Expose globals for runtime dynamic import of Blob URLs
 window.React = React;
 window.Remotion = Remotion;
+window.LucideIcons = LucideIcons;
 
 // Dynamic loader: compiles JS string from Sucrase into live React Component
 async function loadComponentFromJS(compiledJS) {
@@ -15,7 +17,7 @@ async function loadComponentFromJS(compiledJS) {
     return { Component: null, error: "Empty code content", isEmpty: true };
   }
   try {
-    // Rewrite React and Remotion imports robustly to global window variables
+    // Rewrite React, Remotion, and Lucide React imports robustly to global window variables
     let rewrittenJS = compiledJS;
     
     // Match any import from "react" (including multiline, default, and named imports)
@@ -41,6 +43,21 @@ async function loadComponentFromJS(compiledJS) {
       }
       return `const Remotion = window.Remotion;`;
     });
+
+    // Match any import from "lucide-react" (including named imports)
+    rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]lucide-react['"];?/g, (match, imports) => {
+      if (imports.includes("{")) {
+        const named = imports.match(/\{([\s\S]*?)\}/);
+        if (named && named[1]) {
+          const cleanImports = named[1].replace(/[\r\n]+/g, " ").trim();
+          return `const { ${cleanImports} } = window.LucideIcons;`;
+        }
+      }
+      return `const LucideIcons = window.LucideIcons;`;
+    });
+
+    // Strip any other unsupported external package imports
+    rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"](?!react|remotion|lucide-react)[^'"]+['"];?/g, "");
 
     const blob = new Blob([rewrittenJS], { type: "application/javascript" });
     const url = URL.createObjectURL(blob);
@@ -206,7 +223,7 @@ const SceneWrapper = ({ Component, audioUrl, loadError, isEmpty, heading, visual
   );
 };
 
-export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsList = null }) => {
+export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsList = null, onComplete = null }) => {
   const [script, setScript] = useState("");
   const [theme, setTheme] = useState("ai_hub_grid");
   const [targetLength, setTargetLength] = useState("Short (~60s)");
@@ -248,6 +265,11 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
   const [loadedScenes, setLoadedScenes] = useState([]);
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
   const [regeneratingIndex, setRegeneratingIndex] = useState(null);
+
+  // Per-scene regenerate modal state
+  const [showRegenModal, setShowRegenModal] = useState(false);
+  const [regenSceneIndex, setRegenSceneIndex] = useState(null);
+  const [regenVoice, setRegenVoice] = useState("quanganh");
 
   const logoFileInputRef = useRef(null);
   const playerRef = useRef(null);
@@ -294,6 +316,8 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
         if (cachedScript) setScript(cachedScript);
         const cachedTheme = localStorage.getItem("studio_aigen_theme");
         if (cachedTheme) setTheme(cachedTheme);
+        const cachedVoice = localStorage.getItem("studio_aigen_voice");
+        if (cachedVoice) setVoice(cachedVoice);
         const cachedBg = localStorage.getItem("studio_aigen_bg");
         if (cachedBg) setBgImage(cachedBg);
         const cachedRefs = localStorage.getItem("studio_aigen_ref_images");
@@ -453,19 +477,27 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
       localStorage.removeItem("studio_aigen_raw_scenes");
       localStorage.removeItem("studio_aigen_script");
       localStorage.removeItem("studio_aigen_theme");
+      localStorage.removeItem("studio_aigen_voice");
       localStorage.removeItem("studio_aigen_bg");
       localStorage.removeItem("studio_aigen_ref_images");
       setStatusText("🔄 Đã đặt lại phiên làm việc.");
     }
   };
 
-  const handleRegenerateSingleScene = async (index) => {
+  const triggerOpenRegenModal = (idx) => {
+    setRegenSceneIndex(idx);
+    setRegenVoice(voice || "quanganh");
+    setShowRegenModal(true);
+  };
+
+  const handleRegenerateSingleScene = async (index, selectedVoice = null) => {
     if (regeneratingIndex !== null || loading) return;
     const targetScene = rawScenes[index];
     if (!targetScene) return;
 
+    const targetVoice = selectedVoice || voice;
     setRegeneratingIndex(index);
-    setStatusText(`🔄 AI đang sinh lại code cho phân cảnh ${index + 1}...`);
+    setStatusText(`🔄 AI đang sinh lại code & giọng đọc cho phân cảnh ${index + 1}...`);
     setErrorMsg("");
 
     try {
@@ -473,7 +505,7 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
       const res = await api.generateStudioAiGenScene(
         activeProjId,
         targetScene,
-        voice,
+        targetVoice,
         theme,
         bgImage,
         refImages
@@ -545,6 +577,7 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
           localStorage.setItem("studio_aigen_raw_scenes", JSON.stringify(currentScenes));
           localStorage.setItem("studio_aigen_script", script);
           localStorage.setItem("studio_aigen_theme", theme);
+          localStorage.setItem("studio_aigen_voice", voice);
           localStorage.setItem("studio_aigen_bg", bgImage);
           localStorage.setItem("studio_aigen_ref_images", JSON.stringify(refImages));
         } else {
@@ -561,6 +594,10 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
 
       if (onUpdateProjectsList) {
         onUpdateProjectsList();
+      }
+
+      if (onComplete) {
+        onComplete(activeProjId);
       }
     } catch (err) {
       console.error("Studio AI Gen Error:", err);
@@ -1009,7 +1046,11 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
               </label>
               <select
                 value={voice}
-                onChange={(e) => setVoice(e.target.value)}
+                onChange={(e) => {
+                  const newVoice = e.target.value;
+                  setVoice(newVoice);
+                  localStorage.setItem("studio_aigen_voice", newVoice);
+                }}
                 style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "13px" }}
               >
                 <option value="duythanh">OmniVoice - Duy Thanh (Offline Voice)</option>
@@ -1188,18 +1229,45 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                           <span style={{ fontSize: "11px", color: "#dc2626", fontWeight: 700, background: "#fee2e2", padding: "2px 8px", borderRadius: "12px" }}>⚠️ Lỗi code</span>
                         )}
                       </div>
-                      <span style={{
-                        padding: "4px 12px",
-                        borderRadius: "999px",
-                        background: badge.bg,
-                        border: `1px solid ${badge.border}`,
-                        color: badge.text,
-                        fontSize: "11px",
-                        fontWeight: 800,
-                        letterSpacing: "0.05em"
-                      }}>
-                        {sc.visualPattern || "CUSTOM"}
-                      </span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            triggerOpenRegenModal(idx);
+                          }}
+                          disabled={regeneratingIndex !== null || loading}
+                          title="Tải lại và sinh mới code AI cho phân cảnh này"
+                          style={{
+                            padding: "3px 10px",
+                            borderRadius: "14px",
+                            background: regeneratingIndex === idx ? "#cbd5e1" : "linear-gradient(135deg, #2563eb, #1d4ed8)",
+                            color: "#ffffff",
+                            border: "none",
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            cursor: regeneratingIndex !== null || loading ? "not-allowed" : "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                            boxShadow: "0 2px 6px rgba(37, 99, 235, 0.2)"
+                          }}
+                        >
+                          {regeneratingIndex === idx ? "⏳ Đang sinh..." : "🔄 Sinh lại"}
+                        </button>
+                        <span style={{
+                          padding: "4px 12px",
+                          borderRadius: "999px",
+                          background: badge.bg,
+                          border: `1px solid ${badge.border}`,
+                          color: badge.text,
+                          fontSize: "11px",
+                          fontWeight: 800,
+                          letterSpacing: "0.05em"
+                        }}>
+                          {sc.visualPattern || "CUSTOM"}
+                        </span>
+                      </div>
                     </div>
 
                     <div style={{ fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>
@@ -1273,9 +1341,34 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                   ? `Cảnh ${activeSceneIndex + 1} / ${loadedScenes.length} (${currentScene?.visualPattern})`
                   : `Video Tổng Hợp (${loadedScenes.length} Phân cảnh)`}
               </span>
-              <span style={{ fontSize: "13px", fontWeight: 600, color: "#64748b" }}>
-                9:16 Vertical
-              </span>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                {previewType === "SCENE" && currentScene && (
+                  <button
+                    type="button"
+                    onClick={() => triggerOpenRegenModal(activeSceneIndex)}
+                    disabled={regeneratingIndex !== null || loading}
+                    style={{
+                      padding: "5px 12px",
+                      borderRadius: "16px",
+                      background: regeneratingIndex === activeSceneIndex ? "#cbd5e1" : "linear-gradient(135deg, #2563eb, #1d4ed8)",
+                      color: "#ffffff",
+                      border: "none",
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      cursor: regeneratingIndex !== null || loading ? "not-allowed" : "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      boxShadow: "0 2px 8px rgba(37, 99, 235, 0.25)"
+                    }}
+                  >
+                    {regeneratingIndex === activeSceneIndex ? "⏳ Đang sinh..." : "🔄 Sinh lại phân cảnh này"}
+                  </button>
+                )}
+                <span style={{ fontSize: "13px", fontWeight: 600, color: "#64748b" }}>
+                  9:16 Vertical
+                </span>
+              </div>
             </div>
 
             {/* Remotion Player Container */}
@@ -1341,7 +1434,7 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                         color: "#000000"
                       },
                       videoTheme: theme,
-                      visualStyle: theme === "rikkei" ? "rikkei" : "RIKKEI_LIGHT"
+                      visualStyle: theme
                     }
                   }}
                   durationInFrames={totalDurationFrames}
@@ -1797,6 +1890,69 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                   )}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Per-Scene Regenerate Voice Selection Modal */}
+      {showRegenModal && regenSceneIndex !== null && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.75)", backdropFilter: "blur(8px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1100 }}>
+          <div style={{ background: "#ffffff", width: "90%", maxWidth: "480px", borderRadius: "20px", padding: "26px", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)", border: "1px solid #e2e8f0" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: "1px solid #e2e8f0", paddingBottom: "12px" }}>
+              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 800, color: "#0f172a" }}>
+                🔄 Sinh Lại Phân Cảnh {regenSceneIndex + 1}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowRegenModal(false)}
+                style={{ background: "none", border: "none", fontSize: "18px", color: "#64748b", cursor: "pointer", fontWeight: "bold" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ background: "#f8fafc", padding: "12px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", marginBottom: "18px" }}>
+              <div style={{ fontSize: "14px", fontWeight: 700, color: "#0f172a", marginBottom: "4px" }}>
+                {rawScenes[regenSceneIndex]?.heading}
+              </div>
+              <div style={{ fontSize: "13px", color: "#475569", lineHeight: 1.4 }}>
+                🗣️ "{rawScenes[regenSceneIndex]?.voiceover}"
+              </div>
+            </div>
+
+            <label style={{ fontSize: "13px", fontWeight: 700, color: "#334155", display: "block", marginBottom: "8px" }}>
+              🎙️ Chọn giọng đọc AI cho phân cảnh này:
+            </label>
+            <select
+              value={regenVoice}
+              onChange={(e) => setRegenVoice(e.target.value)}
+              style={{ width: "100%", padding: "12px", borderRadius: "10px", border: "1.5px solid #cbd5e1", fontSize: "13px", marginBottom: "22px", fontWeight: 600, color: "#0f172a" }}
+            >
+              <option value="quanganh">OmniVoice - Quang Anh (Offline Voice)</option>
+              <option value="duythanh">OmniVoice - Duy Thanh (Offline Voice)</option>
+            </select>
+
+            <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+              <button
+                type="button"
+                onClick={() => setShowRegenModal(false)}
+                style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid #cbd5e1", background: "#ffffff", color: "#475569", fontWeight: 600, fontSize: "13px", cursor: "pointer" }}
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const idx = regenSceneIndex;
+                  const v = regenVoice;
+                  setShowRegenModal(false);
+                  handleRegenerateSingleScene(idx, v);
+                }}
+                style={{ padding: "10px 22px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #2563eb, #1d4ed8)", color: "#ffffff", fontWeight: 700, fontSize: "13px", cursor: "pointer", boxShadow: "0 4px 14px rgba(37, 99, 235, 0.35)" }}
+              >
+                🚀 Xác Nhận Sinh Lại
+              </button>
             </div>
           </div>
         </div>
