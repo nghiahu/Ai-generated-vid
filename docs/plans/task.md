@@ -71,7 +71,7 @@
 | Task 67 | Implement layout-only reference image adaptation rules (protect theme colors) | [x] Completed |
 | Task 68 | Change generation loop to sequential and handle API errors cleanly | [x] Completed |
 | Task 69 | Implement split generator API (/plan, /generate-scene) and update frontend React flow | [x] Completed |
-| Task 70 | Fix scene loading skeleton state & add single scene regenerate button (`StudioAIGen.jsx`) | [ ] Pending |
+| Task 70 | Fix scene loading skeleton state & add single scene regenerate button (`StudioAIGen.jsx`) | [x] Completed |
 
 
 
