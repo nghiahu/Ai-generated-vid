@@ -339,10 +339,24 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
             setScript(proj.config.script || "");
             setTheme(proj.config.theme || "ai_hub_grid");
             setTargetLength(proj.config.targetLength || "Short (~60s)");
-            setVoice(proj.config.voiceKey || "duythanh");
+            setVoice(proj.config.voiceKey || proj.config.voice || "duythanh");
             setBgImage(proj.config.bgImage || "");
             setRefImages(proj.config.refImages || []);
             setRawScenes(proj.config.scenes || []);
+
+            // Restore Watermark & BGM settings from saved config
+            if (proj.config.watermark) {
+              setWatermarkEnabled(proj.config.watermark.enabled ?? true);
+              setWatermarkText(proj.config.watermark.text || "yupclip.com");
+              setWatermarkPosition(proj.config.watermark.position || "top-right");
+            }
+            if (proj.config.backgroundMusic) {
+              setBgm(proj.config.backgroundMusic);
+            }
+            if (proj.config.backgroundMusicVolume !== undefined) {
+              setBgmVolume(proj.config.backgroundMusicVolume);
+            }
+
             setEditorMode("preview"); // Go straight to preview if project is already generated
             setStatusText("📋 Dự án đã được tải thành công từ cơ sở dữ liệu.");
           }
