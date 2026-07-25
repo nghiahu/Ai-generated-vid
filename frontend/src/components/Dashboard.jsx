@@ -290,13 +290,17 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                       {/* Top Row: Title & Action buttons */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "20px" }}>
                         <h3
+                          onClick={() => onSelectProject(project.id)}
                           style={{
-                            fontSize: "20px",
+                            margin: 0,
+                            fontSize: "18px",
                             fontFamily: "var(--font-heading)",
                             fontWeight: "800",
                             color: "var(--text-primary)",
-                            lineHeight: "1.3"
+                            lineHeight: "1.3",
+                            cursor: "pointer"
                           }}
+                          title="Bấm để mở dự án trong Studio AI Gen"
                         >
                           {project.title}
                         </h3>
@@ -330,19 +334,22 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
 
                           {/* Open in Studio button */}
                           <button
-                            className="secondary"
                             onClick={() => onSelectProject(project.id)}
                             style={{
-                              padding: "6px 14px",
+                              padding: "8px 16px",
                               borderRadius: "20px",
-                              fontSize: "11px",
+                              fontSize: "12px",
                               fontWeight: "700",
                               textTransform: "none",
                               letterSpacing: "0",
-                              border: "1px solid rgba(15, 23, 42, 0.12)"
+                              background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
+                              color: "#ffffff",
+                              border: "none",
+                              cursor: "pointer",
+                              boxShadow: "0 4px 12px rgba(37, 99, 235, 0.25)"
                             }}
                           >
-                            Open in Studio
+                            🎬 Mở & Chỉnh sửa Video
                           </button>
                         </div>
                       </div>
