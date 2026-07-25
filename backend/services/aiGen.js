@@ -1033,6 +1033,61 @@ Do not output any introductory or conversational text, output only the JSON arra
 }
 
 // Phase 2: TSX Code Generator for 1 Scene
+
+/**
+ * Heuristic check: does the generated TSX code actually match the expected visual pattern?
+ * Returns true if compliant, false if Gemini drifted away from the pattern structure.
+ */
+function validatePatternCompliance(tsxCode, visualPattern) {
+  if (!tsxCode || !visualPattern) return true;
+  const pattern = (visualPattern + "").toUpperCase();
+  try {
+    if (pattern === "TITLE_HOOK") {
+      // Must NOT have numbered badges ("01", "02", "03" circles)
+      const hasNumberedBadges = /["'`]0[123]["'`]/.test(tsxCode) || /numStr\s*=\s*["'`]0/.test(tsxCode);
+      if (hasNumberedBadges) {
+        console.warn(`[Compliance] TITLE_HOOK violation: found numbered badge pattern (numbered card list). Rejecting.`);
+        return false;
+      }
+    }
+    if (pattern === "DUAL_METRIC_CARDS") {
+      // Must have 2-column CSS grid
+      const hasGrid = /gridTemplateColumns.*1fr.*1fr/.test(tsxCode);
+      if (!hasGrid) {
+        console.warn(`[Compliance] DUAL_METRIC_CARDS violation: missing 2-column gridTemplateColumns. Rejecting.`);
+        return false;
+      }
+    }
+    if (pattern === "HERO_METRIC_GLOW") {
+      // Must have a large font size >= 100px for the hero number
+      const hasLargeFont = /fontSize[:\s]+["'`]?1[0-9]{2}/.test(tsxCode) || /fontSize[:\s]+["'`]?[2-9][0-9]{2}/.test(tsxCode);
+      if (!hasLargeFont) {
+        console.warn(`[Compliance] HERO_METRIC_GLOW violation: no large hero font size (>=100px) found. Rejecting.`);
+        return false;
+      }
+    }
+    if (pattern === "COMPARISON_VERSUS") {
+      // Must have VS text or a 3-column grid (1fr auto 1fr)
+      const hasVS = /\bVS\b/.test(tsxCode) || /gridTemplateColumns.*1fr.*auto.*1fr/.test(tsxCode);
+      if (!hasVS) {
+        console.warn(`[Compliance] COMPARISON_VERSUS violation: missing VS badge or 3-column grid. Rejecting.`);
+        return false;
+      }
+    }
+    if (pattern === "PROCESS_TIMELINE") {
+      // Must reference step numbers or a steps.map pattern
+      const hasSteps = /step\.num/.test(tsxCode) || /steps\.map/.test(tsxCode) || /step[s]?\.map/.test(tsxCode);
+      if (!hasSteps) {
+        console.warn(`[Compliance] PROCESS_TIMELINE violation: no step chain (steps.map / step.num) found. Rejecting.`);
+        return false;
+      }
+    }
+    return true;
+  } catch (e) {
+    return true; // if check itself throws, don't block generation
+  }
+}
+
 async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_grid", bgImage = "", refImages = []) {
   const fs = require("fs");
   const path = require("path");
@@ -1096,7 +1151,19 @@ async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_
        <img src="${bgImage}" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.3, zIndex: 0 }} />`
     : "";
 
-  const systemInstruction = `
+  const patternLockHeader = `
+╔══════════════════════════════════════════════════════════════╗
+║  ⚠️  LOCKED VISUAL PATTERN: ${scene.visualPattern || "BULLET_GLASS"}
+║  You MUST build EXACTLY the DOM structure defined in the pattern spec below.
+║  VIOLATION EXAMPLES (FORBIDDEN for this pattern):
+║  - DO NOT render numbered card lists (01/02/03 badges) unless pattern = BULLET_GLASS
+║  - DO NOT render side-by-side grid unless pattern = DUAL_METRIC_CARDS or COMPARISON_VERSUS
+║  - DO NOT render a giant single number unless pattern = HERO_METRIC_GLOW or DONUT_GAUGE
+║  Check your JSX structure against the spec skeleton before returning.
+╚══════════════════════════════════════════════════════════════╝
+`;
+
+  const systemInstruction = patternLockHeader + `
 # ROLE
 You are an expert React / Remotion TSX component code generator.
 
@@ -1578,6 +1645,13 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
   if (tsxResult.status === "fulfilled" && tsxResult.value) {
     tsxCode = tsxResult.value;
     compiledJS = compileTSX(tsxCode);
+
+    // Component C: Pattern compliance validation — reject AI output that ignores the locked pattern
+    if (compiledJS && !validatePatternCompliance(tsxCode, scene.visualPattern)) {
+      console.warn(`[Studio AI Gen] ⚠️ Compliance FAIL for scene ${index} (${scene.visualPattern}). Using pattern safety net template instead.`);
+      tsxCode = generateSafetyNetTSX(scene);
+      compiledJS = compileTSX(tsxCode);
+    }
 
     if (!compiledJS) {
       console.warn(`[Studio AI Gen] Lỗi biên dịch đầu tiên cho scene ${index}. Kích hoạt Safety Net Fallback (pattern: ${safetyNetPattern})...`);
