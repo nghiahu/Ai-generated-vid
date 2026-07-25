@@ -5,11 +5,30 @@ import * as LucideIcons from "lucide-react";
 import { api } from "../services/api";
 import axios from "axios";
 import { MainComposition } from "../../../my-video/src/compositions/MainComposition";
+import { DynamicSubtitle } from "../../../my-video/src/components/DynamicSubtitle";
+
+// Safe ES6 Proxy for Lucide Icons to prevent runtime undefined component crashes
+const SafeLucideIcons = new Proxy(LucideIcons, {
+  get: (target, prop) => {
+    if (typeof prop === "symbol" || prop === "then" || prop === "__esModule" || prop === "default") {
+      return target[prop];
+    }
+    if (prop in target && target[prop]) {
+      return target[prop];
+    }
+    // Safe Fallback Icon Component for hallucinated or missing icon names
+    const SafeFallbackIcon = (props) => {
+      const FallbackComp = target.Sparkles || target.HelpCircle || target.Zap || (() => null);
+      return React.createElement(FallbackComp, props);
+    };
+    return SafeFallbackIcon;
+  }
+});
 
 // Expose globals for runtime dynamic import of Blob URLs
 window.React = React;
 window.Remotion = Remotion;
-window.LucideIcons = LucideIcons;
+window.LucideIcons = SafeLucideIcons;
 
 // Dynamic loader: compiles JS string from Sucrase into live React Component
 async function loadComponentFromJS(compiledJS) {
@@ -21,7 +40,7 @@ async function loadComponentFromJS(compiledJS) {
     let rewrittenJS = compiledJS;
 
     // Match any import from "react" (including multiline, default, and named imports)
-    rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]react['"];?/g, (match, imports) => {
+    rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]react['"];?/gi, (match, imports) => {
       let result = "const React = window.React;";
       if (imports.includes("{")) {
         const named = imports.match(/\{([\s\S]*?)\}/);
@@ -33,7 +52,7 @@ async function loadComponentFromJS(compiledJS) {
     });
 
     // Match any import from "remotion" (including multiline and named imports)
-    rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]remotion['"];?/g, (match, imports) => {
+    rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]remotion['"];?/gi, (match, imports) => {
       if (imports.includes("{")) {
         const named = imports.match(/\{([\s\S]*?)\}/);
         if (named && named[1]) {
@@ -45,11 +64,11 @@ async function loadComponentFromJS(compiledJS) {
     });
 
     // Match any import from "lucide-react" (including named imports with aliases)
-    rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]lucide-react['"];?/g, (match, imports) => {
+    rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]lucide-react['"];?/gi, (match, imports) => {
       if (imports.includes("{")) {
         const named = imports.match(/\{([\s\S]*?)\}/);
         if (named && named[1]) {
-          const cleanImports = named[1].replace(/[\r\n]+/g, " ").replace(/\s+as\s+/g, ": ").trim();
+          const cleanImports = named[1].replace(/[\r\n]+/g, " ").replace(/\s+as\s+/gi, ": ").trim();
           return `const { ${cleanImports} } = window.LucideIcons;`;
         }
       }
@@ -57,7 +76,7 @@ async function loadComponentFromJS(compiledJS) {
     });
 
     // Strip any other unsupported external package imports
-    rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"](?!react|remotion|lucide-react)[^'"]+['"];?/g, "");
+    rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"](?!react|remotion|lucide-react)[^'"]+['"];?/gi, "");
 
     const blob = new Blob([rewrittenJS], { type: "application/javascript" });
     const url = URL.createObjectURL(blob);
@@ -209,11 +228,20 @@ const SceneWrapper = ({ Component, audioUrl, loadError, isEmpty, heading, visual
     );
   }
 
+  const sceneDurationSec = (scene?.durationFrames || 150) / (fps || 30);
+
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden", background: "#030712" }}>
       {Component ? (
         <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
           <Component fps={fps} scene={scene} subtitlesJson={subtitlesJson} />
+          {/* Central Outer Subtitle Layer */}
+          <DynamicSubtitle
+            voiceover={scene?.voiceover || ""}
+            durationSeconds={sceneDurationSec}
+            subtitlesJson={subtitlesJson || scene?.subtitlesJson || scene?.voiceoverTtsJson}
+            accentColor="#f97316"
+          />
         </div>
       ) : (
         <div style={{ color: "#fff", display: "grid", placeItems: "center", height: "100%", fontFamily: "sans-serif" }}>
@@ -265,10 +293,32 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
   const [statusText, setStatusText] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Render & Export MP4 state
+  const [rendering, setRendering] = useState(false);
+  const [renderProgress, setRenderProgress] = useState(0);
+  const [renderedFrames, setRenderedFrames] = useState(0);
+  const [renderTotalFrames, setRenderTotalFrames] = useState(0);
+  const [renderedVideoUrl, setRenderedVideoUrl] = useState(null);
+
+  const getInitialActiveSceneIndex = () => {
+    try {
+      const stored = localStorage.getItem("studio_aigen_active_scene");
+      if (stored !== null) return parseInt(stored, 10) || 0;
+    } catch (e) { }
+    return 0;
+  };
+
   const [rawScenes, setRawScenes] = useState([]);
   const [loadedScenes, setLoadedScenes] = useState([]);
-  const [activeSceneIndex, setActiveSceneIndex] = useState(0);
+  const [activeSceneIndex, setActiveSceneIndex] = useState(getInitialActiveSceneIndex);
   const [regeneratingIndex, setRegeneratingIndex] = useState(null);
+
+  // Sync activeSceneIndex to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem("studio_aigen_active_scene", String(activeSceneIndex));
+    } catch (e) { }
+  }, [activeSceneIndex]);
 
   // Per-scene regenerate modal state
   const [showRegenModal, setShowRegenModal] = useState(false);
@@ -512,7 +562,8 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
         targetVoice,
         theme,
         bgImage,
-        refImages
+        refImages,
+        script
       );
 
       if (res && res.scene) {
@@ -529,6 +580,76 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
       setErrorMsg("Không thể sinh lại phân cảnh: " + (err.response?.data?.error || err.message));
     } finally {
       setRegeneratingIndex(null);
+    }
+  };
+
+  const handleRenderVideo = async () => {
+    if (!rawScenes || rawScenes.length === 0) return;
+    const activeProjId = projectId || localStorage.getItem("activeProjectId") || localStorage.getItem("studio_aigen_project_id") || "proj_aigen_draft";
+    setRendering(true);
+    setRenderProgress(0);
+    setRenderedFrames(0);
+    setRenderTotalFrames(0);
+    setRenderedVideoUrl(null);
+    setStatusText("🚀 Đang khởi động tiến trình kết xuất Video MP4 Remotion...");
+
+    try {
+      // 1. Save latest project details to DB first
+      const config = {
+        script,
+        targetLength,
+        theme,
+        voiceKey: voice,
+        bgImage,
+        refImages,
+        watermark: {
+          enabled: watermarkEnabled,
+          text: watermarkText,
+          position: watermarkPosition,
+          color: "#000000"
+        },
+        scenes: rawScenes
+      };
+      await api.saveStudioAiGenConfig(activeProjId, `AI Gen - ${(script || "").substring(0, 30)}...`, config);
+
+      // 2. Trigger render
+      const renderResponse = await api.triggerRender(activeProjId);
+      const renderId = renderResponse.renderId;
+
+      // 3. Start Polling
+      const pollInterval = setInterval(async () => {
+        try {
+          const statusRes = await api.getRenderStatus(activeProjId, renderId);
+          const totalF = statusRes.totalFrames || 0;
+          const renderedF = statusRes.renderedFrames || 0;
+          const rawPct = statusRes.progress || 0;
+          const computedPct = totalF > 0 ? (renderedF / totalF) : rawPct;
+          const progressPercent = Math.min(100, Math.max(0, Math.round(computedPct * 100)));
+
+          setRenderProgress(progressPercent);
+          setRenderedFrames(renderedF);
+          setRenderTotalFrames(totalF);
+
+          if (statusRes.status === "completed") {
+            setRenderedVideoUrl(statusRes.videoUrl);
+            setRendering(false);
+            clearInterval(pollInterval);
+          } else if (statusRes.status === "failed") {
+            setErrorMsg("Kết xuất video MP4 thất bại!");
+            setRendering(false);
+            clearInterval(pollInterval);
+          }
+        } catch (err) {
+          console.error("Error polling render status:", err);
+          setRendering(false);
+          clearInterval(pollInterval);
+        }
+      }, 500);
+
+    } catch (error) {
+      console.error("Failed to start video rendering:", error);
+      setErrorMsg(`Không thể khởi động tiến trình xuất video: ${error.response?.data?.error || error.message}`);
+      setRendering(false);
     }
   };
 
@@ -569,7 +690,8 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
           voice,
           theme,
           bgImage,
-          refImages
+          refImages,
+          script
         );
 
         if (sceneRes && sceneRes.scene) {
@@ -621,8 +743,33 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
   };
 
   // Calculate total sequence duration for Master Preview
+  // Mirrors getSceneDurationFrames() in MainComposition.tsx exactly:
+  //   max(durationFrames, subtitleFrames, secFrames) + 15 safety buffer
+  const calcSceneDurationFrames = (sc) => {
+    const FPS = 30;
+    const backendFrames = (sc.durationFrames && typeof sc.durationFrames === 'number')
+      ? Math.round((sc.durationFrames / 30) * FPS)
+      : 0;
+    let maxSubTime = 0;
+    const subJson = sc.subtitlesJson || sc.voiceoverTtsJson;
+    if (Array.isArray(subJson) && subJson.length > 0) {
+      for (const w of subJson) {
+        const endVal = w.end !== undefined ? w.end : (w.endMs ? w.endMs / 1000 : 0);
+        if (typeof endVal === 'number' && endVal > maxSubTime) maxSubTime = endVal;
+      }
+    }
+    const subtitleFrames = maxSubTime > 0 ? Math.round(maxSubTime * FPS) : 0;
+    const sec = (sc.duration !== undefined && sc.duration !== null && sc.duration !== '')
+      ? parseFloat(sc.duration) || 0
+      : 0;
+    const secFrames = sec > 0 ? Math.round(sec * FPS) : 0;
+    const maxSignal = Math.max(backendFrames, secFrames, subtitleFrames);
+    const baseFrames = maxSignal > 0 ? maxSignal : Math.round(6.0 * FPS);
+    return baseFrames + 15; // +15 frames (0.5s) safety buffer — same as MainComposition
+  };
+
   const totalDurationFrames = loadedScenes.reduce(
-    (sum, sc) => sum + (sc.durationFrames || 150),
+    (sum, sc) => sum + calcSceneDurationFrames(sc),
     0
   );
 
@@ -1115,6 +1262,21 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                     style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", boxSizing: "border-box" }}
                   />
 
+                  <div>
+                    <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "3px", fontWeight: 600 }}>Vị trí Watermark</label>
+                    <select
+                      value={watermarkPosition}
+                      onChange={(e) => setWatermarkPosition(e.target.value)}
+                      style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", boxSizing: "border-box", background: "#ffffff" }}
+                    >
+                      <option value="top-right">Góc Trên - Phải</option>
+                      <option value="top-left">Góc Trên - Trái</option>
+                      <option value="bottom-right">Góc Dưới - Phải</option>
+                      <option value="bottom-left">Góc Dưới - Trái</option>
+                      <option value="bottom-center">Góc Dưới - Giữa</option>
+                    </select>
+                  </div>
+
                   <input
                     type="file"
                     ref={logoFileInputRef}
@@ -1422,9 +1584,15 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                       ...sc,
                       id: sc.id || `scene_${Math.random()}`,
                       voiceoverAudioUrl: sc.audioUrl,
-                      duration: (sc.durationFrames || 150) / 30,
+                      // Pass raw durationFrames/30 (no buffer) so getSceneDurationFrames
+                      // inside MainComposition adds its own +15 matching calcSceneDurationFrames.
+                      duration: sc.durationFrames
+                        ? sc.durationFrames / 30
+                        : Math.max(3.5, (sc.voiceover || '').split(/\s+/).length / 2.7),
+                      subtitlesJson: sc.subtitlesJson || sc.voiceoverTtsJson,
                       Component: sc.Component
                     })),
+
                     config: {
                       voice: voice,
                       backgroundMusic: bgm,
@@ -1449,6 +1617,156 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                 />
               )}
             </div>
+
+            {/* Live Watermark Controls Box in Preview Mode */}
+            <div style={{ width: "360px", marginTop: "14px", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "12px 16px", boxSizing: "border-box", boxShadow: "0 2px 10px rgba(0,0,0,0.03)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: watermarkEnabled ? "10px" : "0" }}>
+                <span style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: "6px" }}>
+                  🛡️ Watermark (Chữ mờ)
+                </span>
+                <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 600, color: "#2563eb", cursor: "pointer" }}>
+                  <input
+                    type="checkbox"
+                    checked={watermarkEnabled}
+                    onChange={(e) => setWatermarkEnabled(e.target.checked)}
+                    style={{ accentColor: "#2563eb" }}
+                  />
+                  <span>{watermarkEnabled ? "Đang bật" : "Đã tắt"}</span>
+                </label>
+              </div>
+
+              {watermarkEnabled && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                    <div>
+                      <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "2px", fontWeight: 600 }}>Nội dung chữ</label>
+                      <input
+                        type="text"
+                        value={watermarkText}
+                        onChange={(e) => setWatermarkText(e.target.value)}
+                        placeholder="yupclip.com"
+                        style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", boxSizing: "border-box" }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "2px", fontWeight: 600 }}>Vị trí</label>
+                      <select
+                        value={watermarkPosition}
+                        onChange={(e) => setWatermarkPosition(e.target.value)}
+                        style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", boxSizing: "border-box", background: "#ffffff" }}
+                      >
+                        <option value="top-right">Góc Trên - Phải</option>
+                        <option value="top-left">Góc Trên - Trái</option>
+                        <option value="bottom-right">Góc Dưới - Phải</option>
+                        <option value="bottom-left">Góc Dưới - Trái</option>
+                        <option value="bottom-center">Góc Dưới - Giữa</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Render / Export MP4 Button */}
+            <button
+              type="button"
+              onClick={handleRenderVideo}
+              disabled={rendering || loading || loadedScenes.length === 0}
+              style={{
+                width: "360px",
+                marginTop: "16px",
+                padding: "16px 24px",
+                borderRadius: "16px",
+                background: rendering ? "#cbd5e1" : "linear-gradient(135deg, #2563eb, #1d4ed8)",
+                color: "#ffffff",
+                border: "none",
+                fontSize: "15px",
+                fontWeight: 800,
+                cursor: rendering || loading || loadedScenes.length === 0 ? "not-allowed" : "pointer",
+                boxShadow: "0 8px 24px rgba(37, 99, 235, 0.35)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
+                transition: "all 0.2s ease"
+              }}
+            >
+              {rendering ? "⏳ Đang kết xuất Video MP4..." : "🎬 Xuất Video MP4 (1080x1920 FHD)"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Render Progress & Download Modal Overlay */}
+      {(rendering || renderedVideoUrl) && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.8)", backdropFilter: "blur(10px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1200 }}>
+          <div style={{ background: "#ffffff", width: "90%", maxWidth: "520px", borderRadius: "24px", padding: "32px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.3)", border: "1px solid #e2e8f0", textAlign: "center" }}>
+            {rendering ? (
+              <>
+                <div style={{ fontSize: "42px", marginBottom: "12px", animation: "bounce 1.5s infinite" }}>🚀</div>
+                <h3 style={{ margin: "0 0 8px 0", fontSize: "20px", fontWeight: 800, color: "#0f172a" }}>
+                  Đang Kết Xuất Video Remotion MP4
+                </h3>
+                <p style={{ margin: "0 0 20px 0", fontSize: "14px", color: "#64748b" }}>
+                  Vui lòng đợi trong giây lát, hệ thống đang ghép hiệu ứng và âm thanh...
+                </p>
+
+                {/* Progress Bar */}
+                <div style={{ width: "100%", height: "14px", background: "#e2e8f0", borderRadius: "10px", overflow: "hidden", marginBottom: "12px" }}>
+                  <div style={{ width: `${renderProgress}%`, height: "100%", background: "linear-gradient(90deg, #2563eb, #3b82f6)", borderRadius: "10px", transition: "width 0.3s ease" }} />
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#475569", fontWeight: 700 }}>
+                  <span>Tiến trình: {renderProgress}%</span>
+                  <span>{renderedFrames} / {renderTotalFrames} frames</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: "48px", marginBottom: "12px" }}>🎉</div>
+                <h3 style={{ margin: "0 0 8px 0", fontSize: "22px", fontWeight: 800, color: "#10b981" }}>
+                  KẾT XUẤT VIDEO THÀNH CÔNG!
+                </h3>
+                <p style={{ margin: "0 0 24px 0", fontSize: "14px", color: "#475569" }}>
+                  Video MP4 chuẩn 1080x1920 đã sẵn sàng để tải xuống.
+                </p>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px", alignItems: "center" }}>
+                  <a
+                    href={`http://localhost:5000${renderedVideoUrl}`}
+                    download
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      width: "100%",
+                      padding: "16px 24px",
+                      borderRadius: "30px",
+                      background: "linear-gradient(135deg, #10b981, #059669)",
+                      color: "#ffffff",
+                      fontWeight: 800,
+                      fontSize: "16px",
+                      textDecoration: "none",
+                      boxShadow: "0 6px 20px rgba(16, 185, 129, 0.4)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "10px",
+                      boxSizing: "border-box"
+                    }}
+                  >
+                    ⬇️ Tải Video MP4 Về Máy (.mp4)
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => setRenderedVideoUrl(null)}
+                    style={{ background: "none", border: "none", color: "#64748b", fontSize: "14px", fontWeight: 600, cursor: "pointer", marginTop: "8px" }}
+                  >
+                    Đóng cửa sổ này
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
