@@ -1,7 +1,6 @@
-# AI Gen Project Restore & Navigation — Task Tracker
+# Dashboard Project Routing & Legacy AI Gen Detection — Task Tracker
 
 | # | Task | Status |
 |---|---|---|
-| 1 | Restore Watermark & BGM State in `StudioAIGen.jsx` | `[x]` done |
-| 2 | Enhance Dashboard Card Click & Navigation (`Dashboard.jsx`) | `[x]` done |
-| 3 | End-to-End Verification | `[x]` done |
+| 1 | Update `fetchProjectDetail` Routing & Type Detection in `App.jsx` | `[x]` done |
+| 2 | Verification | `[x]` done |
