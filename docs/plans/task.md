@@ -1,8 +1,7 @@
-# Layout Diversity Anti-Repetition Engine v2 — Task Tracker
+# Watermark Controls & Duplicate Project Fix — Task Tracker
 
 | # | Task | Status |
 |---|---|---|
-| 1 | Diversify Safety Net Fallback (Component A) — 6 pattern templates | `[x]` done |
-| 2 | Full-Video Pattern Slot Assignment (Component B) | `[x]` done |
-| 3 | Gemini Pattern Compliance Lock (Component C) | `[x]` done |
-| 4 | End-to-End Verification | `[x]` done |
+| 1 | Add Watermark Control Panel UI (`StudioAIGen.jsx`) | `[x]` done |
+| 2 | Eliminate Duplicate Ghost Project Creation (`App.jsx` & `studioAiGenRoute.js`) | `[x]` done |
+| 3 | End-to-End Verification | `[x]` done |
