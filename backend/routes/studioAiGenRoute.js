@@ -70,9 +70,9 @@ router.post("/plan", async (req, res) => {
       throw new Error("GEMINI_API_KEY chưa được cấu hình trong backend .env");
     }
 
-    let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-    if (modelName.includes("2.0") && !modelName.includes("exp")) {
-      modelName = "gemini-3.5-flash";
+    let modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+    if (modelName === "gemini-3.5-flash" || modelName === "gemini-2.0-flash") {
+      modelName = "gemini-3.6-flash";
     }
 
     const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -91,21 +91,27 @@ router.post("/plan", async (req, res) => {
       voiceKey,
       bgImage,
       refImages,
-      scenes: scenePlan.map((s, idx) => ({
-        sceneIndex: idx,
-        visualPattern: s.visualPattern,
-        heading: s.heading,
-        voiceover: s.voiceover,
-        tsxCode: "",
-        compiledJS: "",
-        audioUrl: "",
-        durationFrames: 120,
-        subtitlesJson: null
-      }))
+      scenes: scenePlan.map((s, idx) => {
+        const wordCount = (s.voiceover || "").trim().split(/\s+/).length;
+        const estSec = Math.max(3.5, wordCount / 2.7);
+        const estFrames = Math.round(estSec * 30);
+        return {
+          sceneIndex: idx,
+          visualPattern: s.visualPattern,
+          heading: s.heading,
+          voiceover: s.voiceover,
+          tsxCode: "",
+          compiledJS: "",
+          audioUrl: "",
+          durationFrames: estFrames,
+          duration: estSec.toFixed(2),
+          subtitlesJson: null
+        };
+      })
     };
 
     const projectTitle = `AI Gen - ${script.trim().substring(0, 30)}...`;
-    await db.saveAIGenProject(finalProjectId, projectTitle, config);
+    await db.saveAIGenProject(finalProjectId, projectTitle, config, "PLANNING");
 
     res.json({
       success: true,
@@ -123,7 +129,7 @@ router.post("/plan", async (req, res) => {
 // POST /api/studio-ai-gen/generate-scene
 router.post("/generate-scene", async (req, res) => {
   try {
-    const { projectId, scene, voiceKey = "duythanh", theme = "ai_hub_grid", bgImage = "", refImages = [] } = req.body;
+    const { projectId, scene, script = "", voiceKey = "duythanh", theme = "ai_hub_grid", bgImage = "", refImages = [] } = req.body;
 
     if (!projectId) {
       return res.status(400).json({ error: "Missing projectId." });
@@ -137,9 +143,9 @@ router.post("/generate-scene", async (req, res) => {
       throw new Error("GEMINI_API_KEY chưa được cấu hình trong backend .env");
     }
 
-    let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-    if (modelName.includes("2.0") && !modelName.includes("exp")) {
-      modelName = "gemini-3.5-flash";
+    let modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+    if (modelName === "gemini-3.5-flash" || modelName === "gemini-2.0-flash") {
+      modelName = "gemini-3.6-flash";
     }
 
     const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -150,6 +156,7 @@ router.post("/generate-scene", async (req, res) => {
     const generatedScene = await aiGen.generateSingleSceneCode({
       scene,
       index: scene.sceneIndex,
+      script,
       theme,
       bgImage,
       refImages,
@@ -182,6 +189,19 @@ router.post("/generate-scene", async (req, res) => {
     res.status(500).json({
       error: `Lỗi tạo code phân cảnh: ${error.message}`
     });
+  }
+});
+
+// POST /api/studio-ai-gen/save-config
+router.post("/save-config", async (req, res) => {
+  try {
+    const { projectId, title, config } = req.body;
+    if (!projectId) return res.status(400).json({ error: "Missing projectId" });
+    await db.saveAIGenProject(projectId, title || "AI Gen Video", config);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[Studio AI Gen Route /save-config Error]:", err);
+    res.status(500).json({ error: `Lỗi lưu dự án: ${err.message}` });
   }
 });
 

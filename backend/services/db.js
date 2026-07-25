@@ -147,7 +147,19 @@ module.exports = {
   initDb,
   getProjects: async () => {
     await initDb();
-    const res = await pool.query('SELECT * FROM projects ORDER BY created_at DESC');
+    // Filter out incomplete/ghost AIGEN drafts that have no generated TSX code
+    const res = await pool.query(`
+      SELECT * FROM projects 
+      WHERE type != 'AIGEN' 
+         OR status = 'COMPLETED' 
+         OR (
+           config->'scenes' IS NOT NULL 
+           AND jsonb_array_length(config->'scenes') > 0 
+           AND config->'scenes'->0->>'compiledJS' IS NOT NULL 
+           AND config->'scenes'->0->>'compiledJS' != ''
+         )
+      ORDER BY created_at DESC
+    `);
     return res.rows.map(row => ({
       ...row,
       createdAt: row.created_at
@@ -586,16 +598,16 @@ module.exports = {
       console.error("[db.js] Error accumulating tokens:", err.message);
     }
   },
-  saveAIGenProject: async (id, title, config) => {
+  saveAIGenProject: async (id, title, config, status = 'COMPLETED') => {
     await initDb();
     const query = `
       INSERT INTO projects (id, title, status, config, type)
-      VALUES ($1, $2, 'DRAFT', $3, 'AIGEN')
+      VALUES ($1, $2, $4, $3, 'AIGEN')
       ON CONFLICT (id) DO UPDATE
-      SET title = $2, config = $3
+      SET title = $2, config = $3, status = $4
       RETURNING *
     `;
-    const res = await pool.query(query, [id, title, JSON.stringify(config)]);
+    const res = await pool.query(query, [id, title, JSON.stringify(config), status]);
     return res.rows[0];
   },
   saveUploadedMedia: async (url) => {
