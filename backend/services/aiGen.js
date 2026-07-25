@@ -7,36 +7,89 @@ const tts = require("./tts");
 const db = require("./db");
 const aligner = require("./aligner");
 
+// Sanitize imports to prevent Sucrase compiler 'from expected' errors
+function sanitizeImportStatements(code) {
+  if (!code || typeof code !== "string") return "";
+
+  // Split code into lines for header import line inspection
+  const lines = code.split("\n");
+  const cleanedLines = [];
+  let inHeader = true;
+
+  for (let line of lines) {
+    const trimmed = line.trim();
+
+    // Check header lines before actual component logic
+    if (inHeader) {
+      // Remove leaked instruction text that starts with "Import " or "Do NOT import" before component definition
+      if (/^Import\s+/i.test(trimmed) && !trimmed.includes("from")) {
+        continue;
+      }
+      if (/^Do\s+NOT\s+import/i.test(trimmed)) {
+        continue;
+      }
+
+      // Fix alias syntax in lucide-react imports if present e.g. "Terminal as TerminalIcon" -> "Terminal"
+      if (line.includes("lucide-react") && line.includes(" as ")) {
+        line = line.replace(/(\w+)\s+as\s+\w+/g, "$1");
+      }
+
+      // If line starts with "import " but is missing "from ...", attempt auto-repair or skip broken line
+      if (trimmed.startsWith("import ") && !trimmed.includes("from ") && !trimmed.includes("from\"") && !trimmed.includes("from'")) {
+        // If it looks like Lucide icons import without from clause, append from "lucide-react";
+        if (trimmed.includes("{") || trimmed.includes("Zap") || trimmed.includes("Terminal")) {
+          line = trimmed.endsWith(";") ? trimmed.slice(0, -1) + ' from "lucide-react";' : trimmed + ' from "lucide-react";';
+        } else {
+          // Skip invalid import line
+          continue;
+        }
+      }
+
+      // Once component signature or normal code starts, header phase ends
+      if (trimmed.startsWith("export ") || trimmed.startsWith("const ") || trimmed.startsWith("function ") || trimmed.startsWith("//")) {
+        inHeader = false;
+      }
+    }
+
+    cleanedLines.push(line);
+  }
+
+  return cleanedLines.join("\n");
+}
+
 // Helper to extract and clean TSX code robustly from AI response
 function cleanAndExtractCode(text) {
   if (!text || typeof text !== "string") return "";
 
+  let extracted = "";
   // 1. Try to extract code between ```tsx/jsx/ts/js and ```
   const codeBlockMatch = text.match(/```(?:tsx?|jsx?)([\s\S]*?)```/i);
   if (codeBlockMatch && codeBlockMatch[1]) {
-    return codeBlockMatch[1].trim();
+    extracted = codeBlockMatch[1].trim();
+  } else {
+    // 2. Try to extract code between general ``` and ```
+    const generalMatch = text.match(/```([\s\S]*?)```/);
+    if (generalMatch && generalMatch[1]) {
+      extracted = generalMatch[1].trim();
+    } else {
+      // 3. Try to extract starting from the first "import " line
+      const importIdx = text.indexOf("import ");
+      if (importIdx !== -1) {
+        extracted = text.substring(importIdx).trim();
+      } else {
+        // 4. Fallback to basic cleaning
+        extracted = text
+          .replace(/^```tsx/i, "")
+          .replace(/^```jsx/i, "")
+          .replace(/^```js/i, "")
+          .replace(/^```/i, "")
+          .replace(/```$/i, "")
+          .trim();
+      }
+    }
   }
 
-  // 2. Try to extract code between general ``` and ```
-  const generalMatch = text.match(/```([\s\S]*?)```/);
-  if (generalMatch && generalMatch[1]) {
-    return generalMatch[1].trim();
-  }
-
-  // 3. Try to extract starting from the first "import " line
-  const importIdx = text.indexOf("import ");
-  if (importIdx !== -1) {
-    return text.substring(importIdx).trim();
-  }
-
-  // 4. Fallback to basic cleaning
-  return text
-    .replace(/^```tsx/i, "")
-    .replace(/^```jsx/i, "")
-    .replace(/^```js/i, "")
-    .replace(/^```/i, "")
-    .replace(/```$/i, "")
-    .trim();
+  return sanitizeImportStatements(extracted);
 }
 
 // Schema for Phase 1: Scene Planner in Studio AI Gen
@@ -52,7 +105,7 @@ const AIGEN_PLANNER_SCHEMA = {
       },
       visualPattern: {
         type: SchemaType.STRING,
-        description: "Must be strictly one of: 'DONUT_GAUGE', 'DUAL_METRIC_CARDS', 'HERO_METRIC_GLOW', 'TITLE_HOOK', 'BULLET_GLASS', 'ENDING_CTA'"
+        description: "Must be strictly one of: 'DONUT_GAUGE', 'DUAL_METRIC_CARDS', 'HERO_METRIC_GLOW', 'TITLE_HOOK', 'BULLET_GLASS', 'COMPARISON_VERSUS', 'PROCESS_TIMELINE', 'STAT_GRID_2X2', 'QUOTE_NATURE_CARD', 'ENDING_CTA'"
       },
       heading: {
         type: SchemaType.STRING,
@@ -60,7 +113,11 @@ const AIGEN_PLANNER_SCHEMA = {
       },
       voiceover: {
         type: SchemaType.STRING,
-        description: "Full voiceover narrative sentence(s) for TTS reading"
+        description: "Full ORIGINAL script text strictly from 'Lời thoại (Gốc)' for ON-SCREEN SUBTITLE DISPLAY (e.g. '100% các siêu AI... GPT-4, Llama 3... Backpropagation'). DO NOT put phonetic reading words here!"
+      },
+      voiceoverTts: {
+        type: SchemaType.STRING,
+        description: "Optional phonetic reading transcript strictly from 'Lời thoại (Phiên âm đọc)' for TTS SPEECH SYNTHESIS (e.g. '100 phần trăm các siêu Ây ai... Gi-pi-ti Bốn... Bắc-bơ-rô-ba-gey-xơn'). Leave empty if not provided."
       },
       highlightWords: {
         type: SchemaType.ARRAY,
@@ -121,11 +178,26 @@ const AIGEN_CODE_SCHEMA = {
   required: ["componentCode"]
 };
 
-// Helper to download or read local image and convert to Gemini base64 inlineData part
+// Helper to download, parse Data URL, or read local image and convert to Gemini base64 inlineData part
 async function urlToGenerativePart(imageUrl) {
   if (!imageUrl) return null;
   const axios = require("axios");
   try {
+    // 1. Handle base64 Data URLs (e.g. data:image/png;base64,iVBORw0KGgo...)
+    if (imageUrl.startsWith("data:image/")) {
+      const matches = imageUrl.match(/^data:(image\/[a-zA-Z0-9\+\-\.]+);base64,(.+)$/s);
+      if (matches && matches[2]) {
+        const mimeType = matches[1];
+        const base64Data = matches[2].replace(/[\r\n]+/g, "");
+        return {
+          inlineData: {
+            data: base64Data,
+            mimeType
+          }
+        };
+      }
+    }
+
     let imageBuffer;
     let mimeType = "image/png";
 
@@ -158,28 +230,32 @@ async function urlToGenerativePart(imageUrl) {
       }
     };
   } catch (err) {
-    console.error(`[Studio AI Gen] Failed to convert image to generative part: ${imageUrl}`, err.message);
+    console.error(`[Studio AI Gen] Failed to convert image to generative part: ${imageUrl.substring(0, 60)}...`, err.message);
     return null;
   }
 }
 
-// Helper for retrying API calls across Gemini models
+// Helper for retrying API calls across active Gemini models with exponential backoff & jitter
 async function generateContentWithFallback(genAI, options, promptData, fallbackModels = []) {
-  const modelsToTry = [options.model, ...fallbackModels.slice(0, 1)]; // Limit to 1 fallback model max to avoid rate-limit loops
+  // Pool of active production Gemini models verified via live API test
+  const defaultFallbackPool = ["gemini-3.6-flash", "gemini-2.5-flash"];
+  const combinedModels = [options.model || "gemini-3.6-flash", ...fallbackModels, ...defaultFallbackPool];
+  // Deduplicate model names while preserving order
+  const modelsToTry = [...new Set(combinedModels)].filter(Boolean);
   let lastError = new Error("No models tried");
 
   for (const modelName of modelsToTry) {
     let attempt = 0;
-    const maxRetries = 1; // 1 retry per model
+    const maxRetries = 3; // 3 retries per model with exponential backoff
 
     const model = genAI.getGenerativeModel({
       model: modelName,
       generationConfig: options.generationConfig
     });
 
-    console.log(`[Studio AI Gen] Trying model: ${modelName}`);
+    console.log(`[Studio AI Gen] Requesting Gemini API with model: ${modelName}...`);
 
-    while (attempt <= maxRetries) {
+    while (attempt < maxRetries) {
       try {
         const result = await model.generateContent({
           contents: [{ role: "user", parts: [ ...(promptData.imageParts || []), { text: promptData.userPrompt } ] }],
@@ -187,15 +263,25 @@ async function generateContentWithFallback(genAI, options, promptData, fallbackM
         });
 
         if (result && result.response) {
-          console.log(`[Studio AI Gen] Success with model: ${modelName}`);
+          console.log(`[Studio AI Gen] ✅ Gemini API success with model: ${modelName}`);
           return result;
         }
         throw new Error("Empty response from API");
       } catch (err) {
         lastError = err;
         attempt++;
-        if (attempt <= maxRetries) {
-          await new Promise(r => setTimeout(r, 2000 * attempt));
+        const errMsg = err.message || String(err);
+        const is503OrRateLimit = /503|overloaded|unavailable|429|resource_exhausted/i.test(errMsg);
+
+        if (attempt < maxRetries) {
+          // Calculate exponential backoff with jitter: 1.5s -> 3.5s -> 6.5s
+          const baseDelay = Math.pow(2, attempt) * 1200;
+          const jitter = Math.floor(Math.random() * 800);
+          const backoffMs = baseDelay + jitter;
+          console.warn(`[Studio AI Gen] ⚠️ Gemini API error (${is503OrRateLimit ? '503/429 Load Spike' : 'Error'}) on model ${modelName} (Attempt ${attempt}/${maxRetries}): ${errMsg.substring(0, 80)}. Retrying in ${backoffMs}ms...`);
+          await new Promise(r => setTimeout(r, backoffMs));
+        } else {
+          console.warn(`[Studio AI Gen] Model ${modelName} exhausted ${maxRetries} attempts. Switching fallback model...`);
         }
       }
     }
@@ -221,16 +307,52 @@ function robustJSONParse(text) {
     return JSON.parse(cleaned);
   } catch (err) {
     try {
-      // 1. Replace literal newlines within double-quoted JSON strings with "\n"
-      let fixedText = cleaned.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"/g, (match, p1) => {
+      // 1. Fix inner double quotes e.g. "voiceover": ""Text"" -> "voiceover": "Text"
+      let fixedText = cleaned.replace(/"(voiceover|heading|contextLine|alertText)"\s*:\s*""([^"]*)""/g, '"$1": "$2"');
+
+      // 2. Replace literal newlines within double-quoted JSON strings with "\n"
+      fixedText = fixedText.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"/g, (match, p1) => {
         return '"' + p1.replace(/\n/g, '\\n').replace(/\r/g, '\\r') + '"';
       });
-      // 2. Strip trailing commas before closing brackets and braces
+
+      // 3. Strip trailing commas before closing brackets and braces
       fixedText = fixedText
         .replace(/,\s*([\]}])/g, "$1")
         .replace(/[\u200B-\u200D\uFEFF]/g, ""); // strip zero-width spaces
+
       return JSON.parse(fixedText);
     } catch (_) {
+      // 4. Ultimate Fallback: Extract scene objects using regex regex matcher if JSON.parse fails completely
+      try {
+        const objectMatches = cleaned.match(/\{[^{}]*"voiceover"[^{}]*\}/g) || cleaned.match(/\{[\s\S]*?\}/g);
+        if (objectMatches && objectMatches.length > 0) {
+          const extractedScenes = [];
+          for (let i = 0; i < objectMatches.length; i++) {
+            const blockStr = objectMatches[i];
+            try {
+              extractedScenes.push(JSON.parse(blockStr));
+            } catch (singleErr) {
+              const voMatch = blockStr.match(/"voiceover"\s*:\s*"([\s\S]*?)"\s*[,}\n]/);
+              const hdMatch = blockStr.match(/"heading"\s*:\s*"([\s\S]*?)"\s*[,}\n]/);
+              const vpMatch = blockStr.match(/"visualPattern"\s*:\s*"([\s\S]*?)"\s*[,}\n]/);
+              if (voMatch || hdMatch) {
+                extractedScenes.push({
+                  sceneIndex: i,
+                  visualPattern: vpMatch ? vpMatch[1] : "TITLE_HOOK",
+                  heading: hdMatch ? hdMatch[1] : "Studio AI Gen Scene",
+                  voiceover: voMatch ? voMatch[1].replace(/^"+|"+$/g, '').trim() : "Phân cảnh AI Gen"
+                });
+              }
+            }
+          }
+          if (extractedScenes.length > 0) {
+            console.log(`[Studio AI Gen] Solved JSON syntax error via regex extraction: extracted ${extractedScenes.length} scenes.`);
+            return extractedScenes;
+          }
+        }
+      } catch (regexErr) {
+        console.error("[Studio AI Gen] Ultimate regex extraction failed:", regexErr.message);
+      }
       throw err;
     }
   }
@@ -242,11 +364,23 @@ function normalizeVisualPattern(pattern) {
   if (upper.includes("DONUT") || upper.includes("GAUGE") || upper.includes("PERCENT") || upper.includes("STATCALLOUT") || upper.includes("STAT_CALLOUT")) {
     return "DONUT_GAUGE";
   }
-  if (upper.includes("DUAL") || upper.includes("CARDS") || upper.includes("METRICHIGHLIGHT") || upper.includes("METRIC_HIGHLIGHT") || upper.includes("GRID")) {
+  if (upper.includes("DUAL") || upper.includes("METRICHIGHLIGHT") || upper.includes("METRIC_HIGHLIGHT")) {
     return "DUAL_METRIC_CARDS";
   }
-  if (upper.includes("HERO") || upper.includes("GLOW") || upper.includes("LARGE") || upper.includes("METRIC")) {
+  if (upper.includes("HERO") || upper.includes("GLOW") || upper.includes("LARGE")) {
     return "HERO_METRIC_GLOW";
+  }
+  if (upper.includes("VERSUS") || upper.includes("VS") || upper.includes("COMPARE") || upper.includes("COMPARISON")) {
+    return "COMPARISON_VERSUS";
+  }
+  if (upper.includes("TIMELINE") || upper.includes("PROCESS") || upper.includes("STEP") || upper.includes("FLOW")) {
+    return "PROCESS_TIMELINE";
+  }
+  if (upper.includes("GRID") || upper.includes("MATRIX") || upper.includes("TILES")) {
+    return "STAT_GRID_2X2";
+  }
+  if (upper.includes("QUOTE") || upper.includes("NATURE") || upper.includes("PAPER") || upper.includes("CITATION")) {
+    return "QUOTE_NATURE_CARD";
   }
   if (upper.includes("BULLET") || upper.includes("GLASS") || upper.includes("LIST") || upper.includes("POINTS")) {
     return "BULLET_GLASS";
@@ -260,11 +394,7 @@ function normalizeVisualPattern(pattern) {
 // Compile TSX component string to plain JS via Sucrase
 function compileTSX(tsxCode) {
   try {
-    // Sanitize imports if model adds markdown code block wrappers
-    let cleanedCode = tsxCode
-      .replace(/```tsx?/gi, "")
-      .replace(/```/g, "")
-      .trim();
+    let cleanedCode = cleanAndExtractCode(tsxCode);
 
     const { code } = transform(cleanedCode, {
       transforms: ["typescript", "jsx"],
@@ -273,9 +403,478 @@ function compileTSX(tsxCode) {
     });
     return code;
   } catch (err) {
-    console.error("[Sucrase Compile Error]:", err.message);
-    throw new Error(`Lỗi biên dịch TSX Component: ${err.message}`);
+    console.error("[Studio AI Gen] Sucrase Compile Error:", err.message);
+    return null;
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SAFETY NET FALLBACK TEMPLATES — one per visual pattern (zero AI dependency)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function safetyNetTitleHook(scene = {}) {
+  const safeHeading = (scene.heading || "Phân cảnh Video AI").replace(/"/g, '\\"');
+  const alertStr = (scene.alertText || "").replace(/"/g, '\\"');
+  return `import React from "react";
+import { useCurrentFrame, spring, interpolate } from "remotion";
+import { Sparkles, Zap } from "lucide-react";
+
+export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+  const frame = useCurrentFrame();
+  const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
+  const headingText = "${safeHeading}";
+  const alertText = "${alertStr}";
+  const words = headingText.split(" ");
+  return (
+    <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
+      background: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.22), transparent 65%), #030712",
+      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ position: "absolute", top: "10%", left: "-10%", width: "600px", height: "600px", borderRadius: "50%",
+        background: "rgba(59,130,246,0.12)", filter: "blur(100px)",
+        transform: "translateY(" + (Math.sin(frame / 25) * 20) + "px)" }} />
+      <div style={{ position: "absolute", bottom: "20%", right: "-10%", width: "500px", height: "500px", borderRadius: "50%",
+        background: "rgba(249,115,22,0.12)", filter: "blur(100px)",
+        transform: "translateY(" + (Math.cos(frame / 28) * 20) + "px)" }} />
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center",
+        gap: "24px", textAlign: "center", padding: "0 80px", height: "78%", justifyContent: "center" }}>
+        {alertText ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 20px", borderRadius: 99,
+            background: "rgba(249,115,22,0.15)", border: "1px solid rgba(249,115,22,0.4)", color: "#fb923c",
+            fontSize: "18px", fontWeight: 700, opacity: sp(5), transform: "scale(" + sp(5) + ")" }}>
+            <Sparkles size={18} color="#fb923c" />
+            <span>{alertText}</span>
+          </div>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 18px", borderRadius: 99,
+            background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.35)", color: "#93c5fd",
+            fontSize: "16px", fontWeight: 600, opacity: sp(5), transform: "scale(" + sp(5) + ")" }}>
+            <Zap size={16} color="#93c5fd" />
+            <span>Studio AI Gen</span>
+          </div>
+        )}
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "12px" }}>
+          {words.map((w, i) => {
+            const wSp = sp(8 + i * 6);
+            return (
+              <span key={i} style={{ fontSize: "68px", fontWeight: 800, color: "#ffffff", lineHeight: 1.1,
+                letterSpacing: "-0.03em", display: "inline-block",
+                opacity: wSp, transform: "translateY(" + interpolate(wSp, [0, 1], [40, 0]) + "px)" }}>
+                {w}
+              </span>
+            );
+          })}
+        </div>
+        <div style={{ width: "120px", height: "3px", background: "linear-gradient(90deg, transparent, #f97316, transparent)",
+          opacity: sp(30), borderRadius: "2px" }} />
+      </div>
+    </div>
+  );
+};
+export default GeneratedScene;`;
+}
+
+function safetyNetHeroMetric(scene = {}) {
+  const safeHeading = (scene.heading || "Phân cảnh Video AI").replace(/"/g, '\\"');
+  const metric = scene.metrics && scene.metrics[0];
+  const heroValue = metric ? `${metric.prefix || ""}${metric.value}${metric.suffix || ""}` : "100%";
+  const heroLabel = metric ? String(metric.label || "Số liệu chính").replace(/"/g, '\\"') : "Số liệu chính";
+  return `import React from "react";
+import { useCurrentFrame, spring, interpolate } from "remotion";
+
+export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+  const frame = useCurrentFrame();
+  const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 12, stiffness: 50 } });
+  const heroValue = "${heroValue}";
+  const label = "${heroLabel}";
+  const headingText = "${safeHeading}";
+  const numSp = sp(10);
+  return (
+    <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
+      background: "radial-gradient(circle at 50% 40%, rgba(249,115,22,0.18), transparent 65%), #030712",
+      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif" }}>
+      <div style={{ position: "absolute", top: "20%", left: "50%", transform: "translate(-50%,-50%)",
+        width: "500px", height: "500px", borderRadius: "50%",
+        background: "rgba(249,115,22,0.12)", filter: "blur(100px)" }} />
+      <div style={{ position: "absolute", bottom: "15%", right: "10%", width: "400px", height: "400px", borderRadius: "50%",
+        background: "rgba(59,130,246,0.1)", filter: "blur(90px)" }} />
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", height: "78%", gap: "12px" }}>
+        <div style={{ color: "rgba(255,255,255,0.55)", fontSize: "18px", fontWeight: 600,
+          textTransform: "uppercase", letterSpacing: "0.15em", opacity: sp(5) }}>{label}</div>
+        <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ position: "absolute", width: "280px", height: "280px", borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(249,115,22,0.3), transparent 70%)", filter: "blur(50px)" }} />
+          <div style={{ fontSize: "130px", fontWeight: 900, color: "#f97316",
+            textShadow: "0 0 60px rgba(249,115,22,0.7)", fontVariantNumeric: "tabular-nums", zIndex: 2,
+            opacity: numSp, transform: "scale(" + interpolate(numSp, [0, 1], [0.6, 1]) + ")" }}>
+            {heroValue}
+          </div>
+        </div>
+        <div style={{ color: "rgba(255,255,255,0.65)", fontSize: "22px", textAlign: "center",
+          maxWidth: "500px", marginTop: "8px", opacity: sp(25) }}>{headingText}</div>
+      </div>
+    </div>
+  );
+};
+export default GeneratedScene;`;
+}
+
+function safetyNetDualMetric(scene = {}) {
+  const safeHeading = (scene.heading || "Phân cảnh Video AI").replace(/"/g, '\\"');
+  const m0 = (scene.metrics && scene.metrics[0]) || { prefix: "", value: "50", suffix: "%", label: "Chỉ số 1" };
+  const m1 = (scene.metrics && scene.metrics[1]) || { prefix: "", value: "90", suffix: "%", label: "Chỉ số 2" };
+  const v0 = `${String(m0.prefix||"")}${String(m0.value||"50")}${String(m0.suffix||"%")}`;
+  const v1 = `${String(m1.prefix||"")}${String(m1.value||"90")}${String(m1.suffix||"%")}`;
+  const l0 = String(m0.label||"Chỉ số 1").replace(/"/g,'\\"');
+  const l1 = String(m1.label||"Chỉ số 2").replace(/"/g,'\\"');
+  return `import React from "react";
+import { useCurrentFrame, spring } from "remotion";
+import { TrendingUp, Award } from "lucide-react";
+
+export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+  const frame = useCurrentFrame();
+  const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
+  const headingText = "${safeHeading}";
+  const metrics = [
+    { value: "${v0}", label: "${l0}", color: "#f97316", Icon: TrendingUp },
+    { value: "${v1}", label: "${l1}", color: "#60a5fa", Icon: Award }
+  ];
+  return (
+    <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
+      background: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.18), transparent 65%), #030712",
+      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif" }}>
+      <div style={{ position: "absolute", top: "15%", left: "20%", width: "500px", height: "500px", borderRadius: "50%",
+        background: "rgba(59,130,246,0.1)", filter: "blur(90px)" }} />
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", height: "78%", padding: "0 60px", gap: "28px" }}>
+        <div style={{ fontSize: "38px", fontWeight: 800, color: "#ffffff", textAlign: "center",
+          letterSpacing: "-0.02em", opacity: sp(5), lineHeight: 1.2 }}>{headingText}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", width: "100%", maxWidth: "900px" }}>
+          {metrics.map((m, i) => {
+            const Icon = m.Icon;
+            const cardSp = sp(15 + i * 10);
+            return (
+              <div key={i} style={{ background: "rgba(8,17,37,0.75)", border: "1px solid rgba(255,255,255,0.15)",
+                backdropFilter: "blur(20px)", borderRadius: "20px", padding: "32px 24px",
+                display: "flex", flexDirection: "column", alignItems: "center", gap: "14px",
+                opacity: cardSp, transform: "scale(" + cardSp + ")" }}>
+                <Icon size={32} color={m.color} />
+                <div style={{ fontSize: "72px", fontWeight: 900, color: m.color,
+                  fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{m.value}</div>
+                <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "16px", textAlign: "center" }}>{m.label}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+export default GeneratedScene;`;
+}
+
+function safetyNetComparisonVersus(scene = {}) {
+  const safeHeading = (scene.heading || "So sánh").replace(/"/g, '\\"');
+  const points = Array.isArray(scene.points) ? scene.points : [];
+  const leftPoints = points.filter((_, i) => i % 2 === 0).slice(0, 3);
+  const rightPoints = points.filter((_, i) => i % 2 === 1).slice(0, 3);
+  const leftJson = JSON.stringify(leftPoints.length > 0 ? leftPoints : ["Phương pháp cũ", "Tốn nhiều thời gian", "Chi phí cao"]);
+  const rightJson = JSON.stringify(rightPoints.length > 0 ? rightPoints : ["AI tự động hoá", "Nhanh hơn 10x", "Chi phí thấp"]);
+  return `import React from "react";
+import { useCurrentFrame, spring } from "remotion";
+
+export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+  const frame = useCurrentFrame();
+  const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
+  const headingText = "${safeHeading}";
+  const leftPoints = ${leftJson};
+  const rightPoints = ${rightJson};
+  return (
+    <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
+      background: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.15), transparent 65%), #030712",
+      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif" }}>
+      <div style={{ position: "absolute", top: "10%", left: "10%", width: "500px", height: "500px", borderRadius: "50%",
+        background: "rgba(239,68,68,0.08)", filter: "blur(90px)" }} />
+      <div style={{ position: "absolute", top: "10%", right: "10%", width: "500px", height: "500px", borderRadius: "50%",
+        background: "rgba(59,130,246,0.08)", filter: "blur(90px)" }} />
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", height: "78%", padding: "0 50px", gap: "24px" }}>
+        <div style={{ fontSize: "40px", fontWeight: 800, color: "#ffffff", textAlign: "center",
+          opacity: sp(5), letterSpacing: "-0.02em" }}>{headingText}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 52px 1fr", gap: "12px",
+          alignItems: "center", width: "100%", opacity: sp(15) }}>
+          <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.4)",
+            borderRadius: "18px", padding: "24px 20px" }}>
+            <div style={{ color: "#ef4444", fontWeight: 700, fontSize: "18px", marginBottom: "14px" }}>❌ TRƯỚC ĐÂY</div>
+            {leftPoints.map((p, i) => (
+              <div key={i} style={{ color: "rgba(255,255,255,0.8)", marginBottom: "10px", fontSize: "17px" }}>• {p}</div>
+            ))}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center",
+            width: "52px", height: "52px", borderRadius: "50%",
+            background: "linear-gradient(135deg, #f97316, #3b82f6)", fontWeight: 900, fontSize: "17px", color: "#fff",
+            flexShrink: 0 }}>VS</div>
+          <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.45)",
+            borderRadius: "18px", padding: "24px 20px" }}>
+            <div style={{ color: "#60a5fa", fontWeight: 700, fontSize: "18px", marginBottom: "14px" }}>✅ VỚI AI</div>
+            {rightPoints.map((p, i) => (
+              <div key={i} style={{ color: "rgba(255,255,255,0.8)", marginBottom: "10px", fontSize: "17px" }}>• {p}</div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default GeneratedScene;`;
+}
+
+function safetyNetProcessTimeline(scene = {}) {
+  const safeHeading = (scene.heading || "Quy trình").replace(/"/g, '\\"');
+  const points = Array.isArray(scene.points) && scene.points.length > 0 ? scene.points.slice(0, 3) : ["Phân tích yêu cầu", "Xây dựng giải pháp", "Ra mắt sản phẩm"];
+  const stepsJson = JSON.stringify(points.map((p, i) => ({ num: i + 1, text: String(p) })));
+  return `import React from "react";
+import { useCurrentFrame, spring } from "remotion";
+
+export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+  const frame = useCurrentFrame();
+  const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
+  const headingText = "${safeHeading}";
+  const steps = ${stepsJson};
+  return (
+    <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
+      background: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.18), transparent 65%), #030712",
+      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif" }}>
+      <div style={{ position: "absolute", top: "15%", right: "10%", width: "500px", height: "500px", borderRadius: "50%",
+        background: "rgba(59,130,246,0.1)", filter: "blur(90px)" }} />
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", height: "78%", padding: "0 60px", gap: "28px" }}>
+        <div style={{ fontSize: "40px", fontWeight: 800, color: "#ffffff", textAlign: "center",
+          opacity: sp(5), letterSpacing: "-0.02em" }}>{headingText}</div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 0, width: "100%" }}>
+          {steps.map((step, i) => {
+            const stepSp = sp(15 + i * 10);
+            return (
+              <React.Fragment key={i}>
+                <div style={{ display: "flex", alignItems: "center", gap: "18px", opacity: stepSp }}>
+                  <div style={{ width: "52px", height: "52px", borderRadius: "50%",
+                    border: "2px solid #3b82f6", background: "rgba(59,130,246,0.15)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontWeight: 800, fontSize: "22px", color: "#60a5fa", flexShrink: 0 }}>{step.num}</div>
+                  <div style={{ background: "rgba(8,17,37,0.75)", border: "1px solid rgba(255,255,255,0.12)",
+                    borderRadius: "14px", padding: "16px 20px", flex: 1 }}>
+                    <div style={{ color: "#f97316", fontWeight: 700, fontSize: "20px" }}>{step.text}</div>
+                  </div>
+                </div>
+                {i < steps.length - 1 && (
+                  <div style={{ width: "4px", height: "36px",
+                    background: "linear-gradient(to bottom, #3b82f6, transparent)",
+                    marginLeft: "24px", opacity: stepSp }} />
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+export default GeneratedScene;`;
+}
+
+/**
+ * Dispatcher: picks the right safety net template based on scene.visualPattern.
+ * Every pattern gets a visually DISTINCT fallback — no more all-same numbered card list.
+ */
+function generateSafetyNetTSX(scene = {}) {
+  const pattern = ((scene.visualPattern || "BULLET_GLASS") + "").toUpperCase();
+  if (pattern === "TITLE_HOOK") return safetyNetTitleHook(scene);
+  if (pattern === "HERO_METRIC_GLOW") return safetyNetHeroMetric(scene);
+  if (pattern === "DUAL_METRIC_CARDS") return safetyNetDualMetric(scene);
+  if (pattern === "COMPARISON_VERSUS") return safetyNetComparisonVersus(scene);
+  if (pattern === "PROCESS_TIMELINE") return safetyNetProcessTimeline(scene);
+  // BULLET_GLASS, DONUT_GAUGE, STAT_GRID_2X2, QUOTE_NATURE_CARD, ENDING_CTA → glass card list (safe universal fallback)
+  return generateGlassCardSafetyNetTSX(scene);
+}
+
+// Generate premium multi-card step safety net fallback TSX
+function generateGlassCardSafetyNetTSX(scene = {}) {
+  const safeHeading = (scene.heading || "Phân cảnh Video AI").replace(/"/g, '\\"');
+  const safeVoiceover = (scene.voiceover || "").replace(/"/g, '\\"');
+
+  const pointsList = (scene?.points && Array.isArray(scene.points) && scene.points.length > 0)
+    ? scene.points
+    : (scene?.voiceover || "")
+        .split(/(?:[1-9]\.\s*|;\s*|\.\s+|\s+thứ\s+(?:nhất|hai|ba):\s*)/i)
+        .map(s => s.trim())
+        .filter(s => s.length > 8)
+        .slice(0, 3);
+
+  const cardItems = pointsList.length > 0 ? pointsList : [safeVoiceover];
+  const itemsJson = JSON.stringify(cardItems);
+  const alertStr = (scene?.alertText || "").replace(/"/g, '\\"');
+
+  return `import React from "react";
+import { useCurrentFrame, spring } from "remotion";
+import { Sparkles, Cpu, Zap, Layers } from "lucide-react";
+
+export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson?: any }> = ({ fps = 30 }) => {
+  const frame = useCurrentFrame();
+  const titleSpr = spring({ frame: Math.max(0, frame - 5), fps, config: { damping: 14, stiffness: 55 } });
+  const icons = [Cpu, Zap, Layers, Sparkles];
+
+  const headingText = "${safeHeading}";
+  const cardItems = ${itemsJson};
+  const alertText = "${alertStr}";
+
+  return (
+    <div style={{
+      width: "100%",
+      height: "100%",
+      position: "relative",
+      overflow: "hidden",
+      background: "radial-gradient(circle at 50% 25%, rgba(59, 130, 246, 0.25), transparent 70%), #030712",
+      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif"
+    }}>
+      <div style={{
+        position: "absolute",
+        top: "15%",
+        left: "20%",
+        width: "500px",
+        height: "500px",
+        borderRadius: "50%",
+        background: "rgba(59, 130, 246, 0.15)",
+        filter: "blur(90px)",
+        transform: "translateY(" + (Math.sin(frame / 20) * 15) + "px)"
+      }} />
+      <div style={{
+        position: "absolute",
+        bottom: "20%",
+        right: "15%",
+        width: "450px",
+        height: "450px",
+        borderRadius: "50%",
+        background: "rgba(249, 115, 22, 0.15)",
+        filter: "blur(90px)",
+        transform: "translateY(" + (Math.cos(frame / 20) * 15) + "px)"
+      }} />
+
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "78%",
+        padding: "50px 60px 0 60px",
+        boxSizing: "border-box",
+        zIndex: 10,
+        position: "relative",
+        gap: "16px"
+      }}>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "10px",
+          marginBottom: "10px",
+          transform: "scale(" + titleSpr + ")",
+          textAlign: "center"
+        }}>
+          {alertText ? (
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "6px 16px",
+              borderRadius: "30px",
+              background: "rgba(249, 115, 22, 0.15)",
+              border: "1px solid rgba(249, 115, 22, 0.4)",
+              color: "#fb923c",
+              fontSize: "18px",
+              fontWeight: 700
+            }}>
+              <Sparkles size={20} color="#fb923c" />
+              <span>{alertText}</span>
+            </div>
+          ) : null}
+
+          <h2 style={{
+            fontSize: "44px",
+            fontWeight: 800,
+            color: "#ffffff",
+            margin: 0,
+            lineHeight: 1.2,
+            letterSpacing: "-0.02em"
+          }}>
+            {headingText}
+          </h2>
+        </div>
+
+        <div style={{
+          width: "100%",
+          maxWidth: "920px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "14px"
+        }}>
+          {cardItems.map((itemText, idx) => {
+            const itemSpr = spring({ frame: Math.max(0, frame - (15 + idx * 8)), fps, config: { damping: 14, stiffness: 60 } });
+            const IconComp = icons[idx % icons.length];
+            const numStr = "0" + (idx + 1);
+
+            return (
+              <div key={idx} style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "20px",
+                padding: "20px 24px",
+                background: "rgba(15, 23, 42, 0.75)",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                backdropFilter: "blur(20px)",
+                borderRadius: "18px",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
+                transform: "scale(" + itemSpr + ")",
+                boxSizing: "border-box"
+              }}>
+                <div style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, rgba(249,115,22,0.3), rgba(59,130,246,0.3))",
+                  border: "1px solid rgba(249,115,22,0.6)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#f97316",
+                  fontSize: "18px",
+                  fontWeight: 800,
+                  flexShrink: 0
+                }}>
+                  {numStr}
+                </div>
+
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+                  <p style={{
+                    fontSize: "20px",
+                    color: "#ffffff",
+                    margin: 0,
+                    fontWeight: 600,
+                    lineHeight: 1.45
+                  }}>
+                    {itemText}
+                  </p>
+                </div>
+
+                <IconComp size={24} color="#93c5fd" style={{ opacity: 0.8, flexShrink: 0 }} />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+export default GeneratedScene;`;
 }
 
 // Validate code string meets basic Remotion component requirements
@@ -288,6 +887,27 @@ function validateGeneratedCode(code) {
   );
 }
 
+// Helper to parse multi-scene scripts with timestamp headers (e.g. 0–8s, 8–30s) into distinct text blocks
+function parseScriptIntoBlocks(scriptText) {
+  if (!scriptText || typeof scriptText !== "string") return [];
+  const lines = scriptText.split("\n").map(l => l.trim()).filter(Boolean);
+  const blocks = [];
+  let currentBlock = [];
+
+  const isHeader = (l) => /^(\d+[\s–-]+\d+s|scene\s+\d+|phân\s+cảnh\s+\d+|cảnh\s+\d+)/i.test(l);
+
+  for (const l of lines) {
+    if (isHeader(l) && currentBlock.length > 0) {
+      blocks.push(currentBlock.join("\n"));
+      currentBlock = [l];
+    } else {
+      currentBlock.push(l);
+    }
+  }
+  if (currentBlock.length > 0) blocks.push(currentBlock.join("\n"));
+  return blocks;
+}
+
 // Phase 1: Planner
 async function generateScenePlanForAIGen(genAI, modelName, scriptText, targetLength = "Short (~60s)") {
   const options = {
@@ -295,10 +915,15 @@ async function generateScenePlanForAIGen(genAI, modelName, scriptText, targetLen
     generationConfig: {
       responseMimeType: "application/json",
       responseSchema: AIGEN_PLANNER_SCHEMA,
-      maxOutputTokens: 4096,
-      temperature: 0.2
+      maxOutputTokens: 8192,
+      temperature: 0.0
     }
   };
+
+  const detectedBlocks = parseScriptIntoBlocks(scriptText);
+  const blockCountDirective = detectedBlocks.length > 1
+    ? `\n\nCRITICAL MULTI-SCENE COUNT RULE (MANDATORY):\nThe input script contains EXACTLY ${detectedBlocks.length} timestamped/section blocks:\n${detectedBlocks.map((b, i) => `--- BLOCK ${i + 1} ---\n${b}`).join("\n")}\n\nYou MUST output EXACTLY ${detectedBlocks.length} SCENE OBJECTS in the returned JSON array (one scene per block). DO NOT stop after 1 scene!`
+    : "";
 
   const systemInstruction = `
 # ROLE
@@ -308,36 +933,51 @@ You are a Scene Planner for Studio AI Gen — an AI-powered video production sys
 Convert a raw script into a structured list of chronological scenes.
 Each scene will be rendered using AI-generated React/Remotion code components following strict design patterns.
 
+# 100% EXACT VOICEOVER & SUBTITLE SEPARATION (MANDATORY & ABSOLUTE)
+1. "voiceover" FIELD (FOR SUBTITLE DISPLAY): MUST ALWAYS contain the ORIGINAL script text ("Lời thoại (Gốc)" or the first quoted text in each block). Subtitles on screen MUST render this original text. DO NOT put phonetic reading words in "voiceover"!
+2. "voiceoverTts" FIELD (FOR SPEECH TTS AUDIO): The script may provide phonetic reading text in TWO possible formats — you MUST handle BOTH:
+
+   FORMAT A — Table/column format:
+   | Lời thoại (Gốc) | Lời thoại (Phiên âm đọc) |
+   | "GPT-4, Llama 3" | "Gi-pi-ti Bốn, La-ma 3" |
+   → Extract the "Lời thoại (Phiên âm đọc)" column text into "voiceoverTts".
+
+   FORMAT B — Sequential label format (user's current format):
+   "[original voiceover text]"
+   Lời thoại (Phiên âm đọc)
+   "[phonetic voiceover text]"
+   → The text in quotes AFTER the "Lời thoại (Phiên âm đọc)" label is the phonetic transcript. Extract it into "voiceoverTts".
+
+   CRITICAL: If EITHER format is detected, you MUST populate "voiceoverTts" with the full, complete phonetic text. NEVER leave it empty if phonetic text is available.
+   If no phonetic text is provided in any format, leave "voiceoverTts" empty or omit it.
+3. ABSOLUTE BAN ON SUMMARIZING OR TRUNCATING: You MUST NEVER summarize, shorten, truncate, paraphrase, or rewrite the original script text.
+4. STRUCTURED SCRIPT PARSING:
+   - If the input script contains timestamps (e.g., "0-8s HOOK", "8-16s"), create one scene per timestamp block.
+   - Use the "On-screen text" or "B-roll" content to extract short keywords for "heading", "points", and "alertText".
+${blockCountDirective}
+
 # HARD CONSTRAINTS
 1. Output MUST be a valid JSON array matching the provided Schema.
 2. Do not write markdown formatting or preamble. Just return raw JSON.
 3. Every scene's voiceover must consist of complete sentences.
 4. Keep technical terms in lowercase (e.g. "html", "css", "react"). Acronyms (AI, BA) in ALL CAPS.
 5. Never use mathematical symbols (>, <, =) or long dashes in "voiceover". Write them out in natural words.
+6. Strip any quotation marks from the start and end of string values (e.g. "voiceover": "Khi các tiến sĩ..." instead of "voiceover": "\"Khi các...\"") to produce strictly valid JSON without unescaped quotes.
 
-# VISUAL PATTERN SELECTION RULES (CRITICAL)
-Choose visualPattern strictly according to content semantics:
+# MANDATORY VISUAL PATTERN ROTATION RULE (CRITICAL & STRICT)
+1. NO CONSECUTIVE DUPLICATE PATTERNS: You MUST NEVER assign the same visualPattern to two consecutive scenes!
+2. ROTATE LAYOUT PATTERNS: Rotate through the 10 available patterns across scenes based on content semantics:
 
-- DONUT_GAUGE:
-  → Use when scene contains a SINGLE percentage stat (e.g., "6%", "3%", "94%") as the shocking centerpiece.
-  → Example: "Chỉ 6% tổ chức khai thác được giá trị lớn từ AI"
-
-- DUAL_METRIC_CARDS:
-  → Use when scene contains TWO distinct numeric stats to compare side-by-side.
-  → Example: "900 triệu người dùng ChatGPT" vs "88% doanh nghiệp đã dùng AI"
-
-- HERO_METRIC_GLOW:
-  → Use when scene contains ONE very large number (billions, trillions, millions).
-  → Example: "$2.590 TỶ ĐÔ đổ vào AI năm 2026"
-
-- TITLE_HOOK:
-  → Use for opening hook or rhetorical statement without numbers.
-
-- BULLET_GLASS:
-  → Use for 2-4 structured bullet points or list items.
-
-- ENDING_CTA:
-  → Use for final scene call to action.
+- TITLE_HOOK: Opening hook, title announcement, or bold statement.
+- COMPARISON_VERSUS: Side-by-side comparison of 2 sides (e.g. "3 Years vs 3 Minutes", "Old Way vs AI Way").
+- DONUT_GAUGE: Percentage stat callout centerpiece (e.g. "50%", "6%", "94%").
+- DUAL_METRIC_CARDS: 2 distinct numerical metric cards (e.g. "900M Users" & "88% Adoption").
+- PROCESS_TIMELINE: 2-3 step sequential process or architecture flow (e.g. Step 1 ➔ Step 2 ➔ Step 3).
+- HERO_METRIC_GLOW: Giant centerpiece number (e.g. "$2.590 TỶ ĐÔ", "3 PHÚT").
+- STAT_GRID_2X2: 2x2 grid of metric tiles for scenes with 3-4 stats.
+- QUOTE_NATURE_CARD: High-impact editorial citation card or paper nature reference.
+- BULLET_GLASS: 2-4 glassmorphism bullet points with step numbers (01, 02, 03).
+- ENDING_CTA: Final outro call-to-action scene with follow buttons.
 
 # METRICS FIELDS
 Populate metrics, alertText, contextLine, and subtitleCardText for each scene to make the design rich and complete!
@@ -477,6 +1117,7 @@ ${designReferenceText}
      * Interpolate: transform: translateY(interpolate(wordSpring, [0, 1], [30, 0])) rotate(interpolate(wordSpring, [0, 1], [4, 0])deg), opacity: interpolate(wordSpring, [0, 1], [0, 1]).
      * Render them as inline-blocks with small margins.
    - Numbers: Always use tabular numbers (fontVariantNumeric: "tabular-nums") or monospace fonts for animated statistic counters to prevent text flickering/shifting during count-up animations.
+   - NO BLUR ON TEXT (MANDATORY & ABSOLUTE): You MUST NEVER apply filter: "blur(...)" or backdropFilter to any heading text, titles, text containers, or text words. filter: "blur(...)" is strictly restricted to background ambient glowing orbs (zIndex: 1). All text elements must remain 100% sharp, crisp, unblurred, and readable at all times!
 
 2. Premium Glassmorphism & Glossy Shimmer (Hiệu ứng ánh sáng lướt qua):
    - Apply a high-end glass refraction style to all cards (DUAL_METRIC_CARDS, BULLET_GLASS, and bottom Subtitle card):
@@ -538,12 +1179,15 @@ ${designReferenceText}
    NEVER omit width: "100%", height: "100%" on the root container!
 
 2. ALLOWED IMPORTS & NO ALIAS SYNTAX:
+   Always start your TSX code with these exact import statements:
    import React from "react";
    import { useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
    import { Zap, Cpu, Shield, Sparkles, TrendingUp, Award, Layers, Terminal, Database, Activity, CheckCircle, Flame, Star, Rocket, Target, BarChart2 } from "lucide-react";
-   Import icons directly using their exact names without 'as' alias syntax. Do NOT use `import { Terminal as TerminalIcon }` alias syntax.
-   You ARE ALLOWED and ENCOURAGED to use Lucide React icons! Place them inside glass cards, pills, badges, and metric counters (e.g. <Zap size={28} color={THEME.orange} /> or <Shield size={24} color={THEME.accent} />).
-   Do NOT import any other unlisted external packages or local relative paths.
+
+   Rules for imports:
+   - Import icons using their exact exported names (e.g., Terminal, Zap, Shield). Never use import alias or renaming syntax.
+   - You ARE ALLOWED and ENCOURAGED to use Lucide React icons! Place them inside glass cards, pills, badges, and metric counters (e.g. <Zap size={28} color={THEME.orange} /> or <Shield size={24} color={THEME.accent} />).
+   - Do NOT import any other unlisted external packages or local relative paths.
 
 3. Component Signature MUST be EXACTLY:
    export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson?: any }> = ({ fps = 30, scene = {}, subtitlesJson = [] }) => {
@@ -564,85 +1208,127 @@ ${themeTokensText}
    const sp = (delayFrames = 0, damping = 14, stiffness = 55) =>
      spring({ frame: Math.max(0, frame - delayFrames), fps, config: { damping, stiffness, mass: 1.0 } });
 
-6. Pattern Specs:
-   - DONUT_GAUGE: render SVG circle with strokeDashoffset = circ * (1 - progress * pct). Center display counter and label.
-   - DUAL_METRIC_CARDS: 2 glass cards side by side (gap 16px). Big animated numbers (72px, cyan color).
-   - HERO_METRIC_GLOW: Eyebrow label top, giant hero number center (~120px) with drop-shadow glow.
-   - TITLE_HOOK: Render a giant, high-impact heading centered vertically. Add a glowing capsule pill/badge at the top (e.g. "[XU HƯỚNG MỚI]" or "[HOT REPORT]") with a spring scale entrance animation. Stagger the words of the heading to pop up sequentially.
-   - BULLET_GLASS: Render 2-3 bullet items. Each bullet MUST be a premium glass card (THEME.cardBg, backdropFilter: "blur(16px) saturate(180%)", border: THEME.border, borderRadius: THEME.radius, boxShadow: THEME.shadow). Inside each card, display a circular number badge on the left (e.g. "01", "02", "03" inside a circle with orange background or border) and the bullet point text on the right. Stagger card entrances by index (e.g., delay = 20 + i * 12).
-   - ENDING_CTA: High-impact final screen. A giant animated headline (e.g., "BẮT ĐẦU NGAY", "HÀNH ĐỘNG NGAY"). Below it, render a large glowing Action Button (e.g. "Đăng ký tư vấn", "Tham gia ngay") styled as a premium orange-to-yellow gradient pill (background: "linear-gradient(90deg, #f97316, #fb923c)") with a scale-up bounce animation (using spring) and a heavy drop-shadow (boxShadow: "0 0 35px rgba(249,115,22,0.65)").
-   - Subtitle at bottom (CRITICAL - NO BOX/BLOCK BACKGROUND, DISPLAY 1 LINE AT A TIME):
-      * Position: absolute, bottom: 8% (roughly 150px from bottom to respect video Safe Zone constraints and avoid overlapping main content), left: 5%, right: 5%, text-align: center, padding: 10px, zIndex: 5.
-      * Background style: MUST BE TRANSPARENT. Do NOT render a background card, background box, border, or backdrop-filter. No block shapes. The subtitles must sit directly on the video background.
-      * Visibility: To make the text highly visible on any background, apply a strong, elegant black text-shadow to the text container: textShadow: "0 2px 8px rgba(0,0,0,0.95), 0 1px 2px rgba(0,0,0,0.95)".
-      * Sentence-by-Sentence Karaoke Highlight (CRITICAL - DO NOT render the whole voiceover at once; group words into short lines/sentences of max 7 words or split by punctuation):
-        - Implement this exact logic inside the component body:
-          \`\`\`tsx
-          // 1. Group words into lines/sentences (split by punctuation . ? ! , : OR max 7 words)
-          const lines = React.useMemo(() => {
-            const words = subtitlesJson || [];
-            if (words.length === 0) {
-              // Fallback: split raw voiceover text linearly
-              const rawWords = (scene.voiceover || "").split(" ").filter(Boolean);
-              const res = [];
-              let currentLine = [];
-              rawWords.forEach((word) => {
-                currentLine.push({ word });
-                if (/[.?!,:]$/.test(word.trim()) || currentLine.length >= 7) {
-                  res.push(currentLine);
-                  currentLine = [];
-                }
-              });
-              if (currentLine.length > 0) res.push(currentLine);
-              return res;
-            }
-            const res = [];
-            let currentLine = [];
-            words.forEach((w) => {
-              currentLine.push(w);
-              if (/[.?!,:]$/.test((w.word || "").trim()) || currentLine.length >= 7) {
-                res.push(currentLine);
-                currentLine = [];
-              }
-            });
-            if (currentLine.length > 0) res.push(currentLine);
-            return res;
-          }, [subtitlesJson]);
+6. Pattern Layout Specs — MANDATORY JSX SKELETON (you MUST follow the DOM structure below for the assigned visualPattern):
 
-          // 2. Find active line index based on frame/time
-          const currentSeconds = frame / fps;
-          const activeLineIdx = React.useMemo(() => {
-            if (lines.length === 0) return 0;
-            // If timestamps exist
-            if (subtitlesJson && subtitlesJson.length > 0) {
-              const idx = lines.findIndex((line) => {
-                const start = line[0].start || 0;
-                const end = line[line.length - 1].end || 0;
-                return currentSeconds >= start && currentSeconds < end;
-              });
-              if (idx !== -1) return idx;
-              for (let i = lines.length - 1; i >= 0; i--) {
-                const start = lines[i][0].start || 0;
-                if (currentSeconds >= start) return i;
-              }
-              return 0;
-            }
-            // Linear timing fallback (no timestamps)
-            const durationInFrames = useVideoConfig().durationInFrames;
-            const speakingFrames = Math.max(30, durationInFrames - 30);
-            const framesPerLine = speakingFrames / lines.length;
-            return Math.min(lines.length - 1, Math.floor(Math.max(0, frame - 15) / framesPerLine));
-          }, [lines, currentSeconds, frame, fps]);
+scene.visualPattern === "TITLE_HOOK":
+  STRUCTURE: Single full-screen centered column. TOP: a glowing capsule pill badge (e.g. "[🔥 XU HƯỚNG MỚI]"). MIDDLE: a giant 2-3 line heading split into individual words with staggered spring scale/translateY entrance (fontSize: 64-80px, fontWeight: 800). BOTTOM: a thin horizontal divider line (2px, accent gradient) + a small subtitle context label. NO glass cards. NO numbered lists. NO metrics.
+  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:24}}>
+    <div style={{background:"linear-gradient(...)",borderRadius:99,padding:"6px 18px"}}>[badge text]</div>
+    <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:8}}>{words.map(w => <span style={{fontSize:72,fontWeight:800,...springAnimation}}>w</span>)}</div>
+    <div style={{width:120,height:2,background:"linear-gradient(90deg,transparent,THEME.accent,transparent)"}}/>
+  </div>
 
-          const activeLine = lines[activeLineIdx] || [];
-          \`\`\`
-        - Render ONLY the activeLine words:
-          * Map through activeLine.
-          * If timestamps are present: a word is active when currentSeconds >= w.start && currentSeconds <= w.end.
-          * If timestamps are NOT present: calculate active word index linearly within the active line's duration:
-            const activeWordIdx = Math.floor((Math.max(0, frame - 15) % framesPerLine) / (framesPerLine / activeLine.length)).
-          * Style active words: color: THEME.orange (or #ffffff), scale(1.08), fontWeight: 800, transition: "all 0.08s ease-out", display: "inline-block", marginRight: "10px", textShadow: "0 2px 8px rgba(0,0,0,0.95)".
-          * Style inactive words: color: "rgba(255, 255, 255, 0.45)", scale(1.0), fontWeight: 600, display: "inline-block", marginRight: "10px", textShadow: "0 2px 8px rgba(0,0,0,0.95)".
+scene.visualPattern === "BULLET_GLASS":
+  STRUCTURE: Vertical stack of 2-3 glass cards. Each card has a LEFT circular badge ("01","02","03" on orange circle) + RIGHT text content. Cards stack vertically with staggered entrance delay.
+  <div style={{display:"flex",flexDirection:"column",gap:16,width:"100%"}}>
+    {items.map((item,i) => (
+      <div style={{display:"flex",alignItems:"center",gap:16,background:THEME.cardBg,backdropFilter:"blur(16px)",borderRadius:THEME.radius,border:THEME.border,padding:"18px 20px"}}>
+        <div style={{width:44,height:44,borderRadius:"50%",background:"#f97316",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800}}>0{i+1}</div>
+        <span style={{color:"#fff",fontSize:22,flex:1}}>{item}</span>
+      </div>
+    ))}
+  </div>
+
+scene.visualPattern === "COMPARISON_VERSUS":
+  STRUCTURE: TWO side-by-side columns separated by a central "VS" badge. LEFT column: dark red/gray border card labeled "TRƯỚC ĐÂY". RIGHT column: bright cyan/green border card labeled "SAU NÀY / AI". Must be a 2-column grid layout — NOT a vertical stack. Each column has a header label + 2-3 bullet points inside.
+  <div style={{display:"grid",gridTemplateColumns:"1fr auto 1fr",gap:12,alignItems:"center",width:"100%"}}>
+    <div style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.4)",borderRadius:THEME.radius,padding:20}}>
+      <div style={{color:"#ef4444",fontWeight:700,marginBottom:12}}>❌ TRƯỚC ĐÂY</div>
+      {leftPoints.map(p => <div style={{color:"rgba(255,255,255,0.8)",marginBottom:8}}>• {p}</div>)}
+    </div>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",width:44,height:44,borderRadius:"50%",background:"linear-gradient(135deg,#f97316,#3b82f6)",fontWeight:900,fontSize:18}}>VS</div>
+    <div style={{background:"rgba(59,130,246,0.08)",border:"1px solid rgba(59,130,246,0.5)",borderRadius:THEME.radius,padding:20}}>
+      <div style={{color:"#60a5fa",fontWeight:700,marginBottom:12}}>✅ SAU NÀY</div>
+      {rightPoints.map(p => <div style={{color:"rgba(255,255,255,0.8)",marginBottom:8}}>• {p}</div>)}
+    </div>
+  </div>
+
+scene.visualPattern === "PROCESS_TIMELINE":
+  STRUCTURE: Vertical chain of 2-3 step nodes connected by animated gradient lines. Each step node is a HORIZONTAL row: LEFT circle badge with step number → RIGHT step content box. Between steps: a thin vertical gradient line (4px width, height 40px) to represent the connection arrow.
+  <div style={{display:"flex",flexDirection:"column",alignItems:"flex-start",gap:0,width:"100%",paddingLeft:20}}>
+    {steps.map((step,i) => (<>
+      <div style={{display:"flex",alignItems:"center",gap:16}}>
+        <div style={{width:52,height:52,borderRadius:"50%",border:"2px solid THEME.accent",background:"rgba(59,130,246,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800,fontSize:22,color:THEME.accent,flexShrink:0}}>{i+1}</div>
+        <div style={{background:THEME.cardBg,border:THEME.border,borderRadius:12,padding:"14px 18px",flex:1}}>
+          <div style={{color:THEME.orange,fontWeight:700,fontSize:20,marginBottom:4}}>{step.title}</div>
+          <div style={{color:"rgba(255,255,255,0.75)",fontSize:16}}>{step.desc}</div>
+        </div>
+      </div>
+      {i < steps.length-1 && <div style={{width:4,height:36,background:"linear-gradient(to bottom,THEME.accent,transparent)",marginLeft:24}}/>}
+    </>))}
+  </div>
+
+scene.visualPattern === "DONUT_GAUGE":
+  STRUCTURE: Center-dominant SVG donut ring with animated stroke. NO glass card list. Just: top label → giant SVG circle (200-220px diameter, 18-22px stroke) → center animated % number → bottom description label.
+  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
+    <div style={{color:THEME.textSec,fontSize:18,textTransform:"uppercase",letterSpacing:"0.1em"}}>{scene.metrics[0]?.label}</div>
+    <svg width={220} height={220} style={{transform:"rotate(-90deg)"}}>
+      <circle cx={110} cy={110} r={90} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={20}/>
+      <circle cx={110} cy={110} r={90} fill="none" stroke={THEME.orange} strokeWidth={20} strokeLinecap="round"
+        strokeDasharray={circ} strokeDashoffset={circ*(1-progress*pct/100)}/>
+    </svg>
+    <div style={{marginTop:-190,fontSize:72,fontWeight:900,color:THEME.orange}}>{Math.round(progress*pct)}%</div>
+  </div>
+
+scene.visualPattern === "DUAL_METRIC_CARDS":
+  STRUCTURE: Exactly 2 glass cards placed SIDE BY SIDE (2-column grid). Each card: top icon → big animated number (~72px) → bottom label. Must be horizontal layout, NOT vertical stack.
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,width:"100%"}}>
+    {scene.metrics.slice(0,2).map((m,i) => (
+      <div style={{background:THEME.cardBg,backdropFilter:"blur(16px)",border:THEME.border,borderRadius:THEME.radius,padding:"28px 20px",display:"flex",flexDirection:"column",alignItems:"center",gap:12}}>
+        <LucideIcon size={32} color={i===0?THEME.orange:THEME.accent}/>
+        <div style={{fontSize:72,fontWeight:900,color:i===0?"#f97316":"#60a5fa",fontVariantNumeric:"tabular-nums"}}>{animatedValue}</div>
+        <div style={{color:THEME.textSec,fontSize:16,textAlign:"center"}}>{m.label}</div>
+      </div>
+    ))}
+  </div>
+
+scene.visualPattern === "HERO_METRIC_GLOW":
+  STRUCTURE: Single large glowing number centered on screen. Top: small eyebrow label → Middle: ONE enormous metric number (120-140px) with radial glow behind it → Bottom: context description line. NO cards. NO lists. Pure hero centerpiece.
+  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:16,position:"relative"}}>
+    <div style={{color:THEME.textSec,fontSize:16,textTransform:"uppercase",letterSpacing:"0.15em"}}>{eyebrow}</div>
+    <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{position:"absolute",width:260,height:260,borderRadius:"50%",background:"radial-gradient(circle,rgba(249,115,22,0.25),transparent 70%)",filter:"blur(40px)"}}/>
+      <div style={{fontSize:130,fontWeight:900,color:"#f97316",textShadow:"0 0 60px rgba(249,115,22,0.8)",fontVariantNumeric:"tabular-nums",zIndex:2}}>{heroValue}</div>
+    </div>
+    <div style={{color:"rgba(255,255,255,0.7)",fontSize:20,textAlign:"center",maxWidth:400}}>{contextDesc}</div>
+  </div>
+
+scene.visualPattern === "STAT_GRID_2X2":
+  STRUCTURE: 2×2 grid of 4 equal metric tiles. Each tile: top Lucide icon + middle animated number + bottom label. ALL 4 tiles must be visible at once inside a 2-column grid.
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridTemplateRows:"1fr 1fr",gap:12,width:"100%"}}>
+    {scene.metrics.slice(0,4).map((m,i) => (
+      <div style={{background:THEME.cardBg,border:THEME.border,borderRadius:THEME.radius,padding:"20px 16px",display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+        <LucideIcon size={28} color={THEME.accent}/>
+        <div style={{fontSize:44,fontWeight:900,color:THEME.orange}}>{m.value}{m.suffix}</div>
+        <div style={{color:THEME.textSec,fontSize:13,textAlign:"center"}}>{m.label}</div>
+      </div>
+    ))}
+  </div>
+
+scene.visualPattern === "QUOTE_NATURE_CARD":
+  STRUCTURE: Single centered editorial card. Top: a "📄 NATURE / SIGGRAPH 2024" source badge pill. Middle: a large opening quotation mark (") followed by the quote text in italic. Bottom: author attribution line ("— AuthorName, Journal"). No numbered lists. No metrics.
+  <div style={{background:THEME.cardBg,border:"1px solid rgba(59,130,246,0.3)",borderRadius:20,padding:"36px 32px",display:"flex",flexDirection:"column",gap:20,width:"100%",backdropFilter:"blur(20px)"}}>
+    <div style={{display:"flex",alignSelf:"flex-start",background:"rgba(59,130,246,0.15)",border:"1px solid rgba(59,130,246,0.4)",borderRadius:99,padding:"4px 14px",fontSize:13,color:THEME.accent}}>📄 {sourceBadge}</div>
+    <div style={{fontSize:56,fontWeight:900,color:THEME.orange,lineHeight:0.8,marginBottom:-10}}>"</div>
+    <div style={{fontSize:22,fontStyle:"italic",color:"rgba(255,255,255,0.9)",lineHeight:1.6}}>{quoteText}</div>
+    <div style={{color:THEME.textSec,fontSize:15,borderTop:"1px solid rgba(255,255,255,0.08)",paddingTop:16}}>— {authorAttribution}</div>
+  </div>
+
+scene.visualPattern === "ENDING_CTA":
+  STRUCTURE: Full-screen centered call-to-action. Top: a short motivational tag line → Middle: a giant animated headline (80-100px) → Bottom: 1-2 large glowing orange action buttons with scale-bounce animations. NO glass cards. NO lists. NO metrics numbers.
+  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:28,textAlign:"center"}}>
+    <div style={{color:THEME.textSec,fontSize:18,letterSpacing:"0.1em",textTransform:"uppercase"}}>{tagline}</div>
+    <div style={{fontSize:90,fontWeight:900,color:"#ffffff",lineHeight:1.05,textShadow:"0 0 40px rgba(249,115,22,0.3)"}}>{headline}</div>
+    <div style={{marginTop:16,padding:"18px 44px",background:"linear-gradient(90deg,#f97316,#fb923c)",borderRadius:99,fontSize:22,fontWeight:800,color:"#fff",boxShadow:"0 0 40px rgba(249,115,22,0.6)",transform:\`scale(\${ctaSpring})\`}}>{ctaText}</div>
+  </div>
+
+CRITICAL: You MUST use the exact DOM structure skeleton matching scene.visualPattern above. DO NOT substitute a different structure. NEVER render plain glass bullet cards for patterns that are NOT BULLET_GLASS.
+
+   - Top 80% Height Safe Zone & Subtitle Exclusion (CRITICAL & MANDATORY):
+      * DO NOT generate subtitle components or subtitle Karaoke code inside your TSX output. Subtitles are rendered externally by the master video framework.
+      * Wrap all visual content (headings, badges, cards, donut gauges, statistics, CTA buttons) inside a single main container positioned at the top 80% of screen height:
+        <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "80%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", padding: "60px 60px 0 60px", boxSizing: "border-box", zIndex: 10 }}>
+      * Leave the bottom 20% area (from bottom: 0 to bottom: 20%) completely clean and empty so external subtitles do not collide with your visual layout elements!
 
  7. Strict Contrast and Readability Rules (CRITICAL FOR READABILITY):
     - The background of the video is dark (THEME.bg is typically #030712).
@@ -685,9 +1371,9 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
     throw new Error("GEMINI_API_KEY chưa được cấu hình trong backend .env");
   }
 
-  let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-  if (modelName.includes("2.0") && !modelName.includes("exp")) {
-    modelName = "gemini-3.5-flash";
+  let modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+  if (modelName === "gemini-3.5-flash" || modelName === "gemini-2.0-flash") {
+    modelName = "gemini-3.6-flash";
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
@@ -698,7 +1384,42 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
   const scenePlan = await generateScenePlanForAIGen(genAI, modelName, script, targetLength);
   console.log(`[Studio AI Gen] Phase 1 hoàn tất: ${scenePlan.length} phân cảnh được tạo.`);
 
-  // Step 2: Generate TSX Code & Compile per scene sequentially (to prevent rate limits and 503 errors)
+
+  // Step 2: Enforce pattern diversity — AI Planner doesn't see previous scenes,
+  // so we post-process the plan to ensure no two consecutive scenes share the same pattern.
+  const VALID_PATTERNS = [
+    "TITLE_HOOK", "COMPARISON_VERSUS", "DONUT_GAUGE", "DUAL_METRIC_CARDS",
+    "PROCESS_TIMELINE", "HERO_METRIC_GLOW", "STAT_GRID_2X2", "QUOTE_NATURE_CARD",
+    "BULLET_GLASS", "ENDING_CTA"
+  ];
+  let lastPattern = null;
+  for (let i = 0; i < scenePlan.length; i++) {
+    const scene = scenePlan[i];
+    const normalized = normalizeVisualPattern(scene.visualPattern);
+    scene.visualPattern = normalized;
+
+    if (normalized === lastPattern) {
+      // Pick an alternative pattern that's different from lastPattern
+      // Prefer patterns that haven't appeared recently (look back 2)
+      const recentPatterns = new Set(
+        scenePlan.slice(Math.max(0, i - 2), i).map(s => s.visualPattern)
+      );
+      // Also exclude ENDING_CTA unless it's the last scene
+      const isLast = i === scenePlan.length - 1;
+      const candidates = VALID_PATTERNS.filter(p => {
+        if (recentPatterns.has(p)) return false;
+        if (p === "ENDING_CTA" && !isLast) return false;
+        return true;
+      });
+      // Use scene index to pick deterministically (not random, so reruns are consistent)
+      const alternative = candidates[i % candidates.length] || "PROCESS_TIMELINE";
+      console.log(`[Studio AI Gen] Pattern diversity fix: Scene ${i} changed from '${normalized}' to '${alternative}' (was duplicate of scene ${i-1})`);
+      scene.visualPattern = alternative;
+    }
+    lastPattern = scene.visualPattern;
+  }
+
+  // Step 3: Generate TSX Code & Compile per scene sequentially (to prevent rate limits and 503 errors)
   const scenesWithCode = [];
   for (let index = 0; index < scenePlan.length; index++) {
     const scene = scenePlan[index];
@@ -719,6 +1440,7 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
   console.log(`[Studio AI Gen] Toàn bộ ${scenesWithCode.length} phân cảnh đã biên dịch JS thành công.`);
   return scenesWithCode;
 }
+
 
 // Generates code, tts audio, and alignments for a single scene
 async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages, voiceKey, projectId, genAI, modelName }) {
@@ -743,15 +1465,27 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
 
   // Execute TTS generation AND Gemini TSX code generation in PARALLEL
   const ttsTask = (async () => {
-    if (!scene.voiceover) return null;
+    if (!scene.voiceover && !scene.voiceoverTts) return null;
     try {
-      const optVoiceover = await phoneme.optimizeTextForPhonemes(scene.voiceover, projectId);
-      return await tts.generateTTS(optVoiceover, projectId || "aigen_proj", `scene_${index}_${Date.now()}`, `omnivoice_${voiceKey}`);
+      let textToRead;
+      if (scene.voiceoverTts) {
+        // voiceoverTts is ALREADY a phonetic Vietnamese transcript — bypass phoneme optimizer
+        // to avoid re-processing hand-written phonemes like "Gi-pi-ti Bốn" → wrong output
+        textToRead = scene.voiceoverTts;
+        console.log(`[Studio AI Gen] Scene ${index}: using voiceoverTts directly (skipping phoneme optimizer)`);
+      } else {
+        // voiceover is raw original text with English terms (GPT-4, Llama 3 etc.)
+        // → run phoneme optimizer to transliterate English to Vietnamese phonetics
+        textToRead = await phoneme.optimizeTextForPhonemes(scene.voiceover, projectId);
+        console.log(`[Studio AI Gen] Scene ${index}: optimized voiceover phonemes for TTS`);
+      }
+      return await tts.generateTTS(textToRead, projectId || "aigen_proj", `scene_${index}_${Date.now()}`, `omnivoice_${voiceKey}`);
     } catch (ttsErr) {
       console.warn(`[Studio AI Gen] TTS warning for scene ${index}:`, ttsErr.message);
       return null;
     }
   })();
+
 
   const tsxTask = generateTSXCodeForScene(genAI, modelName, scene, theme, bgImage, refImages);
 
@@ -767,12 +1501,14 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
     audioUrl = res.url;
     if (res.duration > 0) {
       audioDuration = res.duration;
-      scene.durationFrames = Math.max(durationFrames, Math.round((audioDuration + 0.5) * 30));
+      scene.durationFrames = Math.round((audioDuration + 0.25) * 30);
+      scene.duration = (scene.durationFrames / 30).toFixed(2);
     }
     try {
       const absoluteAudioPath = path.join(__dirname, "../public", audioUrl);
       subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, scene.voiceover, audioDuration);
       scene.subtitlesJson = subtitlesJson;
+      scene.voiceoverTtsJson = subtitlesJson;
     } catch (alignErr) {
       console.warn(`[Studio AI Gen] Lỗi căn lề phụ đề cho scene ${index}:`, alignErr.message);
     }
@@ -782,70 +1518,26 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
   let tsxCode = "";
   let compiledJS = "";
 
+  // Safety net patterns rotate by scene index so each fallback looks different
+  const SAFETY_NET_PATTERNS = ["BULLET_GLASS", "PROCESS_TIMELINE", "STAT_GRID_2X2", "QUOTE_NATURE_CARD", "DUAL_METRIC_CARDS", "HERO_METRIC_GLOW"];
+  const safetyNetPattern = scene.visualPattern || SAFETY_NET_PATTERNS[index % SAFETY_NET_PATTERNS.length];
+
   if (tsxResult.status === "fulfilled" && tsxResult.value) {
     tsxCode = tsxResult.value;
-    try {
+    compiledJS = compileTSX(tsxCode);
+
+    if (!compiledJS) {
+      console.warn(`[Studio AI Gen] Lỗi biên dịch đầu tiên cho scene ${index}. Kích hoạt Safety Net Fallback (pattern: ${safetyNetPattern})...`);
+      tsxCode = generateSafetyNetTSX(scene);
       compiledJS = compileTSX(tsxCode);
-    } catch (codeErr) {
-      console.warn(`[Studio AI Gen] Lỗi biên dịch đầu tiên cho scene ${index}:`, codeErr.message);
-      console.warn(`[Studio AI Gen] Tiến hành tự động sửa lỗi qua Gemini...`);
-
-      try {
-        const correctionPrompt = `
-Your previous generated TSX code for the scene failed to compile with error: "${codeErr.message}".
-
-Here is the invalid code you generated:
----
-${tsxCode}
----
-
-Please identify the compilation error and generate the CORRECTED React/Remotion TSX component.
-Ensure all functions, variables, and hooks (like React.useMemo, React.useState, etc.) are properly defined or imported.
-Do not output any introductory or conversational text, output only the corrected TSX code.
-`;
-
-        const options = {
-          model: modelName,
-          generationConfig: {
-            maxOutputTokens: 8192,
-            temperature: 0.1
-          }
-        };
-
-        const fallbacks = ["gemini-2.5-flash"].filter(m => m !== modelName);
-        const correctionResult = await generateContentWithFallback(
-          genAI,
-          options,
-          { systemInstruction: "You are an expert React / Remotion TSX component code generator. Fix compiler errors and output only valid raw TSX code.", userPrompt: correctionPrompt },
-          fallbacks
-        );
-
-        let correctedText = correctionResult.response.text().trim();
-        tsxCode = cleanAndExtractCode(correctedText);
-
-        compiledJS = compileTSX(tsxCode);
-        console.log(`[Studio AI Gen] Tự sửa lỗi thành công cho scene ${index}!`);
-      } catch (retryErr) {
-        console.error(`[Studio AI Gen] Tự sửa lỗi thất bại cho scene ${index}:`, retryErr.message);
-        console.error(`[Studio AI Gen] Raw TSX Code that failed compilation:\n`, tsxCode);
-        // Fallback component code
-        tsxCode = `import React from "react";
-import { useCurrentFrame } from "remotion";
-export const GeneratedScene: React.FC<{ fps?: number }> = () => {
-  return (
-    <div style={{ width: 1080, height: 1920, background: "#030712", color: "#fff", display: "grid", placeItems: "center", fontSize: 40, fontFamily: "sans-serif" }}>
-      <div>${scene.heading || "Phân cảnh"}</div>
-    </div>
-  );
-};
-export default GeneratedScene;`;
-        compiledJS = compileTSX(tsxCode);
-      }
     }
-  } else {
-    const errorMsg = tsxResult.reason?.message || "Unknown error generating TSX code";
-    console.error(`[Studio AI Gen] Lỗi gọi API tạo TSX cho scene ${index}:`, errorMsg);
-    throw new Error(`Lỗi gọi API Gemini (Scene ${index}): ${errorMsg}`);
+  }
+
+  // Safety net fallback if compiledJS is still empty
+  if (!compiledJS) {
+    console.warn(`[Studio AI Gen] 🛡️ Activating Pattern Safety Net for scene ${index} (pattern: ${scene.visualPattern || 'BULLET_GLASS'}, heading: "${scene.heading || 'Scene'}")`);
+    tsxCode = generateSafetyNetTSX(scene);
+    compiledJS = compileTSX(tsxCode);
   }
 
   return {
@@ -857,6 +1549,7 @@ export default GeneratedScene;`;
     compiledJS,
     audioUrl,
     durationFrames: scene.durationFrames,
+    duration: (scene.durationFrames / 30).toFixed(2),
     subtitlesJson
   };
 }
