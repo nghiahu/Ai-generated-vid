@@ -8,6 +8,19 @@ import { StudioAIGen } from "./components/StudioAIGen";
 import "./App.css";
 
 function App() {
+  const getInitialView = () => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlView = urlParams.get("view");
+      if (urlView) return urlView;
+      const storedView = localStorage.getItem("activeView");
+      if (storedView) return storedView;
+    } catch (e) {
+      console.warn("Failed to read initial view:", e);
+    }
+    return "PROJECTS";
+  };
+
   const getInitialProjectId = () => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -25,7 +38,7 @@ function App() {
   const [selectedProjectId, setSelectedProjectId] = useState(getInitialProjectId);
   const [currentProject, setCurrentProject] = useState(null);
   const [selectedSceneId, setSelectedSceneId] = useState(null);
-  const [view, setView] = useState("PROJECTS"); // "PROJECTS", "STUDIO", "BATCH", "WORKSPACE_EDITOR"
+  const [view, setView] = useState(getInitialView); // "PROJECTS", "STUDIO", "STUDIO_AI_GEN", "BATCH", "WORKSPACE_EDITOR", "WORKSPACE_SETUP"
   const [draftConfig, setDraftConfig] = useState({
     length: "Short (~60s)",
     language: "Vietnamese",
@@ -65,6 +78,30 @@ function App() {
     }
   }, [currentProject]);
 
+  // Sync URL search parameters and localStorage whenever view or selectedProjectId changes
+  useEffect(() => {
+    try {
+      if (view) {
+        localStorage.setItem("activeView", view);
+      }
+      const url = new URL(window.location.href);
+      if (view) {
+        url.searchParams.set("view", view);
+      } else {
+        url.searchParams.delete("view");
+      }
+      if (selectedProjectId) {
+        localStorage.setItem("activeProjectId", selectedProjectId);
+        url.searchParams.set("projectId", selectedProjectId);
+      } else {
+        localStorage.removeItem("activeProjectId");
+        url.searchParams.delete("projectId");
+      }
+      window.history.replaceState({}, "", url.toString());
+    } catch (e) {
+      console.warn("Failed to sync view/projectId URL state:", e);
+    }
+  }, [view, selectedProjectId]);
 
   // Load projects list on mount
   useEffect(() => {
@@ -80,23 +117,11 @@ function App() {
     }
   };
 
-  // Fetch full project details when one is selected & sync URL / localStorage
+  // Fetch full project details when one is selected
   useEffect(() => {
     if (selectedProjectId) {
-      try {
-        localStorage.setItem("activeProjectId", selectedProjectId);
-        const url = new URL(window.location.href);
-        url.searchParams.set("projectId", selectedProjectId);
-        window.history.replaceState({}, "", url.toString());
-      } catch (e) { }
       fetchProjectDetail(selectedProjectId);
     } else {
-      try {
-        localStorage.removeItem("activeProjectId");
-        const url = new URL(window.location.href);
-        url.searchParams.delete("projectId");
-        window.history.replaceState({}, "", url.pathname);
-      } catch (e) { }
       setCurrentProject(null);
       setSelectedSceneId(null);
       setVideoUrl(null);
@@ -106,20 +131,30 @@ function App() {
   const fetchProjectDetail = async (id) => {
     try {
       const project = await api.getProjectById(id);
-      if (project && project.type !== "AIGEN") {
+      if (!project) return;
+
+      // Smart AI Gen detection: check type OR config.scenes visualPattern
+      const isAIGen = project.type === "AIGEN" || (
+        project.config &&
+        Array.isArray(project.config.scenes) &&
+        project.config.scenes.length > 0 &&
+        Boolean(project.config.scenes[0].visualPattern)
+      );
+
+      if (!isAIGen) {
         project.config = { visualStyle: "rikkei", ...(project.config || {}) };
         if (!project.config.visualStyle) project.config.visualStyle = "rikkei";
       }
+
       setCurrentProject(project);
-      if (project && project.type === "AIGEN") {
+
+      if (isAIGen) {
         setView("STUDIO_AI_GEN");
+      } else if (project.scenes && project.scenes.length > 0) {
+        setSelectedSceneId(project.scenes[0].id);
+        setView("WORKSPACE_EDITOR");
       } else {
-        if (project && project.scenes && project.scenes.length > 0) {
-          setSelectedSceneId(project.scenes[0].id);
-          setView("WORKSPACE_EDITOR");
-        } else {
-          setView("WORKSPACE_SETUP");
-        }
+        setView("WORKSPACE_SETUP");
       }
     } catch (error) {
       console.error("Failed to fetch project detail:", error);
