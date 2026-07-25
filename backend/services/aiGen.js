@@ -909,7 +909,7 @@ function parseScriptIntoBlocks(scriptText) {
 }
 
 // Phase 1: Planner
-async function generateScenePlanForAIGen(genAI, modelName, scriptText, targetLength = "Short (~60s)") {
+async function generateScenePlanForAIGen(genAI, modelName, scriptText, targetLength = "Short (~60s)", patternSlots = []) {
   const options = {
     model: modelName,
     generationConfig: {
@@ -983,9 +983,16 @@ ${blockCountDirective}
 Populate metrics, alertText, contextLine, and subtitleCardText for each scene to make the design rich and complete!
   `;
 
+  const slotDirective = patternSlots.length > 0
+    ? `\n\nMANDATORY PATTERN ASSIGNMENT — DO NOT DEVIATE (CRITICAL):\n` +
+      patternSlots.map((p, i) => `Scene ${i}: MUST use visualPattern "${p}"`).join("\n") +
+      `\nYou MUST assign EXACTLY the visualPattern listed above to each scene index. Using any other pattern is FORBIDDEN.`
+    : "";
+
   const userPrompt = `
 Script: "${scriptText}"
 Target Length: "${targetLength}"
+${slotDirective}
 
 Generate a scene plan array following the schema and visualPattern rules.
   `;
@@ -1365,6 +1372,45 @@ Background Image: "${bgImage ? 'YES' : 'NO'}"${referenceInstruction}
 }
 
 // Orchestrator function
+/**
+ * Assigns a unique visual pattern to each scene index in a video.
+ * No pattern repeats across the entire video.
+ * Scene 0 → TITLE_HOOK (opening), last scene (N>=3) → ENDING_CTA.
+ * Middle scenes pulled from shuffled pool without repetition.
+ */
+function assignPatternSlots(sceneCount) {
+  const ALL_PATTERNS = [
+    "TITLE_HOOK", "DUAL_METRIC_CARDS", "HERO_METRIC_GLOW", "COMPARISON_VERSUS",
+    "PROCESS_TIMELINE", "DONUT_GAUGE", "STAT_GRID_2X2", "QUOTE_NATURE_CARD",
+    "BULLET_GLASS", "ENDING_CTA"
+  ];
+  if (sceneCount <= 0) return [];
+  if (sceneCount === 1) return ["TITLE_HOOK"];
+  if (sceneCount === 2) return ["TITLE_HOOK", "ENDING_CTA"];
+
+  const slots = new Array(sceneCount).fill(null);
+  slots[0] = "TITLE_HOOK";
+  slots[sceneCount - 1] = "ENDING_CTA";
+
+  // Pool for middle scenes — exclude already pinned
+  const pinned = new Set(["TITLE_HOOK", "ENDING_CTA"]);
+  const pool = ALL_PATTERNS.filter(p => !pinned.has(p));
+
+  // Deterministic shuffle using scene count as seed (stable across reruns)
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = (i * 7 + sceneCount * 3) % (i + 1);
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  let poolIdx = 0;
+  for (let i = 1; i < sceneCount - 1; i++) {
+    slots[i] = pool[poolIdx % pool.length];
+    poolIdx++;
+  }
+
+  return slots;
+}
+
 async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", theme = "ai_hub_grid", voiceKey = "duythanh", bgImage = "", refImages = [], projectId = null }) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -1380,43 +1426,50 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
 
   console.log(`[Studio AI Gen] Bắt đầu khởi tạo Studio AI Gen với model: ${modelName}`);
 
-  // Step 1: Generate Scene Plan
-  const scenePlan = await generateScenePlanForAIGen(genAI, modelName, script, targetLength);
+  // Step 1: Pre-assign unique pattern slots (Component B — Full-Video Rotation)
+  const scriptBlocks = parseScriptIntoBlocks(script);
+  const expectedSceneCount = scriptBlocks.length > 1 ? scriptBlocks.length : 5;
+  const patternSlots = assignPatternSlots(expectedSceneCount);
+  console.log(`[Studio AI Gen] Pre-assigned pattern slots (${expectedSceneCount} scenes): ${patternSlots.join(", ")}`);
+
+  // Step 2: Generate Scene Plan with slot directives injected
+  const scenePlan = await generateScenePlanForAIGen(genAI, modelName, script, targetLength, patternSlots);
   console.log(`[Studio AI Gen] Phase 1 hoàn tất: ${scenePlan.length} phân cảnh được tạo.`);
 
 
-  // Step 2: Enforce pattern diversity — AI Planner doesn't see previous scenes,
-  // so we post-process the plan to ensure no two consecutive scenes share the same pattern.
+  // Step 3: Post-process — normalize patterns and enforce slot assignments
+  // Slots were pre-assigned, but Gemini may have deviated. Re-apply slots as source of truth.
   const VALID_PATTERNS = [
     "TITLE_HOOK", "COMPARISON_VERSUS", "DONUT_GAUGE", "DUAL_METRIC_CARDS",
     "PROCESS_TIMELINE", "HERO_METRIC_GLOW", "STAT_GRID_2X2", "QUOTE_NATURE_CARD",
     "BULLET_GLASS", "ENDING_CTA"
   ];
-  let lastPattern = null;
+  const usedPatterns = new Set();
   for (let i = 0; i < scenePlan.length; i++) {
     const scene = scenePlan[i];
     const normalized = normalizeVisualPattern(scene.visualPattern);
     scene.visualPattern = normalized;
 
-    if (normalized === lastPattern) {
-      // Pick an alternative pattern that's different from lastPattern
-      // Prefer patterns that haven't appeared recently (look back 2)
-      const recentPatterns = new Set(
-        scenePlan.slice(Math.max(0, i - 2), i).map(s => s.visualPattern)
-      );
-      // Also exclude ENDING_CTA unless it's the last scene
+    // Enforce pre-assigned slot if available
+    const assignedSlot = patternSlots[i];
+    if (assignedSlot && normalized !== assignedSlot) {
+      console.warn(`[Studio AI Gen] ⚠️ Pattern slot enforcement: Scene ${i} Gemini chose '${normalized}', overriding to assigned slot '${assignedSlot}'`);
+      scene.visualPattern = assignedSlot;
+    }
+
+    // Final duplicate guard: if somehow still duplicate of previous, pick from unused pool
+    if (usedPatterns.has(scene.visualPattern)) {
       const isLast = i === scenePlan.length - 1;
-      const candidates = VALID_PATTERNS.filter(p => {
-        if (recentPatterns.has(p)) return false;
+      const unused = VALID_PATTERNS.filter(p => {
+        if (usedPatterns.has(p)) return false;
         if (p === "ENDING_CTA" && !isLast) return false;
         return true;
       });
-      // Use scene index to pick deterministically (not random, so reruns are consistent)
-      const alternative = candidates[i % candidates.length] || "PROCESS_TIMELINE";
-      console.log(`[Studio AI Gen] Pattern diversity fix: Scene ${i} changed from '${normalized}' to '${alternative}' (was duplicate of scene ${i-1})`);
-      scene.visualPattern = alternative;
+      const fallbackPattern = unused[i % Math.max(1, unused.length)] || "PROCESS_TIMELINE";
+      console.warn(`[Studio AI Gen] ⚠️ Duplicate pattern guard: Scene ${i} '${scene.visualPattern}' already used, switching to '${fallbackPattern}'`);
+      scene.visualPattern = fallbackPattern;
     }
-    lastPattern = scene.visualPattern;
+    usedPatterns.add(scene.visualPattern);
   }
 
   // Step 3: Generate TSX Code & Compile per scene sequentially (to prevent rate limits and 503 errors)
