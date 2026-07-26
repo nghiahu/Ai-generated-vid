@@ -105,7 +105,11 @@ const AIGEN_PLANNER_SCHEMA = {
       },
       visualPattern: {
         type: SchemaType.STRING,
-        description: "Must be strictly one of: 'DONUT_GAUGE', 'DUAL_METRIC_CARDS', 'HERO_METRIC_GLOW', 'TITLE_HOOK', 'BULLET_GLASS', 'COMPARISON_VERSUS', 'PROCESS_TIMELINE', 'STAT_GRID_2X2', 'QUOTE_NATURE_CARD', 'ENDING_CTA'"
+        description: "Descriptive unique visual concept name for this scene based on semantic intent (e.g., 'CODE_TERMINAL_DIFF', 'HORIZON_3STEP_FLOW', 'HERO_METRIC_GAUGE_RING', 'VS_SPLIT_COMPARISON', 'GRID_MATRIX_4TILES', 'EDITORIAL_QUOTE_CARD', 'OUTRO_CTA_PULSE', 'GLASS_BULLET_LIST'). MUST NOT repeat consecutive patterns."
+      },
+      visualConcept: {
+        type: SchemaType.STRING,
+        description: "Alias for visualPattern describing the bespoke visual layout structure"
       },
       heading: {
         type: SchemaType.STRING,
@@ -359,36 +363,9 @@ function robustJSONParse(text) {
 }
 
 function normalizeVisualPattern(pattern) {
-  if (!pattern) return "TITLE_HOOK";
-  const upper = pattern.toUpperCase();
-  if (upper.includes("DONUT") || upper.includes("GAUGE") || upper.includes("PERCENT") || upper.includes("STATCALLOUT") || upper.includes("STAT_CALLOUT")) {
-    return "DONUT_GAUGE";
-  }
-  if (upper.includes("DUAL") || upper.includes("METRICHIGHLIGHT") || upper.includes("METRIC_HIGHLIGHT")) {
-    return "DUAL_METRIC_CARDS";
-  }
-  if (upper.includes("HERO") || upper.includes("GLOW") || upper.includes("LARGE")) {
-    return "HERO_METRIC_GLOW";
-  }
-  if (upper.includes("VERSUS") || upper.includes("VS") || upper.includes("COMPARE") || upper.includes("COMPARISON")) {
-    return "COMPARISON_VERSUS";
-  }
-  if (upper.includes("TIMELINE") || upper.includes("PROCESS") || upper.includes("STEP") || upper.includes("FLOW")) {
-    return "PROCESS_TIMELINE";
-  }
-  if (upper.includes("GRID") || upper.includes("MATRIX") || upper.includes("TILES")) {
-    return "STAT_GRID_2X2";
-  }
-  if (upper.includes("QUOTE") || upper.includes("NATURE") || upper.includes("PAPER") || upper.includes("CITATION")) {
-    return "QUOTE_NATURE_CARD";
-  }
-  if (upper.includes("BULLET") || upper.includes("GLASS") || upper.includes("LIST") || upper.includes("POINTS")) {
-    return "BULLET_GLASS";
-  }
-  if (upper.includes("ENDING") || upper.includes("CTA") || upper.includes("OUTRO")) {
-    return "ENDING_CTA";
-  }
-  return "TITLE_HOOK";
+  if (!pattern) return "DYNAMIC_VISUAL_HOOK";
+  const cleaned = pattern.trim().replace(/[^a-zA-Z0-9_]/g, "_").toUpperCase();
+  return cleaned || "DYNAMIC_VISUAL_HOOK";
 }
 
 // Compile TSX component string to plain JS via Sucrase
@@ -910,6 +887,25 @@ function parseScriptIntoBlocks(scriptText) {
 
 // Phase 1: Planner
 async function generateScenePlanForAIGen(genAI, modelName, scriptText, targetLength = "Short (~60s)", patternSlots = []) {
+  // Handle flexible signature when scriptText is passed as first argument
+  if (Array.isArray(genAI) || typeof genAI === "string") {
+    scriptText = genAI;
+    genAI = null;
+    modelName = null;
+    targetLength = "Short (~60s)";
+    patternSlots = [];
+  }
+  if (!Array.isArray(patternSlots)) {
+    patternSlots = [];
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!genAI && apiKey) {
+    genAI = new GoogleGenerativeAI(apiKey);
+  }
+  if (!modelName) {
+    modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+  }
   const options = {
     model: modelName,
     generationConfig: {
@@ -964,20 +960,21 @@ ${blockCountDirective}
 5. Never use mathematical symbols (>, <, =) or long dashes in "voiceover". Write them out in natural words.
 6. Strip any quotation marks from the start and end of string values (e.g. "voiceover": "Khi các tiến sĩ..." instead of "voiceover": "\"Khi các...\"") to produce strictly valid JSON without unescaped quotes.
 
-# MANDATORY VISUAL PATTERN ROTATION RULE (CRITICAL & STRICT)
-1. NO CONSECUTIVE DUPLICATE PATTERNS: You MUST NEVER assign the same visualPattern to two consecutive scenes!
-2. ROTATE LAYOUT PATTERNS: Rotate through the 10 available patterns across scenes based on content semantics:
+# MANDATORY DYNAMIC VISUAL CONCEPT REASONING & ROTATION (CRITICAL & STRICT)
+1. DYNAMIC VISUAL REASONING: Analyze the script content of each scene and invent a bespoke, descriptive 'visualPattern' / 'visualConcept' matching the scene's semantic intent.
+   Examples of dynamic visual concepts:
+   - "CODE_TERMINAL_DIFF": Developer code/terminal window displaying code syntax or diffs.
+   - "HORIZON_3STEP_FLOW": Horizontal pipeline flow with connecting arrows (Step 1 ➔ Step 2 ➔ Step 3).
+   - "VS_SPLIT_COMPARISON": Split-screen comparison contrasting two sides (Before vs After, Old vs AI).
+   - "HERO_METRIC_GAUGE_RING": Large 3D percentage ring centerpiece with animated stat callout.
+   - "STAT_GRID_2X2": 2x2 grid matrix of metric tiles with glowing icons and borders.
+   - "EDITORIAL_QUOTE_CARD": High-impact editorial quote card with glowing badge.
+   - "GLASS_BULLET_LIST": Vertical glassmorphism cards with numbered badges (01, 02, 03).
+   - "OUTRO_CTA_PULSE": Outro call-to-action screen with action button and pulse glow.
 
-- TITLE_HOOK: Opening hook, title announcement, or bold statement.
-- COMPARISON_VERSUS: Side-by-side comparison of 2 sides (e.g. "3 Years vs 3 Minutes", "Old Way vs AI Way").
-- DONUT_GAUGE: Percentage stat callout centerpiece (e.g. "50%", "6%", "94%").
-- DUAL_METRIC_CARDS: 2 distinct numerical metric cards (e.g. "900M Users" & "88% Adoption").
-- PROCESS_TIMELINE: 2-3 step sequential process or architecture flow (e.g. Step 1 ➔ Step 2 ➔ Step 3).
-- HERO_METRIC_GLOW: Giant centerpiece number (e.g. "$2.590 TỶ ĐÔ", "3 PHÚT").
-- STAT_GRID_2X2: 2x2 grid of metric tiles for scenes with 3-4 stats.
-- QUOTE_NATURE_CARD: High-impact editorial citation card or paper nature reference.
-- BULLET_GLASS: 2-4 glassmorphism bullet points with step numbers (01, 02, 03).
-- ENDING_CTA: Final outro call-to-action scene with follow buttons.
+2. ABSOLUTE VISUAL NON-REPETITION RULE:
+   - You MUST NEVER assign the same visualPattern / visualConcept to two consecutive scenes! ('visualPattern[i]' != 'visualPattern[i-1]').
+   - Rotate layout structures across all scenes so every single scene feels fresh, dynamic, and unique.
 
 # METRICS FIELDS
 Populate metrics, alertText, contextLine, and subtitleCardText for each scene to make the design rich and complete!
@@ -1093,6 +1090,14 @@ async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_
   const path = require("path");
   const vde = require("./vde");
 
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!genAI && apiKey) {
+    genAI = new GoogleGenerativeAI(apiKey);
+  }
+  if (!modelName) {
+    modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+  }
+
   const options = {
     model: modelName,
     generationConfig: {
@@ -1153,13 +1158,10 @@ async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_
 
   const patternLockHeader = `
 ╔══════════════════════════════════════════════════════════════╗
-║  ⚠️  LOCKED VISUAL PATTERN: ${scene.visualPattern || "BULLET_GLASS"}
-║  You MUST build EXACTLY the DOM structure defined in the pattern spec below.
-║  VIOLATION EXAMPLES (FORBIDDEN for this pattern):
-║  - DO NOT render numbered card lists (01/02/03 badges) unless pattern = BULLET_GLASS
-║  - DO NOT render side-by-side grid unless pattern = DUAL_METRIC_CARDS or COMPARISON_VERSUS
-║  - DO NOT render a giant single number unless pattern = HERO_METRIC_GLOW or DONUT_GAUGE
-║  Check your JSX structure against the spec skeleton before returning.
+║  🎨 DYNAMIC VISUAL CONCEPT: ${scene.visualConcept || scene.visualPattern || "DYNAMIC_GENERATIVE_UI"}
+║  Perform visual reasoning to design a unique, context-aware visual layout.
+║  Use UI System Primitives (<GlassContainer>, <GlowBadge>, <CodeTerminal>, <MetricGauge>, <StatCard>, <FlowArrow>, <ComparisonColumn>, <SafeIcon>)
+║  to build a rich, error-free, and non-repetitive TSX component layout.
 ╚══════════════════════════════════════════════════════════════╝
 `;
 
@@ -1504,39 +1506,18 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
   console.log(`[Studio AI Gen] Phase 1 hoàn tất: ${scenePlan.length} phân cảnh được tạo.`);
 
 
-  // Step 3: Post-process — normalize patterns and enforce slot assignments
-  // Slots were pre-assigned, but Gemini may have deviated. Re-apply slots as source of truth.
-  const VALID_PATTERNS = [
-    "TITLE_HOOK", "COMPARISON_VERSUS", "DONUT_GAUGE", "DUAL_METRIC_CARDS",
-    "PROCESS_TIMELINE", "HERO_METRIC_GLOW", "STAT_GRID_2X2", "QUOTE_NATURE_CARD",
-    "BULLET_GLASS", "ENDING_CTA"
-  ];
-  const usedPatterns = new Set();
+  // Step 3: Post-process — normalize visual concepts and enforce non-consecutive duplicate guard
   for (let i = 0; i < scenePlan.length; i++) {
     const scene = scenePlan[i];
-    const normalized = normalizeVisualPattern(scene.visualPattern);
-    scene.visualPattern = normalized;
+    scene.visualPattern = normalizeVisualPattern(scene.visualPattern || scene.visualConcept);
+    scene.visualConcept = scene.visualPattern;
 
-    // Enforce pre-assigned slot if available
-    const assignedSlot = patternSlots[i];
-    if (assignedSlot && normalized !== assignedSlot) {
-      console.warn(`[Studio AI Gen] ⚠️ Pattern slot enforcement: Scene ${i} Gemini chose '${normalized}', overriding to assigned slot '${assignedSlot}'`);
-      scene.visualPattern = assignedSlot;
+    // Consecutive duplicate guard: if scene[i] matches scene[i-1], differentiate it
+    if (i > 0 && scenePlan[i].visualPattern === scenePlan[i - 1].visualPattern) {
+      scene.visualPattern = `${scene.visualPattern}_ALT_${i + 1}`;
+      scene.visualConcept = scene.visualPattern;
+      console.warn(`[Studio AI Gen] ⚠️ Consecutive duplicate guard: Scene ${i} pattern was duplicate of Scene ${i - 1}, updated to '${scene.visualPattern}'`);
     }
-
-    // Final duplicate guard: if somehow still duplicate of previous, pick from unused pool
-    if (usedPatterns.has(scene.visualPattern)) {
-      const isLast = i === scenePlan.length - 1;
-      const unused = VALID_PATTERNS.filter(p => {
-        if (usedPatterns.has(p)) return false;
-        if (p === "ENDING_CTA" && !isLast) return false;
-        return true;
-      });
-      const fallbackPattern = unused[i % Math.max(1, unused.length)] || "PROCESS_TIMELINE";
-      console.warn(`[Studio AI Gen] ⚠️ Duplicate pattern guard: Scene ${i} '${scene.visualPattern}' already used, switching to '${fallbackPattern}'`);
-      scene.visualPattern = fallbackPattern;
-    }
-    usedPatterns.add(scene.visualPattern);
   }
 
   // Step 3: Generate TSX Code & Compile per scene sequentially (to prevent rate limits and 503 errors)
@@ -1566,6 +1547,14 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
 async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages, voiceKey, projectId, genAI, modelName }) {
   scene.sceneIndex = index;
   scene.visualPattern = normalizeVisualPattern(scene.visualPattern);
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!genAI && apiKey) {
+    genAI = new GoogleGenerativeAI(apiKey);
+  }
+  if (!modelName) {
+    modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+  }
 
   // Auto-backfill points if missing or empty for BULLET_GLASS or DUAL_METRIC_CARDS
   if ((!scene.points || scene.points.length === 0) && scene.voiceover) {
