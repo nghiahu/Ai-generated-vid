@@ -368,10 +368,55 @@ function normalizeVisualPattern(pattern) {
   return cleaned || "DYNAMIC_VISUAL_HOOK";
 }
 
+// Robust TSX Sanitizer to clean LLM syntax flaws before Sucrase compilation
+function sanitizeTSXCode(code) {
+  if (!code || typeof code !== "string") return "";
+
+  let cleaned = cleanAndExtractCode(code);
+
+  // 1. Remove TypeScript interface and type blocks
+  cleaned = cleaned.replace(/interface\s+\w+\s*\{[\s\S]*?\}/g, "");
+  cleaned = cleaned.replace(/type\s+\w+\s*=\s*\{[\s\S]*?\};?/g, "");
+  cleaned = cleaned.replace(/type\s+\w+\s*=\s*[^;]+;/g, "");
+
+  // 2. Remove inline TS type annotations on functions and variables
+  cleaned = cleaned.replace(/:\s*React\.FC<[^>]+>/g, "");
+  cleaned = cleaned.replace(/:\s*React\.ReactNode/g, "");
+  cleaned = cleaned.replace(/\):\s*(?:void|JSX\.Element|React\.ReactElement|any)/g, ")");
+  cleaned = cleaned.replace(/(\w+)\s*:\s*(?:any|string|number|boolean|object|any\[\]|string\[\])\b/g, "$1");
+
+  // 3. Fix unescaped nested double quotes in string variable definitions
+  cleaned = cleaned.replace(/const\s+(\w+)\s*=\s*"([^"\n]*)"([^"\n]+)"([^"\n]*)";/g, (match, varName, p1, inner, p2) => {
+    return `const ${varName} = "${p1}${inner}${p2}";`;
+  });
+
+  // 4. Ensure Lucide icon imports exist for commonly used icons
+  const iconList = ["Sparkles", "Cpu", "Zap", "Layers", "Terminal", "Flame", "TrendingUp", "Award", "CheckCircle", "ArrowRight"];
+  const missingIcons = iconList.filter(icon => cleaned.includes(`<${icon}`) && !cleaned.includes(`import`) && !cleaned.includes(icon));
+  if (missingIcons.length > 0) {
+    if (cleaned.includes("from \"lucide-react\"") || cleaned.includes("from 'lucide-react'")) {
+      cleaned = cleaned.replace(/import\s*\{([^}]+)\}\s*from\s*["']lucide-react["']/, (match, p1) => {
+        const existing = p1.split(",").map(s => s.trim()).filter(Boolean);
+        const combined = [...new Set([...existing, ...missingIcons])].join(", ");
+        return `import { ${combined} } from "lucide-react"`;
+      });
+    } else {
+      cleaned = `import { ${missingIcons.join(", ")} } from "lucide-react";\n` + cleaned;
+    }
+  }
+
+  // 5. Ensure Remotion imports exist if useCurrentFrame / spring / interpolate are used
+  if ((cleaned.includes("useCurrentFrame") || cleaned.includes("spring")) && !cleaned.includes("remotion")) {
+    cleaned = `import { useCurrentFrame, spring, interpolate } from "remotion";\n` + cleaned;
+  }
+
+  return cleaned;
+}
+
 // Compile TSX component string to plain JS via Sucrase
 function compileTSX(tsxCode) {
   try {
-    let cleanedCode = cleanAndExtractCode(tsxCode);
+    let cleanedCode = sanitizeTSXCode(tsxCode);
 
     const { code } = transform(cleanedCode, {
       transforms: ["typescript", "jsx"],
@@ -659,18 +704,75 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
 export default GeneratedScene;`;
 }
 
+function safetyNetCodeTerminal(scene = {}) {
+  const safeHeading = (scene.heading || "Phân cảnh Code & AI").replace(/"/g, '\\"');
+  const safeVoiceover = (scene.voiceover || "").replace(/"/g, '\\"');
+  return `import React from "react";
+import { useCurrentFrame, spring } from "remotion";
+import { Terminal, Code, Cpu } from "lucide-react";
+
+export const GeneratedScene = ({ fps = 30 }) => {
+  const frame = useCurrentFrame();
+  const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
+  const headingText = "${safeHeading}";
+
+  return (
+    <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
+      background: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.22), transparent 65%), #030712",
+      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif" }}>
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", height: "78%", padding: "0 60px", gap: "24px" }}>
+        <div style={{ fontSize: "38px", fontWeight: 800, color: "#ffffff", textAlign: "center", opacity: sp(5) }}>
+          {headingText}
+        </div>
+        <div style={{ width: "100%", maxWidth: "840px", background: "rgba(10,15,30,0.9)", border: "1px solid rgba(59,130,246,0.4)",
+          borderRadius: "16px", padding: "20px", boxShadow: "0 20px 50px rgba(0,0,0,0.5)", opacity: sp(15), transform: "scale(" + sp(15) + ")" }}>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "16px", alignItems: "center" }}>
+            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#ef4444" }} />
+            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#eab308" }} />
+            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#22c55e" }} />
+            <div style={{ flex: 1, textAlign: "center", fontSize: 13, color: "rgba(255,255,255,0.5)", fontFamily: "monospace" }}>hyperframe_diff.tsx</div>
+          </div>
+          <div style={{ fontFamily: "monospace", fontSize: "16px", color: "#86efac", textAlign: "left", lineHeight: 1.6 }}>
+            <div style={{ color: "rgba(255,255,255,0.4)" }}>{"// Analyzing context & rendering dynamic UI"}</div>
+            <div>{"+ const engine = new DynamicVisualEngine();"}</div>
+            <div>{"+ engine.renderScene(sceneData);"}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default GeneratedScene;`;
+}
+
 /**
- * Dispatcher: picks the right safety net template based on scene.visualPattern.
+ * Dispatcher: picks the right safety net template based on scene.visualPattern / scene.visualConcept.
  * Every pattern gets a visually DISTINCT fallback — no more all-same numbered card list.
  */
 function generateSafetyNetTSX(scene = {}) {
-  const pattern = ((scene.visualPattern || "BULLET_GLASS") + "").toUpperCase();
-  if (pattern === "TITLE_HOOK") return safetyNetTitleHook(scene);
-  if (pattern === "HERO_METRIC_GLOW") return safetyNetHeroMetric(scene);
-  if (pattern === "DUAL_METRIC_CARDS") return safetyNetDualMetric(scene);
-  if (pattern === "COMPARISON_VERSUS") return safetyNetComparisonVersus(scene);
-  if (pattern === "PROCESS_TIMELINE") return safetyNetProcessTimeline(scene);
-  // BULLET_GLASS, DONUT_GAUGE, STAT_GRID_2X2, QUOTE_NATURE_CARD, ENDING_CTA → glass card list (safe universal fallback)
+  const pattern = ((scene.visualPattern || scene.visualConcept || "BULLET_GLASS") + "").toUpperCase();
+
+  if (pattern.includes("CODE") || pattern.includes("TERMINAL") || pattern.includes("DIFF") || pattern.includes("DEV")) {
+    return safetyNetCodeTerminal(scene);
+  }
+  if (pattern.includes("FLOW") || pattern.includes("STEP") || pattern.includes("TIMELINE") || pattern.includes("PROCESS")) {
+    return safetyNetProcessTimeline(scene);
+  }
+  if (pattern.includes("VS") || pattern.includes("COMPARE") || pattern.includes("VERSUS")) {
+    return safetyNetComparisonVersus(scene);
+  }
+  if (pattern.includes("GAUGE") || pattern.includes("METRIC") || pattern.includes("PERCENT") || pattern.includes("RING") || pattern.includes("HERO")) {
+    return safetyNetHeroMetric(scene);
+  }
+  if (pattern.includes("DUAL")) {
+    return safetyNetDualMetric(scene);
+  }
+  if (pattern.includes("HOOK") || pattern.includes("TITLE")) {
+    return safetyNetTitleHook(scene);
+  }
+
+  // Universal Glass Card Fallback for general bullet list concepts
   return generateGlassCardSafetyNetTSX(scene);
 }
 
@@ -1675,6 +1777,8 @@ module.exports = {
   generateScenePlanForAIGen,
   generateSingleSceneCode,
   compileTSX,
+  sanitizeTSXCode,
+  generateSafetyNetTSX,
   validateGeneratedCode
 };
 
