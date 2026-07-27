@@ -123,6 +123,14 @@ function ensureWavReferenceAudio(mp3Path) {
   return wavPath;
 }
 
+const VBEE_VOICE_MAP = {
+  vbee_minhtien: "hn_male_minhtien_news_48k-v2",
+  vbee_thuyduyen: "hn_female_thuyduyen_news_48k-v2",
+  vbee_ngochuyen: "hn_female_ngochuyen_full_48k-v2",
+  vbee_naman: "sg_male_naman_full_48k-v2",
+  vbee_maiphuong: "sg_female_maiphuong_full_48k-v2"
+};
+
 // Khóa Mutex để đảm bảo chỉ có tối đa 1 tiến trình OmniVoice chạy tại một thời điểm
 // Tránh xung đột tài nguyên GPU/VRAM khi chạy song song hoặc tuần tự quá nhanh
 let omnivoiceMutex = Promise.resolve();
@@ -174,11 +182,78 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "omnivoice_duyth
   const fileName = `tts_${projectId}_${sceneId}_${version}.mp3`;
   const outputPath = path.join(outputDir, fileName);
 
-  let effectiveVoice = voiceKey;
-  if (!effectiveVoice || !effectiveVoice.toLowerCase().startsWith("omnivoice_")) {
+  let rawVoice = (voiceKey || "omnivoice_duythanh").toLowerCase();
+  let effectiveVoice = rawVoice;
+
+  if (rawVoice.startsWith("vbee_")) {
+    const vbeeApiKey = process.env.VBEE_API_KEY;
+    const vbeeAppId = process.env.VBEE_APP_ID;
+
+    if (vbeeApiKey && vbeeAppId) {
+      try {
+        const voiceCode = VBEE_VOICE_MAP[rawVoice] || "hn_male_minhtien_news_48k-v2";
+        const cleanText = normalizeTextForTTS(text);
+        console.log(`[generateTTS] Calling Vbee API for voice: ${rawVoice} (${voiceCode})...`);
+
+        const response = await fetch("https://api.vbee.vn/v1/tts", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${vbeeApiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            app_id: vbeeAppId,
+            input_text: cleanText,
+            voice_code: voiceCode,
+            audio_type: "mp3",
+            rate: 1.0
+          })
+        });
+
+        if (response.ok) {
+          const contentType = response.headers.get("content-type") || "";
+          if (contentType.includes("audio") || contentType.includes("octet-stream")) {
+            const buffer = Buffer.from(await response.arrayBuffer());
+            fs.writeFileSync(outputPath, buffer);
+            console.log(`[generateTTS] Vbee direct audio saved to ${fileName}`);
+          } else {
+            const json = await response.json();
+            console.log("[generateTTS] Vbee JSON response:", json);
+            const audioUrl = json.audio_link || json.audio_url || json.result?.audio_link || json.data?.audio_link;
+            if (audioUrl) {
+              const audioRes = await fetch(audioUrl);
+              const buffer = Buffer.from(await audioRes.arrayBuffer());
+              fs.writeFileSync(outputPath, buffer);
+              console.log(`[generateTTS] Vbee audio downloaded from ${audioUrl} to ${fileName}`);
+            } else {
+              throw new Error(`Vbee API response missing audio link: ${JSON.stringify(json)}`);
+            }
+          }
+
+          addSilentPadding(outputPath);
+          const duration = getAudioDuration(outputPath);
+          return { url: `/tts/${fileName}`, duration };
+        } else {
+          const errText = await response.text();
+          console.error(`[generateTTS] Vbee API HTTP ${response.status} Error:`, errText);
+          console.warn("[generateTTS] Falling back to OmniVoice...");
+        }
+      } catch (vbeeErr) {
+        console.error("[generateTTS] Vbee API call exception:", vbeeErr.message);
+        console.warn("[generateTTS] Activating OmniVoice safety fallback net...");
+      }
+    } else {
+      console.warn(`[generateTTS] VBEE_API_KEY or VBEE_APP_ID missing in .env. Falling back to OmniVoice for ${rawVoice}.`);
+    }
+
+    effectiveVoice = "omnivoice_duythanh";
+  } else if (effectiveVoice === "duythanh" || effectiveVoice === "quanganh") {
+    effectiveVoice = "omnivoice_" + effectiveVoice;
+  } else if (!effectiveVoice.toLowerCase().startsWith("omnivoice_")) {
     console.warn(`[generateTTS] Legacy or unsupported voice "${voiceKey}" detected. Auto-fallback to "omnivoice_duythanh".`);
     effectiveVoice = "omnivoice_duythanh";
   }
+
 
   // Nhánh xử lý OmniVoice (Chạy offline cục bộ qua omnivoice-infer CLI)
   if (effectiveVoice.toLowerCase().startsWith("omnivoice_")) {
