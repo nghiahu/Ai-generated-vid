@@ -6,7 +6,7 @@ const phoneme = require("./phoneme");
 const tts = require("./tts");
 const db = require("./db");
 const aligner = require("./aligner");
-const { validateTSXCode } = require("./astValidator");
+const { validateTSXCode, clampMotionParameters } = require("./astValidator");
 
 // Sanitize imports to prevent Sucrase compiler 'from expected' errors
 function sanitizeImportStatements(code) {
@@ -1744,6 +1744,9 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
         attemptsRemaining--;
         continue;
       }
+
+      // Automatically clamp spring damping & stiffness out-of-bounds parameters (Layer 6)
+      tsxCode = clampMotionParameters(tsxCode);
 
       // Compile TSX to JS
       compiledJS = compileTSX(tsxCode);

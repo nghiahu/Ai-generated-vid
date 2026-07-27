@@ -1,5 +1,6 @@
 const parser = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
+const generator = require('@babel/generator').default;
 
 function validateTSXCode(code) {
   try {
@@ -61,4 +62,46 @@ function validateTSXCode(code) {
   }
 }
 
-module.exports = { validateTSXCode };
+// Automatically clamp animation physics configs to safe ranges (Layer 6)
+function clampMotionParameters(code) {
+  try {
+    const ast = parser.parse(code, {
+      sourceType: "module",
+      plugins: ["typescript", "jsx"]
+    });
+
+    traverse(ast, {
+      CallExpression(path) {
+        if (path.node.callee.name === 'spring') {
+          const argObj = path.node.arguments[0];
+          if (argObj && argObj.type === 'ObjectExpression') {
+            const configProp = argObj.properties.find(p => p.key?.name === 'config');
+            if (configProp && configProp.value.type === 'ObjectExpression') {
+              const damping = configProp.value.properties.find(p => p.key?.name === 'damping');
+              const stiffness = configProp.value.properties.find(p => p.key?.name === 'stiffness');
+              
+              if (damping && damping.value.type === 'NumericLiteral') {
+                const val = damping.value.value;
+                if (val < 5 || val > 80) {
+                  damping.value.value = 14; // Clamped default damping
+                }
+              }
+              if (stiffness && stiffness.value.type === 'NumericLiteral') {
+                const val = stiffness.value.value;
+                if (val < 10 || val > 300) {
+                  stiffness.value.value = 55; // Clamped default stiffness
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    return generator(ast).code;
+  } catch (err) {
+    return code; // Fallback to original code if parse fails
+  }
+}
+
+module.exports = { validateTSXCode, clampMotionParameters };
