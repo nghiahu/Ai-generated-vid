@@ -7,4 +7,4 @@
 | 3 | Clean up Project Header and Workspace view | [x] completed |
 | 4 | Clean up StudioAIGen.jsx tabs and preview layout | [x] completed |
 | 5 | Simplify scene editor cards in StoryboardEditor.jsx | [x] completed |
-| 6 | Implement single-scene code regeneration in App.jsx | [/] in_progress |
+| 6 | Implement single-scene code regeneration in App.jsx | [x] completed |
