@@ -22,3 +22,6 @@
 | TASK-18 | Cập nhật `aiGen.js` & `studioAiGenRoute.js` để tiếp nhận `userNote` và inject vào Gemini Prompt | `[x]` |
 | TASK-19 | Cập nhật `api.js` truyền `userNote` lên backend | `[x]` |
 | TASK-20 | Nâng cấp giao diện modal "Sinh Lại Phân Cảnh" trong `StudioAIGen.jsx` với 2 ô textarea cho Voiceover & Lưu ý riêng | `[x]` |
+| TASK-21 | Bổ sung danh sách Vbee Voice phân nhóm theo Provider & Vibe vào Dropdown Voiceover ở Frontend và xử lý Mock Fallback ở Backend | `[x]` |
+
+
