@@ -57,8 +57,8 @@ function App() {
   const [renderTotalFrames, setRenderTotalFrames] = useState(0);
   const [videoUrl, setVideoUrl] = useState(null);
   const [regeneratingTts, setRegeneratingTts] = useState(false);
-  const [regeneratingSceneId, setRegeneratingSceneId] = useState(null);
   const [toast, setToast] = useState(null);
+  const [regeneratingCodeSceneId, setRegeneratingCodeSceneId] = useState(null);
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -148,14 +148,10 @@ function App() {
 
       setCurrentProject(project);
 
-      if (isAIGen) {
-        setView("STUDIO_AI_GEN");
-      } else {
-        if (project.scenes && project.scenes.length > 0) {
-          setSelectedSceneId(project.scenes[0].id);
-        }
-        setView("WORKSPACE_EDITOR");
+      if (project.scenes && project.scenes.length > 0) {
+        setSelectedSceneId(project.scenes[0].id);
       }
+      setView("WORKSPACE_EDITOR");
     } catch (error) {
       console.error("Failed to fetch project detail:", error);
     }
@@ -287,6 +283,44 @@ function App() {
       showToast(`Không thể tái tạo giọng đọc: ${error.response?.data?.error || error.message}`, "error");
     } finally {
       setRegeneratingSceneId(null);
+    }
+  };
+
+  const handleRegenerateSceneCode = async (sceneId, scriptText) => {
+    if (!currentProject) return;
+    setRegeneratingCodeSceneId(sceneId);
+    setLoading(true);
+    setLoadingMessage("AI đang thiết kế và sinh lại mã nguồn phân cảnh...");
+    try {
+      const scene = currentProject.scenes.find(s => s.id === sceneId);
+      if (!scene) throw new Error("Không tìm thấy phân cảnh");
+
+      const voiceKey = currentProject.config?.voice || "quanganh";
+      const theme = currentProject.config?.theme || "ai_hub_grid";
+      const bgImage = currentProject.config?.bgImage || "";
+      const refImages = currentProject.config?.refImages || [];
+      const script = scriptText || scene.voiceover || "";
+
+      await api.generateStudioAiGenScene(
+        currentProject.id,
+        scene,
+        voiceKey,
+        theme,
+        bgImage,
+        refImages,
+        script,
+        true, // bypassCache
+        "" // userNote
+      );
+
+      await fetchProjectDetail(currentProject.id);
+      showToast("Đã sinh lại phân cảnh thành công!", "success");
+    } catch (error) {
+      console.error("Failed to regenerate scene code:", error);
+      showToast(`Không thể sinh lại phân cảnh: ${error.response?.data?.error || error.message}`, "error");
+    } finally {
+      setRegeneratingCodeSceneId(null);
+      setLoading(false);
     }
   };
 
@@ -559,6 +593,10 @@ function App() {
               projectId={selectedProjectId}
               onBack={() => { setSelectedProjectId(null); setView("PROJECTS"); }}
               onUpdateProjectsList={fetchProjects}
+              onGenerationSuccess={(id) => {
+                setSelectedProjectId(id);
+                setView("WORKSPACE_EDITOR");
+              }}
             />
           ) : view === "BATCH" ? (
             <div style={{ padding: "50px 40px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }}>
@@ -638,6 +676,8 @@ function App() {
                 onUpdateScene={handleUpdateScene}
                 onRegenerateSceneTts={handleRegenerateSceneTts}
                 regeneratingSceneId={regeneratingSceneId}
+                onRegenerateSceneCode={handleRegenerateSceneCode}
+                regeneratingCodeSceneId={regeneratingCodeSceneId}
                 loading={loading}
                 loadingMessage={loadingMessage}
                 selectedSceneId={selectedSceneId}
