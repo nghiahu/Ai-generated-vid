@@ -7,6 +7,7 @@ const phoneme = require("./phoneme");
 const tts = require("./tts");
 const db = require("./db");
 const aligner = require("./aligner");
+const vde = require("./vde");
 const { validateTSXCode, clampMotionParameters } = require("./astValidator");
 
 // Sanitize imports to prevent Sucrase compiler 'from expected' errors
@@ -1339,7 +1340,6 @@ function validatePatternCompliance(tsxCode, visualPattern) {
 async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_grid", bgImage = "", refImages = [], errorFeedbackPrompt = "") {
   const fs = require("fs");
   const path = require("path");
-  const vde = require("./vde");
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!genAI && apiKey) {
