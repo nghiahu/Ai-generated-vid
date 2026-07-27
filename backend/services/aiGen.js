@@ -365,9 +365,42 @@ function robustJSONParse(text) {
 }
 
 function normalizeVisualPattern(pattern) {
-  if (!pattern) return "DYNAMIC_VISUAL_HOOK";
+  if (!pattern) return "TITLE_HOOK";
   const cleaned = pattern.trim().replace(/[^a-zA-Z0-9_]/g, "_").toUpperCase();
-  return cleaned || "DYNAMIC_VISUAL_HOOK";
+  
+  if (cleaned.includes("GLASS_BULLET") || cleaned.includes("BULLET_GLASS") || cleaned.includes("GLASS_BULLET_LIST")) {
+    return "BULLET_GLASS";
+  }
+  if (cleaned.includes("EDITORIAL_QUOTE") || cleaned.includes("QUOTE_NATURE") || cleaned.includes("QUOTE_NATURE_CARD")) {
+    return "QUOTE_NATURE_CARD";
+  }
+  if (cleaned.includes("OUTRO_CTA") || cleaned.includes("ENDING_CTA") || cleaned.includes("OUTRO_CTA_PULSE")) {
+    return "ENDING_CTA";
+  }
+  if (cleaned.includes("HORIZON_3STEP") || cleaned.includes("PROCESS_TIMELINE") || cleaned.includes("HORIZON_3STEP_FLOW")) {
+    return "PROCESS_TIMELINE";
+  }
+  if (cleaned.includes("VS_SPLIT") || cleaned.includes("COMPARISON_VERSUS") || cleaned.includes("VS_SPLIT_COMPARISON")) {
+    return "COMPARISON_VERSUS";
+  }
+  if (cleaned.includes("GAUGE") || cleaned.includes("DONUT_GAUGE") || cleaned.includes("HERO_METRIC_GAUGE")) {
+    return "DONUT_GAUGE";
+  }
+  if (cleaned.includes("HERO_METRIC") || cleaned.includes("HERO_METRIC_GLOW") || cleaned.includes("HERO_CONCEPT")) {
+    return "HERO_METRIC_GLOW";
+  }
+  if (cleaned.includes("DUAL_METRIC") || cleaned.includes("DUAL_METRIC_CARDS")) {
+    return "DUAL_METRIC_CARDS";
+  }
+  if (cleaned.includes("STAT_GRID") || cleaned.includes("STAT_GRID_2X2")) {
+    return "STAT_GRID_2X2";
+  }
+  if (cleaned.includes("CODE_TERMINAL") || cleaned.includes("ARCH_NETWORK") || cleaned.includes("TERMINAL")) {
+    // Map code terminal / network nodes to PROCESS_TIMELINE which is visual process timeline
+    return "PROCESS_TIMELINE";
+  }
+  
+  return cleaned || "TITLE_HOOK";
 }
 
 // Robust TSX Sanitizer to clean LLM syntax flaws before Sucrase compilation
