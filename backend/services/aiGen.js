@@ -274,7 +274,7 @@ async function generateContentWithFallback(genAI, options, promptData, fallbackM
 
           // Accumulate token usage into DB if projectId is available
           const usage = result.response.usageMetadata;
-          const targetProjectId = projectId || promptData.projectId;
+          const targetProjectId = promptData?.projectId;
           if (usage && targetProjectId) {
             const promptTokens = usage.promptTokenCount || usage.promptTokens || 0;
             const completionTokens = usage.candidatesTokenCount || usage.completionTokens || 0;
