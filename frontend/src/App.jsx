@@ -467,33 +467,7 @@ function App() {
                 🏠 Home
               </button>
             </li>
-            <li>
-              <button
-                onClick={() => { setSelectedProjectId(null); setView("STUDIO"); }}
-                style={{
-                  width: "100%",
-                  textAlign: "left",
-                  background: view === "STUDIO" ? "rgba(37, 99, 235, 0.08)" : "none",
-                  border: "none",
-                  boxShadow: "none",
-                  color: view === "STUDIO" ? "var(--color-primary)" : "var(--text-secondary)",
-                  padding: "10px 16px",
-                  fontSize: "14px",
-                  fontWeight: view === "STUDIO" ? "700" : "600",
-                  textTransform: "none",
-                  letterSpacing: "0",
-                  borderRadius: "8px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  cursor: "pointer"
-                }}
-                onMouseEnter={(e) => { if (view !== "STUDIO") e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.04)"; }}
-                onMouseLeave={(e) => { if (view !== "STUDIO") e.currentTarget.style.backgroundColor = "transparent"; }}
-              >
-                🎥 Studio
-              </button>
-            </li>
+
             <li>
               <button
                 onClick={() => { setSelectedProjectId(null); setView("STUDIO_AI_GEN"); }}
@@ -586,30 +560,6 @@ function App() {
               onBack={() => { setSelectedProjectId(null); setView("PROJECTS"); }}
               onUpdateProjectsList={fetchProjects}
             />
-          ) : view === "STUDIO" ? (
-            <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
-              <div style={{ flex: "0 0 58.33%", borderRight: "1px solid rgba(15, 23, 42, 0.08)", overflowY: "auto", display: "flex" }}>
-                <StoryboardEditor
-                  mode="setup"
-                  scenes={[]}
-                  config={{}}
-                  projectId={null}
-                  onGenerateStoryboard={handleGenerateStoryboard}
-                  onUpdateScene={() => { }}
-                  loading={loading}
-                  loadingMessage={loadingMessage}
-                  selectedSceneId={null}
-                  onSelectScene={() => { }}
-                />
-              </div>
-              <div style={{ flex: "0 0 41.67%", overflowY: "auto" }}>
-                <SidebarConfig
-                  config={draftConfig}
-                  onChange={setDraftConfig}
-                  onBack={() => setView("PROJECTS")}
-                />
-              </div>
-            </div>
           ) : view === "BATCH" ? (
             <div style={{ padding: "50px 40px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }}>
               <h2 style={{ fontSize: "28px", marginBottom: "16px" }}>Sản xuất video Hàng loạt</h2>
@@ -796,15 +746,23 @@ function App() {
                 onChange={(e) => setModalVoice(e.target.value)}
                 style={{ cursor: "pointer", width: "100%" }}
               >
-                <option value="omnivoice_duythanh">OmniVoice - Giọng Duy Thanh (Offline Clone)</option>
-                <option value="omnivoice_quanganh">OmniVoice - Giọng Quang Anh (Offline Clone)</option>
-                <option value="microsoft_hoaimy">Microsoft Hoài My (Free, Fluent Female)</option>
-                <option value="microsoft_namminh">Microsoft Nam Minh (Free, Fluent Male)</option>
-                <option value="rachel">Hoai My (Rachel - English Accent)</option>
-                <option value="antonio">Tuan Dung (Antoni - English Accent)</option>
-                <option value="bella">Bella (English Accent)</option>
-                <option value="domic">Domic (English Accent)</option>
-                <option value="custom">-- Giọng đọc tự chọn (Nhập ID) --</option>
+                <optgroup label="OmniVoice (Offline Clone)">
+                  <option value="omnivoice_duythanh">OmniVoice - Giọng Duy Thanh (Trầm ấm, Nam Bắc)</option>
+                  <option value="omnivoice_quanganh">OmniVoice - Giọng Quang Anh (Hiện đại, Nam Bắc)</option>
+                </optgroup>
+                <optgroup label="Vbee AI Voice (Chờ kết nối API)">
+                  <option value="vbee_minhtien">Vbee - Minh Tiến (📰 Tin tức / Kịch tính - Nam Bắc)</option>
+                  <option value="vbee_thuyduyen">Vbee - Thùy Duyên (🎓 Truyền cảm / Sách nói - Nữ Bắc)</option>
+                  <option value="vbee_ngochuyen">Vbee - Ngọc Huyền (💡 Quảng cáo / Hào hứng - Nữ Bắc)</option>
+                  <option value="vbee_naman">Vbee - Nam An (🚀 Năng động / Công nghệ - Nam Nam)</option>
+                  <option value="vbee_maiphuong">Vbee - Mai Phương (🎭 Tâm sự / Trầm ấm - Nữ Nam)</option>
+                </optgroup>
+                <optgroup label="Khác & Tiếng Anh">
+                  <option value="microsoft_hoaimy">Microsoft Hoài My (Free, Fluent Female)</option>
+                  <option value="microsoft_namminh">Microsoft Nam Minh (Free, Fluent Male)</option>
+                  <option value="rachel">Hoai My (Rachel - English Accent)</option>
+                  <option value="antonio">Tuan Dung (Antoni - English Accent)</option>
+                </optgroup>
               </select>
             </div>
 
