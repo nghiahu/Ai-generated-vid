@@ -73,10 +73,7 @@ router.post("/plan", async (req, res) => {
       throw new Error("GEMINI_API_KEY chưa được cấu hình trong backend .env");
     }
 
-    let modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
-    if (modelName === "gemini-3.5-flash" || modelName === "gemini-2.0-flash") {
-      modelName = "gemini-3.6-flash";
-    }
+    let modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
     const { GoogleGenerativeAI } = require("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -132,7 +129,7 @@ router.post("/plan", async (req, res) => {
 // POST /api/studio-ai-gen/generate-scene
 router.post("/generate-scene", async (req, res) => {
   try {
-    const { projectId, scene, script = "", voiceKey = "duythanh", theme = "ai_hub_grid", bgImage = "", refImages = [], errorFeedback = null } = req.body;
+    const { projectId, scene, script = "", voiceKey = "duythanh", theme = "ai_hub_grid", bgImage = "", refImages = [], errorFeedback = null, bypassCache = false, userNote = "" } = req.body;
 
     if (!projectId) {
       return res.status(400).json({ error: "Missing projectId." });
@@ -146,15 +143,12 @@ router.post("/generate-scene", async (req, res) => {
       throw new Error("GEMINI_API_KEY chưa được cấu hình trong backend .env");
     }
 
-    let modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
-    if (modelName === "gemini-3.5-flash" || modelName === "gemini-2.0-flash") {
-      modelName = "gemini-3.6-flash";
-    }
+    let modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
     const { GoogleGenerativeAI } = require("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    console.log(`[Studio AI Gen Route] Sinh code cho Scene ${scene.sceneIndex} (${scene.visualPattern}) của project ${projectId}`);
+    console.log(`[Studio AI Gen Route] Sinh code cho Scene ${scene.sceneIndex} (${scene.visualPattern}) của project ${projectId} (bypassCache=${bypassCache}, userNote=${userNote ? "YES" : "NO"})`);
     
     const generatedScene = await aiGen.generateSingleSceneCode({
       scene,
@@ -167,7 +161,9 @@ router.post("/generate-scene", async (req, res) => {
       projectId,
       genAI,
       modelName,
-      errorFeedback
+      errorFeedback,
+      bypassCache,
+      userNote
     });
 
     // Update project scenes array in database

@@ -106,15 +106,15 @@ function clampMotionParameters(code) {
                 if (keyName === 'fontSize') {
                   const propVal = prop.value;
                   if (propVal.type === 'NumericLiteral') {
-                    if (propVal.value < 12) {
-                      propVal.value = 12;
+                    if (propVal.value < 20) {
+                      propVal.value = 20;
                     }
                   } else if (propVal.type === 'StringLiteral') {
                     const match = propVal.value.match(/^(\d+)(px)?$/);
                     if (match) {
                       const num = parseInt(match[1], 10);
-                      if (num < 12) {
-                        propVal.value = '12px';
+                      if (num < 20) {
+                        propVal.value = '20px';
                       }
                     }
                   }

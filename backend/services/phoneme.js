@@ -4,26 +4,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const db = require("./db");
 
 const TECH_TERMS_TRANSLITERATION = {
-  'react': 'ri-ắc',
-  'api': 'ây-pi-ai',
-  'vite': 'vít',
-  'nextjs': 'lếch-gi-ét',
-  'next.js': 'lếch-gi-ét',
-  'nodejs': 'nốt-gi-ét',
-  'node.js': 'nốt-gi-ét',
-  'javascript': 'gia-va-sờ-cờ-ríp',
-  'typescript': 'tai-sờ-cờ-ríp',
-  'css': 'xê-ét-ét',
-  'html': 'hắt-ty-em-eo',
-  'npm': 'en-pi-em',
-  'json': 'giây-xơn',
-  'sql': 'ét-quy-eo',
-  'cli': 'xê-lờ-ai',
-  'git': 'gít',
-  'github': 'gít-hắp',
-  'docker': 'đốc-cơ',
-  'aws': 'ây-dub-lờ-ét',
-  'vercel': 'vơ-xen',
+  'ai': "ây-ai",
   'remotion': 'ri-mô-sần',
   'video': 'vi-đê-ô',
   'marketing': 'mác-két-tinh',
@@ -32,36 +13,18 @@ const TECH_TERMS_TRANSLITERATION = {
   'avatar': 'a-va-ta',
   'website': 'oét-sai',
   'logo': 'lô-gô',
-  'brand': 'bờ-ren',
   'component': 'com-po-nơnt',
   'framework': 'fờ-rem-uốc',
   'timeline': 'tai-lai',
   'audio': 'au-đi-ô',
   'mp4': 'em-pi-bốn',
   'mp3': 'em-pi-ba',
-  'client': 'clai-ơn',
-  'server': 'sơ-vơ',
-  'app': 'áp',
-  'dev': 'đép',
-  'build': 'biu',
-  'deploy': 'đi-ploi',
-  'code': 'cốt',
-  'database': 'đê-ta-bây',
-  'ai': 'ây-ai',
-  'AI': 'ây-ai',
-  'Ai': 'ây-ai',
-  'gpt': 'gi-pi-ti',
-  'llm': 'en-en-em',
-  'agent': 'ây-dừn',
-  'agents': "ây-dừn",
   'premiere': 'pờ-re-mi-e',
   'capcut': 'cáp-cắt',
   'photoshop': 'phô-tô-thóp',
   'illustrator': 'in-lút-trây-tơ',
   'canva': 'can-va',
   'figma': 'fích-ma',
-  'ui': 'u-ai',
-  'ux': 'u-ích',
   'front-end': 'phờ-rơn-en',
   'back-end': 'bách-en',
   'native': 'nây-típ',
@@ -81,11 +44,10 @@ const TECH_TERMS_TRANSLITERATION = {
   'usb-c': "ui-ét-bi-ci",
   'drive': "đì-vai",
   'google': "gu-gồ",
-  'database': "đa-ta-bây",
   'model': "mo-đồ",
   'context': "con-tếch",
   'protocol': "pô-tô-cô",
-  'paper': "bây-bờ",
+  'paper': "pây-pơ",
   'abstract': "áp-trách",
   'iot': "ai-ô-ti",
   'internet': "in-tơ-nét",
@@ -99,8 +61,8 @@ const TECH_TERMS_TRANSLITERATION = {
   'follow': "fo-lâu",
   'course': "cót",
   'trend': "chen",
-  'open': 'âu-bần',
-  'openai': 'âu-bần-ây-ai',
+  'open': 'âu-pơn',
+  'openai': 'âu-pơn-ây-ai',
   'reinforcement': "ri-in-pho-mừn",
   'learning': "lơn-ing",
   'meta': "mê-ta",
@@ -120,7 +82,57 @@ const TECH_TERMS_TRANSLITERATION = {
   'realtime': 'riu-tham',
   'selfie': "seo-phi",
   'photo': "Phô-tô",
-  'aI-native': "ây-ai-lây-típ"
+  'aI-native': "ây-ai-lây-típ",
+  '3d': 'ba đê',
+  '2d': 'hai đê',
+  '4d': 'bốn đê',
+  '5g': 'năm gờ',
+  '4g': 'bốn gờ',
+  'ar': 'ây-a',
+  'vr': 'vi-a',
+  'mr': 'em-a',
+  'xr': 'ích-a',
+  'gpu': 'gờ-pi-diu',
+  'cpu': 'xê-pi-diu',
+  'ram': 'ram',
+  'ssd': 'ét-ét-đi',
+  'hdd': 'hát-đi-đi',
+  'usb': 'diu-ét-bi',
+  'hdmi': 'hát-đi-em-ai',
+  '4k': 'bốn cây',
+  '8k': 'tám cây',
+  '1080p': 'một không tám không pi',
+  '720p': 'bảy hai không pi',
+  'fps': 'phờ-pi-ét',
+  'sdk': 'ét-đi-cây',
+  'ide': 'ai-đi-i',
+  'saas': 'xát',
+  'paas': 'pát',
+  'iaas': 'ai-at',
+  'b2b': 'bi tu bi',
+  'b2c': 'bi tu xi',
+  'roi': 'a-roi',
+  'kpi': 'cây-pi-ai',
+  'okr': 'âu-cây-a',
+  'cto': 'xê-ti-âu',
+  'ceo': 'xê-i-âu',
+  'coo': 'xê-âu-âu',
+  'llama': 'la-ma',
+  'deepseek': 'đíp-sích',
+  'claude': 'cờ-lau',
+  'gemini': 'ge-mi-ni',
+  'mistral': 'mít-trồ',
+  'pytorch': 'pai-tót',
+  'tensorflow': 'ten-sờ-phlâu',
+  'huggingface': 'hắc-kinh-pheit',
+  'langchain': 'lang-chên',
+  'llamaindex': 'la-ma-in-đéch',
+  'backpropagation': 'bắc-bờ-rô-ba-gây-sần',
+  'gradient': 'gờ-rây-đi-ơnt',
+  'transformer': 'trăn-pho-mơ',
+  'attention': 'a-ten-sần',
+  'bernhard': "bơn-hát",
+  'kerbl': "cơ-bồ"
 };
 
 const cmuDict = new Map();
@@ -176,14 +188,31 @@ const ADDITIONAL_VIETNAMESE_WORDS = [
 ADDITIONAL_VIETNAMESE_WORDS.forEach(w => VIETNAMESE_STOP_WORDS.add(w));
 
 const TECH_TERMS_WHITELIST = new Set([
-  'react', 'api', 'vite', 'nextjs', 'next.js', 'nodejs', 'node.js', 'javascript', 'typescript',
+  'prompt', 'react', 'api', 'vite', 'nextjs', 'next.js', 'nodejs', 'node.js', 'javascript', 'typescript',
   'css', 'html', 'npm', 'json', 'sql', 'cli', 'git', 'github', 'docker', 'aws', 'vercel',
   'remotion', 'video', 'marketing', 'dashboard', 'animation', 'avatar', 'website', 'logo',
   'brand', 'component', 'framework', 'timeline', 'audio', 'mp4', 'mp3', 'client', 'server',
   'app', 'dev', 'build', 'deploy', 'code', 'database', 'ai', 'gpt', 'llm', 'agent', 'premiere',
   'capcut', 'photoshop', 'illustrator', 'canva', 'figma', 'ui', 'ux', 'front-end', 'back-end',
-  'native', 'gateway', 'service', 'cloud', 'serverless'
+  'native', 'gateway', 'service', 'cloud', 'serverless',
+  // Dimension / resolution terms
+  '3d', '2d', '4d', '4k', '8k', '1080p', '720p',
+  // Connectivity
+  '5g', '4g', 'ar', 'vr', 'xr', 'mr',
+  // Hardware
+  'gpu', 'cpu', 'ram', 'ssd', 'hdd', 'usb', 'hdmi', 'fps',
+  // Dev tools
+  'sdk', 'ide', 'saas', 'paas', 'iaas',
+  // Business metrics
+  'roi', 'kpi', 'okr', 'b2b', 'b2c', 'ceo', 'cto', 'coo',
+  // AI models & frameworks
+  'llama', 'deepseek', 'chatgpt', 'claude', 'gemini', 'mistral',
+  'gpt-4', 'gpt-3', 'gpt4', 'gpt3', 'pytorch', 'tensorflow',
+  'huggingface', 'langchain', 'llamaindex',
+  // ML concepts
+  'backpropagation', 'gradient', 'transformer', 'attention',
 ]);
+
 
 /**
  * Kiểm tra một từ đơn có phải từ tiếng Anh cần phiên âm hay không
@@ -320,10 +349,7 @@ async function extractTerms(text, projectId = null) {
     return localExtractTerms(text);
   }
 
-  let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-  if (modelName.includes("2.0") && !modelName.includes("exp")) {
-    modelName = "gemini-3.5-flash";
-  }
+  let modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -382,7 +408,7 @@ async function getPhonemesForTerms(terms, projectId = null) {
   for (const term of terms) {
     const cleanTerm = term.toLowerCase().trim();
 
-    // 1. Kiểm tra từ điển dịch tĩnh TECH_TERMS_TRANSLITERATION
+    // 1. Kiểm tra từ điển dịch tĩnh TECH_TERMS_TRANSLITERATION (Ưu tiên cao nhất)
     if (TECH_TERMS_TRANSLITERATION[cleanTerm]) {
       const transliterated = TECH_TERMS_TRANSLITERATION[cleanTerm];
       mapping[term] = transliterated;
@@ -396,6 +422,12 @@ async function getPhonemesForTerms(terms, projectId = null) {
           confidence: 1.0
         });
       } catch (saveErr) { }
+      continue;
+    }
+
+    // 2. Nếu từ nằm trong whitelist thì bỏ qua không dịch (giữ nguyên tiếng Anh)
+    if (TECH_TERMS_WHITELIST.has(cleanTerm)) {
+      console.log(`[Phoneme Engine] Bỏ qua dịch cho từ trong Whitelist: "${term}"`);
       continue;
     }
 
@@ -457,10 +489,7 @@ async function getPhonemesForTerms(terms, projectId = null) {
       return mapping;
     }
 
-    let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-    if (modelName.includes("2.0") && !modelName.includes("exp")) {
-      modelName = "gemini-3.5-flash";
-    }
+    let modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
@@ -560,13 +589,24 @@ async function optimizeTextForPhonemes(text, projectId = null) {
 
     // 1.1. Tự động quét và thêm tất cả các từ khóa tĩnh trong TECH_TERMS_TRANSLITERATION xuất hiện trong văn bản
     const staticTerms = Object.keys(TECH_TERMS_TRANSLITERATION).filter(term => {
-      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const regex = new RegExp(`(?<=^|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])${escaped}(?=$|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])`, "i");
+      const isStopWordTerm = VIETNAMESE_STOP_WORDS.has(term.toLowerCase());
+      // Nếu từ là stop word tiếng Việt (vd: 'ai'), chỉ match khi xuất hiện dạng VIẾT HOA (AI)
+      // để tránh match nhầm với từ tiếng Việt bình thường như 'sai', 'hai'
+      const searchPattern = isStopWordTerm ? term.toUpperCase() : term;
+      const escaped = searchPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp(`(?<=^|\\s|[-.,!?;()'"""\\/\\\\*+={}\\[\\]])${escaped}(?=$|\\s|[-.,!?;()'"""\\/\\\\*+={}\\[\\]])`, isStopWordTerm ? "g" : "i");
       return regex.test(text);
     });
 
-    // Gộp cả 2 danh sách lại và loại bỏ trùng lặp
-    const terms = [...new Set([...aiTerms, ...staticTerms])];
+    // Gộp cả 2 danh sách lại và loại bỏ trùng lặp theo lowercase
+    // (tránh double-replace khi 'AI' và 'ai' đều có trong danh sách)
+    const seenLower = new Set();
+    const terms = [...aiTerms, ...staticTerms].filter(t => {
+      const lc = t.toLowerCase();
+      if (seenLower.has(lc)) return false;
+      seenLower.add(lc);
+      return true;
+    });
     if (terms.length === 0) return text;
 
     // 2. Tra cứu/dịch âm vị CMU
@@ -582,15 +622,17 @@ async function optimizeTextForPhonemes(text, projectId = null) {
       const phoneme = mapping[term];
       if (!phoneme) continue;
 
-      const isStopWord = VIETNAMESE_STOP_WORDS.has(term.toLowerCase());
-      // Nếu là từ trùng với stopword tiếng Việt (như 'ai', 'ba', 'an'), ta ép buộc tìm kiếm dạng VIẾT HOA TOÀN BỘ (AI, BA, AN)
-      // Điều này giúp tránh việc Gemini trích xuất dạng viết thường 'ai' làm lệch so khớp hoặc thay thế nhầm từ tiếng Việt thường
-      const searchPattern = isStopWord ? term.toUpperCase() : term;
+      const cleanLower = term.toLowerCase();
+      const isTransliterated = !!TECH_TERMS_TRANSLITERATION[cleanLower];
+      const isStopWord = VIETNAMESE_STOP_WORDS.has(cleanLower);
+
+      // Cho phép thay thế không phân biệt hoa thường nếu từ nằm trong từ điển dịch tĩnh (vd: 'AI' / 'ai' -> 'ây-ai')
+      const searchPattern = (isStopWord && !isTransliterated) ? term.toUpperCase() : term;
       const escaped = searchPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
       const regex = new RegExp(
         `(?<=^|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])(${escaped})(?=$|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])`,
-        isStopWord ? "g" : "gi"
+        (isStopWord && !isTransliterated) ? "g" : "gi"
       );
 
       optimizedText = optimizedText.replace(regex, phoneme);

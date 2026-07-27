@@ -58,7 +58,11 @@ const PLANNER_SCHEMA = {
       },
       voiceover: {
         type: SchemaType.STRING,
-        description: "Vietnamese speech text read aloud. Technical English terms (html, css, react, api) must remain lowercase English, EXCEPT for acronyms that conflict with Vietnamese stop-words (like 'AI', 'BA', 'AN') which must be UPPERCASE."
+        description: "Full ORIGINAL script text strictly from 'Lời thoại (Gốc)' for ON-SCREEN SUBTITLE DISPLAY. DO NOT put phonetic reading words here."
+      },
+      voiceoverTts: {
+        type: SchemaType.STRING,
+        description: "Optional phonetic reading transcript strictly from 'Lời thoại (Phiên âm đọc)' for TTS SPEECH READ ALOUD. Leave empty if not provided."
       }
     },
     required: ["sceneIndex", "sceneIntent", "visualIntent", "layoutId", "heading", "voiceover"]
@@ -222,7 +226,14 @@ Convert a raw script into a structured list of chronological scenes (scene plan)
 # HARD CONSTRAINTS
 1. Output MUST be a valid JSON array matching the provided Schema.
 2. Do not write markdown formatting, code blocks, or preamble. Just return raw JSON.
-3. Every scene's voiceover must consist of complete sentences. Do not split a single sentence across scenes.
+3. "voiceover" vs "voiceoverTts" SEPARATION — TWO FORMATS SUPPORTED:
+   - "voiceover" MUST ALWAYS contain the original script text (first quoted text / "Lời thoại (Gốc)") for subtitle display.
+   - "voiceoverTts" MUST contain the phonetic reading transcript for TTS speech, if provided. The script may use TWO formats:
+     FORMAT A (table): columns "Lời thoại (Gốc)" | "Lời thoại (Phiên âm đọc)" → extract the phonetic column into "voiceoverTts".
+     FORMAT B (sequential): each scene block has original text in quotes, then a "Lời thoại (Phiên âm đọc)" label, then phonetic text in quotes → extract the quoted text AFTER that label into "voiceoverTts".
+   - CRITICAL: If phonetic text is present in EITHER format, you MUST populate "voiceoverTts". NEVER leave it empty when phonetic text is available.
+
+4. Every scene's voiceover must consist of complete sentences. Do not split a single sentence across scenes.
 4. Keep all technical and English terms in "voiceover" in their original lowercase English form (e.g. "html", "css", "react", "node.js"). EXCEPT for acronyms and terms that conflict with common Vietnamese words (like "AI", "BA", "AN"), which MUST be written in ALL CAPS (uppercase) to distinguish them from Vietnamese words.
 5. Never use mathematical symbols (like ">", "<", "=") or long dashes ("—", "--") in the "voiceover" field. Instead, write them out in natural words (e.g., "lớn hơn", "nhỏ hơn", "bằng") or use standard punctuation (like commas ",", colons ":", or periods ".") to ensure the TTS reads it smoothly without dropping words.
 
@@ -361,13 +372,7 @@ async function generateStoryboard(projectId, scriptText, visualStyle = "rikkei",
     throw new Error("GEMINI_API_KEY chưa được cấu hình trong tệp .env. Vui lòng kiểm tra lại cấu hình Backend.");
   }
 
-  let modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-
-  // Tự động chuyển model sang gemini-3.5-flash nếu sử dụng các model cũ đã bị khai tử
-  if (modelName.includes("2.0") && !modelName.includes("exp")) {
-    console.warn(`[Gemini API] Model "${modelName}" không hợp lệ. Tự động chuyển về "gemini-3.5-flash" để chạy ổn định.`);
-    modelName = "gemini-3.5-flash";
-  }
+  let modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
   const genAI = new GoogleGenerativeAI(apiKey);
 

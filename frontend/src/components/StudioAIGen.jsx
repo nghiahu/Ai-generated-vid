@@ -324,6 +324,8 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
   const [showRegenModal, setShowRegenModal] = useState(false);
   const [regenSceneIndex, setRegenSceneIndex] = useState(null);
   const [regenVoice, setRegenVoice] = useState("quanganh");
+  const [regenVoiceover, setRegenVoiceover] = useState("");
+  const [regenUserNote, setRegenUserNote] = useState("");
 
   const logoFileInputRef = useRef(null);
   const playerRef = useRef(null);
@@ -604,13 +606,20 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
   const triggerOpenRegenModal = (idx) => {
     setRegenSceneIndex(idx);
     setRegenVoice(voice || "quanganh");
+    setRegenVoiceover(rawScenes[idx]?.voiceover || "");
+    setRegenUserNote("");
     setShowRegenModal(true);
   };
 
-  const handleRegenerateSingleScene = async (index, selectedVoice = null) => {
+  const handleRegenerateSingleScene = async (index, selectedVoice = null, customVoiceover = null, customUserNote = "") => {
     if (regeneratingIndex !== null || loading) return;
-    const targetScene = rawScenes[index];
-    if (!targetScene) return;
+    const baseScene = rawScenes[index];
+    if (!baseScene) return;
+
+    const targetScene = { ...baseScene };
+    if (customVoiceover !== null && customVoiceover.trim() !== "") {
+      targetScene.voiceover = customVoiceover.trim();
+    }
 
     const targetVoice = selectedVoice || voice;
     setRegeneratingIndex(index);
@@ -626,7 +635,9 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
         theme,
         bgImage,
         refImages,
-        script
+        script,
+        true,
+        customUserNote
       );
 
       if (res && res.scene) {
@@ -2280,10 +2291,10 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
         </div>
       )}
 
-      {/* Per-Scene Regenerate Voice Selection Modal */}
+      {/* Per-Scene Regenerate Voice & Custom Prompt Selection Modal */}
       {showRegenModal && regenSceneIndex !== null && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.75)", backdropFilter: "blur(8px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1100 }}>
-          <div style={{ background: "#ffffff", width: "90%", maxWidth: "480px", borderRadius: "20px", padding: "26px", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)", border: "1px solid #e2e8f0" }}>
+          <div style={{ background: "#ffffff", width: "90%", maxWidth: "520px", borderRadius: "20px", padding: "26px", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)", border: "1px solid #e2e8f0" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: "1px solid #e2e8f0", paddingBottom: "12px" }}>
               <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 800, color: "#0f172a" }}>
                 🔄 Sinh Lại Phân Cảnh {regenSceneIndex + 1}
@@ -2297,26 +2308,44 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
               </button>
             </div>
 
-            <div style={{ background: "#f8fafc", padding: "12px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", marginBottom: "18px" }}>
-              <div style={{ fontSize: "14px", fontWeight: 700, color: "#0f172a", marginBottom: "4px" }}>
-                {rawScenes[regenSceneIndex]?.heading}
-              </div>
-              <div style={{ fontSize: "13px", color: "#475569", lineHeight: 1.4 }}>
-                🗣️ "{rawScenes[regenSceneIndex]?.voiceover}"
-              </div>
+            <div style={{ marginBottom: "14px" }}>
+              <label style={{ fontSize: "13px", fontWeight: 700, color: "#334155", display: "block", marginBottom: "6px" }}>
+                🗣️ Lời thoại phân cảnh (Có thể chỉnh sửa):
+              </label>
+              <textarea
+                value={regenVoiceover}
+                onChange={(e) => setRegenVoiceover(e.target.value)}
+                rows={3}
+                style={{ width: "100%", padding: "12px", borderRadius: "10px", border: "1.5px solid #cbd5e1", fontSize: "13px", color: "#0f172a", lineHeight: 1.4, resize: "vertical", fontFamily: "inherit" }}
+              />
             </div>
 
-            <label style={{ fontSize: "13px", fontWeight: 700, color: "#334155", display: "block", marginBottom: "8px" }}>
-              🎙️ Chọn giọng đọc AI cho phân cảnh này:
-            </label>
-            <select
-              value={regenVoice}
-              onChange={(e) => setRegenVoice(e.target.value)}
-              style={{ width: "100%", padding: "12px", borderRadius: "10px", border: "1.5px solid #cbd5e1", fontSize: "13px", marginBottom: "22px", fontWeight: 600, color: "#0f172a" }}
-            >
-              <option value="quanganh">OmniVoice - Quang Anh (Offline Voice)</option>
-              <option value="duythanh">OmniVoice - Duy Thanh (Offline Voice)</option>
-            </select>
+            <div style={{ marginBottom: "14px" }}>
+              <label style={{ fontSize: "13px", fontWeight: 700, color: "#334155", display: "block", marginBottom: "6px" }}>
+                ✍️ Chỉ thị thiết kế / Lưu ý riêng cho AI (Tùy chọn):
+              </label>
+              <textarea
+                value={regenUserNote}
+                onChange={(e) => setRegenUserNote(e.target.value)}
+                placeholder="VD: Muốn layout dạng so sánh 2 cột, nổi bật màu cam, dùng hiệu ứng Glassmorphism..."
+                rows={2}
+                style={{ width: "100%", padding: "12px", borderRadius: "10px", border: "1.5px solid #cbd5e1", fontSize: "13px", color: "#0f172a", lineHeight: 1.4, resize: "vertical", fontFamily: "inherit" }}
+              />
+            </div>
+
+            <div style={{ marginBottom: "20px" }}>
+              <label style={{ fontSize: "13px", fontWeight: 700, color: "#334155", display: "block", marginBottom: "6px" }}>
+                🎙️ Chọn giọng đọc AI cho phân cảnh này:
+              </label>
+              <select
+                value={regenVoice}
+                onChange={(e) => setRegenVoice(e.target.value)}
+                style={{ width: "100%", padding: "12px", borderRadius: "10px", border: "1.5px solid #cbd5e1", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}
+              >
+                <option value="quanganh">OmniVoice - Quang Anh (Offline Voice)</option>
+                <option value="duythanh">OmniVoice - Duy Thanh (Offline Voice)</option>
+              </select>
+            </div>
 
             <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
               <button
@@ -2331,8 +2360,10 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                 onClick={() => {
                   const idx = regenSceneIndex;
                   const v = regenVoice;
+                  const vo = regenVoiceover;
+                  const note = regenUserNote;
                   setShowRegenModal(false);
-                  handleRegenerateSingleScene(idx, v);
+                  handleRegenerateSingleScene(idx, v, vo, note);
                 }}
                 style={{ padding: "10px 22px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #2563eb, #1d4ed8)", color: "#ffffff", fontWeight: 700, fontSize: "13px", cursor: "pointer", boxShadow: "0 4px 14px rgba(37, 99, 235, 0.35)" }}
               >

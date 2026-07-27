@@ -245,8 +245,8 @@ async function urlToGenerativePart(imageUrl) {
 // Helper for retrying API calls across active Gemini models with exponential backoff & jitter
 async function generateContentWithFallback(genAI, options, promptData, fallbackModels = []) {
   // Pool of active production Gemini models verified via live API test
-  const defaultFallbackPool = ["gemini-3.6-flash", "gemini-2.5-flash"];
-  const combinedModels = [options.model || "gemini-3.6-flash", ...fallbackModels, ...defaultFallbackPool];
+  const defaultFallbackPool = ["gemini-3.1-flash-lite", "gemini-2.5-flash"];
+  const combinedModels = [options.model || process.env.GEMINI_MODEL || "gemini-3.1-flash-lite", ...fallbackModels, ...defaultFallbackPool];
   // Deduplicate model names while preserving order
   const modelsToTry = [...new Set(combinedModels)].filter(Boolean);
   let lastError = new Error("No models tried");
@@ -466,9 +466,20 @@ function compileTSX(tsxCode) {
   }
 }
 
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SAFETY NET FALLBACK TEMPLATES — one per visual pattern (zero AI dependency)
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Returns the inline bgImage img JSX string for Safety Net templates.
+// Uses scene.resolvedAssets.bgImage at runtime (dynamic prop) so the URL
+// never needs to be hardcoded and always reflects what's stored in the DB.
+function safetyNetBgImageJSX() {
+  return `{scene && scene.resolvedAssets && scene.resolvedAssets.bgImage ? (
+        <img src={scene.resolvedAssets.bgImage} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 1.0, zIndex: 0 }} />
+      ) : null}`;
+}
+
 
 function safetyNetTitleHook(scene = {}, themeTokens = null) {
   const safeHeading = (scene.heading || "Phân cảnh Video AI").replace(/"/g, '\\"');
@@ -500,10 +511,12 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
   const words = headingText.split(" ");
   const THEME = ${JSON.stringify(themeObj, null, 2)};
 
+  const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
-      background: THEME.bg,
+      background: bgImgUrl ? THEME.bg : THEME.bg,
       fontFamily: THEME.font, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {bgImgUrl ? (<img src={bgImgUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 1.0, zIndex: 0 }} />) : null}
       <div style={{ position: "absolute", top: "10%", left: "-10%", width: "600px", height: "600px", borderRadius: "50%",
         background: THEME.accent + "1b", filter: "blur(100px)",
         transform: "translateY(" + (Math.sin(frame / 25) * 20) + "px)" }} />
@@ -580,10 +593,12 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
   const numSp = sp(10);
   const THEME = ${JSON.stringify(themeObj, null, 2)};
 
+  const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
       background: THEME.bg,
       fontFamily: THEME.font }}>
+      {bgImgUrl ? (<img src={bgImgUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 1.0, zIndex: 0 }} />) : null}
       <div style={{ position: "absolute", top: "20%", left: "50%", transform: "translate(-50%,-50%)",
         width: "500px", height: "500px", borderRadius: "50%",
         background: THEME.orange + "1e", filter: "blur(100px)" }} />
@@ -647,10 +662,12 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
     { value: "${v0}", label: "${l0}", color: THEME.orange, Icon: TrendingUp },
     { value: "${v1}", label: "${l1}", color: THEME.cyan, Icon: Award }
   ];
+  const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
       background: THEME.bg,
       fontFamily: THEME.font }}>
+      {bgImgUrl ? (<img src={bgImgUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 1.0, zIndex: 0 }} />) : null}
       <div style={{ position: "absolute", top: "15%", left: "20%", width: "500px", height: "500px", borderRadius: "50%",
         background: THEME.accent + "12", filter: "blur(90px)" }} />
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
@@ -713,10 +730,12 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
   const leftPoints = ${leftJson};
   const rightPoints = ${rightJson};
   const THEME = ${JSON.stringify(themeObj, null, 2)};
+  const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
       background: THEME.bg,
       fontFamily: THEME.font }}>
+      {bgImgUrl ? (<img src={bgImgUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 1.0, zIndex: 0 }} />) : null}
       <div style={{ position: "absolute", top: "10%", left: "10%", width: "500px", height: "500px", borderRadius: "50%",
         background: "rgba(239,68,68,0.08)", filter: "blur(90px)" }} />
       <div style={{ position: "absolute", top: "10%", right: "10%", width: "500px", height: "500px", borderRadius: "50%",
@@ -781,10 +800,12 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
   const headingText = "${safeHeading}";
   const steps = ${stepsJson};
   const THEME = ${JSON.stringify(themeObj, null, 2)};
+  const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
       background: THEME.bg,
       fontFamily: THEME.font }}>
+      {bgImgUrl ? (<img src={bgImgUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 1.0, zIndex: 0 }} />) : null}
       <div style={{ position: "absolute", top: "15%", right: "10%", width: "500px", height: "500px", borderRadius: "50%",
         background: THEME.accent + "12", filter: "blur(90px)" }} />
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
@@ -844,16 +865,18 @@ function safetyNetCodeTerminal(scene = {}, themeTokens = null) {
 import { useCurrentFrame, spring } from "remotion";
 import { Terminal, Code, Cpu } from "lucide-react";
 
-export const GeneratedScene = ({ fps = 30 }) => {
+export const GeneratedScene = ({ fps = 30, scene = {} }) => {
   const frame = useCurrentFrame();
   const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
   const headingText = "${safeHeading}";
   const THEME = ${JSON.stringify(themeObj, null, 2)};
 
+  const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
       background: THEME.bg,
       fontFamily: THEME.font }}>
+      {bgImgUrl ? (<img src={bgImgUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 1.0, zIndex: 0 }} />) : null}
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center", height: "78%", padding: "0 60px", gap: "24px" }}>
         <div style={{ fontSize: "38px", fontWeight: 800, color: THEME.text, textAlign: "center", opacity: sp(5) }}>
@@ -946,7 +969,7 @@ function generateGlassCardSafetyNetTSX(scene = {}, themeTokens = null) {
 import { useCurrentFrame, spring } from "remotion";
 import { Sparkles, Cpu, Zap, Layers } from "lucide-react";
 
-export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson?: any }> = ({ fps = 30 }) => {
+export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson?: any }> = ({ fps = 30, scene = {} }) => {
   const frame = useCurrentFrame();
   const titleSpr = spring({ frame: Math.max(0, frame - 5), fps, config: { damping: 14, stiffness: 55 } });
   const icons = [Cpu, Zap, Layers, Sparkles];
@@ -955,6 +978,7 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
   const cardItems = ${itemsJson};
   const alertText = "${alertStr}";
   const THEME = ${JSON.stringify(themeObj, null, 2)};
+  const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
 
   return (
     <div style={{
@@ -965,6 +989,7 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
       background: THEME.bg,
       fontFamily: THEME.font
     }}>
+      {bgImgUrl ? (<img src={bgImgUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 1.0, zIndex: 0 }} />) : null}
       <div style={{
         position: "absolute",
         top: "15%",
@@ -1057,9 +1082,8 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
                 alignItems: "center",
                 gap: "20px",
                 padding: "20px 24px",
-                background: THEME.cardBg,
+                background: "rgba(15, 23, 42, 0.88)",
                 border: THEME.border,
-                backdropFilter: "blur(20px)",
                 borderRadius: THEME.radius,
                 boxShadow: THEME.shadow,
                 transform: "scale(" + itemSpr + ")",
@@ -1156,7 +1180,7 @@ async function generateScenePlanForAIGen(genAI, modelName, scriptText, targetLen
     genAI = new GoogleGenerativeAI(apiKey);
   }
   if (!modelName) {
-    modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+    modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
   }
   const options = {
     model: modelName,
@@ -1337,7 +1361,7 @@ function validatePatternCompliance(tsxCode, visualPattern) {
   }
 }
 
-async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_grid", bgImage = "", refImages = [], errorFeedbackPrompt = "") {
+async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_grid", bgImage = "", refImages = [], errorFeedbackPrompt = "", userNote = "") {
   const fs = require("fs");
   const path = require("path");
 
@@ -1346,7 +1370,7 @@ async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_
     genAI = new GoogleGenerativeAI(apiKey);
   }
   if (!modelName) {
-    modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+    modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
   }
 
   const options = {
@@ -1403,8 +1427,9 @@ async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_
   `;
 
   const bgImageRule = bgImage
-    ? `8. Background Image: Include a background image layer as the bottom-most layer (zIndex: 0):
-       <img src="${bgImage}" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.3, zIndex: 0 }} />`
+    ? `8. Background Image Instruction: A background image URL is available via the scene prop: \`scene.resolvedAssets.bgImage\`. You MUST render this background image as the bottom-most layer (zIndex: 0) with 100% FULL ORIGINAL CRISP OPACITY without any dark overlay, tint, or blur filter.
+       CRITICAL: Use the dynamic prop, NOT a hardcoded URL string. Render it exactly like this at the start of your root div's children:
+       {scene && scene.resolvedAssets && scene.resolvedAssets.bgImage ? (<img src={scene.resolvedAssets.bgImage} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 1.0, zIndex: 0 }} />) : null}`
     : "";
 
   const patternLockHeader = `
@@ -1416,7 +1441,15 @@ async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_
 ╚══════════════════════════════════════════════════════════════╝
 `;
 
-  const systemInstruction = patternLockHeader + `
+  const userNoteInstruction = userNote ? `
+╔══════════════════════════════════════════════════════════════╗
+║  📌 CUSTOM USER DIRECTIVE & SPECIAL INSTRUCTION:             
+║  "${userNote}"                                              
+║  You MUST prioritize fulfilling this design requirement!     
+╚══════════════════════════════════════════════════════════════╝
+` : "";
+
+  const systemInstruction = userNoteInstruction + patternLockHeader + `
 # ROLE
 You are an expert React / Remotion TSX component code generator.
 
@@ -1634,6 +1667,11 @@ scene.visualPattern === "STAT_GRID_2X2":
 
 scene.visualPattern === "QUOTE_NATURE_CARD":
   STRUCTURE: Single centered editorial card. Top: a "📄 NATURE / SIGGRAPH 2024" source badge pill. Middle: a large opening quotation mark (") followed by the quote text in italic. Bottom: author attribution line ("— AuthorName, Journal"). No numbered lists. No metrics.
+  MANDATORY FALLBACK VARIABLES:
+    const quoteText = scene.quoteText || scene.voiceover || scene.heading || "Kỷ nguyên AI-Native";
+    const sourceBadge = scene.sourceBadge || scene.heading || "NGHIÊN CỨU KHOA HỌC AI";
+    const authorAttribution = scene.authorAttribution || "Bloomberg AI Research";
+  JSX SKELETON:
   <div style={{background:THEME.cardBg,border:"1px solid rgba(59,130,246,0.3)",borderRadius:20,padding:"36px 32px",display:"flex",flexDirection:"column",gap:20,width:"100%",backdropFilter:"blur(20px)"}}>
     <div style={{display:"flex",alignSelf:"flex-start",background:"rgba(59,130,246,0.15)",border:"1px solid rgba(59,130,246,0.4)",borderRadius:99,padding:"4px 14px",fontSize:13,color:THEME.accent}}>📄 {sourceBadge}</div>
     <div style={{fontSize:56,fontWeight:900,color:THEME.orange,lineHeight:0.8,marginBottom:-10}}>"</div>
@@ -1689,7 +1727,9 @@ Generate raw TSX code for this scene data:
 ${JSON.stringify(scene, null, 2)}
 Theme: "${theme}"
 Background Image: "${bgImage ? 'YES' : 'NO'}"${referenceInstruction}
+${userNote ? `\n💡 USER REGENERATION CUSTOM REQUEST: "${userNote}"\n(You MUST incorporate the user's custom instruction above!)` : ''}
 ${errorFeedbackPrompt ? `\n⚠️ PREVIOUS CODE GENERATION FAILED VALIDATION:\n${errorFeedbackPrompt}\nPlease fix the error details. Do NOT redesign the layout, only fix the syntax/runtime bug.` : ''}
+Generation Seed / Timestamp: ${Date.now()}
   `;
 
   const fallbacks = ["gemini-2.5-flash", "gemini-2.0-flash"].filter(m => m !== modelName);
@@ -1745,10 +1785,7 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
     throw new Error("GEMINI_API_KEY chưa được cấu hình trong backend .env");
   }
 
-  let modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
-  if (modelName === "gemini-3.5-flash" || modelName === "gemini-2.0-flash") {
-    modelName = "gemini-3.6-flash";
-  }
+  let modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
   const genAI = new GoogleGenerativeAI(apiKey);
 
@@ -1831,36 +1868,89 @@ function resolveSceneAssets(scene, bgImage) {
 }
 
 // Calculate signature hash of scene inputs to track configuration state (Layer 7)
-function calculateSceneHash(scene, theme, modelName) {
+function calculateSceneHash(scene, theme, modelName, userNote = "") {
   const data = JSON.stringify({
     heading: scene.heading || "",
     voiceover: scene.voiceover || "",
     points: scene.points || [],
     visualPattern: scene.visualPattern || "",
     theme,
-    modelName
+    modelName,
+    userNote
   });
   return crypto.createHash("sha256").update(data).digest("hex");
 }
 
+function enrichSceneDataForPattern(scene) {
+  if (!scene) return scene;
+  const pattern = normalizeVisualPattern(scene.visualPattern || scene.visualConcept);
+
+  // Auto-backfill points if missing
+  if ((!scene.points || scene.points.length === 0) && scene.voiceover) {
+    const clauses = scene.voiceover.split(/[,.;?!]+/).map(s => s.trim()).filter(s => s.length > 5);
+    if (clauses.length > 1) {
+      scene.points = clauses.slice(0, 3);
+    } else {
+      scene.points = [scene.heading || "Kỷ nguyên AI-Native", "Tự động hóa 70% quy trình mã nguồn"];
+    }
+  }
+
+  if (pattern === "QUOTE_NATURE_CARD") {
+    scene.quoteText = scene.quoteText || scene.voiceover || (scene.points && scene.points[0]) || scene.heading || "Công nghệ AI mở ra kỷ nguyên đột phá mới.";
+    scene.sourceBadge = scene.sourceBadge || scene.heading || "NGHIÊN CỨU KHOA HỌC AI";
+    scene.authorAttribution = scene.authorAttribution || "Bloomberg AI Research";
+  } else if (pattern === "COMPARISON_VERSUS") {
+    if (!scene.leftPoints || scene.leftPoints.length === 0) {
+      scene.leftPoints = [scene.points?.[0] || "Quy trình thủ công phức tạp", "Tốn 80% thời gian nhân sự"];
+    }
+    if (!scene.rightPoints || scene.rightPoints.length === 0) {
+      scene.rightPoints = [scene.points?.[1] || "Tự động hóa bằng AI Native", "Tối ưu 90% hiệu suất làm việc"];
+    }
+  } else if (pattern === "PROCESS_TIMELINE") {
+    if (!scene.steps || scene.steps.length === 0) {
+      const pts = (scene.points && scene.points.length > 0) ? scene.points : [scene.heading || "Khởi chạy", scene.voiceover || "Thực thi hệ thống"];
+      scene.steps = pts.map((p, idx) => ({
+        title: `Bước ${idx + 1}`,
+        desc: p
+      }));
+    }
+  } else if (pattern === "DONUT_GAUGE" || pattern === "DUAL_METRIC_CARDS" || pattern === "HERO_METRIC_GLOW" || pattern === "STAT_GRID_2X2") {
+    if (!scene.metrics || scene.metrics.length === 0) {
+      scene.metrics = [
+        { value: 85, suffix: "%", label: scene.heading || "Tỷ lệ tăng trưởng AI" },
+        { value: 99, suffix: "%", label: "Độ chính xác mô hình" },
+        { value: 70, suffix: "%", label: "Tiết kiệm thời gian" },
+        { value: 100, suffix: "+", label: "Tính năng tự động" }
+      ];
+    }
+  } else if (pattern === "ENDING_CTA") {
+    scene.tagline = scene.tagline || scene.heading || "BẮT ĐẦU NGAY HÔM NAY";
+    scene.headline = scene.headline || scene.heading || "Kỷ Nguyên AI Mới";
+    scene.ctaText = scene.ctaText || "Trải Nghiệm Ngay";
+  }
+
+  return scene;
+}
+
 // Generates code, tts audio, and alignments for a single scene
-async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages, voiceKey, projectId, genAI, modelName, errorFeedback = null }) {
+async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages, voiceKey, projectId, genAI, modelName, errorFeedback = null, bypassCache = false, userNote = "" }) {
   scene.sceneIndex = index;
   scene.visualPattern = normalizeVisualPattern(scene.visualPattern);
+  enrichSceneDataForPattern(scene);
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!genAI && apiKey) {
     genAI = new GoogleGenerativeAI(apiKey);
   }
   if (!modelName) {
-    modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+    modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
   }
 
   // Calculate signature hash (Layer 7 Caching)
-  const promptHash = calculateSceneHash(scene, theme, modelName);
+  const promptHash = calculateSceneHash(scene, theme, modelName, userNote);
 
   // Check cached compile result in database (Layer 7 Caching)
-  if (projectId && !errorFeedback) {
+  if (projectId && !errorFeedback && !bypassCache) {
     try {
       const project = await db.getProjectById(projectId);
       if (project && project.config) {
@@ -1927,7 +2017,7 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
 
   while (attemptsRemaining > 0) {
     try {
-      tsxCode = await generateTSXCodeForScene(genAI, modelName, scene, theme, bgImage, refImages, errorFeedbackPrompt);
+      tsxCode = await generateTSXCodeForScene(genAI, modelName, scene, theme, bgImage, refImages, errorFeedbackPrompt, userNote);
       
       // Layer 1: AST Validation Check
       const astResult = validateTSXCode(tsxCode);
@@ -2032,6 +2122,7 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
   const validationId = `val_${projectId || 'aigen'}_${index}_${Date.now()}`;
 
   return {
+    ...scene,
     sceneIndex: index,
     visualPattern: scene.visualPattern,
     heading: scene.heading,
@@ -2044,6 +2135,7 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
     subtitlesJson,
     validationId,
     promptHash,
+    resolvedAssets: scene.resolvedAssets || {},
     status: "PENDING_BROWSER_VALIDATION"
   };
 }
