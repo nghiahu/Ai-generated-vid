@@ -255,7 +255,7 @@ const SceneWrapper = ({ Component, audioUrl, loadError, isEmpty, heading, visual
   );
 };
 
-export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsList = null }) => {
+export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsList = null, onGenerationSuccess = null }) => {
   const [script, setScript] = useState("");
   const [theme, setTheme] = useState("ai_hub_grid");
   const [targetLength, setTargetLength] = useState("Short (~60s)");
@@ -750,7 +750,7 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
       // Immediately display outline scenes list to the user
       setRawScenes(currentScenes);
       setActiveSceneIndex(0);
-      setEditorMode("preview");
+      // No preview tab switch, stay in setup
 
       // Step 2: Sequentially generate code & audio for each scene in the plan
       for (let i = 0; i < currentScenes.length; i++) {
@@ -794,6 +794,9 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
 
       if (onUpdateProjectsList) {
         onUpdateProjectsList();
+      }
+      if (onGenerationSuccess) {
+        onGenerationSuccess(activeProjId);
       }
     } catch (err) {
       console.error("Studio AI Gen Error:", err);
@@ -903,51 +906,6 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
           </div>
         </div>
 
-        {/* View Mode Tabs (Biên soạn vs Xem trước) */}
-        {rawScenes.length > 0 && (
-          <div style={{
-            display: "flex",
-            background: "rgba(15, 23, 42, 0.04)",
-            padding: "4px",
-            borderRadius: "10px",
-            border: "1px solid rgba(15, 23, 42, 0.06)"
-          }}>
-            <button
-              onClick={() => setEditorMode("setup")}
-              style={{
-                padding: "8px 18px",
-                borderRadius: "8px",
-                border: "none",
-                background: editorMode === "setup" ? "#ffffff" : "transparent",
-                color: editorMode === "setup" ? "#0f172a" : "#64748b",
-                fontWeight: 700,
-                fontSize: "13px",
-                cursor: "pointer",
-                boxShadow: editorMode === "setup" ? "0 2px 6px rgba(0,0,0,0.05)" : "none",
-                transition: "all 0.15s ease"
-              }}
-            >
-              ✏️ Biên soạn Kịch bản
-            </button>
-            <button
-              onClick={() => setEditorMode("preview")}
-              style={{
-                padding: "8px 18px",
-                borderRadius: "8px",
-                border: "none",
-                background: editorMode === "preview" ? "#ffffff" : "transparent",
-                color: editorMode === "preview" ? "#0f172a" : "#64748b",
-                fontWeight: 700,
-                fontSize: "13px",
-                cursor: "pointer",
-                boxShadow: editorMode === "preview" ? "0 2px 6px rgba(0,0,0,0.05)" : "none",
-                transition: "all 0.15s ease"
-              }}
-            >
-              👁️ Xem trước Video
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Status Bar */}
@@ -1274,8 +1232,17 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                 }}
                 style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "13px" }}
               >
-                <option value="duythanh">OmniVoice - Duy Thanh (Offline Voice)</option>
-                <option value="quanganh">OmniVoice - Quang Anh (Offline Voice)</option>
+                <optgroup label="OmniVoice (Offline Clone)">
+                  <option value="duythanh">OmniVoice - Duy Thanh (Trầm ấm, Nam Bắc)</option>
+                  <option value="quanganh">OmniVoice - Quang Anh (Hiện đại, Nam Bắc)</option>
+                </optgroup>
+                <optgroup label="Vbee AI Voice (Chờ kết nối API)">
+                  <option value="vbee_minhtien">Vbee - Minh Tiến (📰 Tin tức / Kịch tính - Nam Bắc)</option>
+                  <option value="vbee_thuyduyen">Vbee - Thùy Duyên (🎓 Truyền cảm / Sách nói - Nữ Bắc)</option>
+                  <option value="vbee_ngochuyen">Vbee - Ngọc Huyền (💡 Quảng cáo / Hào hứng - Nữ Bắc)</option>
+                  <option value="vbee_naman">Vbee - Nam An (🚀 Năng động / Công nghệ - Nam Nam)</option>
+                  <option value="vbee_maiphuong">Vbee - Mai Phương (🎭 Tâm sự / Trầm ấm - Nữ Nam)</option>
+                </optgroup>
               </select>
             </div>
 
@@ -1416,360 +1383,7 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
         </div>
       )}
 
-      {/* VIEW 2: Preview Mode (Split Screen Workspace) */}
-      {editorMode === "preview" && loadedScenes.length > 0 && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 420px", gap: "24px", marginTop: "10px" }}>
-          {/* Left Column: Scene Card Voiceover List */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <h3 style={{ margin: 0, fontSize: "17px", fontWeight: 700, color: "#1e293b" }}>
-              Danh sách Phân Cảnh AI sinh ({loadedScenes.length} scenes):
-            </h3>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxHeight: "680px", overflowY: "auto", paddingRight: "6px" }}>
-              {loadedScenes.map((sc, idx) => {
-                const badge = getPatternBadgeColor(sc.visualPattern);
-                const isActive = idx === activeSceneIndex;
-
-                return (
-                  <div
-                    key={idx}
-                    onClick={() => {
-                      setActiveSceneIndex(idx);
-                      setPreviewType("SCENE"); // switch back to scene view on select
-                    }}
-                    style={{
-                      padding: "16px 18px",
-                      borderRadius: "14px",
-                      background: isActive ? "#eff6ff" : "#ffffff",
-                      border: `2px solid ${isActive ? "#2563eb" : "rgba(15, 23, 42, 0.08)"}`,
-                      cursor: "pointer",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                      boxShadow: isActive ? "0 4px 16px rgba(37, 99, 235, 0.12)" : "0 2px 8px rgba(0, 0, 0, 0.03)",
-                      transition: "all 0.15s ease"
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span style={{ fontSize: "14px", fontWeight: 800, color: isActive ? "#1d4ed8" : "#475569" }}>
-                          Phân cảnh {idx + 1}
-                        </span>
-                        {regeneratingIndex === idx && (
-                          <span style={{ fontSize: "11px", color: "#2563eb", fontWeight: 700, background: "#dbeafe", padding: "2px 8px", borderRadius: "12px" }}>⏳ Đang sinh lại...</span>
-                        )}
-                        {loading && regeneratingIndex !== idx && (!sc.Component || sc.isEmpty) && (
-                          <span style={{ fontSize: "11px", color: "#d97706", fontWeight: 600, background: "#fef3c7", padding: "2px 8px", borderRadius: "12px" }}>⏳ Đang tạo code...</span>
-                        )}
-                        {!loading && regeneratingIndex !== idx && sc.loadError && (
-                          <span style={{ fontSize: "11px", color: "#dc2626", fontWeight: 700, background: "#fee2e2", padding: "2px 8px", borderRadius: "12px" }}>⚠️ Lỗi code</span>
-                        )}
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            triggerOpenRegenModal(idx);
-                          }}
-                          disabled={regeneratingIndex !== null || loading}
-                          title="Tải lại và sinh mới code AI cho phân cảnh này"
-                          style={{
-                            padding: "3px 10px",
-                            borderRadius: "14px",
-                            background: regeneratingIndex === idx ? "#cbd5e1" : "linear-gradient(135deg, #2563eb, #1d4ed8)",
-                            color: "#ffffff",
-                            border: "none",
-                            fontSize: "11px",
-                            fontWeight: 700,
-                            cursor: regeneratingIndex !== null || loading ? "not-allowed" : "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "4px",
-                            boxShadow: "0 2px 6px rgba(37, 99, 235, 0.2)"
-                          }}
-                        >
-                          {regeneratingIndex === idx ? "⏳ Đang sinh..." : "🔄 Sinh lại"}
-                        </button>
-                        <span style={{
-                          padding: "4px 12px",
-                          borderRadius: "999px",
-                          background: badge.bg,
-                          border: `1px solid ${badge.border}`,
-                          color: badge.text,
-                          fontSize: "11px",
-                          fontWeight: 800,
-                          letterSpacing: "0.05em"
-                        }}>
-                          {sc.visualPattern || "CUSTOM"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div style={{ fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>
-                      {sc.heading}
-                    </div>
-
-                    <div style={{ fontSize: "13px", color: "#475569", lineHeight: 1.5 }}>
-                      🗣️ "{sc.voiceover}"
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Right Column: Live Player Embed */}
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "16px",
-            background: "#ffffff",
-            border: "1px solid rgba(15, 23, 42, 0.08)",
-            borderRadius: "20px",
-            padding: "24px",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.04)"
-          }}>
-            {/* Preview Type Tab Selector */}
-            <div style={{ display: "flex", width: "100%", background: "#f1f5f9", padding: "4px", borderRadius: "10px" }}>
-              <button
-                onClick={() => setPreviewType("SCENE")}
-                style={{
-                  flex: 1,
-                  padding: "8px",
-                  borderRadius: "8px",
-                  border: "none",
-                  background: previewType === "SCENE" ? "#ffffff" : "transparent",
-                  color: previewType === "SCENE" ? "#0f172a" : "#64748b",
-                  fontWeight: 700,
-                  fontSize: "13px",
-                  cursor: "pointer",
-                  boxShadow: previewType === "SCENE" ? "0 2px 5px rgba(0,0,0,0.05)" : "none",
-                  transition: "all 0.15s ease"
-                }}
-              >
-                🎬 Preview Phân Cảnh
-              </button>
-              <button
-                onClick={() => setPreviewType("MASTER")}
-                style={{
-                  flex: 1,
-                  padding: "8px",
-                  borderRadius: "8px",
-                  border: "none",
-                  background: previewType === "MASTER" ? "#ffffff" : "transparent",
-                  color: previewType === "MASTER" ? "#0f172a" : "#64748b",
-                  fontWeight: 700,
-                  fontSize: "13px",
-                  cursor: "pointer",
-                  boxShadow: previewType === "MASTER" ? "0 2px 5px rgba(0,0,0,0.05)" : "none",
-                  transition: "all 0.15s ease"
-                }}
-              >
-                🌍 Preview Tổng
-              </button>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-              <span style={{ fontSize: "15px", fontWeight: 800, color: "#0f172a" }}>
-                {previewType === "SCENE"
-                  ? `Cảnh ${activeSceneIndex + 1} / ${loadedScenes.length} (${currentScene?.visualPattern})`
-                  : `Video Tổng Hợp (${loadedScenes.length} Phân cảnh)`}
-              </span>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                {previewType === "SCENE" && currentScene && (
-                  <button
-                    type="button"
-                    onClick={() => triggerOpenRegenModal(activeSceneIndex)}
-                    disabled={regeneratingIndex !== null || loading}
-                    style={{
-                      padding: "5px 12px",
-                      borderRadius: "16px",
-                      background: regeneratingIndex === activeSceneIndex ? "#cbd5e1" : "linear-gradient(135deg, #2563eb, #1d4ed8)",
-                      color: "#ffffff",
-                      border: "none",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      cursor: regeneratingIndex !== null || loading ? "not-allowed" : "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      boxShadow: "0 2px 8px rgba(37, 99, 235, 0.25)"
-                    }}
-                  >
-                    {regeneratingIndex === activeSceneIndex ? "⏳ Đang sinh..." : "🔄 Sinh lại phân cảnh này"}
-                  </button>
-                )}
-                <span style={{ fontSize: "13px", fontWeight: 600, color: "#64748b" }}>
-                  9:16 Vertical
-                </span>
-              </div>
-            </div>
-
-            {/* Remotion Player Container */}
-            <div style={{
-              width: "360px",
-              height: "640px",
-              borderRadius: "18px",
-              overflow: "hidden",
-              boxShadow: "0 14px 40px rgba(0, 0, 0, 0.25)",
-              border: "1px solid rgba(15, 23, 42, 0.12)"
-            }}>
-              {previewType === "SCENE" ? (
-                currentScene ? (
-                  <Player
-                    ref={playerRef}
-                    component={SceneWrapper}
-                    inputProps={{
-                      Component: currentScene.Component,
-                      audioUrl: currentScene.audioUrl,
-                      loadError: currentScene.loadError,
-                      isEmpty: currentScene.isEmpty,
-                      heading: currentScene.heading,
-                      visualPattern: currentScene.visualPattern,
-                      scene: currentScene,
-                      subtitlesJson: currentScene.voiceoverTtsJson,
-                      fps: 30,
-                      isGenerating: loading,
-                      isRegenerating: regeneratingIndex === activeSceneIndex,
-                      onRegenerate: () => handleRegenerateSingleScene(activeSceneIndex)
-                    }}
-                    durationInFrames={durationInFrames}
-                    compositionWidth={1080}
-                    compositionHeight={1920}
-                    fps={30}
-                    style={{ width: "100%", height: "100%" }}
-                    controls
-                    autoPlay
-                    loop
-                  />
-                ) : (
-                  <div style={{ display: "grid", placeItems: "center", height: "100%", color: "#64748b", background: "#f8fafc" }}>
-                    Chưa chọn phân cảnh
-                  </div>
-                )
-              ) : (
-                /* Master Sequential Player rendering the full MainComposition overlay effects & bgm */
-                <Player
-                  component={MainComposition}
-                  inputProps={{
-                    scenes: loadedScenes.map(sc => ({
-                      ...sc,
-                      id: sc.id || `scene_${Math.random()}`,
-                      voiceoverAudioUrl: sc.audioUrl,
-                      // Pass raw durationFrames/30 (no buffer) so getSceneDurationFrames
-                      // inside MainComposition adds its own +15 matching calcSceneDurationFrames.
-                      duration: sc.durationFrames
-                        ? sc.durationFrames / 30
-                        : Math.max(3.5, (sc.voiceover || '').split(/\s+/).length / 2.7),
-                      subtitlesJson: sc.subtitlesJson || sc.voiceoverTtsJson,
-                      Component: sc.Component
-                    })),
-
-                    config: {
-                      voice: voice,
-                      backgroundMusic: bgm,
-                      backgroundMusicVolume: bgmVolume,
-                      watermark: {
-                        enabled: watermarkEnabled,
-                        text: watermarkText,
-                        position: watermarkPosition,
-                        color: "#000000"
-                      },
-                      videoTheme: theme,
-                      visualStyle: theme
-                    }
-                  }}
-                  durationInFrames={totalDurationFrames}
-                  compositionWidth={1080}
-                  compositionHeight={1920}
-                  fps={30}
-                  style={{ width: "100%", height: "100%" }}
-                  controls
-                  autoPlay
-                />
-              )}
-            </div>
-
-            {/* Live Watermark Controls Box in Preview Mode */}
-            <div style={{ width: "360px", marginTop: "14px", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "12px 16px", boxSizing: "border-box", boxShadow: "0 2px 10px rgba(0,0,0,0.03)" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: watermarkEnabled ? "10px" : "0" }}>
-                <span style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: "6px" }}>
-                  🛡️ Watermark (Chữ mờ)
-                </span>
-                <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 600, color: "#2563eb", cursor: "pointer" }}>
-                  <input
-                    type="checkbox"
-                    checked={watermarkEnabled}
-                    onChange={(e) => setWatermarkEnabled(e.target.checked)}
-                    style={{ accentColor: "#2563eb" }}
-                  />
-                  <span>{watermarkEnabled ? "Đang bật" : "Đã tắt"}</span>
-                </label>
-              </div>
-
-              {watermarkEnabled && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                    <div>
-                      <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "2px", fontWeight: 600 }}>Nội dung chữ</label>
-                      <input
-                        type="text"
-                        value={watermarkText}
-                        onChange={(e) => setWatermarkText(e.target.value)}
-                        placeholder="yupclip.com"
-                        style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", boxSizing: "border-box" }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "2px", fontWeight: 600 }}>Vị trí</label>
-                      <select
-                        value={watermarkPosition}
-                        onChange={(e) => setWatermarkPosition(e.target.value)}
-                        style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", boxSizing: "border-box", background: "#ffffff" }}
-                      >
-                        <option value="top-right">Góc Trên - Phải</option>
-                        <option value="top-left">Góc Trên - Trái</option>
-                        <option value="bottom-right">Góc Dưới - Phải</option>
-                        <option value="bottom-left">Góc Dưới - Trái</option>
-                        <option value="bottom-center">Góc Dưới - Giữa</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Render / Export MP4 Button */}
-            <button
-              type="button"
-              onClick={handleRenderVideo}
-              disabled={rendering || loading || loadedScenes.length === 0}
-              style={{
-                width: "360px",
-                marginTop: "16px",
-                padding: "16px 24px",
-                borderRadius: "16px",
-                background: rendering ? "#cbd5e1" : "linear-gradient(135deg, #2563eb, #1d4ed8)",
-                color: "#ffffff",
-                border: "none",
-                fontSize: "15px",
-                fontWeight: 800,
-                cursor: rendering || loading || loadedScenes.length === 0 ? "not-allowed" : "pointer",
-                boxShadow: "0 8px 24px rgba(37, 99, 235, 0.35)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "10px",
-                transition: "all 0.2s ease"
-              }}
-            >
-              {rendering ? "⏳ Đang kết xuất Video MP4..." : "🎬 Xuất Video MP4 (1080x1920 FHD)"}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Render Progress & Download Modal Overlay */}
       {(rendering || renderedVideoUrl) && (
@@ -2342,8 +1956,17 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                 onChange={(e) => setRegenVoice(e.target.value)}
                 style={{ width: "100%", padding: "12px", borderRadius: "10px", border: "1.5px solid #cbd5e1", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}
               >
-                <option value="quanganh">OmniVoice - Quang Anh (Offline Voice)</option>
-                <option value="duythanh">OmniVoice - Duy Thanh (Offline Voice)</option>
+                <optgroup label="OmniVoice (Offline Clone)">
+                  <option value="quanganh">OmniVoice - Quang Anh (Hiện đại, Nam Bắc)</option>
+                  <option value="duythanh">OmniVoice - Duy Thanh (Trầm ấm, Nam Bắc)</option>
+                </optgroup>
+                <optgroup label="Vbee AI Voice (Chờ kết nối API)">
+                  <option value="vbee_minhtien">Vbee - Minh Tiến (📰 Tin tức / Kịch tính - Nam Bắc)</option>
+                  <option value="vbee_thuyduyen">Vbee - Thùy Duyên (🎓 Truyền cảm / Sách nói - Nữ Bắc)</option>
+                  <option value="vbee_ngochuyen">Vbee - Ngọc Huyền (💡 Quảng cáo / Hào hứng - Nữ Bắc)</option>
+                  <option value="vbee_naman">Vbee - Nam An (🚀 Năng động / Công nghệ - Nam Nam)</option>
+                  <option value="vbee_maiphuong">Vbee - Mai Phương (🎭 Tâm sự / Trầm ấm - Nữ Nam)</option>
+                </optgroup>
               </select>
             </div>
 
