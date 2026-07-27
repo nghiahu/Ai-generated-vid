@@ -214,10 +214,14 @@ module.exports = {
     project.config = JSON.parse(project.config || '{}');
 
     if (project.type === 'AIGEN') {
+      const scenes = (project.config?.scenes || []).map((sc, idx) => ({
+        id: sc.id || `scene_idx_${idx}`,
+        ...sc
+      }));
       return {
         id: project.id, title: project.title, status: project.status,
         createdAt: project.created_at, type: project.type, config: project.config,
-        scenes: project.config?.scenes || []
+        scenes
       };
     }
 
@@ -282,6 +286,32 @@ module.exports = {
   updateScene: async (projectId, sceneId, sceneData) => {
     await initDb();
     const db = await getDb();
+
+    // Check if it is an AIGen project
+    const project = await module.exports.getProjectById(projectId);
+    if (project && project.type === 'AIGEN') {
+      const idx = project.scenes.findIndex(s => s.id === sceneId);
+      if (idx !== -1) {
+        const updatedScenes = [...project.scenes];
+        updatedScenes[idx] = {
+          ...updatedScenes[idx],
+          ...sceneData
+        };
+        // Remove virtual id field when persisting to config
+        const scenesToSave = updatedScenes.map(({ id, ...rest }) => rest);
+        project.config.scenes = scenesToSave;
+
+        runQuery(db, 'UPDATE projects SET config = ? WHERE id = ?', [JSON.stringify(project.config), projectId]);
+        saveDb();
+
+        return {
+          id: sceneId,
+          ...updatedScenes[idx]
+        };
+      }
+      return null;
+    }
+
     const columnMap = {
       sceneIndex: 'scene_index', duration: 'duration', layoutFamily: 'layout_family',
       visualLayout: 'visual_layout', sceneIntent: 'scene_intent', heading: 'heading',
@@ -312,6 +342,40 @@ module.exports = {
   createScene: async (projectId, sceneData) => {
     await initDb();
     const db = await getDb();
+
+    const project = await module.exports.getProjectById(projectId);
+    if (project && project.type === 'AIGEN') {
+      const nextIndex = project.scenes.length;
+      const newScene = {
+        sceneIndex: nextIndex,
+        duration: sceneData.duration || 6.0,
+        layoutFamily: sceneData.layoutFamily || null,
+        visualLayout: sceneData.visualLayout || null,
+        sceneIntent: sceneData.sceneIntent || { type: 'opening', importance: 'medium', density: 'medium', emotion: 'neutral' },
+        heading: sceneData.heading || 'Tiêu đề phân cảnh mới',
+        points: sceneData.points || [{ type: 'card', text: 'Ý chính 1' }, { type: 'card', text: 'Ý chính 2' }],
+        voiceover: sceneData.voiceover || 'Lời thoại của phân cảnh mới.',
+        voiceoverTts: sceneData.voiceoverTts || sceneData.voiceover || 'Lời thoại của phân cảnh mới.',
+        voiceoverAudioUrl: sceneData.voiceoverAudioUrl || '',
+        placement: sceneData.placement || 'Full',
+        mediaList: sceneData.mediaList || [],
+        selectedMediaIndex: sceneData.selectedMediaIndex || 0,
+        theme: sceneData.theme || 'default',
+        accentColor: sceneData.accentColor || '#FFB7C5',
+        voiceoverDuration: sceneData.voiceoverDuration || null,
+        subtitlesJson: sceneData.subtitlesJson || []
+      };
+
+      project.config.scenes.push(newScene);
+      runQuery(db, 'UPDATE projects SET config = ? WHERE id = ?', [JSON.stringify(project.config), projectId]);
+      saveDb();
+
+      return {
+        id: `scene_idx_${nextIndex}`,
+        ...newScene
+      };
+    }
+
     const countRow = queryOne(db, 'SELECT COUNT(*) as cnt FROM scenes WHERE project_id = ?', [projectId]);
     const nextIndex = countRow ? countRow.cnt : 0;
     const id = `scene_${projectId}_${nextIndex}_${Math.random().toString(36).substr(2, 4)}`;
@@ -344,6 +408,27 @@ module.exports = {
   deleteScene: async (projectId, sceneId) => {
     await initDb();
     const db = await getDb();
+
+    const project = await module.exports.getProjectById(projectId);
+    if (project && project.type === 'AIGEN') {
+      const idx = project.scenes.findIndex(s => s.id === sceneId);
+      if (idx !== -1) {
+        const updatedScenes = project.scenes.filter((_, i) => i !== idx);
+        // Re-index remaining scenes
+        const scenesToSave = updatedScenes.map((sc, i) => {
+          const { id, ...rest } = sc;
+          return {
+            ...rest,
+            sceneIndex: i
+          };
+        });
+        project.config.scenes = scenesToSave;
+        runQuery(db, 'UPDATE projects SET config = ? WHERE id = ?', [JSON.stringify(project.config), projectId]);
+        saveDb();
+      }
+      return;
+    }
+
     db.run('DELETE FROM scenes WHERE project_id = ? AND id = ?', [projectId, sceneId]);
     const remaining = queryAll(db, 'SELECT id FROM scenes WHERE project_id = ? ORDER BY scene_index ASC', [projectId]);
     remaining.forEach((r, i) => db.run('UPDATE scenes SET scene_index = ? WHERE id = ?', [i, r.id]));
