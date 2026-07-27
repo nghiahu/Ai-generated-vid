@@ -1516,6 +1516,7 @@ CRITICAL: You MUST use the exact DOM structure skeleton matching scene.visualPat
     - All text, titles, numbers, bullet items, and badges must be highly readable and use bright, high-contrast colors. Use pure white (#ffffff), bright orange (#f97316 / #fb923c), bright cyan/blue (#60a5fa / #93c5fd), or bright yellow (#fbbf24).
     - Active subtitle words must be bright orange (#f97316) or white (#ffffff), never dark grey or blue. Inactive subtitle words should be semi-transparent white (rgba(255,255,255,0.4)), not dark.
     - Check every color inside your TSX code. If there is a color code resembling a dark/slate color on text, replace it immediately with a bright high-contrast color.
+    - Font Size Constraint (CRITICAL): The fontSize of any text element (e.g. titles, details, labels, badges) MUST NEVER be below 12 (e.g. do NOT use 10, 8 or 9). Use at least 12px or higher to maintain mobile readability.
 
  8. Return ONLY the raw TSX code. Do NOT wrap in JSON. Do NOT include markdown code block syntax (like \`\`\`tsx). Start directly with the imports and end with the default export.
 
