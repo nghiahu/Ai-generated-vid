@@ -5,3 +5,6 @@
 | 1 | Update App Navigation and Routing | [x] completed |
 | 2 | Simplify Dashboard to Show Only AI Gen Projects | [x] completed |
 | 3 | Clean up Project Header and Workspace view | [x] completed |
+| 4 | Clean up StudioAIGen.jsx tabs and preview layout | [ ] not_started |
+| 5 | Simplify scene editor cards in StoryboardEditor.jsx | [ ] not_started |
+| 6 | Implement single-scene code regeneration in App.jsx | [ ] not_started |
