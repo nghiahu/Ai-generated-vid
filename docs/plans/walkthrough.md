@@ -26,6 +26,12 @@ We have completed the cleanups and minimized the Storyboard Editor scene cards t
 - Kept only the layout preview video player, the header index badge, and the script textarea.
 - Embedded action buttons below the script area to either regenerate the scene code/graphics through Gemini AI or regenerate TTS audio.
 
+### 5. Backend Database Layer Scene CRUD Support for AI Gen Projects
+- Resolved the "Scene not found" issue when editing scripts of AIGen projects.
+- In [db.js](file:///c:/Users/nghia/OneDrive/Máy tính/AI-grenerated vid-hyperframe/backend/services/db.js):
+  - In `getProjectById`, dynamically injected virtual `id` values (e.g. `scene_idx_${idx}`) to AIGen project scenes to match standard project scene structures.
+  - In `updateScene`, `createScene`, and `deleteScene`, added specialized handling for `AIGEN` project types, updating scene fields within the project's config array and saving it back to the SQLite `projects` table.
+
 ## Verification Results
 
 ### Build Verification
@@ -37,8 +43,8 @@ rendering chunks...
 computing gzip size...
 dist/index.html                     0.46 kB │ gzip:   0.30 kB
 dist/assets/index-fIAXRcOY.css      5.17 kB │ gzip:   1.42 kB
-dist/assets/index-iN8ITTN0.js   2,256.72 kB │ gzip: 570.00 kB
+dist/assets/index-DxAd342G.js   2,256.72 kB │ gzip: 570.00 kB
 
-✓ built in 977ms
+✓ built in 953ms
 ```
 All code compiles and passes successfully.
