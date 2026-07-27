@@ -26,6 +26,9 @@
 | TASK-22 | Tích hợp Vbee API chính thức vào `backend/services/tts.js` với VBEE_API_KEY & VBEE_APP_ID | `[x]` |
 | TASK-23 | Tự động trích xuất `usageMetadata` từ Gemini API và lưu tích lũy token vào DB cho các luồng Studio AI Gen | `[x]` |
 | TASK-24 | Xử lý lỗi Rate Limit 429 & Loại bỏ gemini-2.0-flash khỏi danh sách fallback sang các model hoạt động (gemini-2.5-flash, gemini-2.5-flash-lite, gemini-1.5-flash) | `[x]` |
+| TASK-25 | Cập nhật danh sách Model Gemini chuẩn xác theo live API (gemini-3.1-flash-lite, gemini-3.5-flash-lite, gemini-3.5-flash, gemini-3.6-flash, gemini-flash-lite-latest) và loại bỏ hoàn toàn 404 models | `[x]` |
+
+
 
 
 

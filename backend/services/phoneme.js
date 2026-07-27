@@ -374,7 +374,7 @@ async function extractTerms(text, projectId = null) {
       "${text}"
     `;
 
-    const fallbacks = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-flash"].filter(m => m !== modelName);
+    const fallbacks = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.6-flash", "gemini-2.5-flash"].filter(m => m !== modelName);
     console.log(`[Phoneme Agent] Gọi Gemini G2P Extract với model ${modelName}...`);
     const result = await generateContentWithRetryAndFallback(genAI, options, prompt, fallbacks, projectId);
     const responseText = result.response.text().trim();
@@ -525,7 +525,7 @@ async function getPhonemesForTerms(terms, projectId = null) {
         ${JSON.stringify(unknownTerms)}
       `;
 
-      const fallbacks = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-flash"].filter(m => m !== modelName);
+      const fallbacks = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.6-flash", "gemini-2.5-flash"].filter(m => m !== modelName);
       console.log(`[Phoneme Agent] Gọi Gemini G2P Fallback dịch sang tiếng Việt cho ${unknownTerms.length} từ:`, unknownTerms);
       const result = await generateContentWithRetryAndFallback(genAI, options, prompt, fallbacks, projectId);
       const responseText = result.response.text().trim();

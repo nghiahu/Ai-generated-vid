@@ -245,7 +245,7 @@ async function urlToGenerativePart(imageUrl) {
 // Helper for retrying API calls across active Gemini models with exponential backoff & jitter
 async function generateContentWithFallback(genAI, options, promptData, fallbackModels = []) {
   // Pool of active production Gemini models verified via live API test
-  const defaultFallbackPool = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-flash"];
+  const defaultFallbackPool = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.6-flash", "gemini-flash-lite-latest"];
   const combinedModels = [options.model || process.env.GEMINI_MODEL || "gemini-3.1-flash-lite", ...fallbackModels, ...defaultFallbackPool];
   // Deduplicate model names while preserving order
   const modelsToTry = [...new Set(combinedModels)].filter(Boolean);
@@ -1297,7 +1297,7 @@ ${slotDirective}
 Generate a scene plan array following the schema and visualPattern rules.
   `;
 
-  const fallbacks = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-flash"].filter(m => m !== modelName);
+  const fallbacks = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.6-flash", "gemini-2.5-flash"].filter(m => m !== modelName);
   const result = await generateContentWithFallback(genAI, options, { systemInstruction, userPrompt, projectId }, fallbacks);
   const text = result.response.text().trim();
   
@@ -1759,7 +1759,7 @@ ${errorFeedbackPrompt ? `\n⚠️ PREVIOUS CODE GENERATION FAILED VALIDATION:\n$
 Generation Seed / Timestamp: ${Date.now()}
   `;
 
-  const fallbacks = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-flash"].filter(m => m !== modelName);
+  const fallbacks = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.6-flash", "gemini-2.5-flash"].filter(m => m !== modelName);
   const result = await generateContentWithFallback(genAI, options, { systemInstruction, userPrompt, imageParts, projectId: projectId || scene?.projectId }, fallbacks);
   let text = result.response.text().trim();
   text = cleanAndExtractCode(text);
