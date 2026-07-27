@@ -34,7 +34,7 @@ test('Should keep in-bounds spring config values unchanged', () => {
   assert.match(repaired, /stiffness:\s*60/);
 });
 
-test('Should clamp out-of-bounds fontSize values to 12px / 12', () => {
+test('Should clamp out-of-bounds fontSize values to 20px / 20', () => {
   const tsx = `
     import React from 'react';
     
@@ -49,8 +49,8 @@ test('Should clamp out-of-bounds fontSize values to 12px / 12', () => {
     };
   `;
   const repaired = clampMotionParameters(tsx);
-  assert.match(repaired, /fontSize:\s*12/);
-  assert.match(repaired, /fontSize:\s*["']12px["']/);
+  assert.match(repaired, /fontSize:\s*20/);
+  assert.match(repaired, /fontSize:\s*["']20px["']/);
   assert.match(repaired, /fontSize:\s*48/);
 });
 

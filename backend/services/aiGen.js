@@ -1657,15 +1657,14 @@ CRITICAL: You MUST use the exact DOM structure skeleton matching scene.visualPat
         <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "80%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", padding: "60px 60px 0 60px", boxSizing: "border-box", zIndex: 10 }}>
       * Leave the bottom 20% area (from bottom: 0 to bottom: 20%) completely clean and empty so external subtitles do not collide with your visual layout elements!
 
- 7. Strict Contrast and Readability Rules (CRITICAL FOR READABILITY):
+   - Font Size Constraint (CRITICAL): The fontSize of any text element (e.g. titles, details, labels, badges) MUST NEVER be below 20 (e.g. do NOT use 14, 12, 10, or 8). Use at least 20px or higher to maintain mobile readability on the 1080x1920 canvas.
+
+ 8. Strict Contrast and Readability Rules (CRITICAL FOR READABILITY):
     - The background of the video is dark (THEME.bg is typically #030712).
     - You MUST NEVER use dark colors (such as dark blue, slate, charcoal, grey, or black) for any visible text, numbers, list items, or subtitles. For example, never style text with color: "#0f172a", "#1e293b", "#334155", or "#475569".
     - All text, titles, numbers, bullet items, and badges must be highly readable and use bright, high-contrast colors. Use pure white (#ffffff), bright orange (#f97316 / #fb923c), bright cyan/blue (#60a5fa / #93c5fd), or bright yellow (#fbbf24).
     - Active subtitle words must be bright orange (#f97316) or white (#ffffff), never dark grey or blue. Inactive subtitle words should be semi-transparent white (rgba(255,255,255,0.4)), not dark.
     - Check every color inside your TSX code. If there is a color code resembling a dark/slate color on text, replace it immediately with a bright high-contrast color.
-    - Font Size Constraint (CRITICAL): The fontSize of any text element (e.g. titles, details, labels, badges) MUST NEVER be below 12 (e.g. do NOT use 10, 8 or 9). Use at least 12px or higher to maintain mobile readability.
-
- 8. Return ONLY the raw TSX code. Do NOT wrap in JSON. Do NOT include markdown code block syntax (like \`\`\`tsx). Start directly with the imports and end with the default export.
 
  9. Reference Image Layout Adaptation & Theme Color Preservation (CRITICAL):
     - If design reference images are attached, you MUST analyze them strictly to mimic their layout structures, container placements, alignment, spacing gaps, border-radii, shadows, padding, and typography hierarchy.
@@ -1675,6 +1674,9 @@ ${bgImageRule}
  10. Visual Asset URLs (CRITICAL):
     - You MUST use ONLY the exact visual asset URL strings provided inside "scene.resolvedAssets" (for example: \`scene.resolvedAssets.illustration\` for images/graphics, and \`scene.resolvedAssets.bgImage\` for background images).
     - Do NOT invent, hallucinate, or write any other image, logo, icon or background URL strings in your TSX code.
+
+ 11. Format Constraint:
+    - Return ONLY the raw TSX code. Do NOT wrap in JSON. Do NOT include markdown code block syntax (like \`\`\`tsx). Start directly with the imports and end with the default export.
   `;
 
   const referenceInstruction = imageParts.length > 0
