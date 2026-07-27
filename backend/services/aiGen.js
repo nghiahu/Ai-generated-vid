@@ -271,6 +271,20 @@ async function generateContentWithFallback(genAI, options, promptData, fallbackM
 
         if (result && result.response) {
           console.log(`[Studio AI Gen] ✅ Gemini API success with model: ${modelName}`);
+
+          // Accumulate token usage into DB if projectId is available
+          const usage = result.response.usageMetadata;
+          const targetProjectId = projectId || promptData.projectId;
+          if (usage && targetProjectId) {
+            const promptTokens = usage.promptTokenCount || usage.promptTokens || 0;
+            const completionTokens = usage.candidatesTokenCount || usage.completionTokens || 0;
+            if (promptTokens > 0 || completionTokens > 0) {
+              db.accumulateTokens(targetProjectId, promptTokens, completionTokens).catch(err => {
+                console.error("[Studio AI Gen] Failed to accumulate tokens:", err.message);
+              });
+            }
+          }
+
           return result;
         }
         throw new Error("Empty response from API");
@@ -1162,7 +1176,7 @@ function parseScriptIntoBlocks(scriptText) {
 }
 
 // Phase 1: Planner
-async function generateScenePlanForAIGen(genAI, modelName, scriptText, targetLength = "Short (~60s)", patternSlots = []) {
+async function generateScenePlanForAIGen(genAI, modelName, scriptText, targetLength = "Short (~60s)", patternSlots = [], projectId = null) {
   // Handle flexible signature when scriptText is passed as first argument
   if (Array.isArray(genAI) || typeof genAI === "string") {
     scriptText = genAI;
@@ -1271,7 +1285,7 @@ Generate a scene plan array following the schema and visualPattern rules.
   `;
 
   const fallbacks = ["gemini-2.5-flash", "gemini-2.0-flash"].filter(m => m !== modelName);
-  const result = await generateContentWithFallback(genAI, options, { systemInstruction, userPrompt }, fallbacks);
+  const result = await generateContentWithFallback(genAI, options, { systemInstruction, userPrompt, projectId }, fallbacks);
   const text = result.response.text().trim();
   
   try {
@@ -1293,7 +1307,7 @@ Do not output any introductory or conversational text, output only the JSON arra
       const correctionResult = await generateContentWithFallback(
         genAI,
         options,
-        { systemInstruction, userPrompt: correctionPrompt },
+        { systemInstruction, userPrompt: correctionPrompt, projectId },
         fallbacks
       );
       const correctedText = correctionResult.response.text().trim();
@@ -1361,7 +1375,7 @@ function validatePatternCompliance(tsxCode, visualPattern) {
   }
 }
 
-async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_grid", bgImage = "", refImages = [], errorFeedbackPrompt = "", userNote = "") {
+async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_grid", bgImage = "", refImages = [], errorFeedbackPrompt = "", userNote = "", projectId = null) {
   const fs = require("fs");
   const path = require("path");
 
@@ -1733,7 +1747,7 @@ Generation Seed / Timestamp: ${Date.now()}
   `;
 
   const fallbacks = ["gemini-2.5-flash", "gemini-2.0-flash"].filter(m => m !== modelName);
-  const result = await generateContentWithFallback(genAI, options, { systemInstruction, userPrompt, imageParts }, fallbacks);
+  const result = await generateContentWithFallback(genAI, options, { systemInstruction, userPrompt, imageParts, projectId: projectId || scene?.projectId }, fallbacks);
   let text = result.response.text().trim();
   text = cleanAndExtractCode(text);
   return text;
@@ -1798,7 +1812,7 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
   console.log(`[Studio AI Gen] Pre-assigned pattern slots (${expectedSceneCount} scenes): ${patternSlots.join(", ")}`);
 
   // Step 2: Generate Scene Plan with slot directives injected
-  const scenePlan = await generateScenePlanForAIGen(genAI, modelName, script, targetLength, patternSlots);
+  const scenePlan = await generateScenePlanForAIGen(genAI, modelName, script, targetLength, patternSlots, projectId);
   console.log(`[Studio AI Gen] Phase 1 hoàn tất: ${scenePlan.length} phân cảnh được tạo.`);
 
 
@@ -2017,7 +2031,7 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
 
   while (attemptsRemaining > 0) {
     try {
-      tsxCode = await generateTSXCodeForScene(genAI, modelName, scene, theme, bgImage, refImages, errorFeedbackPrompt, userNote);
+      tsxCode = await generateTSXCodeForScene(genAI, modelName, scene, theme, bgImage, refImages, errorFeedbackPrompt, userNote, projectId);
       
       // Layer 1: AST Validation Check
       const astResult = validateTSXCode(tsxCode);
