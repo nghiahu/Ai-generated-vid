@@ -1772,6 +1772,40 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
   };
 }
 
+function validateCompiledJS(compiledJS) {
+  if (!compiledJS || typeof compiledJS !== "string" || compiledJS.trim() === "") {
+    return { isValid: false, error: "Compiled JS is empty" };
+  }
+
+  const { transform } = require("sucrase");
+  try {
+    // Transform ES imports/exports to CommonJS for Node VM execution
+    const { code: cjsCode } = transform(compiledJS, {
+      transforms: ["imports"]
+    });
+
+    const vm = require("vm");
+    const mockExports = {};
+    const context = vm.createContext({
+      module: { exports: mockExports },
+      exports: mockExports,
+      require: (mod) => {
+        if (["react", "remotion", "lucide-react"].includes(mod)) return {};
+        throw new Error(`Cannot find module '${mod}'`);
+      }
+    });
+
+    vm.runInContext(cjsCode, context, { timeout: 100 });
+    const comp = mockExports.default || mockExports.GeneratedScene;
+    if (!comp) {
+      return { isValid: false, error: "Compiled JS does not export default or GeneratedScene component" };
+    }
+    return { isValid: true };
+  } catch (err) {
+    return { isValid: false, error: `Module Validation Failure: ${err.message}` };
+  }
+}
+
 module.exports = {
   generateAIGenStoryboard,
   generateScenePlanForAIGen,
@@ -1779,7 +1813,8 @@ module.exports = {
   compileTSX,
   sanitizeTSXCode,
   generateSafetyNetTSX,
-  validateGeneratedCode
+  validateGeneratedCode,
+  validateCompiledJS
 };
 
 
