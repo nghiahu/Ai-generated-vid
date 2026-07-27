@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Studio AI Gen Validation Sandbox</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <style>
+    #root { width: 1080px; height: 1920px; position: relative; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    // Mock Remotion and Lucide variables on window
+    window.React = React;
+    window.Remotion = {
+      useCurrentFrame: () => 0,
+      useVideoConfig: () => ({ width: 1080, height: 1920, fps: 30, durationInFrames: 120 }),
+      spring: () => 1,
+      interpolate: () => 0
+    };
+    window.LucideIcons = new Proxy({}, { get: () => () => React.createElement('div') });
+
+    // React Error Boundary Helper
+    class ErrorBoundary extends React.Component {
+      constructor(props) { super(props); this.state = { hasError: false, error: null }; }
+      static getDerivedStateFromError(error) { return { hasError: true, error }; }
+      componentDidCatch(error, errorInfo) {
+        window.parent.postMessage({ type: 'VALIDATION_ERROR', error: error.message, stack: errorInfo.componentStack }, '*');
+      }
+      render() { return this.state.hasError ? null : this.props.children; }
+    }
+
+    window.addEventListener('message', async (e) => {
+      if (e.data.type === 'VALIDATE_CODE') {
+        const { code, sceneData } = e.data;
+        const rootEl = document.getElementById('root');
+        
+        try {
+          // Process and load compiled code dynamically via blob URL
+          let rewrittenJS = code
+            .replace(/import\s+([\s\S]*?)\s+from\s+['"]react['"];?/gi, "const React = window.React;")
+            .replace(/import\s+([\s\S]*?)\s+from\s+['"]remotion['"];?/gi, "const { useCurrentFrame, spring, interpolate } = window.Remotion;")
+            .replace(/import\s+([\s\S]*?)\s+from\s+['"]lucide-react['"];?/gi, "const LucideIcons = window.LucideIcons;");
+
+          const blob = new Blob([rewrittenJS], { type: 'application/javascript' });
+          const url = URL.createObjectURL(blob);
+          const mod = await import(url);
+          const Component = mod.default || mod.GeneratedScene;
+
+          const root = ReactDOM.createRoot(rootEl);
+          root.render(React.createElement(ErrorBoundary, null, React.createElement(Component, { scene: sceneData || {} })));
+
+          // Wait brief frame for layout to render fully
+          requestAnimationFrame(() => {
+            // Visual Overlap and Safe Area checks
+            const errors = [];
+            const elements = rootEl.querySelectorAll('*');
+            
+            // Check safe zone overflow (bottom 22% is y > 1498px)
+            elements.forEach(el => {
+              const rect = el.getBoundingClientRect();
+              if (rect.bottom > 1498 && el.innerText?.trim()) {
+                errors.push({ type: 'safe-zone-overflow', message: `Element containing "${el.innerText.substring(0, 15)}..." overflowed into subtitle safe zone` });
+              }
+            });
+
+            // Post successful validation
+            window.parent.postMessage({
+              type: 'VALIDATION_SUCCESS',
+              errors
+            }, '*');
+          });
+        } catch (err) {
+          window.parent.postMessage({ type: 'VALIDATION_ERROR', error: err.message, stack: err.stack }, '*');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -3,6 +3,9 @@ const router = express.Router();
 const aiGen = require("../services/aiGen");
 const db = require("../services/db");
 
+// Store temporary validation responses in memory index keyed by validationId
+const pendingValidations = new Map();
+
 // POST /api/studio-ai-gen/generate
 router.post("/generate", async (req, res) => {
   try {
@@ -204,5 +207,47 @@ router.post("/save-config", async (req, res) => {
     res.status(500).json({ error: `Lỗi lưu dự án: ${err.message}` });
   }
 });
+
+// POST /api/studio-ai-gen/validate-result
+router.post("/validate-result", (req, res) => {
+  try {
+    const { validationId, success, error, stack, visualErrors } = req.body;
+    if (!validationId) return res.status(400).json({ error: "Missing validationId" });
+    
+    pendingValidations.set(validationId, {
+      success,
+      error,
+      stack,
+      visualErrors,
+      timestamp: Date.now()
+    });
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[Studio AI Gen Route /validate-result Error]:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/studio-ai-gen/validate-status/:validationId
+router.get("/validate-status/:validationId", (req, res) => {
+  try {
+    const val = pendingValidations.get(req.params.validationId);
+    if (!val) return res.json({ status: "PENDING" });
+    res.json({ status: "COMPLETE", result: val });
+  } catch (err) {
+    console.error("[Studio AI Gen Route /validate-status Error]:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Clean up pendingValidations regularly every 2 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, val] of pendingValidations.entries()) {
+    if (now - val.timestamp > 120000) { // 2 minutes TTL
+      pendingValidations.delete(key);
+    }
+  }
+}, 60000);
 
 module.exports = router;
