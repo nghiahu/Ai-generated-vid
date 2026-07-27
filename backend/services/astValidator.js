@@ -62,7 +62,7 @@ function validateTSXCode(code) {
   }
 }
 
-// Automatically clamp animation physics configs to safe ranges (Layer 6)
+// Automatically clamp animation physics configs to safe ranges and enforce minimum 12px font size (Layer 6)
 function clampMotionParameters(code) {
   try {
     const ast = parser.parse(code, {
@@ -93,6 +93,34 @@ function clampMotionParameters(code) {
                 }
               }
             }
+          }
+        }
+      },
+      JSXAttribute(path) {
+        if (path.node.name.name === 'style') {
+          const val = path.node.value;
+          if (val && val.type === 'JSXExpressionContainer' && val.expression.type === 'ObjectExpression') {
+            val.expression.properties.forEach(prop => {
+              if (prop.type === 'ObjectProperty') {
+                const keyName = prop.key.name || prop.key.value;
+                if (keyName === 'fontSize') {
+                  const propVal = prop.value;
+                  if (propVal.type === 'NumericLiteral') {
+                    if (propVal.value < 12) {
+                      propVal.value = 12;
+                    }
+                  } else if (propVal.type === 'StringLiteral') {
+                    const match = propVal.value.match(/^(\d+)(px)?$/);
+                    if (match) {
+                      const num = parseInt(match[1], 10);
+                      if (num < 12) {
+                        propVal.value = '12px';
+                      }
+                    }
+                  }
+                }
+              }
+            });
           }
         }
       }
