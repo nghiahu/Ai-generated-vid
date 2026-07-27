@@ -25,6 +25,9 @@
 | TASK-21 | Bổ sung danh sách Vbee Voice phân nhóm theo Provider & Vibe vào Dropdown Voiceover ở Frontend và xử lý Mock Fallback ở Backend | `[x]` |
 | TASK-22 | Tích hợp Vbee API chính thức vào `backend/services/tts.js` với VBEE_API_KEY & VBEE_APP_ID | `[x]` |
 | TASK-23 | Tự động trích xuất `usageMetadata` từ Gemini API và lưu tích lũy token vào DB cho các luồng Studio AI Gen | `[x]` |
+| TASK-24 | Xử lý lỗi Rate Limit 429 & Loại bỏ gemini-2.0-flash khỏi danh sách fallback sang các model hoạt động (gemini-2.5-flash, gemini-2.5-flash-lite, gemini-1.5-flash) | `[x]` |
+
+
 
 
 

@@ -245,7 +245,7 @@ async function urlToGenerativePart(imageUrl) {
 // Helper for retrying API calls across active Gemini models with exponential backoff & jitter
 async function generateContentWithFallback(genAI, options, promptData, fallbackModels = []) {
   // Pool of active production Gemini models verified via live API test
-  const defaultFallbackPool = ["gemini-3.1-flash-lite", "gemini-2.5-flash"];
+  const defaultFallbackPool = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-flash"];
   const combinedModels = [options.model || process.env.GEMINI_MODEL || "gemini-3.1-flash-lite", ...fallbackModels, ...defaultFallbackPool];
   // Deduplicate model names while preserving order
   const modelsToTry = [...new Set(combinedModels)].filter(Boolean);
@@ -292,14 +292,27 @@ async function generateContentWithFallback(genAI, options, promptData, fallbackM
         lastError = err;
         attempt++;
         const errMsg = err.message || String(err);
+        const isQuotaExceededOrLimit0 = /limit:\s*0|quota exceeded/i.test(errMsg);
         const is503OrRateLimit = /503|overloaded|unavailable|429|resource_exhausted/i.test(errMsg);
 
+        // If this model has 0 quota limit or quota fully exceeded, skip retries on this model and switch fallback model immediately
+        if (isQuotaExceededOrLimit0) {
+          console.warn(`[Studio AI Gen] ⚠️ Quota limit 0 or exhausted on model ${modelName}. Immediately switching to next fallback model...`);
+          break;
+        }
+
         if (attempt < maxRetries) {
-          // Calculate exponential backoff with jitter: 1.5s -> 3.5s -> 6.5s
-          const baseDelay = Math.pow(2, attempt) * 1200;
-          const jitter = Math.floor(Math.random() * 800);
-          const backoffMs = baseDelay + jitter;
-          console.warn(`[Studio AI Gen] ⚠️ Gemini API error (${is503OrRateLimit ? '503/429 Load Spike' : 'Error'}) on model ${modelName} (Attempt ${attempt}/${maxRetries}): ${errMsg.substring(0, 80)}. Retrying in ${backoffMs}ms...`);
+          // Check if Gemini API recommended a specific retry delay e.g. "retryDelay":"8s" or "Please retry in 8.35s"
+          const retryMatch = errMsg.match(/retry\s+in\s+([\d\.]+)\s*s/i) || errMsg.match(/retryDelay["\s:]+([\d\.]+)/i);
+          let backoffMs;
+          if (retryMatch && parseFloat(retryMatch[1])) {
+            backoffMs = Math.ceil(parseFloat(retryMatch[1])) * 1000 + 500;
+          } else {
+            const baseDelay = Math.pow(2, attempt) * 1200;
+            const jitter = Math.floor(Math.random() * 800);
+            backoffMs = baseDelay + jitter;
+          }
+          console.warn(`[Studio AI Gen] ⚠️ Gemini API error (${is503OrRateLimit ? '429 Rate Limit / 503 Spike' : 'Error'}) on model ${modelName} (Attempt ${attempt}/${maxRetries}): ${errMsg.substring(0, 100)}. Retrying in ${backoffMs}ms...`);
           await new Promise(r => setTimeout(r, backoffMs));
         } else {
           console.warn(`[Studio AI Gen] Model ${modelName} exhausted ${maxRetries} attempts. Switching fallback model...`);
@@ -1284,7 +1297,7 @@ ${slotDirective}
 Generate a scene plan array following the schema and visualPattern rules.
   `;
 
-  const fallbacks = ["gemini-2.5-flash", "gemini-2.0-flash"].filter(m => m !== modelName);
+  const fallbacks = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-flash"].filter(m => m !== modelName);
   const result = await generateContentWithFallback(genAI, options, { systemInstruction, userPrompt, projectId }, fallbacks);
   const text = result.response.text().trim();
   
@@ -1746,7 +1759,7 @@ ${errorFeedbackPrompt ? `\n⚠️ PREVIOUS CODE GENERATION FAILED VALIDATION:\n$
 Generation Seed / Timestamp: ${Date.now()}
   `;
 
-  const fallbacks = ["gemini-2.5-flash", "gemini-2.0-flash"].filter(m => m !== modelName);
+  const fallbacks = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-flash"].filter(m => m !== modelName);
   const result = await generateContentWithFallback(genAI, options, { systemInstruction, userPrompt, imageParts, projectId: projectId || scene?.projectId }, fallbacks);
   let text = result.response.text().trim();
   text = cleanAndExtractCode(text);
