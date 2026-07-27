@@ -1655,21 +1655,27 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
 
 // Pre-resolve asset pipeline requirements mapping to actual verified media files (Layer 5)
 function resolveSceneAssets(scene, bgImage) {
+  const host = "http://localhost:5000";
+  let resolvedBg = bgImage || scene.bgImage || "";
+  if (resolvedBg && !resolvedBg.startsWith("http")) {
+    resolvedBg = `${host}${resolvedBg}`;
+  }
+
   const assets = {
-    bgImage: bgImage || scene.bgImage || "",
-    illustration: "/media/upload_1784020563112_wzfjh3.jpg" // default
+    bgImage: resolvedBg,
+    illustration: `${host}/media/upload_1784020563112_wzfjh3.jpg` // default
   };
 
   const txt = ((scene.heading || "") + " " + (scene.points || []).join(" ") + " " + (scene.voiceover || "")).toLowerCase();
   
   if (txt.includes("chart") || txt.includes("metric") || txt.includes("growth") || txt.includes("doanh thu") || txt.includes("tăng trưởng")) {
-    assets.illustration = "/media/upload_1784020563145_0tlhpk.png";
+    assets.illustration = `${host}/media/upload_1784020563145_0tlhpk.png`;
   } else if (txt.includes("shield") || txt.includes("security") || txt.includes("bảo mật") || txt.includes("an toàn")) {
-    assets.illustration = "/media/upload_1784020563142_l1sd73.png";
+    assets.illustration = `${host}/media/upload_1784020563142_l1sd73.png`;
   } else if (txt.includes("network") || txt.includes("cloud") || txt.includes("hệ thống") || txt.includes("máy chủ")) {
-    assets.illustration = "/media/upload_1784020563138_oagqev.png";
+    assets.illustration = `${host}/media/upload_1784020563138_oagqev.png`;
   } else if (txt.includes("mobile") || txt.includes("điện thoại") || txt.includes("app") || txt.includes("ứng dụng")) {
-    assets.illustration = "/media/upload_1784020563114_o8uhtv.png";
+    assets.illustration = `${host}/media/upload_1784020563114_o8uhtv.png`;
   }
 
   return assets;
