@@ -1516,12 +1516,16 @@ CRITICAL: You MUST use the exact DOM structure skeleton matching scene.visualPat
     - Active subtitle words must be bright orange (#f97316) or white (#ffffff), never dark grey or blue. Inactive subtitle words should be semi-transparent white (rgba(255,255,255,0.4)), not dark.
     - Check every color inside your TSX code. If there is a color code resembling a dark/slate color on text, replace it immediately with a bright high-contrast color.
 
- 8. Return ONLY the raw TSX code. Do NOT wrap in JSON. Do NOT include markdown code block syntax (like \`\`\`tsx). Start directly with the imports and end with the default export.
+ 8. Return ONLY the raw TSX code. Do NOT wrap in JSON. Do NOT include markdown code block syntax (like ```tsx). Start directly with the imports and end with the default export.
 
  9. Reference Image Layout Adaptation & Theme Color Preservation (CRITICAL):
     - If design reference images are attached, you MUST analyze them strictly to mimic their layout structures, container placements, alignment, spacing gaps, border-radii, shadows, padding, and typography hierarchy.
     - WARNING (PRESERVE COLORS): Do NOT copy the colors, background gradients, or text colors from the reference images. All colors, text highlighting, and background styles MUST be driven strictly by the pre-defined \`THEME\` variables (e.g. \`THEME.bg\`, \`THEME.accent\`, \`THEME.orange\`, \`THEME.cyan\`) to maintain the selected brand theme.
 ${bgImageRule}
+
+ 10. Visual Asset URLs (CRITICAL):
+    - You MUST use ONLY the exact visual asset URL strings provided inside "scene.resolvedAssets" (for example: \`scene.resolvedAssets.illustration\` for images/graphics, and \`scene.resolvedAssets.bgImage\` for background images).
+    - Do NOT invent, hallucinate, or write any other image, logo, icon or background URL strings in your TSX code.
   `;
 
   const referenceInstruction = imageParts.length > 0
@@ -1647,6 +1651,28 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
 }
 
 
+// Pre-resolve asset pipeline requirements mapping to actual verified media files (Layer 5)
+function resolveSceneAssets(scene, bgImage) {
+  const assets = {
+    bgImage: bgImage || scene.bgImage || "",
+    illustration: "/media/upload_1784020563112_wzfjh3.jpg" // default
+  };
+
+  const txt = ((scene.heading || "") + " " + (scene.points || []).join(" ") + " " + (scene.voiceover || "")).toLowerCase();
+  
+  if (txt.includes("chart") || txt.includes("metric") || txt.includes("growth") || txt.includes("doanh thu") || txt.includes("tăng trưởng")) {
+    assets.illustration = "/media/upload_1784020563145_0tlhpk.png";
+  } else if (txt.includes("shield") || txt.includes("security") || txt.includes("bảo mật") || txt.includes("an toàn")) {
+    assets.illustration = "/media/upload_1784020563142_l1sd73.png";
+  } else if (txt.includes("network") || txt.includes("cloud") || txt.includes("hệ thống") || txt.includes("máy chủ")) {
+    assets.illustration = "/media/upload_1784020563138_oagqev.png";
+  } else if (txt.includes("mobile") || txt.includes("điện thoại") || txt.includes("app") || txt.includes("ứng dụng")) {
+    assets.illustration = "/media/upload_1784020563114_o8uhtv.png";
+  }
+
+  return assets;
+}
+
 // Generates code, tts audio, and alignments for a single scene
 async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages, voiceKey, projectId, genAI, modelName, errorFeedback = null }) {
   scene.sceneIndex = index;
@@ -1669,6 +1695,9 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
       scene.points = [scene.heading || "Kỷ nguyên AI-Native", "Tự động hóa 70% quy trình mã nguồn"];
     }
   }
+
+  // Bind resolved assets for code generator prompt
+  scene.resolvedAssets = resolveSceneAssets(scene, bgImage);
 
   // Calculate duration frames (word count / 2.7 * 30 fps, min 120 frames = 4s)
   const wordCount = (scene.voiceover || "").trim().split(/\s+/).length;
