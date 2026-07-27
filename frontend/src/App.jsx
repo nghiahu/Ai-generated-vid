@@ -57,6 +57,7 @@ function App() {
   const [renderTotalFrames, setRenderTotalFrames] = useState(0);
   const [videoUrl, setVideoUrl] = useState(null);
   const [regeneratingTts, setRegeneratingTts] = useState(false);
+  const [regeneratingSceneId, setRegeneratingSceneId] = useState(null);
   const [toast, setToast] = useState(null);
   const [regeneratingCodeSceneId, setRegeneratingCodeSceneId] = useState(null);
 
