@@ -600,6 +600,19 @@ module.exports = {
   },
   saveAIGenProject: async (id, title, config, status = 'COMPLETED') => {
     await initDb();
+    let finalConfig = config;
+    try {
+      const existingRes = await pool.query('SELECT config FROM projects WHERE id = $1', [id]);
+      if (existingRes.rowCount > 0) {
+        const existingConfig = existingRes.rows[0].config || {};
+        finalConfig = {
+          ...existingConfig,
+          ...config,
+          tokenUsage: existingConfig.tokenUsage || config.tokenUsage || { promptTokens: 0, completionTokens: 0, totalTokens: 0 }
+        };
+      }
+    } catch (e) {}
+
     const query = `
       INSERT INTO projects (id, title, status, config, type)
       VALUES ($1, $2, $4, $3, 'AIGEN')
@@ -607,7 +620,7 @@ module.exports = {
       SET title = $2, config = $3, status = $4
       RETURNING *
     `;
-    const res = await pool.query(query, [id, title, JSON.stringify(config), status]);
+    const res = await pool.query(query, [id, title, JSON.stringify(finalConfig), status]);
     return res.rows[0];
   },
   saveUploadedMedia: async (url) => {

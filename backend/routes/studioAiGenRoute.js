@@ -15,7 +15,18 @@ router.post("/generate", async (req, res) => {
       return res.status(400).json({ error: "Kịch bản (script) không được để trống." });
     }
 
-    console.log(`[Studio AI Gen Route] Nhận yêu cầu tạo video cho kịch bản length=${targetLength}, theme=${theme}, hasBgImage=${Boolean(bgImage)}, refImagesCount=${refImages.length}, projectId=${projectId}`);
+    const finalProjectId = projectId || `proj_aigen_${Math.random().toString(36).substr(2, 9)}`;
+    const projectTitle = `AI Gen - ${script.trim().substring(0, 30)}...`;
+
+    // Save initial project entry to DB so accumulateTokens finds the row during generation
+    await db.saveAIGenProject(finalProjectId, projectTitle, {
+      script: script.trim(),
+      targetLength,
+      theme,
+      voiceKey,
+      bgImage,
+      refImages
+    }, 'IN_PROGRESS');
 
     const scenes = await aiGen.generateAIGenStoryboard({
       script: script.trim(),
@@ -24,11 +35,8 @@ router.post("/generate", async (req, res) => {
       voiceKey,
       bgImage,
       refImages,
-      projectId
+      projectId: finalProjectId
     });
-
-    // Generate a new project ID if not provided
-    const finalProjectId = projectId || `proj_aigen_${Math.random().toString(36).substr(2, 9)}`;
 
     // Prepare database project configuration object
     const config = {
@@ -41,9 +49,8 @@ router.post("/generate", async (req, res) => {
       scenes
     };
 
-    // Save project details inside database projects table
-    const projectTitle = `AI Gen - ${script.trim().substring(0, 30)}...`;
-    await db.saveAIGenProject(finalProjectId, projectTitle, config);
+    // Save final project details inside database projects table
+    await db.saveAIGenProject(finalProjectId, projectTitle, config, 'COMPLETED');
 
     res.json({
       success: true,
