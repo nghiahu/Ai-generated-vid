@@ -1899,9 +1899,11 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                 {vdeThemes.map(styleItem => {
                   const isSelected = theme === styleItem.id;
                   const tokens = styleItem.tokens || {};
-                  const bgVal = tokens.colors?.background || "#030712";
-                  const textVal = tokens.colors?.text || "#ffffff";
-                  const accentVal = tokens.colors?.accent || "#3b82f6";
+                  const bgVal = tokens.background || "#030712";
+                  const textVal = tokens.text || "#ffffff";
+                  const accentVal = tokens.accent || "#3b82f6";
+                  const cardBgVal = tokens.cardBg || "rgba(255, 255, 255, 0.05)";
+                  const borderVal = tokens.border || "1px solid rgba(255, 255, 255, 0.1)";
 
                   return (
                     <div
@@ -1945,12 +1947,12 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                           </div>
                         </div>
 
-                        <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: "10px", padding: "10px", border: `1px solid ${accentVal}30` }}>
+                        <div style={{ background: cardBgVal, borderRadius: "10px", padding: "10px", border: borderVal }}>
                           <div style={{ fontSize: "11px", fontWeight: "bold", color: textVal }}>Giao diện AI Gen</div>
-                          <div style={{ fontSize: "8px", opacity: 0.7, marginTop: "2px" }}>Visual design mockup</div>
+                          <div style={{ fontSize: "8px", opacity: 0.7, marginTop: "2px", color: tokens.textSecondary || "rgba(255,255,255,0.6)" }}>Visual design mockup</div>
                         </div>
 
-                        <div style={{ fontSize: "8px", opacity: 0.6, textAlign: "center" }}>
+                        <div style={{ fontSize: "8px", opacity: 0.6, textAlign: "center", color: tokens.textSecondary || "rgba(255,255,255,0.6)" }}>
                           9:16 Vertical Preview
                         </div>
                       </div>
