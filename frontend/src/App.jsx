@@ -150,11 +150,11 @@ function App() {
 
       if (isAIGen) {
         setView("STUDIO_AI_GEN");
-      } else if (project.scenes && project.scenes.length > 0) {
-        setSelectedSceneId(project.scenes[0].id);
-        setView("WORKSPACE_EDITOR");
       } else {
-        setView("WORKSPACE_SETUP");
+        if (project.scenes && project.scenes.length > 0) {
+          setSelectedSceneId(project.scenes[0].id);
+        }
+        setView("WORKSPACE_EDITOR");
       }
     } catch (error) {
       console.error("Failed to fetch project detail:", error);
@@ -166,7 +166,7 @@ function App() {
       const newProj = await api.createProject(title);
       await fetchProjects();
       setSelectedProjectId(newProj.id);
-      setView("WORKSPACE_SETUP");
+      setView("WORKSPACE_EDITOR");
     } catch (error) {
       console.error("Failed to create project:", error);
       alert(`Không thể tạo dự án mới: ${error.response?.data?.error || error.message}`);
@@ -618,21 +618,6 @@ function App() {
             >
               &larr; Projects
             </button>
-
-            <button
-              className={view === "WORKSPACE_SETUP" ? "tab-active" : "tab-inactive"}
-              style={{ background: "none", border: "none", fontSize: "14px", cursor: "pointer", paddingBottom: "4px" }}
-              onClick={() => setView("WORKSPACE_SETUP")}
-            >
-              Thiết lập & Kịch bản
-            </button>
-            <button
-              className={view === "WORKSPACE_EDITOR" ? "tab-active" : "tab-inactive"}
-              style={{ background: "none", border: "none", fontSize: "14px", cursor: "pointer", paddingBottom: "4px" }}
-              onClick={() => setView("WORKSPACE_EDITOR")}
-            >
-              Biên tập Storyboard
-            </button>
           </div>
         </div>
 
@@ -640,33 +625,6 @@ function App() {
 
       {/* Main Workspace content */}
       <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-        {view === "WORKSPACE_SETUP" ? (
-          <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-            {/* Left Column: Script input & Generation */}
-            <div style={{ flex: "0 0 58.33%", borderRight: "1px solid rgba(15, 23, 42, 0.08)", overflowY: "auto", display: "flex" }}>
-              <StoryboardEditor
-                mode="setup"
-                scenes={currentProject?.scenes || []}
-                config={currentProject?.config || {}}
-                projectId={currentProject?.id}
-                onGenerateStoryboard={handleGenerateStoryboard}
-                onUpdateScene={handleUpdateScene}
-                loading={loading}
-                loadingMessage={loadingMessage}
-                selectedSceneId={selectedSceneId}
-                onSelectScene={setSelectedSceneId}
-              />
-            </div>
-            {/* Right Column: Video Config */}
-            <div style={{ flex: "0 0 41.67%", overflowY: "auto" }}>
-              <SidebarConfig
-                config={currentProject?.config || {}}
-                onChange={handleUpdateConfig}
-                onBack={() => { setSelectedProjectId(null); setView("DASHBOARD"); }}
-              />
-            </div>
-          </div>
-        ) : (
           <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
 
             {/* Middle Column: Storyboard cards list */}
@@ -704,7 +662,6 @@ function App() {
               />
             </div>
           </div>
-        )}
       </div>
 
       {showVoiceModal && (
