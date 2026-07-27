@@ -2,6 +2,7 @@ const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const { transform } = require("sucrase");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 const phoneme = require("./phoneme");
 const tts = require("./tts");
 const db = require("./db");
@@ -1516,7 +1517,7 @@ CRITICAL: You MUST use the exact DOM structure skeleton matching scene.visualPat
     - Active subtitle words must be bright orange (#f97316) or white (#ffffff), never dark grey or blue. Inactive subtitle words should be semi-transparent white (rgba(255,255,255,0.4)), not dark.
     - Check every color inside your TSX code. If there is a color code resembling a dark/slate color on text, replace it immediately with a bright high-contrast color.
 
- 8. Return ONLY the raw TSX code. Do NOT wrap in JSON. Do NOT include markdown code block syntax (like ```tsx). Start directly with the imports and end with the default export.
+ 8. Return ONLY the raw TSX code. Do NOT wrap in JSON. Do NOT include markdown code block syntax (like \`\`\`tsx). Start directly with the imports and end with the default export.
 
  9. Reference Image Layout Adaptation & Theme Color Preservation (CRITICAL):
     - If design reference images are attached, you MUST analyze them strictly to mimic their layout structures, container placements, alignment, spacing gaps, border-radii, shadows, padding, and typography hierarchy.
@@ -1673,6 +1674,19 @@ function resolveSceneAssets(scene, bgImage) {
   return assets;
 }
 
+// Calculate signature hash of scene inputs to track configuration state (Layer 7)
+function calculateSceneHash(scene, theme, modelName) {
+  const data = JSON.stringify({
+    heading: scene.heading || "",
+    voiceover: scene.voiceover || "",
+    points: scene.points || [],
+    visualPattern: scene.visualPattern || "",
+    theme,
+    modelName
+  });
+  return crypto.createHash("sha256").update(data).digest("hex");
+}
+
 // Generates code, tts audio, and alignments for a single scene
 async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages, voiceKey, projectId, genAI, modelName, errorFeedback = null }) {
   scene.sceneIndex = index;
@@ -1684,6 +1698,29 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
   }
   if (!modelName) {
     modelName = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+  }
+
+  // Calculate signature hash (Layer 7 Caching)
+  const promptHash = calculateSceneHash(scene, theme, modelName);
+
+  // Check cached compile result in database (Layer 7 Caching)
+  if (projectId && !errorFeedback) {
+    try {
+      const project = await db.getProjectById(projectId);
+      if (project && project.config) {
+        const scenes = project.config.scenes || [];
+        const cached = scenes.find(s => s.sceneIndex === index && s.promptHash === promptHash && s.tsxCode && s.compiledJS);
+        if (cached) {
+          console.log(`[Studio AI Gen Cache HIT] Scene ${index} matches cache signature. Skipping Gemini compilation.`);
+          return {
+            ...cached,
+            status: "PENDING_BROWSER_VALIDATION" // Re-validate visual in browser sandbox
+          };
+        }
+      }
+    } catch (err) {
+      console.warn(`[Studio AI Gen Cache] Error checking DB cache:`, err.message);
+    }
   }
 
   // Auto-backfill points if missing or empty for BULLET_GLASS or DUAL_METRIC_CARDS
@@ -1827,6 +1864,7 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
     duration: (scene.durationFrames / 30).toFixed(2),
     subtitlesJson,
     validationId,
+    promptHash,
     status: "PENDING_BROWSER_VALIDATION"
   };
 }
