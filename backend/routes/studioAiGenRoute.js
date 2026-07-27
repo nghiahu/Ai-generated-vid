@@ -132,7 +132,7 @@ router.post("/plan", async (req, res) => {
 // POST /api/studio-ai-gen/generate-scene
 router.post("/generate-scene", async (req, res) => {
   try {
-    const { projectId, scene, script = "", voiceKey = "duythanh", theme = "ai_hub_grid", bgImage = "", refImages = [] } = req.body;
+    const { projectId, scene, script = "", voiceKey = "duythanh", theme = "ai_hub_grid", bgImage = "", refImages = [], errorFeedback = null } = req.body;
 
     if (!projectId) {
       return res.status(400).json({ error: "Missing projectId." });
@@ -166,7 +166,8 @@ router.post("/generate-scene", async (req, res) => {
       voiceKey,
       projectId,
       genAI,
-      modelName
+      modelName,
+      errorFeedback
     });
 
     // Update project scenes array in database

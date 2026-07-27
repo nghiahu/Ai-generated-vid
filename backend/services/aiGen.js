@@ -6,6 +6,7 @@ const phoneme = require("./phoneme");
 const tts = require("./tts");
 const db = require("./db");
 const aligner = require("./aligner");
+const { validateTSXCode } = require("./astValidator");
 
 // Sanitize imports to prevent Sucrase compiler 'from expected' errors
 function sanitizeImportStatements(code) {
@@ -1187,7 +1188,7 @@ function validatePatternCompliance(tsxCode, visualPattern) {
   }
 }
 
-async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_grid", bgImage = "", refImages = []) {
+async function generateTSXCodeForScene(genAI, modelName, scene, theme = "ai_hub_grid", bgImage = "", refImages = [], errorFeedbackPrompt = "") {
   const fs = require("fs");
   const path = require("path");
   const vde = require("./vde");
@@ -1533,6 +1534,7 @@ Generate raw TSX code for this scene data:
 ${JSON.stringify(scene, null, 2)}
 Theme: "${theme}"
 Background Image: "${bgImage ? 'YES' : 'NO'}"${referenceInstruction}
+${errorFeedbackPrompt ? `\n⚠️ PREVIOUS CODE GENERATION FAILED VALIDATION:\n${errorFeedbackPrompt}\nPlease fix the error details. Do NOT redesign the layout, only fix the syntax/runtime bug.` : ''}
   `;
 
   const fallbacks = ["gemini-2.5-flash", "gemini-2.0-flash"].filter(m => m !== modelName);
@@ -1646,7 +1648,7 @@ async function generateAIGenStoryboard({ script, targetLength = "Short (~60s)", 
 
 
 // Generates code, tts audio, and alignments for a single scene
-async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages, voiceKey, projectId, genAI, modelName }) {
+async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages, voiceKey, projectId, genAI, modelName, errorFeedback = null }) {
   scene.sceneIndex = index;
   scene.visualPattern = normalizeVisualPattern(scene.visualPattern);
 
@@ -1674,19 +1676,15 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
   const durationFrames = Math.round(durationSec * 30);
   scene.durationFrames = durationFrames;
 
-  // Execute TTS generation AND Gemini TSX code generation in PARALLEL
+  // Execute TTS generation in parallel with code generation
   const ttsTask = (async () => {
     if (!scene.voiceover && !scene.voiceoverTts) return null;
     try {
       let textToRead;
       if (scene.voiceoverTts) {
-        // voiceoverTts is ALREADY a phonetic Vietnamese transcript — bypass phoneme optimizer
-        // to avoid re-processing hand-written phonemes like "Gi-pi-ti Bốn" → wrong output
         textToRead = scene.voiceoverTts;
         console.log(`[Studio AI Gen] Scene ${index}: using voiceoverTts directly (skipping phoneme optimizer)`);
       } else {
-        // voiceover is raw original text with English terms (GPT-4, Llama 3 etc.)
-        // → run phoneme optimizer to transliterate English to Vietnamese phonetics
         textToRead = await phoneme.optimizeTextForPhonemes(scene.voiceover, projectId);
         console.log(`[Studio AI Gen] Scene ${index}: optimized voiceover phonemes for TTS`);
       }
@@ -1697,12 +1695,69 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
     }
   })();
 
+  // Code generation & validation retry loop (Max 3 attempts)
+  let tsxCode = "";
+  let compiledJS = "";
+  let attemptsRemaining = 3;
+  let errorFeedbackPrompt = errorFeedback ? (
+    `Client Sandbox Error: ${errorFeedback.error || 'Unknown Error'}\nStack trace: ${errorFeedback.stack || 'N/A'}\nVisual Errors: ${JSON.stringify(errorFeedback.visualErrors || [])}`
+  ) : "";
 
-  const tsxTask = generateTSXCodeForScene(genAI, modelName, scene, theme, bgImage, refImages);
+  while (attemptsRemaining > 0) {
+    try {
+      tsxCode = await generateTSXCodeForScene(genAI, modelName, scene, theme, bgImage, refImages, errorFeedbackPrompt);
+      
+      // Layer 1: AST Validation Check
+      const astResult = validateTSXCode(tsxCode);
+      if (!astResult.isValid) {
+        console.warn(`[AI Repair] Layer 1 AST check failed for Scene ${index} (Attempts left: ${attemptsRemaining - 1}). Error: ${astResult.error}`);
+        errorFeedbackPrompt = `AST Validation Error: ${astResult.error}`;
+        attemptsRemaining--;
+        continue;
+      }
 
-  const [ttsResult, tsxResult] = await Promise.allSettled([ttsTask, tsxTask]);
+      // Compile TSX to JS
+      compiledJS = compileTSX(tsxCode);
 
-  // Process TTS & Alignment results
+      // Layer 2: Module Execution Validation Check
+      const compileResult = validateCompiledJS(compiledJS);
+      if (!compileResult.isValid) {
+        console.warn(`[AI Repair] Layer 2 Compile check failed for Scene ${index} (Attempts left: ${attemptsRemaining - 1}). Error: ${compileResult.error}`);
+        errorFeedbackPrompt = `Compilation Module Error: ${compileResult.error}`;
+        attemptsRemaining--;
+        continue;
+      }
+
+      // Pattern compliance check
+      if (!validatePatternCompliance(tsxCode, scene.visualPattern)) {
+        console.warn(`[AI Repair] Pattern Compliance check failed for Scene ${index} (Attempts left: ${attemptsRemaining - 1})`);
+        errorFeedbackPrompt = `Pattern Compliance Error: Generated code does not match required visual layout pattern "${scene.visualPattern}".`;
+        attemptsRemaining--;
+        continue;
+      }
+
+      // All backend checks passed successfully!
+      break;
+    } catch (err) {
+      console.warn(`[AI Repair] Attempt failed with exception for Scene ${index}:`, err.message);
+      errorFeedbackPrompt = `Exception: ${err.message}`;
+      attemptsRemaining--;
+    }
+  }
+
+  // Fallback to Safety Net if all attempts exhausted
+  if (attemptsRemaining === 0 || !compiledJS) {
+    const SAFETY_NET_PATTERNS = ["BULLET_GLASS", "PROCESS_TIMELINE", "STAT_GRID_2X2", "QUOTE_NATURE_CARD", "DUAL_METRIC_CARDS", "HERO_METRIC_GLOW"];
+    const safetyNetPattern = scene.visualPattern || SAFETY_NET_PATTERNS[index % SAFETY_NET_PATTERNS.length];
+    console.warn(`[Studio AI Gen] 🛡️ Activating Pattern Safety Net for scene ${index} (pattern: ${safetyNetPattern})`);
+    tsxCode = generateSafetyNetTSX(scene);
+    compiledJS = compileTSX(tsxCode);
+  }
+
+  // Wait for TTS audio generation task to complete
+  const [ttsResult] = await Promise.allSettled([ttsTask]);
+
+  // Process TTS results
   let audioUrl = "";
   let audioDuration = durationSec;
   let subtitlesJson = null;
@@ -1725,38 +1780,8 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
     }
   }
 
-  // Process TSX Code result
-  let tsxCode = "";
-  let compiledJS = "";
-
-  // Safety net patterns rotate by scene index so each fallback looks different
-  const SAFETY_NET_PATTERNS = ["BULLET_GLASS", "PROCESS_TIMELINE", "STAT_GRID_2X2", "QUOTE_NATURE_CARD", "DUAL_METRIC_CARDS", "HERO_METRIC_GLOW"];
-  const safetyNetPattern = scene.visualPattern || SAFETY_NET_PATTERNS[index % SAFETY_NET_PATTERNS.length];
-
-  if (tsxResult.status === "fulfilled" && tsxResult.value) {
-    tsxCode = tsxResult.value;
-    compiledJS = compileTSX(tsxCode);
-
-    // Component C: Pattern compliance validation — reject AI output that ignores the locked pattern
-    if (compiledJS && !validatePatternCompliance(tsxCode, scene.visualPattern)) {
-      console.warn(`[Studio AI Gen] ⚠️ Compliance FAIL for scene ${index} (${scene.visualPattern}). Using pattern safety net template instead.`);
-      tsxCode = generateSafetyNetTSX(scene);
-      compiledJS = compileTSX(tsxCode);
-    }
-
-    if (!compiledJS) {
-      console.warn(`[Studio AI Gen] Lỗi biên dịch đầu tiên cho scene ${index}. Kích hoạt Safety Net Fallback (pattern: ${safetyNetPattern})...`);
-      tsxCode = generateSafetyNetTSX(scene);
-      compiledJS = compileTSX(tsxCode);
-    }
-  }
-
-  // Safety net fallback if compiledJS is still empty
-  if (!compiledJS) {
-    console.warn(`[Studio AI Gen] 🛡️ Activating Pattern Safety Net for scene ${index} (pattern: ${scene.visualPattern || 'BULLET_GLASS'}, heading: "${scene.heading || 'Scene'}")`);
-    tsxCode = generateSafetyNetTSX(scene);
-    compiledJS = compileTSX(tsxCode);
-  }
+  // Generate a validationId for client-side sandbox validation
+  const validationId = `val_${projectId || 'aigen'}_${index}_${Date.now()}`;
 
   return {
     sceneIndex: index,
@@ -1768,7 +1793,9 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
     audioUrl,
     durationFrames: scene.durationFrames,
     duration: (scene.durationFrames / 30).toFixed(2),
-    subtitlesJson
+    subtitlesJson,
+    validationId,
+    status: "PENDING_BROWSER_VALIDATION"
   };
 }
 
