@@ -35,5 +35,5 @@ backend/public/downloads/*.mp4
 # Frontend ignores
 frontend/node_modules
 frontend/dist
-
-
+# SQLite DB
+backend/database.sqlite
