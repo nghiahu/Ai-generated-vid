@@ -2,9 +2,9 @@
 
 > **For Antigravity:** REQUIRED WORKFLOW: Use `.agent/workflows/execute-plan.md` to execute this plan in single-flow mode.
 
-**Goal:** Remove the manual Studio sidebar option and page views while simplifying the Dashboard to show only AI Gen projects.
+**Goal:** Remove the manual Studio sidebar option and page views while simplifying the Dashboard to show only AI Gen projects. Also, clean up the workspace editor header tabs and go straight to the editor workspace layout.
 
-**Architecture:** Modify `App.jsx` navigation and page conditionals, and update `Dashboard.jsx` to remove tab layout and only filter projects of type AIGEN.
+**Architecture:** Modify `App.jsx` navigation, header, workspace layout conditional, and update `Dashboard.jsx` to remove tab layout and only filter projects of type AIGEN.
 
 **Tech Stack:** React, CSS.
 
@@ -30,22 +30,10 @@ Expected: Build passes.
 Remove the `🎥 Studio` sidebar option and `view === "STUDIO"` view rendering.
 
 In `frontend/src/App.jsx`:
-```jsx
-// Remove lines 470-496 (Studio <li> item)
-// Remove lines 589-612 (view === "STUDIO" conditional block)
-```
+- Removed lines 470-496 (Studio <li> item)
+- Removed lines 589-612 (view === "STUDIO" conditional block)
 
-**Step 4: Run verification**
-
-Run: `npm run dev` in `frontend` directory and check visual interface.
-Expected: Studio sidebar link is gone, no compile errors.
-
-**Step 5: Commit**
-
-```bash
-git add frontend/src/App.jsx
-git commit -m "feat: remove manual studio sidebar navigation and view"
-```
+*(This task was completed in Batch 1)*
 
 ---
 
@@ -74,13 +62,41 @@ In `frontend/src/components/Dashboard.jsx`:
 - Remove tag selector tab div at the top of the content.
 - Simplify empty state message.
 
+*(This task was completed in Batch 1)*
+
+---
+
+### Task 3: Clean up Project Header and Workspace view
+
+**Files:**
+- Modify: `frontend/src/App.jsx:151-158`
+- Modify: `frontend/src/App.jsx:672-686`
+- Modify: `frontend/src/App.jsx:691-758`
+
+**Step 1: Write the failing test**
+
+Manual check on local browser to see project workspace view.
+
+**Step 2: Run verification**
+
+Run: `npm run dev` in `frontend` directory.
+Expected: Build passes.
+
+**Step 3: Write minimal implementation**
+
+In `frontend/src/App.jsx`:
+- In `fetchProjectDetail`, always set view to `"WORKSPACE_EDITOR"` instead of `"WORKSPACE_SETUP"`.
+- Remove tab button elements for `Thiết lập & Kịch bản` and `Biên tập Storyboard` in the Header.
+- Remove `view === "WORKSPACE_SETUP"` layout check and render only the `WORKSPACE_EDITOR` layout directly.
+
 **Step 4: Run verification**
 
-Expected: Dashboard has no tabs and lists only AI Gen videos.
+Run: `npm run build` in `frontend` directory.
+Expected: Build passes, header has no tabs, and clicking project opens direct editor.
 
 **Step 5: Commit**
 
 ```bash
-git add frontend/src/components/Dashboard.jsx
-git commit -m "feat: simplify dashboard to only show AI Gen projects and remove tabs"
+git add frontend/src/App.jsx
+git commit -m "feat: clean up workspace header tabs and remove manual setup mode layout"
 ```
