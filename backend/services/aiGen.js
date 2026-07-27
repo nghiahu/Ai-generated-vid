@@ -436,9 +436,24 @@ function compileTSX(tsxCode) {
 // SAFETY NET FALLBACK TEMPLATES — one per visual pattern (zero AI dependency)
 // ─────────────────────────────────────────────────────────────────────────────
 
-function safetyNetTitleHook(scene = {}) {
+function safetyNetTitleHook(scene = {}, themeTokens = null) {
   const safeHeading = (scene.heading || "Phân cảnh Video AI").replace(/"/g, '\\"');
   const alertStr = (scene.alertText || "").replace(/"/g, '\\"');
+  const defaultTheme = {
+    bg: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.22), transparent 65%), #030712",
+    cardBg: "rgba(15, 23, 42, 0.75)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    accent: "#3b82f6",
+    orange: "#f97316",
+    cyan: "#93c5fd",
+    text: "#ffffff",
+    textSec: "rgba(255, 255, 255, 0.65)",
+    radius: "18px",
+    shadow: "0 10px 30px rgba(0,0,0,0.35)",
+    font: "'Be Vietnam Pro', 'Inter', sans-serif"
+  };
+  const themeObj = themeTokens || defaultTheme;
+
   return `import React from "react";
 import { useCurrentFrame, spring, interpolate } from "remotion";
 import { Sparkles, Zap } from "lucide-react";
@@ -449,30 +464,32 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
   const headingText = "${safeHeading}";
   const alertText = "${alertStr}";
   const words = headingText.split(" ");
+  const THEME = ${JSON.stringify(themeObj, null, 2)};
+
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
-      background: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.22), transparent 65%), #030712",
-      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      background: THEME.bg,
+      fontFamily: THEME.font, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ position: "absolute", top: "10%", left: "-10%", width: "600px", height: "600px", borderRadius: "50%",
-        background: "rgba(59,130,246,0.12)", filter: "blur(100px)",
+        background: THEME.accent + "1b", filter: "blur(100px)",
         transform: "translateY(" + (Math.sin(frame / 25) * 20) + "px)" }} />
       <div style={{ position: "absolute", bottom: "20%", right: "-10%", width: "500px", height: "500px", borderRadius: "50%",
-        background: "rgba(249,115,22,0.12)", filter: "blur(100px)",
+        background: THEME.orange + "1b", filter: "blur(100px)",
         transform: "translateY(" + (Math.cos(frame / 28) * 20) + "px)" }} />
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center",
         gap: "24px", textAlign: "center", padding: "0 80px", height: "78%", justifyContent: "center" }}>
         {alertText ? (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 20px", borderRadius: 99,
-            background: "rgba(249,115,22,0.15)", border: "1px solid rgba(249,115,22,0.4)", color: "#fb923c",
+            background: THEME.orange + "25", border: "1px solid " + THEME.orange + "66", color: THEME.orange,
             fontSize: "18px", fontWeight: 700, opacity: sp(5), transform: "scale(" + sp(5) + ")" }}>
-            <Sparkles size={18} color="#fb923c" />
+            <Sparkles size={18} color={THEME.orange} />
             <span>{alertText}</span>
           </div>
         ) : (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 18px", borderRadius: 99,
-            background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.35)", color: "#93c5fd",
+            background: THEME.accent + "20", border: "1px solid " + THEME.accent + "59", color: THEME.accent,
             fontSize: "16px", fontWeight: 600, opacity: sp(5), transform: "scale(" + sp(5) + ")" }}>
-            <Zap size={16} color="#93c5fd" />
+            <Zap size={16} color={THEME.accent} />
             <span>Studio AI Gen</span>
           </div>
         )}
@@ -480,7 +497,7 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
           {words.map((w, i) => {
             const wSp = sp(8 + i * 6);
             return (
-              <span key={i} style={{ fontSize: "68px", fontWeight: 800, color: "#ffffff", lineHeight: 1.1,
+              <span key={i} style={{ fontSize: "68px", fontWeight: 800, color: THEME.text, lineHeight: 1.1,
                 letterSpacing: "-0.03em", display: "inline-block",
                 opacity: wSp, transform: "translateY(" + interpolate(wSp, [0, 1], [40, 0]) + "px)" }}>
                 {w}
@@ -488,7 +505,7 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
             );
           })}
         </div>
-        <div style={{ width: "120px", height: "3px", background: "linear-gradient(90deg, transparent, #f97316, transparent)",
+        <div style={{ width: "120px", height: "3px", background: "linear-gradient(90deg, transparent, " + THEME.orange + ", transparent)",
           opacity: sp(30), borderRadius: "2px" }} />
       </div>
     </div>
@@ -497,11 +514,26 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
 export default GeneratedScene;`;
 }
 
-function safetyNetHeroMetric(scene = {}) {
+function safetyNetHeroMetric(scene = {}, themeTokens = null) {
   const safeHeading = (scene.heading || "Phân cảnh Video AI").replace(/"/g, '\\"');
   const metric = scene.metrics && scene.metrics[0];
   const heroValue = metric ? `${metric.prefix || ""}${metric.value}${metric.suffix || ""}` : "100%";
   const heroLabel = metric ? String(metric.label || "Số liệu chính").replace(/"/g, '\\"') : "Số liệu chính";
+  const defaultTheme = {
+    bg: "radial-gradient(circle at 50% 40%, rgba(249,115,22,0.18), transparent 65%), #030712",
+    cardBg: "rgba(15, 23, 42, 0.75)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    accent: "#3b82f6",
+    orange: "#f97316",
+    cyan: "#93c5fd",
+    text: "#ffffff",
+    textSec: "rgba(255, 255, 255, 0.65)",
+    radius: "18px",
+    shadow: "0 10px 30px rgba(0,0,0,0.35)",
+    font: "'Be Vietnam Pro', 'Inter', sans-serif"
+  };
+  const themeObj = themeTokens || defaultTheme;
+
   return `import React from "react";
 import { useCurrentFrame, spring, interpolate } from "remotion";
 
@@ -512,29 +544,31 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
   const label = "${heroLabel}";
   const headingText = "${safeHeading}";
   const numSp = sp(10);
+  const THEME = ${JSON.stringify(themeObj, null, 2)};
+
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
-      background: "radial-gradient(circle at 50% 40%, rgba(249,115,22,0.18), transparent 65%), #030712",
-      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif" }}>
+      background: THEME.bg,
+      fontFamily: THEME.font }}>
       <div style={{ position: "absolute", top: "20%", left: "50%", transform: "translate(-50%,-50%)",
         width: "500px", height: "500px", borderRadius: "50%",
-        background: "rgba(249,115,22,0.12)", filter: "blur(100px)" }} />
+        background: THEME.orange + "1e", filter: "blur(100px)" }} />
       <div style={{ position: "absolute", bottom: "15%", right: "10%", width: "400px", height: "400px", borderRadius: "50%",
-        background: "rgba(59,130,246,0.1)", filter: "blur(90px)" }} />
+        background: THEME.accent + "1b", filter: "blur(90px)" }} />
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center", height: "78%", gap: "12px" }}>
-        <div style={{ color: "rgba(255,255,255,0.55)", fontSize: "18px", fontWeight: 600,
+        <div style={{ color: THEME.textSec, fontSize: "18px", fontWeight: 600,
           textTransform: "uppercase", letterSpacing: "0.15em", opacity: sp(5) }}>{label}</div>
         <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ position: "absolute", width: "280px", height: "280px", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(249,115,22,0.3), transparent 70%)", filter: "blur(50px)" }} />
-          <div style={{ fontSize: "130px", fontWeight: 900, color: "#f97316",
-            textShadow: "0 0 60px rgba(249,115,22,0.7)", fontVariantNumeric: "tabular-nums", zIndex: 2,
+            background: "radial-gradient(circle, " + THEME.orange + "4d, transparent 70%)", filter: "blur(50px)" }} />
+          <div style={{ fontSize: "130px", fontWeight: 900, color: THEME.orange,
+            textShadow: "0 0 60px " + THEME.orange + "b3", fontVariantNumeric: "tabular-nums", zIndex: 2,
             opacity: numSp, transform: "scale(" + interpolate(numSp, [0, 1], [0.6, 1]) + ")" }}>
             {heroValue}
           </div>
         </div>
-        <div style={{ color: "rgba(255,255,255,0.65)", fontSize: "22px", textAlign: "center",
+        <div style={{ color: THEME.text, fontSize: "22px", textAlign: "center",
           maxWidth: "500px", marginTop: "8px", opacity: sp(25) }}>{headingText}</div>
       </div>
     </div>
@@ -543,7 +577,7 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
 export default GeneratedScene;`;
 }
 
-function safetyNetDualMetric(scene = {}) {
+function safetyNetDualMetric(scene = {}, themeTokens = null) {
   const safeHeading = (scene.heading || "Phân cảnh Video AI").replace(/"/g, '\\"');
   const m0 = (scene.metrics && scene.metrics[0]) || { prefix: "", value: "50", suffix: "%", label: "Chỉ số 1" };
   const m1 = (scene.metrics && scene.metrics[1]) || { prefix: "", value: "90", suffix: "%", label: "Chỉ số 2" };
@@ -551,41 +585,57 @@ function safetyNetDualMetric(scene = {}) {
   const v1 = `${String(m1.prefix||"")}${String(m1.value||"90")}${String(m1.suffix||"%")}`;
   const l0 = String(m0.label||"Chỉ số 1").replace(/"/g,'\\"');
   const l1 = String(m1.label||"Chỉ số 2").replace(/"/g,'\\"');
+  const defaultTheme = {
+    bg: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.18), transparent 65%), #030712",
+    cardBg: "rgba(15, 23, 42, 0.75)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    accent: "#3b82f6",
+    orange: "#f97316",
+    cyan: "#93c5fd",
+    text: "#ffffff",
+    textSec: "rgba(255, 255, 255, 0.65)",
+    radius: "18px",
+    shadow: "0 10px 30px rgba(0,0,0,0.35)",
+    font: "'Be Vietnam Pro', 'Inter', sans-serif"
+  };
+  const themeObj = themeTokens || defaultTheme;
+
   return `import React from "react";
 import { useCurrentFrame, spring } from "remotion";
 import { TrendingUp, Award } from "lucide-react";
-
+ 
 export const GeneratedScene = ({ fps = 30, scene = {} }) => {
   const frame = useCurrentFrame();
   const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
   const headingText = "${safeHeading}";
+  const THEME = ${JSON.stringify(themeObj, null, 2)};
   const metrics = [
-    { value: "${v0}", label: "${l0}", color: "#f97316", Icon: TrendingUp },
-    { value: "${v1}", label: "${l1}", color: "#60a5fa", Icon: Award }
+    { value: "${v0}", label: "${l0}", color: THEME.orange, Icon: TrendingUp },
+    { value: "${v1}", label: "${l1}", color: THEME.cyan, Icon: Award }
   ];
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
-      background: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.18), transparent 65%), #030712",
-      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif" }}>
+      background: THEME.bg,
+      fontFamily: THEME.font }}>
       <div style={{ position: "absolute", top: "15%", left: "20%", width: "500px", height: "500px", borderRadius: "50%",
-        background: "rgba(59,130,246,0.1)", filter: "blur(90px)" }} />
+        background: THEME.accent + "12", filter: "blur(90px)" }} />
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center", height: "78%", padding: "0 60px", gap: "28px" }}>
-        <div style={{ fontSize: "38px", fontWeight: 800, color: "#ffffff", textAlign: "center",
+        <div style={{ fontSize: "38px", fontWeight: 800, color: THEME.text, textAlign: "center",
           letterSpacing: "-0.02em", opacity: sp(5), lineHeight: 1.2 }}>{headingText}</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", width: "100%", maxWidth: "900px" }}>
           {metrics.map((m, i) => {
             const Icon = m.Icon;
             const cardSp = sp(15 + i * 10);
             return (
-              <div key={i} style={{ background: "rgba(8,17,37,0.75)", border: "1px solid rgba(255,255,255,0.15)",
-                backdropFilter: "blur(20px)", borderRadius: "20px", padding: "32px 24px",
+              <div key={i} style={{ background: THEME.cardBg, border: THEME.border,
+                backdropFilter: "blur(20px)", borderRadius: THEME.radius, padding: "32px 24px",
                 display: "flex", flexDirection: "column", alignItems: "center", gap: "14px",
-                opacity: cardSp, transform: "scale(" + cardSp + ")" }}>
+                opacity: cardSp, transform: "scale(" + cardSp + ")", boxShadow: THEME.shadow }}>
                 <Icon size={32} color={m.color} />
                 <div style={{ fontSize: "72px", fontWeight: 900, color: m.color,
                   fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{m.value}</div>
-                <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "16px", textAlign: "center" }}>{m.label}</div>
+                <div style={{ color: THEME.textSec, fontSize: "16px", textAlign: "center" }}>{m.label}</div>
               </div>
             );
           })}
@@ -597,13 +647,28 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
 export default GeneratedScene;`;
 }
 
-function safetyNetComparisonVersus(scene = {}) {
+function safetyNetComparisonVersus(scene = {}, themeTokens = null) {
   const safeHeading = (scene.heading || "So sánh").replace(/"/g, '\\"');
   const points = Array.isArray(scene.points) ? scene.points : [];
   const leftPoints = points.filter((_, i) => i % 2 === 0).slice(0, 3);
   const rightPoints = points.filter((_, i) => i % 2 === 1).slice(0, 3);
   const leftJson = JSON.stringify(leftPoints.length > 0 ? leftPoints : ["Phương pháp cũ", "Tốn nhiều thời gian", "Chi phí cao"]);
   const rightJson = JSON.stringify(rightPoints.length > 0 ? rightPoints : ["AI tự động hoá", "Nhanh hơn 10x", "Chi phí thấp"]);
+  const defaultTheme = {
+    bg: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.15), transparent 65%), #030712",
+    cardBg: "rgba(15, 23, 42, 0.75)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    accent: "#3b82f6",
+    orange: "#f97316",
+    cyan: "#93c5fd",
+    text: "#ffffff",
+    textSec: "rgba(255, 255, 255, 0.65)",
+    radius: "18px",
+    shadow: "0 10px 30px rgba(0,0,0,0.35)",
+    font: "'Be Vietnam Pro', 'Inter', sans-serif"
+  };
+  const themeObj = themeTokens || defaultTheme;
+
   return `import React from "react";
 import { useCurrentFrame, spring } from "remotion";
 
@@ -613,36 +678,37 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
   const headingText = "${safeHeading}";
   const leftPoints = ${leftJson};
   const rightPoints = ${rightJson};
+  const THEME = ${JSON.stringify(themeObj, null, 2)};
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
-      background: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.15), transparent 65%), #030712",
-      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif" }}>
+      background: THEME.bg,
+      fontFamily: THEME.font }}>
       <div style={{ position: "absolute", top: "10%", left: "10%", width: "500px", height: "500px", borderRadius: "50%",
         background: "rgba(239,68,68,0.08)", filter: "blur(90px)" }} />
       <div style={{ position: "absolute", top: "10%", right: "10%", width: "500px", height: "500px", borderRadius: "50%",
-        background: "rgba(59,130,246,0.08)", filter: "blur(90px)" }} />
+        background: THEME.accent + "12", filter: "blur(90px)" }} />
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center", height: "78%", padding: "0 50px", gap: "24px" }}>
-        <div style={{ fontSize: "40px", fontWeight: 800, color: "#ffffff", textAlign: "center",
+        <div style={{ fontSize: "40px", fontWeight: 800, color: THEME.text, textAlign: "center",
           opacity: sp(5), letterSpacing: "-0.02em" }}>{headingText}</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 52px 1fr", gap: "12px",
           alignItems: "center", width: "100%", opacity: sp(15) }}>
           <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.4)",
-            borderRadius: "18px", padding: "24px 20px" }}>
+            borderRadius: THEME.radius, padding: "24px 20px" }}>
             <div style={{ color: "#ef4444", fontWeight: 700, fontSize: "18px", marginBottom: "14px" }}>❌ TRƯỚC ĐÂY</div>
             {leftPoints.map((p, i) => (
-              <div key={i} style={{ color: "rgba(255,255,255,0.8)", marginBottom: "10px", fontSize: "17px" }}>• {p}</div>
+              <div key={i} style={{ color: THEME.text, opacity: 0.8, marginBottom: "10px", fontSize: "17px" }}>• {p}</div>
             ))}
           </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center",
             width: "52px", height: "52px", borderRadius: "50%",
-            background: "linear-gradient(135deg, #f97316, #3b82f6)", fontWeight: 900, fontSize: "17px", color: "#fff",
+            background: "linear-gradient(135deg, " + THEME.orange + ", " + THEME.accent + ")", fontWeight: 900, fontSize: "17px", color: "#fff",
             flexShrink: 0 }}>VS</div>
-          <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.45)",
-            borderRadius: "18px", padding: "24px 20px" }}>
-            <div style={{ color: "#60a5fa", fontWeight: 700, fontSize: "18px", marginBottom: "14px" }}>✅ VỚI AI</div>
+          <div style={{ background: THEME.cardBg, border: THEME.border,
+            borderRadius: THEME.radius, padding: "24px 20px", boxShadow: THEME.shadow }}>
+            <div style={{ color: THEME.accent, fontWeight: 700, fontSize: "18px", marginBottom: "14px" }}>✅ VỚI AI</div>
             {rightPoints.map((p, i) => (
-              <div key={i} style={{ color: "rgba(255,255,255,0.8)", marginBottom: "10px", fontSize: "17px" }}>• {p}</div>
+              <div key={i} style={{ color: THEME.text, opacity: 0.8, marginBottom: "10px", fontSize: "17px" }}>• {p}</div>
             ))}
           </div>
         </div>
@@ -653,27 +719,43 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
 export default GeneratedScene;`;
 }
 
-function safetyNetProcessTimeline(scene = {}) {
+function safetyNetProcessTimeline(scene = {}, themeTokens = null) {
   const safeHeading = (scene.heading || "Quy trình").replace(/"/g, '\\"');
   const points = Array.isArray(scene.points) && scene.points.length > 0 ? scene.points.slice(0, 3) : ["Phân tích yêu cầu", "Xây dựng giải pháp", "Ra mắt sản phẩm"];
   const stepsJson = JSON.stringify(points.map((p, i) => ({ num: i + 1, text: String(p) })));
+  const defaultTheme = {
+    bg: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.18), transparent 65%), #030712",
+    cardBg: "rgba(15, 23, 42, 0.75)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    accent: "#3b82f6",
+    orange: "#f97316",
+    cyan: "#93c5fd",
+    text: "#ffffff",
+    textSec: "rgba(255, 255, 255, 0.65)",
+    radius: "18px",
+    shadow: "0 10px 30px rgba(0,0,0,0.35)",
+    font: "'Be Vietnam Pro', 'Inter', sans-serif"
+  };
+  const themeObj = themeTokens || defaultTheme;
+
   return `import React from "react";
 import { useCurrentFrame, spring } from "remotion";
-
+ 
 export const GeneratedScene = ({ fps = 30, scene = {} }) => {
   const frame = useCurrentFrame();
   const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
   const headingText = "${safeHeading}";
   const steps = ${stepsJson};
+  const THEME = ${JSON.stringify(themeObj, null, 2)};
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
-      background: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.18), transparent 65%), #030712",
-      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif" }}>
+      background: THEME.bg,
+      fontFamily: THEME.font }}>
       <div style={{ position: "absolute", top: "15%", right: "10%", width: "500px", height: "500px", borderRadius: "50%",
-        background: "rgba(59,130,246,0.1)", filter: "blur(90px)" }} />
+        background: THEME.accent + "12", filter: "blur(90px)" }} />
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center", height: "78%", padding: "0 60px", gap: "28px" }}>
-        <div style={{ fontSize: "40px", fontWeight: 800, color: "#ffffff", textAlign: "center",
+        <div style={{ fontSize: "40px", fontWeight: 800, color: THEME.text, textAlign: "center",
           opacity: sp(5), letterSpacing: "-0.02em" }}>{headingText}</div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 0, width: "100%" }}>
           {steps.map((step, i) => {
@@ -682,17 +764,17 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
               <React.Fragment key={i}>
                 <div style={{ display: "flex", alignItems: "center", gap: "18px", opacity: stepSp }}>
                   <div style={{ width: "52px", height: "52px", borderRadius: "50%",
-                    border: "2px solid #3b82f6", background: "rgba(59,130,246,0.15)",
+                    border: "2px solid " + THEME.accent, background: THEME.accent + "25",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontWeight: 800, fontSize: "22px", color: "#60a5fa", flexShrink: 0 }}>{step.num}</div>
-                  <div style={{ background: "rgba(8,17,37,0.75)", border: "1px solid rgba(255,255,255,0.12)",
-                    borderRadius: "14px", padding: "16px 20px", flex: 1 }}>
-                    <div style={{ color: "#f97316", fontWeight: 700, fontSize: "20px" }}>{step.text}</div>
+                    fontWeight: 800, fontSize: "22px", color: THEME.cyan, flexShrink: 0 }}>{step.num}</div>
+                  <div style={{ background: THEME.cardBg, border: THEME.border,
+                    borderRadius: THEME.radius, padding: "16px 20px", flex: 1, boxShadow: THEME.shadow }}>
+                    <div style={{ color: THEME.orange, fontWeight: 700, fontSize: "20px" }}>{step.text}</div>
                   </div>
                 </div>
                 {i < steps.length - 1 && (
                   <div style={{ width: "4px", height: "36px",
-                    background: "linear-gradient(to bottom, #3b82f6, transparent)",
+                    background: "linear-gradient(to bottom, " + THEME.accent + ", transparent)",
                     marginLeft: "24px", opacity: stepSp }} />
                 )}
               </React.Fragment>
@@ -706,9 +788,24 @@ export const GeneratedScene = ({ fps = 30, scene = {} }) => {
 export default GeneratedScene;`;
 }
 
-function safetyNetCodeTerminal(scene = {}) {
+function safetyNetCodeTerminal(scene = {}, themeTokens = null) {
   const safeHeading = (scene.heading || "Phân cảnh Code & AI").replace(/"/g, '\\"');
   const safeVoiceover = (scene.voiceover || "").replace(/"/g, '\\"');
+  const defaultTheme = {
+    bg: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.22), transparent 65%), #030712",
+    cardBg: "rgba(15, 23, 42, 0.75)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    accent: "#3b82f6",
+    orange: "#f97316",
+    cyan: "#93c5fd",
+    text: "#ffffff",
+    textSec: "rgba(255, 255, 255, 0.65)",
+    radius: "18px",
+    shadow: "0 10px 30px rgba(0,0,0,0.35)",
+    font: "'Be Vietnam Pro', 'Inter', sans-serif"
+  };
+  const themeObj = themeTokens || defaultTheme;
+
   return `import React from "react";
 import { useCurrentFrame, spring } from "remotion";
 import { Terminal, Code, Cpu } from "lucide-react";
@@ -717,26 +814,27 @@ export const GeneratedScene = ({ fps = 30 }) => {
   const frame = useCurrentFrame();
   const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
   const headingText = "${safeHeading}";
+  const THEME = ${JSON.stringify(themeObj, null, 2)};
 
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
-      background: "radial-gradient(circle at 50% 30%, rgba(59,130,246,0.22), transparent 65%), #030712",
-      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif" }}>
+      background: THEME.bg,
+      fontFamily: THEME.font }}>
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center", height: "78%", padding: "0 60px", gap: "24px" }}>
-        <div style={{ fontSize: "38px", fontWeight: 800, color: "#ffffff", textAlign: "center", opacity: sp(5) }}>
+        <div style={{ fontSize: "38px", fontWeight: 800, color: THEME.text, textAlign: "center", opacity: sp(5) }}>
           {headingText}
         </div>
-        <div style={{ width: "100%", maxWidth: "840px", background: "rgba(10,15,30,0.9)", border: "1px solid rgba(59,130,246,0.4)",
-          borderRadius: "16px", padding: "20px", boxShadow: "0 20px 50px rgba(0,0,0,0.5)", opacity: sp(15), transform: "scale(" + sp(15) + ")" }}>
+        <div style={{ width: "100%", maxWidth: "840px", background: THEME.cardBg, border: THEME.border,
+          borderRadius: THEME.radius, padding: "20px", boxShadow: THEME.shadow, opacity: sp(15), transform: "scale(" + sp(15) + ")" }}>
           <div style={{ display: "flex", gap: "8px", marginBottom: "16px", alignItems: "center" }}>
             <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#ef4444" }} />
             <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#eab308" }} />
             <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#22c55e" }} />
-            <div style={{ flex: 1, textAlign: "center", fontSize: 13, color: "rgba(255,255,255,0.5)", fontFamily: "monospace" }}>hyperframe_diff.tsx</div>
+            <div style={{ flex: 1, textAlign: "center", fontSize: 13, color: THEME.textSec, fontFamily: "monospace" }}>hyperframe_diff.tsx</div>
           </div>
-          <div style={{ fontFamily: "monospace", fontSize: "16px", color: "#86efac", textAlign: "left", lineHeight: 1.6 }}>
-            <div style={{ color: "rgba(255,255,255,0.4)" }}>{"// Analyzing context & rendering dynamic UI"}</div>
+          <div style={{ fontFamily: "monospace", fontSize: "16px", color: THEME.cyan, textAlign: "left", lineHeight: 1.6 }}>
+            <div style={{ color: THEME.textSec }}>{"// Analyzing context & rendering dynamic UI"}</div>
             <div>{"+ const engine = new DynamicVisualEngine();"}</div>
             <div>{"+ engine.renderScene(sceneData);"}</div>
           </div>
@@ -752,34 +850,34 @@ export default GeneratedScene;`;
  * Dispatcher: picks the right safety net template based on scene.visualPattern / scene.visualConcept.
  * Every pattern gets a visually DISTINCT fallback — no more all-same numbered card list.
  */
-function generateSafetyNetTSX(scene = {}) {
+function generateSafetyNetTSX(scene = {}, themeTokens = null) {
   const pattern = ((scene.visualPattern || scene.visualConcept || "BULLET_GLASS") + "").toUpperCase();
 
   if (pattern.includes("CODE") || pattern.includes("TERMINAL") || pattern.includes("DIFF") || pattern.includes("DEV")) {
-    return safetyNetCodeTerminal(scene);
+    return safetyNetCodeTerminal(scene, themeTokens);
   }
   if (pattern.includes("FLOW") || pattern.includes("STEP") || pattern.includes("TIMELINE") || pattern.includes("PROCESS")) {
-    return safetyNetProcessTimeline(scene);
+    return safetyNetProcessTimeline(scene, themeTokens);
   }
   if (pattern.includes("VS") || pattern.includes("COMPARE") || pattern.includes("VERSUS")) {
-    return safetyNetComparisonVersus(scene);
+    return safetyNetComparisonVersus(scene, themeTokens);
   }
   if (pattern.includes("GAUGE") || pattern.includes("METRIC") || pattern.includes("PERCENT") || pattern.includes("RING") || pattern.includes("HERO")) {
-    return safetyNetHeroMetric(scene);
+    return safetyNetHeroMetric(scene, themeTokens);
   }
   if (pattern.includes("DUAL")) {
-    return safetyNetDualMetric(scene);
+    return safetyNetDualMetric(scene, themeTokens);
   }
   if (pattern.includes("HOOK") || pattern.includes("TITLE")) {
-    return safetyNetTitleHook(scene);
+    return safetyNetTitleHook(scene, themeTokens);
   }
 
   // Universal Glass Card Fallback for general bullet list concepts
-  return generateGlassCardSafetyNetTSX(scene);
+  return generateGlassCardSafetyNetTSX(scene, themeTokens);
 }
 
 // Generate premium multi-card step safety net fallback TSX
-function generateGlassCardSafetyNetTSX(scene = {}) {
+function generateGlassCardSafetyNetTSX(scene = {}, themeTokens = null) {
   const safeHeading = (scene.heading || "Phân cảnh Video AI").replace(/"/g, '\\"');
   const safeVoiceover = (scene.voiceover || "").replace(/"/g, '\\"');
 
@@ -795,6 +893,21 @@ function generateGlassCardSafetyNetTSX(scene = {}) {
   const itemsJson = JSON.stringify(cardItems);
   const alertStr = (scene?.alertText || "").replace(/"/g, '\\"');
 
+  const defaultTheme = {
+    bg: "radial-gradient(circle at 50% 25%, rgba(59, 130, 246, 0.25), transparent 70%), #030712",
+    cardBg: "rgba(15, 23, 42, 0.75)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    accent: "#3b82f6",
+    orange: "#f97316",
+    cyan: "#93c5fd",
+    text: "#ffffff",
+    textSec: "rgba(255, 255, 255, 0.65)",
+    radius: "18px",
+    shadow: "0 10px 30px rgba(0,0,0,0.35)",
+    font: "'Be Vietnam Pro', 'Inter', sans-serif"
+  };
+  const themeObj = themeTokens || defaultTheme;
+
   return `import React from "react";
 import { useCurrentFrame, spring } from "remotion";
 import { Sparkles, Cpu, Zap, Layers } from "lucide-react";
@@ -807,6 +920,7 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
   const headingText = "${safeHeading}";
   const cardItems = ${itemsJson};
   const alertText = "${alertStr}";
+  const THEME = ${JSON.stringify(themeObj, null, 2)};
 
   return (
     <div style={{
@@ -814,8 +928,8 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
       height: "100%",
       position: "relative",
       overflow: "hidden",
-      background: "radial-gradient(circle at 50% 25%, rgba(59, 130, 246, 0.25), transparent 70%), #030712",
-      fontFamily: "'Be Vietnam Pro', 'Inter', sans-serif"
+      background: THEME.bg,
+      fontFamily: THEME.font
     }}>
       <div style={{
         position: "absolute",
@@ -824,7 +938,7 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
         width: "500px",
         height: "500px",
         borderRadius: "50%",
-        background: "rgba(59, 130, 246, 0.15)",
+        background: THEME.accent + "1b",
         filter: "blur(90px)",
         transform: "translateY(" + (Math.sin(frame / 20) * 15) + "px)"
       }} />
@@ -835,7 +949,7 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
         width: "450px",
         height: "450px",
         borderRadius: "50%",
-        background: "rgba(249, 115, 22, 0.15)",
+        background: THEME.orange + "1b",
         filter: "blur(90px)",
         transform: "translateY(" + (Math.cos(frame / 20) * 15) + "px)"
       }} />
@@ -868,13 +982,13 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
               gap: "8px",
               padding: "6px 16px",
               borderRadius: "30px",
-              background: "rgba(249, 115, 22, 0.15)",
-              border: "1px solid rgba(249, 115, 22, 0.4)",
-              color: "#fb923c",
+              background: THEME.orange + "25",
+              border: "1px solid " + THEME.orange + "66",
+              color: THEME.orange,
               fontSize: "18px",
               fontWeight: 700
             }}>
-              <Sparkles size={20} color="#fb923c" />
+              <Sparkles size={20} color={THEME.orange} />
               <span>{alertText}</span>
             </div>
           ) : null}
@@ -882,7 +996,7 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
           <h2 style={{
             fontSize: "44px",
             fontWeight: 800,
-            color: "#ffffff",
+            color: THEME.text,
             margin: 0,
             lineHeight: 1.2,
             letterSpacing: "-0.02em"
@@ -909,11 +1023,11 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
                 alignItems: "center",
                 gap: "20px",
                 padding: "20px 24px",
-                background: "rgba(15, 23, 42, 0.75)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
+                background: THEME.cardBg,
+                border: THEME.border,
                 backdropFilter: "blur(20px)",
-                borderRadius: "18px",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
+                borderRadius: THEME.radius,
+                boxShadow: THEME.shadow,
                 transform: "scale(" + itemSpr + ")",
                 boxSizing: "border-box"
               }}>
@@ -921,12 +1035,12 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
                   width: "48px",
                   height: "48px",
                   borderRadius: "50%",
-                  background: "linear-gradient(135deg, rgba(249,115,22,0.3), rgba(59,130,246,0.3))",
-                  border: "1px solid rgba(249,115,22,0.6)",
+                  background: "linear-gradient(135deg, " + THEME.orange + "4d, " + THEME.accent + "4d)",
+                  border: "1px solid " + THEME.orange + "99",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#f97316",
+                  color: THEME.orange,
                   fontSize: "18px",
                   fontWeight: 800,
                   flexShrink: 0
@@ -937,7 +1051,7 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
                   <p style={{
                     fontSize: "20px",
-                    color: "#ffffff",
+                    color: THEME.text,
                     margin: 0,
                     fontWeight: 600,
                     lineHeight: 1.45
@@ -946,7 +1060,7 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
                   </p>
                 </div>
 
-                <IconComp size={24} color="#93c5fd" style={{ opacity: 0.8, flexShrink: 0 }} />
+                <IconComp size={24} color={THEME.cyan} style={{ opacity: 0.8, flexShrink: 0 }} />
               </div>
             );
           })}
@@ -1826,7 +1940,30 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
     const SAFETY_NET_PATTERNS = ["BULLET_GLASS", "PROCESS_TIMELINE", "STAT_GRID_2X2", "QUOTE_NATURE_CARD", "DUAL_METRIC_CARDS", "HERO_METRIC_GLOW"];
     const safetyNetPattern = scene.visualPattern || SAFETY_NET_PATTERNS[index % SAFETY_NET_PATTERNS.length];
     console.warn(`[Studio AI Gen] 🛡️ Activating Pattern Safety Net for scene ${index} (pattern: ${safetyNetPattern})`);
-    tsxCode = generateSafetyNetTSX(scene);
+    
+    // Resolve theme tokens (Layer 7 / Safety Net Theme Integration)
+    const styleData = vde.getStyle(theme) || {};
+    const colors = styleData.tokens?.colors || {};
+    const radius = styleData.tokens?.radius || "16px";
+    const shadow = styleData.tokens?.shadow || "none";
+    const border = styleData.tokens?.border || "1px solid rgba(255, 255, 255, 0.1)";
+    const fontTitle = styleData.tokens?.fonts?.title || '"Be Vietnam Pro", sans-serif';
+
+    const themeTokens = {
+      bg: colors.background || "#030712",
+      cardBg: colors.cardBg || "rgba(8, 17, 37, 0.75)",
+      border: colors.border || border,
+      accent: colors.accent || "#3b82f6",
+      orange: "#f97316",
+      cyan: "#93c5fd",
+      text: colors.text || "#ffffff",
+      textSec: colors.textSecondary || "rgba(255, 255, 255, 0.65)",
+      radius,
+      shadow,
+      font: fontTitle
+    };
+
+    tsxCode = generateSafetyNetTSX(scene, themeTokens);
     compiledJS = compileTSX(tsxCode);
   }
 
