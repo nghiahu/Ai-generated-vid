@@ -443,6 +443,8 @@ export const StoryboardEditor = ({
   onUpdateScene,
   onRegenerateSceneTts,
   regeneratingSceneId,
+  onRegenerateSceneCode,
+  regeneratingCodeSceneId,
   loading,
   loadingMessage,
   selectedSceneId,
@@ -1719,451 +1721,13 @@ export const StoryboardEditor = ({
                     </button>
                   </div>
 
-                  {/* Unsplash Search & Suggestion Panel */}
-                  <div style={{ borderTop: "1px solid #000000", paddingTop: "15px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                      <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Background Media</label>
-                      <button
-                        type="button"
-                        onClick={() => handleImageUploadClick(scene.id)}
-                        disabled={uploadingScenes[scene.id]}
-                        style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
-                      >
-                        {uploadingScenes[scene.id] ? "⏳ Uploading..." : "📁 Upload"}
-                      </button>
-                    </div>
 
-                    <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
-                      <input
-                        className="form-input-mono"
-                        type="text"
-                        placeholder="Search English keywords (e.g., code, zen)..."
-                        value={searchQueries[scene.id] || ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setSearchQueries(prev => ({ ...prev, [scene.id]: val }));
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleSearchImages(scene.id);
-                        }}
-                        style={{ padding: "8px", fontSize: "12px" }}
-                      />
-                      <button
-                        className="btn-mono btn-mono-secondary"
-                        style={{ padding: "8px 15px", whiteSpace: "nowrap", height: "auto" }}
-                        disabled={searchingImages[scene.id]}
-                        onClick={() => handleSearchImages(scene.id)}
-                      >
-                        {searchingImages[scene.id] ? "..." : "Tìm"}
-                      </button>
-                    </div>
-
-                    {/* Image Suggestions Grid */}
-                    <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
-                      {/* Default Accent HEX Gradient choice */}
-                      <div
-                        onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", -1)}
-                        style={{
-                          width: "48px",
-                          height: "48px",
-                          flexShrink: 0,
-                          borderRadius: "4px",
-                          border: scene.selectedMediaIndex === -1 ? "3px solid #000000" : "1px solid #cccccc",
-                          background: `linear-gradient(135deg, ${scene.accentColor || "#FFB7C5"}aa 0%, #060813 100%)`,
-                          cursor: "pointer",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "8px",
-                          fontWeight: "bold",
-                          color: "#ffffff",
-                          textAlign: "center",
-                          padding: "2px",
-                          fontFamily: "Space Grotesk, sans-serif",
-                          lineHeight: "1.1",
-                          boxSizing: "border-box",
-                          textTransform: "uppercase"
-                        }}
-                      >
-                        Nền màu nhấn
-                      </div>
-
-                      {scene.mediaList && scene.mediaList.map((imgUrl, imgIdx) => (
-                        <div
-                          key={imgIdx}
-                          onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", imgIdx)}
-                          style={{
-                            width: "48px",
-                            height: "48px",
-                            flexShrink: 0,
-                            borderRadius: "4px",
-                            border: scene.selectedMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
-                            overflow: "hidden",
-                            cursor: "pointer"
-                          }}
-                        >
-                          <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 </div>
 
                 {/* Right Side: Editing Inputs */}
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px" }} onClick={(e) => e.stopPropagation()}>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-                    <div>
-                      <label className="form-label-mono" style={{ fontSize: "11px" }}>Layout Family</label>
-                      <select
-                        className="form-input-mono"
-                        value={normalizeFamily(scene.layoutFamily, scene.visualLayout)}
-                        onChange={(e) => {
-                          const newFamily = e.target.value;
-                          const layouts = LAYOUTS_BY_FAMILY[newFamily] || [];
-                          const defaultLayout = layouts[0]?.value || "AppCardConcept";
-
-                          onUpdateScene(scene.id, {
-                            ...scene,
-                            layoutFamily: newFamily,
-                            visualLayout: defaultLayout
-                          });
-                        }}
-                        style={{ padding: "8px", fontSize: "12px" }}
-                      >
-                        {Object.keys(LAYOUTS_BY_FAMILY).map((fam) => (
-                          <option key={fam} value={fam}>{fam}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="form-label-mono" style={{ fontSize: "11px" }}>Visual Layout</label>
-                      <select
-                        className="form-input-mono"
-                        value={scene.visualLayout}
-                        onChange={(e) => handleFieldChange(scene.id, "visualLayout", e.target.value)}
-                        style={{ padding: "8px", fontSize: "12px" }}
-                      >
-                        {(LAYOUTS_BY_FAMILY[normalizeFamily(scene.layoutFamily, scene.visualLayout)] || LAYOUTS_BY_FAMILY["Opening / Headline"]).map((lay) => (
-                          <option key={lay.value} value={lay.value}>{lay.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="form-label-mono" style={{ fontSize: "11px" }}>Duration (Sec)</label>
-                      <input
-                        className="form-input-mono"
-                        type="number"
-                        step="0.5"
-                        value={scene.duration}
-                        onChange={(e) => handleFieldChange(scene.id, "duration", parseFloat(e.target.value) || 6.0)}
-                        style={{ padding: "8px", fontSize: "12px" }}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="form-label-mono" style={{ fontSize: "11px" }}>Heading</label>
-                    <input
-                      className="form-input-mono"
-                      type="text"
-                      value={localTexts[`${scene.id}_heading`] !== undefined ? localTexts[`${scene.id}_heading`] : scene.heading}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setLocalTexts(prev => ({ ...prev, [`${scene.id}_heading`]: val }));
-                      }}
-                      onBlur={() => {
-                        const val = localTexts[`${scene.id}_heading`];
-                        if (val !== undefined && val !== scene.heading) {
-                          handleFieldChange(scene.id, "heading", val);
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.target.blur();
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="form-label-mono" style={{ fontSize: "11px" }}>Từ khóa nổi bật (cách nhau bằng dấu phẩy)</label>
-                    <input
-                      className="form-input-mono"
-                      type="text"
-                      placeholder="Ví dụ: Vendor, AI Agent"
-                      value={
-                        localTexts[`${scene.id}_highlightWords`] !== undefined
-                          ? localTexts[`${scene.id}_highlightWords`]
-                          : (scene.sceneIntent?.highlightWords || []).join(", ")
-                      }
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setLocalTexts(prev => ({ ...prev, [`${scene.id}_highlightWords`]: val }));
-                      }}
-                      onBlur={() => {
-                        const val = localTexts[`${scene.id}_highlightWords`];
-                        if (val !== undefined) {
-                          const wordsArray = val.split(",").map(w => w.trim()).filter(w => w.length > 0);
-                          const currentHighlightWords = scene.sceneIntent?.highlightWords || [];
-                          if (JSON.stringify(wordsArray) !== JSON.stringify(currentHighlightWords)) {
-                            const updatedIntent = {
-                              ...(scene.sceneIntent || {}),
-                              highlightWords: wordsArray
-                            };
-                            handleFieldChange(scene.id, "sceneIntent", updatedIntent);
-                          }
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.target.blur();
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                    <div>
-                      <label className="form-label-mono" style={{ fontSize: "11px" }}>Hiệu ứng hạt (Theme)</label>
-                      <select
-                        className="form-input-mono"
-                        value={scene.theme || "default"}
-                        onChange={(e) => handleFieldChange(scene.id, "theme", e.target.value)}
-                        style={{ padding: "8px", fontSize: "12px" }}
-                      >
-                        <option value="default">Mặc định (Bokeh)</option>
-                        <option value="japan">Nhật Bản (Sakura)</option>
-                        <option value="tech">Công nghệ (Digital)</option>
-                        <option value="finance">Tài chính (Gold)</option>
-                        <option value="nature">Thiên nhiên (Lá rụng)</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="form-label-mono" style={{ fontSize: "11px" }}>Màu nhấn (Accent HEX)</label>
-                      <div style={{ display: "flex", gap: "6px" }}>
-                        <input
-                          className="form-input-mono"
-                          type="color"
-                          value={scene.accentColor || "#FFB7C5"}
-                          onChange={(e) => handleFieldChange(scene.id, "accentColor", e.target.value)}
-                          style={{ width: "35px", height: "35px", padding: 0, cursor: "pointer", border: "2px solid #000" }}
-                        />
-                        <input
-                          className="form-input-mono"
-                          type="text"
-                          value={localTexts[`${scene.id}_accentColor`] !== undefined ? localTexts[`${scene.id}_accentColor`] : (scene.accentColor || "#FFB7C5")}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setLocalTexts(prev => ({ ...prev, [`${scene.id}_accentColor`]: val }));
-                          }}
-                          onBlur={() => {
-                            const val = localTexts[`${scene.id}_accentColor`];
-                            if (val !== undefined && val !== (scene.accentColor || "#FFB7C5")) {
-                              handleFieldChange(scene.id, "accentColor", val);
-                            }
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              e.target.blur();
-                            }
-                          }}
-                          style={{ padding: "8px", fontSize: "12px", flex: 1 }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Các Khối Nội Dung (Points & Hiệu ứng)</label>
-                      <button
-                        type="button"
-                        onClick={() => handleAddPoint(scene.id, scene.points)}
-                        style={{
-                          padding: "3px 8px",
-                          fontFamily: "Space Grotesk",
-                          fontWeight: "bold",
-                          fontSize: "10px",
-                          backgroundColor: "#00E5FF",
-                          color: "#000000",
-                          border: "none",
-                          borderRadius: "4px",
-                          cursor: "pointer"
-                        }}
-                      >
-                        + Thêm ý chính
-                      </button>
-                    </div>
-
-                    <div style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4px",
-                      maxHeight: "260px",
-                      overflowY: "auto",
-                      paddingRight: "4px",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      borderRadius: "6px",
-                      padding: "6px",
-                      backgroundColor: "rgba(0, 0, 0, 0.15)"
-                    }}>
-                      {getNormalizedPoints(scene.points).length === 0 ? (
-                        <div style={{ textAlign: "center", padding: "15px", fontSize: "12px", opacity: 0.4 }}>Chưa có ý chính nào. Bấm "+ Thêm ý chính" để tạo mới.</div>
-                      ) : (
-                        getNormalizedPoints(scene.points).map((pt, idx) => (
-                          <div key={idx} style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "6px",
-                            padding: "5px 6px",
-                            borderRadius: "5px",
-                            backgroundColor: "rgba(255,255,255,0.03)",
-                            border: "1px solid rgba(255,255,255,0.06)"
-                          }}>
-                            {/* Index badge */}
-                            <span style={{
-                              fontSize: "10px",
-                              fontFamily: "monospace",
-                              opacity: 0.35,
-                              flexShrink: 0,
-                              width: "18px",
-                              textAlign: "right"
-                            }}>#{idx + 1}</span>
-
-                            {/* Text input */}
-                            <input
-                              type="text"
-                              className="form-input-mono"
-                              value={localTexts[`${scene.id}_point_${idx}`] !== undefined ? localTexts[`${scene.id}_point_${idx}`] : pt.text}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setLocalTexts(prev => ({ ...prev, [`${scene.id}_point_${idx}`]: val }));
-                              }}
-                              onBlur={() => {
-                                const val = localTexts[`${scene.id}_point_${idx}`];
-                                if (val !== undefined && val !== pt.text) {
-                                  handlePointChange(scene.id, scene.points, idx, "text", val);
-                                }
-                              }}
-                              onKeyDown={(e) => { if (e.key === "Enter") e.target.blur(); }}
-                              placeholder="Nội dung hiển thị..."
-                              style={{ flex: 1, padding: "4px 7px", fontSize: "12px", minWidth: 0 }}
-                            />
-
-                            {/* Animation select — compact */}
-                            <select
-                              className="form-input-mono"
-                              value={pt.animation}
-                              onChange={(e) => handlePointChange(scene.id, scene.points, idx, "animation", e.target.value)}
-                              title="Hiệu ứng xuất hiện"
-                              style={{ padding: "4px 4px", fontSize: "11px", height: "auto", width: "110px", flexShrink: 0 }}
-                            >
-                              <option value="slide-up">↑ Slide Up</option>
-                              <option value="scale-in">⊕ Scale In</option>
-                              <option value="fade-in">◎ Fade In</option>
-                              <option value="blur-in">✦ Blur In</option>
-                              <option value="slide-left">← Slide Left</option>
-                              <option value="slide-right">→ Slide Right</option>
-                            </select>
-
-                            {/* Delay slider + value */}
-                            <div style={{ display: "flex", alignItems: "center", gap: "5px", flexShrink: 0, width: "110px" }}>
-                              <input
-                                type="range"
-                                min="0"
-                                max={scene.duration || 10}
-                                step="0.1"
-                                value={pt.delay}
-                                onChange={(e) => handlePointChange(scene.id, scene.points, idx, "delay", parseFloat(e.target.value))}
-                                style={{ flex: 1, height: "3px", accentColor: "#00E5FF", cursor: "pointer" }}
-                              />
-                              <span style={{
-                                fontSize: "11px",
-                                fontWeight: "700",
-                                fontFamily: "Space Grotesk, monospace",
-                                width: "32px",
-                                textAlign: "center",
-                                flexShrink: 0,
-                                color: "#111111",
-                                backgroundColor: "#ffffff",
-                                borderRadius: "4px",
-                                padding: "1px 3px",
-                                letterSpacing: "-0.3px"
-                              }}>
-                                {pt.delay}s
-                              </span>
-                            </div>
-
-                            {/* Delete button */}
-                            <button
-                              type="button"
-                              onClick={() => handleRemovePoint(scene.id, scene.points, idx)}
-                              style={{
-                                background: "none",
-                                border: "none",
-                                color: "rgba(255,77,77,0.6)",
-                                cursor: "pointer",
-                                fontSize: "13px",
-                                padding: "0 2px",
-                                flexShrink: 0,
-                                lineHeight: 1,
-                                transition: "color 0.15s"
-                              }}
-                              onMouseOver={(e) => e.currentTarget.style.color = "#ff4d4d"}
-                              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255,77,77,0.6)"}
-                              title="Xóa ý này"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                      <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Voiceover Script</label>
-                      {onRegenerateSceneTts && scene.voiceover && (
-                        <button
-                          type="button"
-                          onClick={() => onRegenerateSceneTts(scene.id)}
-                          disabled={regeneratingSceneId === scene.id}
-                          style={{
-                            background: "none",
-                            border: "none",
-                            fontSize: "11px",
-                            color: regeneratingSceneId === scene.id ? "#94a3b8" : "var(--color-primary, #2563eb)",
-                            textDecoration: regeneratingSceneId === scene.id ? "none" : "underline",
-                            cursor: regeneratingSceneId === scene.id ? "not-allowed" : "pointer",
-                            fontFamily: "Space Grotesk, sans-serif",
-                            fontWeight: "bold",
-                            padding: 0,
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "4px"
-                          }}
-                        >
-                          {regeneratingSceneId === scene.id ? (
-                            <>
-                              <span style={{
-                                display: "inline-block",
-                                width: "10px",
-                                height: "10px",
-                                border: "2px solid #2563eb",
-                                borderTopColor: "transparent",
-                                borderRadius: "50%",
-                                animation: "spin 0.8s linear infinite"
-                              }} />
-                              <span>⏳ Đang tạo giọng đọc...</span>
-                            </>
-                          ) : (
-                            "🔊 Tái tạo giọng đọc"
-                          )}
-                        </button>
-                      )}
-                    </div>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px", justifyContent: "space-between" }} onClick={(e) => e.stopPropagation()}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+                    <label className="form-label-mono" style={{ fontSize: "12px", fontWeight: "bold" }}>Kịch bản giọng đọc (Voiceover Script)</label>
                     <textarea
                       className="form-input-mono"
                       value={localTexts[`${scene.id}_voiceover`] !== undefined ? localTexts[`${scene.id}_voiceover`] : scene.voiceover}
@@ -2177,8 +1741,62 @@ export const StoryboardEditor = ({
                           handleFieldChange(scene.id, "voiceover", val);
                         }
                       }}
-                      style={{ height: "60px", fontSize: "13px", resize: "none" }}
+                      placeholder="Nhập nội dung giọng thoại..."
+                      style={{ height: "140px", fontSize: "14px", lineHeight: "1.6", padding: "12px", resize: "vertical" }}
                     />
+                  </div>
+
+                  <div style={{ display: "flex", gap: "12px", marginTop: "12px" }}>
+                    {onRegenerateSceneCode && (
+                      <button
+                        type="button"
+                        className="btn-mono btn-mono-primary"
+                        onClick={() => onRegenerateSceneCode(scene.id, localTexts[`${scene.id}_voiceover`] || scene.voiceover)}
+                        disabled={regeneratingCodeSceneId === scene.id || loading}
+                        style={{
+                          flex: 1,
+                          padding: "12px",
+                          fontSize: "13px",
+                          fontWeight: "bold",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                          backgroundColor: "#2563eb",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          cursor: (regeneratingCodeSceneId === scene.id || loading) ? "not-allowed" : "pointer"
+                        }}
+                      >
+                        {regeneratingCodeSceneId === scene.id ? "⏳ Đang sinh..." : "⚡ Sinh lại video bằng AI"}
+                      </button>
+                    )}
+
+                    {onRegenerateSceneTts && scene.voiceover && (
+                      <button
+                        type="button"
+                        className="btn-mono btn-mono-secondary"
+                        onClick={() => onRegenerateSceneTts(scene.id)}
+                        disabled={regeneratingSceneId === scene.id || loading}
+                        style={{
+                          padding: "12px 20px",
+                          fontSize: "13px",
+                          fontWeight: "bold",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                          backgroundColor: "#f1f5f9",
+                          color: "#334155",
+                          border: "1px solid #cbd5e1",
+                          borderRadius: "6px",
+                          cursor: (regeneratingSceneId === scene.id || loading) ? "not-allowed" : "pointer"
+                        }}
+                      >
+                        {regeneratingSceneId === scene.id ? "⏳ Đang tạo..." : "🔊 Tạo lại giọng đọc (TTS)"}
+                      </button>
+                    )}
                   </div>
                 </div>
               </article>
