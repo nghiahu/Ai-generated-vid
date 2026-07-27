@@ -54,23 +54,73 @@
 
           // Wait brief frame for layout to render fully
           requestAnimationFrame(() => {
-            // Visual Overlap and Safe Area checks
             const errors = [];
-            const elements = rootEl.querySelectorAll('*');
-            
-            // Check safe zone overflow (bottom 22% is y > 1498px)
+            const elements = Array.from(rootEl.querySelectorAll('h1, h2, p, img, span, div, [class*="card"], [class*="tile"]'))
+              .filter(el => {
+                const rect = el.getBoundingClientRect();
+                return rect.width > 0 && rect.height > 0 && (el.innerText?.trim() || el.tagName === 'IMG');
+              });
+
+            // 1. Check safe zone overflow (bottom 22% is y > 1498px)
             elements.forEach(el => {
               const rect = el.getBoundingClientRect();
               if (rect.bottom > 1498 && el.innerText?.trim()) {
-                errors.push({ type: 'safe-zone-overflow', message: `Element containing "${el.innerText.substring(0, 15)}..." overflowed into subtitle safe zone` });
+                errors.push({ type: 'safe-zone-overflow', message: `Element containing "${el.innerText.trim().substring(0, 15)}..." overflowed into subtitle safe zone` });
               }
             });
 
-            // Post successful validation
-            window.parent.postMessage({
-              type: 'VALIDATION_SUCCESS',
-              errors
-            }, '*');
+            // 2. Check Overlaps (Pairwise Collisions)
+            for (let i = 0; i < elements.length; i++) {
+              for (let j = i + 1; j < elements.length; j++) {
+                const el1 = elements[i];
+                const el2 = elements[j];
+
+                // Skip parent-child overlap checks
+                if (el1.contains(el2) || el2.contains(el1)) continue;
+
+                const r1 = el1.getBoundingClientRect();
+                const r2 = el2.getBoundingClientRect();
+
+                const xOverlap = Math.max(0, Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left));
+                const yOverlap = Math.max(0, Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top));
+                const intersection = xOverlap * yOverlap;
+
+                if (intersection > 0) {
+                  const area1 = r1.width * r1.height;
+                  const area2 = r2.width * r2.height;
+                  const minArea = Math.min(area1, area2);
+                  const ratio = intersection / minArea;
+                  
+                  if (ratio > 0.20) {
+                    errors.push({
+                      type: 'visual-overlap',
+                      message: `Overlap collision: "${el1.innerText?.trim().substring(0, 10) || el1.tagName}" overlaps with "${el2.innerText?.trim().substring(0, 10) || el2.tagName}" by ${(ratio * 100).toFixed(0)}%`
+                    });
+                  }
+                }
+              }
+            }
+
+            // 3. Check Text Truncation / Overflow Clipping
+            elements.forEach(el => {
+              if (el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth) {
+                errors.push({ type: 'text-clipping', message: `Text truncated/overflowed: "${el.innerText?.trim().substring(0, 15)}..."` });
+              }
+            });
+
+            // Post validation result
+            if (errors.length > 0) {
+              window.parent.postMessage({
+                type: 'VALIDATION_ERROR',
+                error: errors[0].message,
+                errors
+              }, '*');
+            } else {
+              window.parent.postMessage({
+                type: 'VALIDATION_SUCCESS',
+                errors: []
+              }, '*');
+            }
           });
         } catch (err) {
           window.parent.postMessage({ type: 'VALIDATION_ERROR', error: err.message, stack: err.stack }, '*');
