@@ -411,6 +411,55 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
     fetchThemes();
   }, []);
 
+  // Handle Browser Sandbox Validation Telemetry
+  useEffect(() => {
+    const handleSandboxMessage = async (event) => {
+      if (!event.data || !event.data.type) return;
+      
+      if (event.data.type === 'VALIDATION_SUCCESS' || event.data.type === 'VALIDATION_ERROR') {
+        const isSuccess = event.data.type === 'VALIDATION_SUCCESS';
+        const validationId = window.__activeValidationId;
+        
+        if (!validationId) return;
+
+        try {
+          await axios.post("http://localhost:5000/api/studio-ai-gen/validate-result", {
+            validationId,
+            success: isSuccess,
+            error: isSuccess ? null : event.data.error,
+            stack: isSuccess ? null : event.data.stack,
+            visualErrors: event.data.errors || []
+          });
+        } catch (err) {
+          console.error("Failed to post validation telemetry:", err);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleSandboxMessage);
+    return () => window.removeEventListener('message', handleSandboxMessage);
+  }, []);
+
+  // Expose global callback for orchestrator triggering
+  useEffect(() => {
+    window.triggerBrowserValidation = (validationId, code, sceneData) => {
+      const iframe = document.getElementById('validation-sandbox-iframe');
+      if (!iframe) {
+        console.warn("Validation sandbox iframe not mounted");
+        return;
+      }
+      window.__activeValidationId = validationId;
+      iframe.contentWindow.postMessage({
+        type: 'VALIDATE_CODE',
+        code,
+        sceneData
+      }, '*');
+    };
+    return () => {
+      delete window.triggerBrowserValidation;
+    };
+  }, []);
+
   // Fetch previous media items when Media Modal opens
   useEffect(() => {
     if (showMediaModal) {
@@ -2291,6 +2340,13 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
           </div>
         </div>
       )}
+
+      {/* Hidden Validation Sandbox Iframe */}
+      <iframe
+        id="validation-sandbox-iframe"
+        src="http://localhost:5000/validation-sandbox.html"
+        style={{ display: "none" }}
+      />
     </div>
   );
 };
