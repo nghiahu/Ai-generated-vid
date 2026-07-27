@@ -4,3 +4,4 @@
 |---|---|---|
 | 1 | Update App Navigation and Routing | [x] completed |
 | 2 | Simplify Dashboard to Show Only AI Gen Projects | [x] completed |
+| 3 | Clean up Project Header and Workspace view | [x] completed |
