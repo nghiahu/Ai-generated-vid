@@ -1,42 +1,6 @@
-# Task List: Tối ưu hóa phát âm thuật ngữ công nghệ và giảm ngắt quãng trong TTS
+# Task Tracker — Remove Manual Studio & Filter AI Gen Only
 
-| Task ID | Description | Status |
+| # | Task | Status |
 |---|---|---|
-| TASK-01 | Dọn dẹp `TECH_TERMS_TRANSLITERATION` trong `phoneme.js` (loại bỏ các từ tiếng Anh thông dụng để đọc trực tiếp) | `[x]` |
-| TASK-02 | Sửa đổi phiên âm tĩnh các từ còn lại trong `TECH_TERMS_TRANSLITERATION` (`open` -> `'âu-pơn'`, `'paper'` -> `'pây-pơ'`) | `[x]` |
-| TASK-03 | Đồng bộ và cập nhật `TECH_TERMS_WHITELIST` trong `phoneme.js` | `[x]` |
-| TASK-04 | Chạy thử nghiệm script kiểm thử và nghe file âm thanh để xác minh kết quả | `[x]` |
-| TASK-05 | Cập nhật hàm `getPhonemesForTerms` trong `phoneme.js` để bỏ qua tra cứu cache DB đối với các từ trong whitelist | `[x]` |
-| TASK-06 | Viết script và dọn dẹp các bản ghi cache cũ trong `phoneme_cache` database | `[x]` |
-| TASK-07 | Chạy kiểm thử tự động và thủ công lại để xác nhận | `[x]` |
-| TASK-08 | Định nghĩa hàm `normalizeVisualPattern` trong `aiGen.js` và thực hiện chuẩn hóa visualPattern đầu vào | `[x]` |
-| TASK-09 | Loại bỏ `'prompt': 'bờ-rom'` khỏi `phoneme.js` để đồng bộ lại file code | `[x]` |
-| TASK-10 | Chạy script kiểm thử để kiểm tra tính đúng đắn và cập nhật cơ sở dữ liệu cho dự án hiện tại | `[x]` |
-| TASK-11 | Cập nhật `bgImageRule` và System Instruction trong `aiGen.js` cho độ nét phông nền 100% | `[x]` |
-| TASK-12 | Cập nhật tất cả các Safety Net Fallback Templates để bỏ hiệu ứng mờ phông nền | `[x]` |
-| TASK-13 | Chạy script tái sinh code cho dự án hiện tại và kiểm tra kết quả hiển thị | `[x]` |
-| TASK-14 | Xử lý cờ `bypassCache: true` khi người dùng chủ động bấm "Sinh lại" phân cảnh | `[x]` |
-| TASK-15 | Chẩn đoán lỗi mất nền khi xuất video: `resolvedAssets` không được lưu vào DB | `[x]` |
-| TASK-16 | Sửa `aiGen.js`: return `resolvedAssets` từ `generateSingleSceneCode`, cập nhật `bgImageRule` dùng `scene.resolvedAssets.bgImage` động, thêm bgImage layer vào tất cả 7 Safety Net templates | `[x]` |
-| TASK-17 | Chạy script validate và tái sinh toàn bộ scene để áp dụng fix bgImage mới | `[x]` |
-| TASK-18 | Cập nhật `aiGen.js` & `studioAiGenRoute.js` để tiếp nhận `userNote` và inject vào Gemini Prompt | `[x]` |
-| TASK-19 | Cập nhật `api.js` truyền `userNote` lên backend | `[x]` |
-| TASK-20 | Nâng cấp giao diện modal "Sinh Lại Phân Cảnh" trong `StudioAIGen.jsx` với 2 ô textarea cho Voiceover & Lưu ý riêng | `[x]` |
-| TASK-21 | Bổ sung danh sách Vbee Voice phân nhóm theo Provider & Vibe vào Dropdown Voiceover ở Frontend và xử lý Mock Fallback ở Backend | `[x]` |
-| TASK-22 | Tích hợp Vbee API chính thức vào `backend/services/tts.js` với VBEE_API_KEY & VBEE_APP_ID | `[x]` |
-| TASK-23 | Tự động trích xuất `usageMetadata` từ Gemini API và lưu tích lũy token vào DB cho các luồng Studio AI Gen | `[x]` |
-| TASK-24 | Xử lý lỗi Rate Limit 429 & Loại bỏ gemini-2.0-flash khỏi danh sách fallback sang các model hoạt động (gemini-2.5-flash, gemini-2.5-flash-lite, gemini-1.5-flash) | `[x]` |
-| TASK-25 | Cập nhật danh sách Model Gemini chuẩn xác theo live API (gemini-3.1-flash-lite, gemini-3.5-flash-lite, gemini-3.5-flash, gemini-3.6-flash, gemini-flash-lite-latest) và loại bỏ hoàn toàn 404 models | `[x]` |
-| TASK-26 | Khởi tạo projectId trong DB trước khi sinh video & Bảo tồn tokenUsage trong `saveAIGenProject` | `[x]` |
-
-
-
-
-
-
-
-
-
-
-
-
+| 1 | Update App Navigation and Routing | [x] completed |
+| 2 | Simplify Dashboard to Show Only AI Gen Projects | [x] completed |
