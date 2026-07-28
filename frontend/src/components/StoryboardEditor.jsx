@@ -319,11 +319,11 @@ const VDE_PRESET_STYLES = [
     description: "Nền Royal Navy đậm, họa tiết vi mạch SVG cyan phát sáng, thẻ thông số Dashboard và nút CTA Gold nổi bật.",
     tokens: {
       background: "linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)",
-      cardBg: "rgba(0, 40, 160, 0.35)",
-      border: "1.5px solid rgba(0, 212, 255, 0.4)",
+      cardBg: "rgba(0, 25, 80, 0.55)",
+      border: "1.5px solid rgba(255, 215, 0, 0.45)",
       text: "#FFFFFF",
-      textSecondary: "rgba(255, 255, 255, 0.75)",
-      accent: "#00d4ff",
+      textSecondary: "rgba(255, 255, 255, 0.85)",
+      accent: "#FFD700",
       radius: "12px",
       shadow: "0 0 30px rgba(0, 212, 255, 0.35)",
       fontFamily: "Chakra Petch, sans-serif"

@@ -27,14 +27,26 @@ export const highlightHeadingText = (text: string, accentColor: string, theme?: 
   return parts.map((part, index) => {
     const isMatch = sortedKeywords.some(k => k.toLowerCase() === part.toLowerCase());
     if (isMatch) {
-      if (theme === "ai_hub_grid" || theme === "fintech_edu" || theme?.includes("fintech")) {
+      if (theme === "fintech_edu" || theme?.includes("fintech")) {
         return (
           <span 
             key={index} 
             style={{ 
-              background: (theme === "fintech_edu" || theme?.includes("fintech"))
-                ? "linear-gradient(to bottom, #ffffff 20%, #00e5ff 60%, #FFD700 100%)"
-                : "linear-gradient(to bottom, #ffffff 10%, #00e5ff 60%, #3b82f6 100%)",
+              color: "#FFD700",
+              textShadow: "0 2px 12px rgba(0, 0, 0, 0.95), 0 0 24px rgba(255, 215, 0, 0.7)",
+              fontWeight: 900
+            }}
+          >
+            {part}
+          </span>
+        );
+      }
+      if (theme === "ai_hub_grid") {
+        return (
+          <span 
+            key={index} 
+            style={{ 
+              background: "linear-gradient(to bottom, #ffffff 10%, #00e5ff 60%, #3b82f6 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               filter: "drop-shadow(0 2px 10px rgba(0, 0, 0, 0.85))",

@@ -84,11 +84,11 @@ export function getVDETokens(styleName?: string): VDETokens {
       ...(tokens || VDE_TOKENS.fintech_edu),
       colors: {
         background: "linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)",
-        cardBg: "rgba(0, 40, 160, 0.35)",
-        border: "1.5px solid rgba(0, 212, 255, 0.4)",
-        accent: "#00d4ff",
+        cardBg: "rgba(0, 25, 80, 0.55)",
+        border: "1.5px solid rgba(255, 215, 0, 0.45)",
+        accent: "#FFD700",
         text: "#FFFFFF",
-        textSecondary: "rgba(255, 255, 255, 0.75)"
+        textSecondary: "rgba(255, 255, 255, 0.85)"
       },
       fonts: {
         title: "Chakra Petch",

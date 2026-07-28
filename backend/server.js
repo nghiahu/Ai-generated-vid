@@ -86,7 +86,7 @@ app.get('/api/projects', async (req, res) => {
   }
 });
 
-// 1.5. GET /api/vde-themes: Get all VDE themes dynamically from master JSON (includes fintech_edu)
+// 1.5. GET /api/vde-themes: Get all VDE themes dynamically from master JSON (includes fintech_edu with Gold accent)
 app.get('/api/vde-themes', (req, res) => {
   try {
     const stylesList = Object.keys(vde.BUILTIN_STYLES).map(id => {
