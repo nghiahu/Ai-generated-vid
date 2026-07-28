@@ -15,6 +15,7 @@ import { AnimatedBlock } from "../../components/layout/AnimatedBlock";
 import { getLayoutById } from "./index";
 import { getVDETokens } from "../../styles/vdeTokens";
 import { AICodeLayout } from "./modes/AICodeLayout";
+import { CircuitBoardBg } from "../../components/CircuitBoardBg";
 
 const hexToRgb = (hex: string): string => {
   let cleaned = hex.trim();
@@ -81,6 +82,31 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
   const renderBackground = () => {
     const isRikkei = theme === "rikkei";
     const isAiHubGrid = theme === "ai_hub_grid";
+    const isFintechEdu = theme === "fintech_edu" || (theme && theme.includes("fintech"));
+
+    if (isFintechEdu) {
+      return (
+        <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
+          <CircuitBoardBg glowColor="#00d4ff" circuitOpacity={0.28} />
+          {imageUrl && (
+            <img 
+              src={imageUrl} 
+              style={{ 
+                position: "absolute",
+                inset: 0,
+                width: "100%", 
+                height: "100%", 
+                objectFit: "cover", 
+                opacity: 0.35,
+                filter: "contrast(1.1)",
+                mixBlendMode: "screen"
+              }} 
+            />
+          )}
+        </AbsoluteFill>
+      );
+    }
+
     if (isRikkei && !imageUrl) {
       return (
         <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, backgroundColor: "#ffffff" }} />

@@ -248,7 +248,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
       {renderBackground()}
 
       {/* Contrast overlay — sits between background image and content */}
-      {layoutMode !== "blank" && layoutMode !== "fintech_edu" && (
+      {layoutMode !== "blank" && resolvedTheme !== "fintech_edu" && !resolvedTheme?.includes("fintech") && (
         <div style={{
           position: "absolute",
           inset: 0,
