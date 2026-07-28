@@ -29,6 +29,36 @@
       "avoid": ["bounce"]
     }
   },
+  "fintech_edu": {
+    "extends": "ai_hub_grid",
+    "name": "FinTech Edu — Deep Blue AI",
+    "description": "Deep Royal Blue Navy gradient, circuit board SVG texture, Electric Cyan glow, Gold CTA. Phong cách RKKEIEdu AI tech poster.",
+    "dna": {
+      "philosophy": { "oneIdeaPerScene": true, "clarity": 0.92, "minimalism": 0.7 },
+      "tone": "tech, futuristic, education, glow, circuit, deep-blue"
+    },
+    "tokens": {
+      "colors": {
+        "background": "linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)",
+        "cardBg": "rgba(0, 40, 160, 0.35)",
+        "border": "1.5px solid rgba(0, 212, 255, 0.4)",
+        "accent": "#00d4ff",
+        "text": "#FFFFFF",
+        "textSecondary": "rgba(255, 255, 255, 0.75)"
+      },
+      "fonts": {
+        "title": "Chakra Petch",
+        "body": "Be Vietnam Pro"
+      },
+      "radius": "12px",
+      "shadow": "0 0 30px rgba(0, 212, 255, 0.35), 0 0 60px rgba(0, 212, 255, 0.1)"
+    },
+    "motion": {
+      "energy": "high",
+      "style": ["slide-up", "fade", "glow-pulse"],
+      "avoid": ["bounce", "glitch"]
+    }
+  },
   "ai_hub_grid": {
     "extends": "minimal",
     "name": "AI Hub Grid",

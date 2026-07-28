@@ -78,7 +78,27 @@ export function getVDETokens(styleName?: string): VDETokens {
       radius: "16px"
     };
   }
-  
+
+  if (name.includes("fintech_edu") || name.includes("fintech-edu")) {
+    return {
+      ...(tokens || VDE_TOKENS.fintech_edu),
+      colors: {
+        background: "linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)",
+        cardBg: "rgba(0, 40, 160, 0.35)",
+        border: "1.5px solid rgba(0, 212, 255, 0.4)",
+        accent: "#00d4ff",
+        text: "#FFFFFF",
+        textSecondary: "rgba(255, 255, 255, 0.75)"
+      },
+      fonts: {
+        title: "Chakra Petch",
+        body: "Be Vietnam Pro"
+      },
+      shadow: "0 0 30px rgba(0, 212, 255, 0.35), 0 0 60px rgba(0, 212, 255, 0.1)",
+      radius: "12px"
+    };
+  }
+
   if (name.includes("claude")) {
     return {
       ...tokens,

@@ -33,6 +33,7 @@ import { IntroFullImageMode } from "./modes/IntroFullImageMode";
 import { IntroSplitHeadlineMode } from "./modes/IntroSplitHeadlineMode";
 import { CenteredTextMode } from "./modes/CenteredTextMode";
 import { HustXRikkeiMode } from "./modes/HustXRikkeiMode";
+import { FintechEduMode } from "./modes/FintechEduMode";
 import { IntroRadarSignalMode } from "./modes/IntroRadarSignalMode";
 import { IntroSignalStepsMode } from "./modes/IntroSignalStepsMode";
 import { IntroMapPinsMode } from "./modes/IntroMapPinsMode";
@@ -233,6 +234,8 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
         return <CenteredTextMode {...modeProps} />;
       case "hust_x_rikkei":
         return <HustXRikkeiMode {...modeProps} />;
+      case "fintech_edu":
+        return <FintechEduMode {...modeProps} />;
       case "blank":
         return null;
       default:
