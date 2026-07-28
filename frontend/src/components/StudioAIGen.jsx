@@ -359,7 +359,9 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
               setBgmVolume(proj.config.backgroundMusicVolume);
             }
 
-            setEditorMode("preview"); // Go straight to preview if project is already generated
+            if (onGenerationSuccess) {
+              onGenerationSuccess(projectId);
+            }
             setStatusText("📋 Dự án đã được tải thành công từ cơ sở dữ liệu.");
           }
         })
@@ -378,7 +380,7 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
           const parsed = JSON.parse(cachedRaw);
           if (Array.isArray(parsed) && parsed.length > 0) {
             setRawScenes(parsed);
-            setEditorMode("preview");
+            setEditorMode("setup");
             setStatusText("📋 Đã khôi phục các phân cảnh từ phiên làm việc trước.");
           }
         }
