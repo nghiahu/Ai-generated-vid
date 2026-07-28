@@ -305,15 +305,15 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
   const vdeTokens = getVDETokens(vdeStyle);
   const isRikkei = vdeStyle.includes("rikkei") || vdeStyle.includes("academic");
   const isLightTheme = isRikkei || vdeStyle.includes("light") || vdeStyle.includes("claude") || vdeStyle === "minimal";
-  const hasOverlayEffects = !isLightTheme && vdeStyle !== "apple";
-  const bgStyle = isLightTheme 
-    ? { background: vdeTokens.colors.background || "linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)" }
-    : { backgroundColor: "#030712" };
+  const isFintechEdu = vdeStyle.includes("fintech");
+  const bgStyle = {
+    background: vdeTokens.colors.background || (isLightTheme ? "linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)" : "#030712")
+  };
 
   return (
     <AbsoluteFill style={{ ...bgStyle, overflow: "hidden" }}>
       {/* Permanent Continuous Ambient Background Layer for Dark Themes (Zero Flash) */}
-      {!isLightTheme && (
+      {!isLightTheme && !isFintechEdu && (
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
           <div style={{
             position: "absolute",

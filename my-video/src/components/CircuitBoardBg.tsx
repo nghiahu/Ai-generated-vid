@@ -17,7 +17,7 @@ interface CircuitBoardBgProps {
  */
 export const CircuitBoardBg: React.FC<CircuitBoardBgProps> = ({
   glowColor = "#00d4ff",
-  circuitOpacity = 0.09,
+  circuitOpacity = 0.25,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();

@@ -134,7 +134,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
       ? "0px"
       : (isBottomAligned
         ? "0px"
-        : (layoutMode === "intro_briefing_card" || layoutMode === "chapter_stack" || layoutMode === "cutout_headline" || layoutMode === "evidence_readline" || layoutMode === "evidence_scanline" || layoutMode === "evidence_timeline" || layoutMode === "intro_full_image" || layoutMode === "split_headline" || layoutMode === "intro_radar_signal" || layoutMode === "intro_signal_steps" || layoutMode === "intro_map_pins" || layoutMode === "ops_monitor" || layoutMode === "orbital_bubbles" || layoutMode === "venn_spheres" ? "380px" : (layoutMode === "split_horizontal" || layoutMode === "before_after_panel" || layoutMode === "broadcast_lower_third" || layoutMode === "case_study_editorial" || layoutMode === "dossier_notes" || layoutMode === "earnings_snapshot" || layoutMode === "fear_greed" || layoutMode === "feed_scroll" ? "420px" : (t.container.paddingTop || "300px")))),
+        : (layoutMode === "fintech_edu" || layoutMode === "intro_briefing_card" || layoutMode === "chapter_stack" || layoutMode === "cutout_headline" || layoutMode === "evidence_readline" || layoutMode === "evidence_scanline" || layoutMode === "evidence_timeline" || layoutMode === "intro_full_image" || layoutMode === "split_headline" || layoutMode === "intro_radar_signal" || layoutMode === "intro_signal_steps" || layoutMode === "intro_map_pins" || layoutMode === "ops_monitor" || layoutMode === "orbital_bubbles" || layoutMode === "venn_spheres" ? "0px" : (layoutMode === "split_horizontal" || layoutMode === "before_after_panel" || layoutMode === "broadcast_lower_third" || layoutMode === "case_study_editorial" || layoutMode === "dossier_notes" || layoutMode === "earnings_snapshot" || layoutMode === "fear_greed" || layoutMode === "feed_scroll" ? "420px" : (t.container.paddingTop || "300px")))),
     paddingBottom: isCenteredLayout ? "0px" : (isBottomAligned ? "480px" : "86px"),
     boxSizing: "border-box",
     position: "relative",
@@ -248,13 +248,13 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
       {renderBackground()}
 
       {/* Contrast overlay — sits between background image and content */}
-      {layoutMode !== "blank" && (
+      {layoutMode !== "blank" && layoutMode !== "fintech_edu" && (
         <div style={{
           position: "absolute",
           inset: 0,
           background: isLight
-            ? "linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.55) 45%, rgba(255, 255, 255, 0.76) 100%)"
-            : "linear-gradient(180deg, rgba(0, 0, 0, 0.36) 0%, rgba(0, 0, 0, 0.46) 45%, rgba(0, 0, 0, 0.78) 100%)",
+            ? "linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.35) 45%, rgba(255, 255, 255, 0.5) 100%)"
+            : "linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.25) 45%, rgba(0, 0, 0, 0.45) 100%)",
           zIndex: 0,
           pointerEvents: "none"
         }} />
@@ -262,7 +262,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
 
       {/* Content layer — carries containerStyle (flex/padding) and sits above overlay via zIndex: 1 */}
       <div style={{ ...containerStyle, position: "relative", zIndex: 1, fontFamily: styles.fontFamily }}>
-        {titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "blank" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && (
+        {titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "fintech_edu" && layoutMode !== "blank" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && (
           <div style={{
             marginBottom: `${parseInt(String(t.title.marginBottom || 100)) + 50}px`,
             zIndex: 10,
