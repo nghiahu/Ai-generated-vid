@@ -104,9 +104,9 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   })();
 
   // Theme dependent values
-  const activeCardTextColor = isAccentLight ? "#111111" : "#ffffff";
-  const activeCardBadgeColor = isAccentLight ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.8)";
-  const inactiveCardTextColor = isLight ? "#191919" : "rgb(249, 247, 255)";
+  const activeCardTextColor = isLight ? (isAccentLight ? "#111111" : "#ffffff") : "#ffffff";
+  const activeCardBadgeColor = isLight ? (isAccentLight ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.8)") : "rgba(255, 255, 255, 0.9)";
+  const inactiveCardTextColor = isLight ? "#191919" : "#ffffff";
 
   const cleanCategory = category || (t.categoryPill?.text?.trim().toLowerCase() !== "ai viết video" && t.categoryPill?.text?.trim().toLowerCase() !== "ai viet video" ? t.categoryPill?.text : "");
 

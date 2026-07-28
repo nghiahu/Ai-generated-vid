@@ -119,13 +119,12 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = ({
       alignSelf: isLeft ? "flex-start" : "flex-end",
       borderRadius: itemStyleSetting.borderRadius || "24px",
       padding: resolvePadding(itemStyleSetting.padding || "22px", paddingScale),
-      backgroundColor: isLeft 
-        ? (isLight ? "rgba(245, 245, 247, 0.82)" : "rgba(8, 14, 28, 0.88)") 
-        : (isLight ? undefined : "rgba(12, 20, 36, 0.95)"),
-      background: !isLeft && isLight ? defaultThemeBg : undefined,
+      background: styles.cardStyle.background || styles.cardStyle.backgroundColor || (isLeft 
+        ? (isLight ? "rgba(245, 245, 247, 0.82)" : "rgba(8, 25, 80, 0.65)") 
+        : (isLight ? defaultThemeBg : "rgba(12, 35, 100, 0.75)")),
       border: isLeft 
-        ? (isLight ? "1px solid rgba(0, 0, 0, 0.08)" : `1.5px solid ${sideColor}55`)
-        : `2px solid ${sideColor}`,
+        ? (isLight ? "1px solid rgba(0, 0, 0, 0.08)" : (styles.cardStyle.border || `1.5px solid ${sideColor}55`))
+        : (styles.cardStyle.border || `2px solid ${sideColor}`),
       boxShadow: isLeft 
         ? (isLight ? "0 10px 30px rgba(0, 0, 0, 0.04)" : `0 12px 36px rgba(0, 0, 0, 0.45), 0 0 20px ${sideColor}15`)
         : (isLight ? `0 20px 40px rgba(0, 0, 0, 0.06), 0 0 25px ${sideColor}18` : `0 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px ${sideColor}44`),
@@ -186,7 +185,7 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = ({
           <div style={{
             fontSize: getDynamicFontSize(body || text, 26, fontScale),
             fontWeight: 700,
-            color: isLight ? (inactiveCardTextColor || "#191919") : (activeCardTextColor || "#ffffff"),
+            color: isLight ? "#191919" : "#ffffff",
             fontFamily: styles.fontFamily,
             lineHeight: 1.35
           }}>
