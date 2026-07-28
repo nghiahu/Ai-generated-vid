@@ -287,7 +287,7 @@ function App() {
     }
   };
 
-  const handleRegenerateSceneCode = async (sceneId, scriptText) => {
+  const handleRegenerateSceneCode = async (sceneId, scriptText, userNote = "") => {
     if (!currentProject) return;
     setRegeneratingCodeSceneId(sceneId);
     setLoading(true);
@@ -311,7 +311,7 @@ function App() {
         refImages,
         script,
         true, // bypassCache
-        "" // userNote
+        userNote
       );
 
       await fetchProjectDetail(currentProject.id);
@@ -683,6 +683,7 @@ function App() {
                 loadingMessage={loadingMessage}
                 selectedSceneId={selectedSceneId}
                 onSelectScene={setSelectedSceneId}
+                onUpdateConfig={handleUpdateConfig}
               />
             </div>
 

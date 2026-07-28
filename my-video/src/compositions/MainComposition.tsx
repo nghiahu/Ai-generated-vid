@@ -138,7 +138,7 @@ const SceneContainer: React.FC<{
 export interface WatermarkConfig {
   enabled: boolean;
   text: string;
-  position: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  position: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "bottom-center";
   color: string;
 }
 
@@ -149,6 +149,7 @@ export interface ProjectConfig {
   watermark: WatermarkConfig;
   videoTheme?: string;
   visualStyle?: string;
+  theme?: string;
 }
 
 export interface SceneData {
@@ -300,7 +301,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
   // Calculate cumulative frames for each sequence
   let currentFrameOffset = 0;
 
-  const vdeStyle = (config?.visualStyle || config?.videoTheme || "rikkei").toLowerCase();
+  const vdeStyle = (config?.visualStyle || config?.videoTheme || config?.theme || "rikkei").toLowerCase();
   const vdeTokens = getVDETokens(vdeStyle);
   const isRikkei = vdeStyle.includes("rikkei") || vdeStyle.includes("academic");
   const isLightTheme = isRikkei || vdeStyle.includes("light") || vdeStyle.includes("claude") || vdeStyle === "minimal";
@@ -418,7 +419,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                         voiceoverDuration={(scene as any).voiceoverDuration}
                         subtitlesJson={scene.subtitlesJson || (scene as any).voiceoverTtsJson}
                         accentColor={scene.accentColor || "#f97316"}
-                        visualStyle={config?.visualStyle}
+                        visualStyle={vdeStyle}
                       />
                     </>
                   );
@@ -433,7 +434,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                       points={scene.points}
                       imageUrl={imageUrl}
                       accentColor={scene.accentColor}
-                      theme={config?.videoTheme || "glassmorphism"}
+                      theme={config?.videoTheme || config?.theme || "glassmorphism"}
                       visualStyle={config?.visualStyle}
                       voiceover={scene.voiceover}
                       layoutData={(scene as any).layout}
@@ -448,7 +449,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                       voiceoverDuration={scene.voiceoverDuration}
                       subtitlesJson={scene.subtitlesJson}
                       accentColor={scene.accentColor}
-                      visualStyle={config?.visualStyle}
+                      visualStyle={vdeStyle}
                       customSubtitle={getLayoutById(layoutId)?.templateJson?.subtitle}
                     />
                   </>
@@ -473,7 +474,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
       })}
 
       {/* Watermark Overlay layer (Tĩnh xuyên suốt video) */}
-      {config?.watermark?.enabled && config?.watermark?.text && (
+      {(config?.watermark?.enabled !== false) && (config?.watermark?.text || "yupclip.com") && (
         <div
           style={{
             position: "absolute",
@@ -491,7 +492,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
             opacity: 0.85,
             ...(() => {
-              switch (config?.watermark?.position) {
+              switch (config?.watermark?.position || "top-right") {
                 case "top-left":
                   return { top: "35px", left: "35px" };
                 case "bottom-left":
@@ -507,7 +508,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
             })(),
           }}
         >
-          {config.watermark.text}
+          {config?.watermark?.text || "yupclip.com"}
         </div>
       )}
 

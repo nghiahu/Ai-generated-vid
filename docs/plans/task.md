@@ -1,10 +1,9 @@
-# Task Tracker — Remove Manual Studio & Filter AI Gen Only
+# Task Tracker — Revert LLM back to Google Gemini
 
 | # | Task | Status |
 |---|---|---|
-| 1 | Update App Navigation and Routing | [x] completed |
-| 2 | Simplify Dashboard to Show Only AI Gen Projects | [x] completed |
-| 3 | Clean up Project Header and Workspace view | [x] completed |
-| 4 | Clean up StudioAIGen.jsx tabs and preview layout | [x] completed |
-| 5 | Simplify scene editor cards in StoryboardEditor.jsx | [x] completed |
-| 6 | Implement single-scene code regeneration in App.jsx | [x] completed |
+| 1 | Revert `studioAiGenRoute.js` to Google Gemini | [x] completed |
+| 2 | Revert `ai.js` to Google Gemini | [x] completed |
+| 3 | Revert `aiGen.js` to Google Gemini | [x] completed |
+| 4 | Revert `phoneme.js` to Google Gemini | [x] completed |
+| 5 | Verify backend server starts and compiles with zero errors | [x] completed |

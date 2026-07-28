@@ -263,7 +263,9 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
   const bottom = isNaN(bottomPx) || bottomPx < 100 ? "115px" : `${bottomPx}px`;
   const fontSize = customSubtitle?.fontSize || "46px";
   const fontWeight = customSubtitle?.fontWeight ? parseInt(customSubtitle.fontWeight) : 800;
-  const textShadow = "none";
+  const textShadow = isLightBg 
+    ? "0px 1px 2px rgba(255, 255, 255, 0.9), 0px 0px 4px rgba(255, 255, 255, 0.5)" 
+    : "0px 2px 8px rgba(0, 0, 0, 0.95), 0px 4px 16px rgba(0, 0, 0, 0.8), 0px 0px 4px rgba(0, 0, 0, 0.9)";
 
   // ── Group fade-in (Remotion-native interpolate) ──────────────────────────────
   let groupOpacity: number;
@@ -308,12 +310,10 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
           lineHeight: 1.45,
           textShadow,
           margin: 0,
-          padding: "12px 28px",
-          borderRadius: "20px",
-          background: isLightBg ? "rgba(255, 255, 255, 0.95)" : "rgba(9, 11, 16, 0.82)",
-          boxShadow: isRikkei ? "0 10px 30px rgba(168, 35, 42, 0.1)" : (isLightBg ? "0 10px 30px rgba(0,0,0,0.08)" : "0 10px 30px rgba(0,0,0,0.4)"),
-          backdropFilter: "blur(14px)",
-          border: isRikkei ? "1.5px solid rgba(168, 35, 42, 0.2)" : (isLightBg ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255,255,255,0.1)"),
+          padding: 0,
+          background: "none",
+          boxShadow: "none",
+          border: "none",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",

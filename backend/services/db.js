@@ -64,7 +64,10 @@ function runQuery(db, sql, params = []) {
   saveDb();
 }
 
+let _dbInitialized = false;
+
 async function initDb() {
+  if (_dbInitialized) return;
   const db = await getDb();
 
   db.run(`
@@ -159,6 +162,7 @@ async function initDb() {
   }
 
   saveDb();
+  _dbInitialized = true;
   console.log('SQLite (sql.js) database initialized successfully.');
 }
 

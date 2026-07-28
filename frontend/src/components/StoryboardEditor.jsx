@@ -449,7 +449,8 @@ export const StoryboardEditor = ({
   loadingMessage,
   selectedSceneId,
   onSelectScene,
-  mode = "editor"
+  mode = "editor",
+  onUpdateConfig
 }) => {
   const [topicText, setTopicText] = useState("");
   const [scriptText, setScriptText] = useState("");
@@ -459,6 +460,17 @@ export const StoryboardEditor = ({
   const [showStyleModal, setShowStyleModal] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState("minimal");
   const [vdeThemes, setVdeThemes] = useState(VDE_PRESET_STYLES);
+
+  const [localWatermarkText, setLocalWatermarkText] = useState(config.watermark?.text || "yupclip.com");
+
+  useEffect(() => {
+    setLocalWatermarkText(config.watermark?.text || "yupclip.com");
+  }, [config.watermark?.text]);
+
+  const [showRegenCodeModal, setShowRegenCodeModal] = useState(false);
+  const [regenSceneId, setRegenSceneId] = useState(null);
+  const [regenVoiceover, setRegenVoiceover] = useState("");
+  const [regenUserNote, setRegenUserNote] = useState("");
 
   // Media Modal & Upload states
   const [selectedMedia, setSelectedMedia] = useState([]);
@@ -1188,6 +1200,216 @@ export const StoryboardEditor = ({
     );
   };
 
+  const renderRegenCodeModal = () => {
+    if (!showRegenCodeModal || !regenSceneId) return null;
+    const scene = scenes.find(s => s.id === regenSceneId);
+    if (!scene) return null;
+    const sceneIndex = scenes.findIndex(s => s.id === regenSceneId) + 1;
+
+    return (
+      <div style={{
+        position: "fixed",
+        inset: 0,
+        backgroundColor: "rgba(10, 11, 20, 0.75)",
+        backdropFilter: "blur(8px)",
+        zIndex: 9999,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px"
+      }}>
+        <div style={{
+          backgroundColor: "#ffffff",
+          width: "100%",
+          maxWidth: "520px",
+          borderRadius: "24px",
+          border: "3px solid #000000",
+          boxShadow: "8px 8px 0px #000000",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden"
+        }}>
+          {/* Header */}
+          <div style={{
+            padding: "24px 30px",
+            borderBottom: "2px solid #000000",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: "#ffffff"
+          }}>
+            <div>
+              <h3 style={{
+                margin: 0,
+                fontFamily: "Space Grotesk",
+                fontSize: "20px",
+                fontWeight: "900",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em"
+              }}>
+                🔄 Sinh lại Phân cảnh {sceneIndex < 10 ? `0${sceneIndex}` : sceneIndex}
+              </h3>
+              <p style={{ margin: "4px 0 0 0", fontSize: "13px", color: "#64748b", fontFamily: "Inter" }}>
+                AI sẽ thiết kế lại bố cục và tạo mã nguồn Remotion TSX mới
+              </p>
+            </div>
+            <button
+              onClick={() => setShowRegenCodeModal(false)}
+              style={{
+                background: "none",
+                border: "none",
+                fontSize: "28px",
+                fontWeight: "bold",
+                cursor: "pointer",
+                lineHeight: 1
+              }}
+            >
+              &times;
+            </button>
+          </div>
+
+          {/* Body */}
+          <div style={{ padding: "30px", display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <label className="form-label-mono" style={{ fontSize: "13px", fontWeight: "bold" }}>
+                🗣️ Lời thoại phân cảnh (Có thể chỉnh sửa):
+              </label>
+              <textarea
+                value={regenVoiceover}
+                onChange={(e) => setRegenVoiceover(e.target.value)}
+                rows={3}
+                className="form-input-mono"
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  fontSize: "13px",
+                  lineHeight: 1.5,
+                  resize: "vertical",
+                  boxSizing: "border-box"
+                }}
+              />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <label className="form-label-mono" style={{ fontSize: "13px", fontWeight: "bold" }}>
+                ✍️ Yêu cầu thay đổi giao diện chữ / Thiết kế (Cho AI):
+              </label>
+              <textarea
+                value={regenUserNote}
+                onChange={(e) => setRegenUserNote(e.target.value)}
+                placeholder="VD: Căn giữa chữ, chữ cỡ siêu to màu vàng, chữ có bóng/stroke đen dày để nổi bật, làm layout 2 cột..."
+                rows={3}
+                className="form-input-mono"
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  fontSize: "13px",
+                  lineHeight: 1.5,
+                  resize: "vertical",
+                  boxSizing: "border-box"
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Footer Actions */}
+          <div style={{
+            padding: "20px 30px",
+            borderTop: "2px solid #000000",
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "12px",
+            backgroundColor: "#f8fafc"
+          }}>
+            <button
+              onClick={() => setShowRegenCodeModal(false)}
+              style={{
+                padding: "10px 24px",
+                borderRadius: "30px",
+                border: "2px solid #000000",
+                backgroundColor: "#ffffff",
+                fontFamily: "Space Grotesk",
+                fontWeight: "bold",
+                fontSize: "14px",
+                cursor: "pointer",
+                boxShadow: "2px 2px 0px #000000"
+              }}
+            >
+              Hủy
+            </button>
+            <button
+              onClick={() => {
+                setShowRegenCodeModal(false);
+                onRegenerateSceneCode(regenSceneId, regenVoiceover, regenUserNote);
+              }}
+              style={{
+                padding: "10px 24px",
+                borderRadius: "30px",
+                border: "2px solid #000000",
+                backgroundColor: "#000000",
+                color: "#ffffff",
+                fontFamily: "Space Grotesk",
+                fontWeight: "bold",
+                fontSize: "14px",
+                cursor: "pointer",
+                boxShadow: "2px 2px 0px #000000"
+              }}
+            >
+              🚀 Bắt đầu sinh lại
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderLoadingOverlay = () => {
+    if (!loading) return null;
+    return (
+      <div style={{
+        position: "fixed",
+        inset: 0,
+        backgroundColor: "rgba(10, 11, 20, 0.8)",
+        backdropFilter: "blur(12px)",
+        zIndex: 99999,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        gap: "24px",
+        color: "#ffffff",
+        fontFamily: "Space Grotesk, sans-serif"
+      }}>
+        {/* Animated Custom Spinner */}
+        <div className="spinner-brutalist" style={{
+          width: "80px",
+          height: "80px",
+          border: "4px solid rgba(255, 255, 255, 0.1)",
+          borderTop: "4px solid #3b82f6",
+          borderRadius: "50%"
+        }} />
+        <style>{`
+          .spinner-brutalist {
+            animation: spin-brutalist 1s linear infinite;
+          }
+          @keyframes spin-brutalist {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+        
+        <div style={{ textAlign: "center" }}>
+          <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            🪄 AI ĐANG THIẾT KẾ LẠI
+          </h3>
+          <p style={{ margin: "8px 0 0 0", fontSize: "14px", color: "#cbd5e1", fontFamily: "Inter" }}>
+            {loadingMessage || "Vui lòng chờ trong giây lát..."}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   // MODE 1: SETUP & SCRIPT INPUT
   if (mode === "setup") {
     return (
@@ -1268,6 +1490,7 @@ export const StoryboardEditor = ({
         )}
 
         {renderMediaModal()}
+       {renderRegenCodeModal()}
 
         {showStyleModal && (
           <div style={{
@@ -1560,6 +1783,123 @@ export const StoryboardEditor = ({
         </span>
       </div>
 
+      {scenes.length > 0 && onUpdateConfig && (
+        <div style={{
+          backgroundColor: "#ffffff",
+          borderRadius: "16px",
+          border: "3px solid #000000",
+          boxShadow: "4px 4px 0px #000000",
+          padding: "20px 24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+          fontFamily: "Space Grotesk, sans-serif"
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <span style={{ fontSize: "20px" }}>🏷️</span>
+              <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "0.02em" }}>
+                Cấu hình Watermark
+              </h3>
+            </div>
+            
+            <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "13px", fontWeight: "bold" }}>
+              <input
+                type="checkbox"
+                checked={config.watermark?.enabled !== false}
+                onChange={(e) => {
+                  onUpdateConfig({
+                    ...config,
+                    watermark: {
+                      ...(config.watermark || {}),
+                      enabled: e.target.checked
+                    }
+                  });
+                }}
+                style={{ width: "16px", height: "16px", cursor: "pointer" }}
+              />
+              Bật Watermark
+            </label>
+          </div>
+
+          {(config.watermark?.enabled !== false) && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "12px", fontWeight: "bold", color: "#475569" }}>
+                  Chữ hiển thị:
+                </label>
+                <input
+                  type="text"
+                  value={localWatermarkText}
+                  onChange={(e) => setLocalWatermarkText(e.target.value)}
+                  onBlur={() => {
+                    if (localWatermarkText !== config.watermark?.text) {
+                      onUpdateConfig({
+                        ...config,
+                        watermark: {
+                          ...(config.watermark || {}),
+                          text: localWatermarkText
+                        }
+                      });
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.target.blur();
+                    }
+                  }}
+                  placeholder="Ví dụ: yupclip.com"
+                  className="form-input-mono"
+                  style={{
+                    padding: "8px 12px",
+                    fontSize: "13px",
+                    border: "2px solid #000000",
+                    borderRadius: "6px",
+                    outline: "none",
+                    boxSizing: "border-box"
+                  }}
+                />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "12px", fontWeight: "bold", color: "#475569" }}>
+                  Vị trí hiển thị:
+                </label>
+                <select
+                  value={config.watermark?.position || "top-right"}
+                  onChange={(e) => {
+                    onUpdateConfig({
+                      ...config,
+                      watermark: {
+                        ...(config.watermark || {}),
+                        position: e.target.value
+                      }
+                    });
+                  }}
+                  className="form-input-mono"
+                  style={{
+                    padding: "8px 12px",
+                    fontSize: "13px",
+                    border: "2px solid #000000",
+                    borderRadius: "6px",
+                    backgroundColor: "#ffffff",
+                    outline: "none",
+                    cursor: "pointer",
+                    boxSizing: "border-box"
+                  }}
+                >
+                  <option value="top-left">Góc trên - Trái</option>
+                  <option value="top-right">Góc trên - Phải</option>
+                  <option value="bottom-left">Góc dưới - Trái</option>
+                  <option value="bottom-right">Góc dưới - Phải</option>
+                  <option value="bottom-center">Góc dưới - Giữa</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {scenes.length === 0 ? (
         <div className="border-strict" style={{ borderStyle: "dashed", padding: "60px 20px", textAlign: "center", backgroundColor: "#ffffff" }}>
           <p style={{ color: "#555555", fontSize: "14px", marginBottom: "15px" }}>
@@ -1751,7 +2091,12 @@ export const StoryboardEditor = ({
                       <button
                         type="button"
                         className="btn-mono btn-mono-primary"
-                        onClick={() => onRegenerateSceneCode(scene.id, localTexts[`${scene.id}_voiceover`] || scene.voiceover)}
+                        onClick={() => {
+                          setRegenSceneId(scene.id);
+                          setRegenVoiceover(localTexts[`${scene.id}_voiceover`] !== undefined ? localTexts[`${scene.id}_voiceover`] : scene.voiceover);
+                          setRegenUserNote("");
+                          setShowRegenCodeModal(true);
+                        }}
                         disabled={regeneratingCodeSceneId === scene.id || loading}
                         style={{
                           flex: 1,
@@ -1828,6 +2173,8 @@ export const StoryboardEditor = ({
         </div>
       )}
       {renderMediaModal()}
+      {renderRegenCodeModal()}
+      {renderLoadingOverlay()}
     </div>
   );
 };

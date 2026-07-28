@@ -241,6 +241,7 @@ const SceneWrapper = ({ Component, audioUrl, loadError, isEmpty, heading, visual
             durationSeconds={sceneDurationSec}
             subtitlesJson={subtitlesJson || scene?.subtitlesJson || scene?.voiceoverTtsJson}
             accentColor="#f97316"
+            visualStyle={scene?.theme}
           />
         </div>
       ) : (
