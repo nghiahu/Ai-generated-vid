@@ -27,14 +27,17 @@ export const highlightHeadingText = (text: string, accentColor: string, theme?: 
   return parts.map((part, index) => {
     const isMatch = sortedKeywords.some(k => k.toLowerCase() === part.toLowerCase());
     if (isMatch) {
-      if (theme === "ai_hub_grid") {
+      if (theme === "ai_hub_grid" || theme === "fintech_edu" || theme?.includes("fintech")) {
         return (
           <span 
             key={index} 
             style={{ 
-              background: "linear-gradient(to bottom, #ffffff 10%, #00e5ff 60%, #3b82f6 100%)",
+              background: (theme === "fintech_edu" || theme?.includes("fintech"))
+                ? "linear-gradient(to bottom, #ffffff 20%, #00e5ff 60%, #FFD700 100%)"
+                : "linear-gradient(to bottom, #ffffff 10%, #00e5ff 60%, #3b82f6 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
+              filter: "drop-shadow(0 2px 10px rgba(0, 0, 0, 0.85))",
               display: "inline-block",
               paddingTop: "0.22em",
               marginTop: "-0.22em",

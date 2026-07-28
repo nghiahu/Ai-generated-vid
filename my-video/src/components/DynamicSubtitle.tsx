@@ -250,12 +250,14 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
 
   // ── Styling ──────────────────────────────────────────────────────────────────
   const styleName = (visualStyle || "").toLowerCase();
-  const isRikkei = !visualStyle || styleName.includes("rikkei") || styleName.includes("academic") || styleName === "minimal" || styleName === "default";
+  const isRikkei = styleName.includes("rikkei") || styleName.includes("academic");
   const isLightBg = isRikkei || styleName.includes("claude") || styleName.includes("light") || styleName.includes("anime");
 
-  const inactiveColor = isLightBg ? "rgba(25, 25, 25, 0.65)" : "rgba(255, 255, 255, 0.45)";
+  const inactiveColor = isLightBg ? "rgba(25, 25, 25, 0.65)" : "rgba(255, 255, 255, 0.70)";
   const textColor = isLightBg ? "#191919" : "#ffffff";
-  const effectiveAccentColor = isRikkei ? "#A8232A" : accentColor;
+  const effectiveAccentColor = isRikkei 
+    ? "#A8232A" 
+    : (styleName.includes("fintech") ? "#FFD700" : accentColor);
   const accent = parseRGB(effectiveAccentColor);
 
   const rawBottom = customSubtitle?.bottom || "120px";
