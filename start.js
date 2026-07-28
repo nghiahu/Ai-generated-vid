@@ -47,9 +47,12 @@ function ensureNodeModules(dir, name) {
   }
 }
 
-// Ensure both frontend and backend have node_modules
+const MY_VIDEO_DIR = path.join(ROOT_DIR, 'my-video');
+
+// Ensure frontend, backend, and my-video have node_modules
 ensureNodeModules(BACKEND_DIR, 'Backend');
 ensureNodeModules(FRONTEND_DIR, 'Frontend');
+ensureNodeModules(MY_VIDEO_DIR, 'My-Video');
 
 // Helper to check and initialize git submodules (e.g., my-video)
 function ensureGitSubmodules() {

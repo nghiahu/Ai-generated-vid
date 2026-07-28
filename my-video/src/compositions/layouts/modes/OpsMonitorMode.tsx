@@ -49,11 +49,11 @@ export const OpsMonitorMode: React.FC<ModeRendererProps> = ({
         style={{
           width: "100%",
           borderRadius: "24px",
-          background: isLight 
-            ? "rgba(255, 255, 255, 0.45)" 
+          background: isLight
+            ? "rgba(255, 255, 255, 0.45)"
             : "linear-gradient(180deg, rgba(12, 18, 32, 0.97) 0%, rgba(6, 10, 20, 0.99) 100%)",
-          border: isLight 
-            ? "1.5px solid rgba(0, 0, 0, 0.08)" 
+          border: isLight
+            ? "1.5px solid rgba(0, 0, 0, 0.08)"
             : `2px solid rgba(${rgb}, 0.3)`,
           boxShadow: isLight
             ? "0 24px 64px rgba(0, 0, 0, 0.06), inset 0 0 30px rgba(255, 255, 255, 0.8)"
@@ -110,10 +110,10 @@ export const OpsMonitorMode: React.FC<ModeRendererProps> = ({
                     style={{
                       flex: 1,
                       borderRadius: "16px",
-                      background: isLight 
+                      background: isLight
                         ? (styles.cardStyle.background || styles.cardStyle.backgroundColor || "rgba(255, 255, 255, 0.9)")
                         : "rgba(20, 28, 48, 0.85)",
-                      border: isLight 
+                      border: isLight
                         ? (styles.cardStyle.border || "1px solid rgba(0, 0, 0, 0.08)")
                         : `1.5px solid rgba(${rgb}, 0.2)`,
                       borderLeftWidth: "3px",
