@@ -257,7 +257,7 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
   const textColor = isLightBg ? "#191919" : "#ffffff";
   const effectiveAccentColor = isRikkei 
     ? "#A8232A" 
-    : (styleName.includes("fintech") ? "#FFD700" : accentColor);
+    : (styleName.includes("fintech") ? "#00e5ff" : accentColor);
   const accent = parseRGB(effectiveAccentColor);
 
   const rawBottom = customSubtitle?.bottom || "120px";

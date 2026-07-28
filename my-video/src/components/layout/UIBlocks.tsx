@@ -32,8 +32,8 @@ export const highlightHeadingText = (text: string, accentColor: string, theme?: 
           <span 
             key={index} 
             style={{ 
-              color: "#FFD700",
-              textShadow: "0 2px 12px rgba(0, 0, 0, 0.95), 0 0 24px rgba(255, 215, 0, 0.7)",
+              color: "#00e5ff",
+              textShadow: "0 2px 12px rgba(0, 0, 0, 0.95), 0 0 20px rgba(0, 229, 255, 0.8)",
               fontWeight: 900
             }}
           >
