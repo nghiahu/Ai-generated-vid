@@ -138,8 +138,17 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
               onChange={(e) => handleConfigChange("voice", e.target.value)}
               style={{ cursor: "pointer" }}
             >
-              <option value="omnivoice_duythanh">OmniVoice - Giọng Duy Thanh (Offline Clone)</option>
-              <option value="omnivoice_quanganh">OmniVoice - Giọng Quang Anh (Offline Clone)</option>
+              <optgroup label="OmniVoice (Offline Clone)">
+                <option value="omnivoice_duythanh">OmniVoice - Giọng Duy Thanh (Trầm ấm, Nam Bắc)</option>
+                <option value="omnivoice_quanganh">OmniVoice - Giọng Quang Anh (Hiện đại, Nam Bắc)</option>
+              </optgroup>
+              <optgroup label="Vbee AI Voice (Chờ kết nối API)">
+                <option value="vbee_minhtien">Vbee - Minh Tiến (📰 Tin tức / Kịch tính - Nam Bắc)</option>
+                <option value="vbee_thuyduyen">Vbee - Thùy Duyên (🎓 Truyền cảm / Sách nói - Nữ Bắc)</option>
+                <option value="vbee_ngochuyen">Vbee - Ngọc Huyền (💡 Quảng cáo / Hào hứng - Nữ Bắc)</option>
+                <option value="vbee_naman">Vbee - Nam An (🚀 Năng động / Công nghệ - Nam Nam)</option>
+                <option value="vbee_maiphuong">Vbee - Mai Phương (🎭 Tâm sự / Trầm ấm - Nữ Nam)</option>
+              </optgroup>
             </select>
           </div>
 

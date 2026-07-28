@@ -85,10 +85,10 @@ router.post("/plan", async (req, res) => {
     const { GoogleGenerativeAI } = require("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    console.log(`[Studio AI Gen Route] Tạo Scene Plan cho kịch bản length=${targetLength}`);
-    const scenePlan = await aiGen.generateScenePlanForAIGen(genAI, modelName, script.trim(), targetLength);
-
     const finalProjectId = projectId || `proj_aigen_${Math.random().toString(36).substr(2, 9)}`;
+
+    console.log(`[Studio AI Gen Route] Tạo Scene Plan cho kịch bản length=${targetLength}`);
+    const scenePlan = await aiGen.generateScenePlanForAIGen(genAI, modelName, script.trim(), targetLength, [], finalProjectId);
 
     // Prepare initial draft project config (with scenes having no TSX code/audio yet)
     const config = {
