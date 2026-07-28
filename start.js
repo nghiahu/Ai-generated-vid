@@ -9,11 +9,37 @@ const FRONTEND_DIR = path.join(ROOT_DIR, 'frontend');
 // Helper to check and install node_modules
 function ensureNodeModules(dir, name) {
   const nodeModulesPath = path.join(dir, 'node_modules');
+  const packageJsonPath = path.join(dir, 'package.json');
+  
+  let needInstall = false;
+
   if (!fs.existsSync(nodeModulesPath)) {
-    console.log(`\n📦 Không tìm thấy node_modules cho ${name}. Đang tự động cài đặt (npm install)...`);
+    needInstall = true;
+  } else if (fs.existsSync(packageJsonPath)) {
+    try {
+      const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      const deps = Object.keys(pkg.dependencies || {});
+      const devDeps = Object.keys(pkg.devDependencies || {});
+      
+      // Check if all dependencies exist in node_modules
+      for (const dep of [...deps, ...devDeps]) {
+        const depPath = path.join(nodeModulesPath, dep);
+        if (!fs.existsSync(depPath)) {
+          console.log(`\n🔍 Phát hiện thiếu thư viện "${dep}" trong ${name}.`);
+          needInstall = true;
+          break;
+        }
+      }
+    } catch (e) {
+      needInstall = true; // Fallback to install if parsing fails
+    }
+  }
+
+  if (needInstall) {
+    console.log(`\n📦 Đang tự động cập nhật thư viện cho ${name} (npm install)...`);
     try {
       execSync('npm install', { cwd: dir, stdio: 'inherit' });
-      console.log(`✅ Cài đặt thư viện cho ${name} hoàn tất!\n`);
+      console.log(`✅ Cập nhật thư viện cho ${name} hoàn tất!\n`);
     } catch (err) {
       console.error(`❌ Lỗi khi chạy npm install cho ${name}:`, err.message);
       process.exit(1);
