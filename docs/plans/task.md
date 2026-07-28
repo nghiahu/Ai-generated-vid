@@ -26,7 +26,8 @@
 | TASK-23 | Fix background overlay and hexToRgb parser in DynamicLayout.tsx | `[x]` |
 | TASK-24 | Support Light Mode (Rikkei Theme) for TimelineShiftMode layout | `[x]` |
 | TASK-25 | Support Light Mode (Rikkei Theme) for OpsMonitorMode layout | `[x]` |
-
-
-
-
+| TASK-26 | Brainstorming: Phân biệt từ "ai" tiếng Việt và "AI" tiếng Anh trong TTS (Explore & Q&A) | `[x]` |
+| TASK-27 | Thiết kế & Viết tài liệu thiết kế phân biệt "ai" vs "AI" | `[x]` |
+| TASK-28 | Lập kế hoạch triển khai (Implementation Plan) cho sửa lỗi phát âm "ai" vs "AI" | `[/]` |
+| TASK-29 | Thực thi sửa lỗi phát âm "ai" vs "AI" | `[ ]` |
+| TASK-30 | Kiểm thử và xác minh lỗi phát âm "ai" vs "AI" | `[ ]` |
