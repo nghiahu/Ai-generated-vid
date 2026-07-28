@@ -84,30 +84,35 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
     const isAiHubGrid = theme === "ai_hub_grid";
     const isFintechEdu = theme === "fintech_edu" || (theme && theme.includes("fintech"));
 
-    if (isFintechEdu) {
+    // If user uploaded/selected a background image, keep it 100% original, crisp and untouched!
+    if (imageUrl) {
       return (
         <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
-          <CircuitBoardBg glowColor="#00d4ff" circuitOpacity={0.28} />
-          {imageUrl && (
-            <img 
-              src={imageUrl} 
-              style={{ 
-                position: "absolute",
-                inset: 0,
-                width: "100%", 
-                height: "100%", 
-                objectFit: "cover", 
-                opacity: 0.35,
-                filter: "contrast(1.1)",
-                mixBlendMode: "screen"
-              }} 
-            />
-          )}
+          <img 
+            src={imageUrl} 
+            style={{ 
+              position: "absolute",
+              inset: 0,
+              width: "100%", 
+              height: "100%", 
+              objectFit: "cover", 
+              opacity: 1.0
+            }} 
+          />
         </AbsoluteFill>
       );
     }
 
-    if (isRikkei && !imageUrl) {
+    // Default generated background when NO user image is uploaded
+    if (isFintechEdu) {
+      return (
+        <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
+          <CircuitBoardBg glowColor="#00d4ff" circuitOpacity={0.25} />
+        </AbsoluteFill>
+      );
+    }
+
+    if (isRikkei) {
       return (
         <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, backgroundColor: "#ffffff" }} />
       );
