@@ -51,6 +51,24 @@ function ensureNodeModules(dir, name) {
 ensureNodeModules(BACKEND_DIR, 'Backend');
 ensureNodeModules(FRONTEND_DIR, 'Frontend');
 
+// Helper to check and initialize git submodules (e.g., my-video)
+function ensureGitSubmodules() {
+  const myVideoDir = path.join(ROOT_DIR, 'my-video');
+  const packageJsonInSubmodule = path.join(myVideoDir, 'package.json');
+  
+  if (!fs.existsSync(packageJsonInSubmodule)) {
+    console.log('\n📦 Phát hiện Git Submodule (my-video) chưa được tải. Đang tự động nạp (git submodule update)...');
+    try {
+      execSync('git submodule update --init --recursive', { cwd: ROOT_DIR, stdio: 'inherit' });
+      console.log('✅ Nạp Git Submodules thành công!\n');
+    } catch (err) {
+      console.warn('⚠️ Không thể tự động nạp Git Submodules. Hãy đảm bảo bạn đã cài đặt Git và chạy lệnh "git submodule update --init --recursive" thủ công.', err.message);
+    }
+  }
+}
+
+ensureGitSubmodules();
+
 console.log('\n🚀 Đang khởi động dự án...');
 
 // Color helper
