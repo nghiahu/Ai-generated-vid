@@ -134,7 +134,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
       ? "0px"
       : (isBottomAligned
         ? "0px"
-        : (layoutMode === "fintech_edu" || layoutMode === "intro_briefing_card" || layoutMode === "chapter_stack" || layoutMode === "cutout_headline" || layoutMode === "evidence_readline" || layoutMode === "evidence_scanline" || layoutMode === "evidence_timeline" || layoutMode === "intro_full_image" || layoutMode === "split_headline" || layoutMode === "intro_radar_signal" || layoutMode === "intro_signal_steps" || layoutMode === "intro_map_pins" || layoutMode === "ops_monitor" || layoutMode === "orbital_bubbles" || layoutMode === "venn_spheres" ? "0px" : (layoutMode === "split_horizontal" || layoutMode === "before_after_panel" || layoutMode === "broadcast_lower_third" || layoutMode === "case_study_editorial" || layoutMode === "dossier_notes" || layoutMode === "earnings_snapshot" || layoutMode === "fear_greed" || layoutMode === "feed_scroll" ? "420px" : (t.container.paddingTop || "300px")))),
+        : (layoutMode === "fintech_edu" || layoutMode === "hust_x_rikkei" ? "0px" : (t.container?.paddingTop || "380px"))),
     paddingBottom: isCenteredLayout ? "0px" : (isBottomAligned ? "480px" : "86px"),
     boxSizing: "border-box",
     position: "relative",
