@@ -306,6 +306,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
   const isRikkei = vdeStyle.includes("rikkei") || vdeStyle.includes("academic");
   const isLightTheme = isRikkei || vdeStyle.includes("light") || vdeStyle.includes("claude") || vdeStyle === "minimal";
   const isFintechEdu = vdeStyle.includes("fintech");
+  const hasOverlayEffects = !isLightTheme && vdeStyle !== "apple" && !isFintechEdu;
   const bgStyle = {
     background: vdeTokens.colors.background || (isLightTheme ? "linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)" : "#030712")
   };
