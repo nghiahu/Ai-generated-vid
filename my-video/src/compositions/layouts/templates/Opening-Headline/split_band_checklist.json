@@ -1,0 +1,78 @@
+{
+  "id": "SplitBandChecklist",
+  "name": "Versus Timeline Shift (Split Band Checklist)",
+  "family": "comparison",
+  "layoutMode": "timeline_shift",
+  "container": {
+    "paddingTop": "320px",
+    "maxWidth": "1000px",
+    "gap": "16px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "80px",
+    "fontWeight": "800",
+    "letterSpacing": "-0.04em",
+    "marginBottom": "40px",
+    "useAccentTextShadow": true
+  },
+  "positions": [
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1"
+    },
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1"
+    }
+  ],
+  "items": {
+    "rotations": [
+      0,
+      0
+    ],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "26px",
+        "fontWeight": "800",
+        "borderRadius": "24px",
+        "padding": "24px",
+        "scale": 1,
+        "backdropBlur": "8px",
+        "useAccentBg": false,
+        "useAccentBorder": true,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": false
+      },
+      {
+        "v2": true,
+        "fontSize": "26px",
+        "fontWeight": "800",
+        "borderRadius": "24px",
+        "padding": "24px",
+        "scale": 1,
+        "backdropBlur": "8px",
+        "useAccentBg": false,
+        "useAccentBorder": true,
+        "useAccentShadow": true,
+        "useSubtleThemeBg": false,
+        "useThemeBorder": false
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

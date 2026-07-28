@@ -1,0 +1,174 @@
+{
+  "id": "IntroBriefingCard",
+  "name": "Intro Briefing Card",
+  "family": "opening",
+  "layoutMode": "intro_briefing_card",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "156px",
+    "fontWeight": "900",
+    "letterSpacing": "-0.08em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_simple",
+        "badgeText": null,
+        "titleText": null,
+        "pills": []
+      }
+    },
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_with_nested_pills",
+        "badgeText": "VIDEO",
+        "titleText": "",
+        "pills": []
+      }
+    },
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "72px",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_simple",
+        "badgeText": "viết video",
+        "titleText": "",
+        "pills": []
+      }
+    },
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "72px",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_simple",
+        "badgeText": "code",
+        "titleText": "",
+        "pills": []
+      }
+    },
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "72px",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_simple",
+        "badgeText": "video",
+        "titleText": "",
+        "pills": []
+      }
+    }
+  ],
+  "items": {
+    "rotations": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "16px",
+        "fontWeight": "900",
+        "borderRadius": "999px",
+        "padding": "10px 16px",
+        "scale": 1,
+        "backdropBlur": "14px",
+        "useAccentBg": true,
+        "useAccentBorder": true,
+        "useAccentShadow": true,
+        "useSubtleThemeBg": false,
+        "useThemeBorder": false
+      },
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "30px",
+        "padding": "38px 32px 40px",
+        "scale": 1,
+        "backdropBlur": "12px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      },
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "18px",
+        "padding": "16px 18px",
+        "scale": 1,
+        "backdropBlur": "10px",
+        "useAccentBg": true,
+        "useAccentBorder": true,
+        "useAccentShadow": true,
+        "useSubtleThemeBg": false,
+        "useThemeBorder": false
+      },
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "18px",
+        "padding": "16px 18px",
+        "scale": 1,
+        "backdropBlur": "10px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      },
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "18px",
+        "padding": "16px 18px",
+        "scale": 1.012,
+        "backdropBlur": "10px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

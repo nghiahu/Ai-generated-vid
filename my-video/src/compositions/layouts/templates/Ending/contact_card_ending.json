@@ -1,0 +1,64 @@
+{
+  "id": "ContactCardEnding",
+  "name": "Contact Card Ending",
+  "family": "ending",
+  "layoutMode": "centered_text",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": {
+    "text": "AI viết video"
+  },
+  "accentDivider": null,
+  "title": {
+    "fontSize": "92px",
+    "fontWeight": "950",
+    "letterSpacing": "-0.07em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "620px",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_with_nested_pills",
+        "badgeText": "Email",
+        "titleText": "",
+        "pills": []
+      }
+    }
+  ],
+  "items": {
+    "rotations": [
+      0
+    ],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "34px",
+        "padding": "34px 34px 30px",
+        "scale": 1,
+        "backdropBlur": "8px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

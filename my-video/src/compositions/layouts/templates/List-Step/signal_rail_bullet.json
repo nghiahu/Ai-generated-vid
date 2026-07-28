@@ -1,0 +1,31 @@
+{
+  "id": "SignalRailBullet",
+  "name": "Signal Rail Bullet",
+  "family": "list",
+  "layoutMode": "vertical_list",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "80px",
+    "fontWeight": "800",
+    "letterSpacing": "-0.04em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [],
+  "items": {
+    "rotations": [],
+    "itemStyles": []
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "Blank",
+  "name": "Blank / Subtitles Only",
+  "family": "blank",
+  "layoutMode": "blank",
+  "container": {
+    "paddingTop": "0px",
+    "maxWidth": "100%",
+    "gap": "0px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "0px"
+  },
+  "positions": [],
+  "items": {
+    "rotations": [],
+    "itemStyles": []
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

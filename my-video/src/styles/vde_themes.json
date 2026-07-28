@@ -1,0 +1,62 @@
+{
+  "rikkei": {
+    "extends": "minimal",
+    "name": "Rikkei Academic Premium",
+    "description": "Phong cách nhận diện Rikkei Edu: Nền trắng hồng hạt siêu sạch, viền đỏ Crimson, thẻ học tập 3D bo góc 16px, khung tiêu đề Brackets.",
+    "dna": {
+      "philosophy": { "oneIdeaPerScene": true, "clarity": 0.95, "minimalism": 0.8 },
+      "tone": "professional, educational, academic, clean, corporate, structured"
+    },
+    "tokens": {
+      "colors": {
+        "background": "linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)",
+        "cardBg": "linear-gradient(135deg, #FFFFFF 0%, #FFF8F8 100%)",
+        "border": "1.5px solid rgba(168, 35, 42, 0.18)",
+        "accent": "#A8232A",
+        "text": "#191919",
+        "textSecondary": "#595959"
+      },
+      "fonts": {
+        "title": "Be Vietnam Pro",
+        "body": "Be Vietnam Pro"
+      },
+      "radius": "16px",
+      "shadow": "0 10px 30px rgba(168, 35, 42, 0.08)"
+    },
+    "motion": {
+      "energy": "medium",
+      "style": ["slide-up", "fade"],
+      "avoid": ["bounce"]
+    }
+  },
+  "ai_hub_grid": {
+    "extends": "minimal",
+    "name": "AI Hub Grid",
+    "description": "Nền chàm tối với lưới tọa độ kỹ thuật số, quầng sáng xanh dương và các thẻ kính mờ phát sáng viền cyan.",
+    "dna": {
+      "philosophy": { "oneIdeaPerScene": true, "clarity": 0.95, "minimalism": 0.8 },
+      "tone": "tech, futuristic, ambient grid, glow glassmorphism"
+    },
+    "tokens": {
+      "colors": {
+        "background": "#030712",
+        "cardBg": "linear-gradient(135deg, rgba(8, 17, 37, 0.7) 0%, rgba(3, 7, 18, 0.4) 100%)",
+        "border": "1px solid rgba(59, 130, 246, 0.35)",
+        "accent": "#3b82f6",
+        "text": "#ffffff",
+        "textSecondary": "rgba(255, 255, 255, 0.65)"
+      },
+      "fonts": {
+        "title": "Be Vietnam Pro, sans-serif",
+        "body": "Be Vietnam Pro, sans-serif"
+      },
+      "radius": "16px",
+      "shadow": "0 0 25px rgba(59, 130, 246, 0.15)"
+    },
+    "motion": {
+      "energy": "medium",
+      "style": ["slide-up", "fade"],
+      "avoid": ["glitch"]
+    }
+  }
+}

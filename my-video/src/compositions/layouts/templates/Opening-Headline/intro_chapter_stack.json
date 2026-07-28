@@ -1,0 +1,83 @@
+{
+  "id": "intro_chapter_stack",
+  "name": "Intro Chapter Stack Image",
+  "layoutMode": "chapter_stack",
+  "container": {
+    "paddingTop": "230px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "title": {
+    "fontSize": "76px",
+    "fontWeight": "900",
+    "letterSpacing": "-0.06em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [
+    {
+      "left": "96px",
+      "top": "358px",
+      "width": "700px",
+      "height": "360px",
+      "zIndex": "4"
+    },
+    {
+      "left": "438px",
+      "top": "676px",
+      "width": "420px",
+      "height": "184px",
+      "zIndex": "3"
+    },
+    {
+      "left": "44px",
+      "top": "266px",
+      "width": "440px",
+      "height": "190px",
+      "zIndex": "2"
+    }
+  ],
+  "items": {
+    "rotations": [
+      0.0,
+      5.0,
+      -5.0
+    ],
+    "itemStyles": [
+      {
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "38px",
+        "padding": "40px 42px",
+        "scale": 1.0,
+        "useAccentBg": true,
+        "useAccentBorder": true,
+        "useAccentShadow": true
+      },
+      {
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "30px",
+        "padding": "24px 26px",
+        "scale": 1.022,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      },
+      {
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "30px",
+        "padding": "24px 26px",
+        "scale": 1.0,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}
