@@ -312,6 +312,22 @@ const VDE_PRESET_STYLES = [
       shadow: "0 0 25px rgba(59, 130, 246, 0.15)",
       fontFamily: "Be Vietnam Pro, sans-serif"
     }
+  },
+  {
+    id: "fintech_edu",
+    name: "FinTech Edu — Deep Blue AI",
+    description: "Nền Royal Navy đậm, họa tiết vi mạch SVG cyan phát sáng, thẻ thông số Dashboard và nút CTA Gold nổi bật.",
+    tokens: {
+      background: "linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)",
+      cardBg: "rgba(0, 40, 160, 0.35)",
+      border: "1.5px solid rgba(0, 212, 255, 0.4)",
+      text: "#FFFFFF",
+      textSecondary: "rgba(255, 255, 255, 0.75)",
+      accent: "#00d4ff",
+      radius: "12px",
+      shadow: "0 0 30px rgba(0, 212, 255, 0.35)",
+      fontFamily: "Chakra Petch, sans-serif"
+    }
   }
 ];
 
