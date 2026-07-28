@@ -623,16 +623,15 @@ async function optimizeTextForPhonemes(text, projectId = null) {
       if (!phoneme) continue;
 
       const cleanLower = term.toLowerCase();
-      const isTransliterated = !!TECH_TERMS_TRANSLITERATION[cleanLower];
       const isStopWord = VIETNAMESE_STOP_WORDS.has(cleanLower);
 
-      // Cho phép thay thế không phân biệt hoa thường nếu từ nằm trong từ điển dịch tĩnh (vd: 'AI' / 'ai' -> 'ây-ai')
-      const searchPattern = (isStopWord && !isTransliterated) ? term.toUpperCase() : term;
+      // Nếu là Stop Word tiếng Việt (vd: ai, ba), bắt buộc dùng dạng viết hoa (AI, BA) và khớp chính xác (case-sensitive)
+      const searchPattern = isStopWord ? term.toUpperCase() : term;
       const escaped = searchPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
       const regex = new RegExp(
         `(?<=^|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])(${escaped})(?=$|\\s|[-.,!?;()'"“”\\/\\\\*+={}\\[\\]])`,
-        (isStopWord && !isTransliterated) ? "g" : "gi"
+        isStopWord ? "g" : "gi"
       );
 
       optimizedText = optimizedText.replace(regex, phoneme);
