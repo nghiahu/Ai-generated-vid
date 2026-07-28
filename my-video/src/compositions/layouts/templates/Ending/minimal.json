@@ -1,0 +1,34 @@
+{
+  "id": "Minimal",
+  "name": "Minimal",
+  "family": "ending",
+  "layoutMode": "centered_text",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": null,
+  "accentDivider": {
+    "width": "184px",
+    "height": "3px"
+  },
+  "title": {
+    "fontSize": "104px",
+    "fontWeight": "950",
+    "letterSpacing": "-0.08em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [],
+  "items": {
+    "rotations": [],
+    "itemStyles": []
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

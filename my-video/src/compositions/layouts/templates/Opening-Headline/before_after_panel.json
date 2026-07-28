@@ -1,0 +1,100 @@
+{
+  "id": "BeforeAfterPanel",
+  "name": "Before After Panel",
+  "family": "opening",
+  "layoutMode": "before_after_panel",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "80px",
+    "fontWeight": "800",
+    "letterSpacing": "-0.04em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "360px",
+      "zIndex": "1"
+    },
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "360px",
+      "zIndex": "1"
+    },
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1"
+    }
+  ],
+  "items": {
+    "rotations": [
+      0,
+      0,
+      0
+    ],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "28px",
+        "padding": "28px",
+        "scale": 1,
+        "backdropBlur": "7px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      },
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "28px",
+        "padding": "28px",
+        "scale": 1,
+        "backdropBlur": "7px",
+        "useAccentBg": true,
+        "useAccentBorder": true,
+        "useAccentShadow": true,
+        "useSubtleThemeBg": false,
+        "useThemeBorder": false
+      },
+      {
+        "v2": true,
+        "fontSize": "22px",
+        "fontWeight": "800",
+        "borderRadius": "22px",
+        "padding": "18px 22px",
+        "scale": 1,
+        "backdropBlur": "5px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "id": "AIHubGrid1",
+  "name": "AI Hub Grid 1 (Emotion Column)",
+  "family": "list",
+  "layoutMode": "absolute_cards",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1800px",
+    "gap": "40px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "86px",
+    "fontWeight": "900",
+    "marginBottom": "60px"
+  },
+  "positions": [
+    {
+      "left": "120px",
+      "top": "350px",
+      "width": "820px",
+      "height": "480px",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "vertical_item_list",
+        "badgeText": "In Design & Relationships"
+      }
+    },
+    {
+      "left": "980px",
+      "top": "480px",
+      "width": "820px",
+      "height": "220px",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_simple",
+        "badgeText": "Core Philosophy"
+      }
+    }
+  ],
+  "items": {
+    "rotations": [
+      0.0,
+      0.0
+    ],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "26px",
+        "fontWeight": "700",
+        "borderRadius": "20px",
+        "padding": "32px",
+        "scale": 1.0,
+        "backdropBlur": "16px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      },
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "20px",
+        "padding": "32px",
+        "scale": 1.0,
+        "backdropBlur": "16px",
+        "useAccentBg": true,
+        "useAccentBorder": true,
+        "useAccentShadow": true,
+        "useSubtleThemeBg": false,
+        "useThemeBorder": false
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "180px",
+    "fontSize": "38px",
+    "fontWeight": "800",
+    "useThemeTextShadow": true
+  }
+}

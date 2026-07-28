@@ -1,0 +1,64 @@
+{
+  "id": "NextStepEnding",
+  "name": "Next Step Ending",
+  "family": "ending",
+  "layoutMode": "centered_text",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": {
+    "text": "Next Step"
+  },
+  "accentDivider": null,
+  "title": {
+    "fontSize": "90px",
+    "fontWeight": "950",
+    "letterSpacing": "-0.07em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "670px",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_with_nested_pills",
+        "badgeText": "Next Step",
+        "titleText": "",
+        "pills": []
+      }
+    }
+  ],
+  "items": {
+    "rotations": [
+      0
+    ],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "36px",
+        "padding": "36px 34px 34px",
+        "scale": 1,
+        "backdropBlur": "8px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

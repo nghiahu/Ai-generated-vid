@@ -1,0 +1,90 @@
+{
+  "id": "DossierNotes",
+  "name": "Dossier Notes",
+  "family": "opening",
+  "layoutMode": "dossier_notes",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "80px",
+    "fontWeight": "800",
+    "letterSpacing": "-0.04em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_with_nested_pills",
+        "badgeText": "Evidence 3",
+        "titleText": "",
+        "pills": []
+      }
+    },
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_simple",
+        "badgeText": "Summary",
+        "titleText": "",
+        "pills": []
+      }
+    }
+  ],
+  "items": {
+    "rotations": [
+      0,
+      0
+    ],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "28px",
+        "padding": "24px",
+        "scale": 1,
+        "backdropBlur": "8px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      },
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "28px",
+        "padding": "26px 24px",
+        "scale": 1,
+        "backdropBlur": "8px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

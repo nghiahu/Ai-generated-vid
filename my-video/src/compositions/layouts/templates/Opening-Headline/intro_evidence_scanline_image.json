@@ -1,0 +1,123 @@
+{
+  "id": "IntroEvidenceScanlineImage",
+  "name": "Intro Evidence Scanline Image",
+  "family": "opening",
+  "layoutMode": "evidence_scanline",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": {
+    "text": "AI VIẾT VIDEO"
+  },
+  "accentDivider": {
+    "width": "220px",
+    "height": "4px"
+  },
+  "title": {
+    "fontSize": "106px",
+    "fontWeight": "900",
+    "letterSpacing": "-0.075em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_simple",
+        "badgeText": "AI",
+        "titleText": "",
+        "pills": []
+      }
+    },
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_simple",
+        "badgeText": "code",
+        "titleText": "",
+        "pills": []
+      }
+    },
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_simple",
+        "badgeText": "video",
+        "titleText": "",
+        "pills": []
+      }
+    }
+  ],
+  "items": {
+    "rotations": [
+      0,
+      0,
+      0
+    ],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "18px",
+        "padding": "14px 16px",
+        "scale": 1,
+        "backdropBlur": "16px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      },
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "18px",
+        "padding": "14px 16px",
+        "scale": 1,
+        "backdropBlur": "16px",
+        "useAccentBg": true,
+        "useAccentBorder": true,
+        "useAccentShadow": true,
+        "useSubtleThemeBg": false,
+        "useThemeBorder": false
+      },
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "18px",
+        "padding": "14px 16px",
+        "scale": 1,
+        "backdropBlur": "16px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

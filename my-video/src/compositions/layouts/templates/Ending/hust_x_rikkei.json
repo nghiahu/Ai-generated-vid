@@ -1,0 +1,32 @@
+{
+  "id": "HustXRikkei",
+  "name": "HUST X RIKKEI",
+  "family": "ending",
+  "layoutMode": "hust_x_rikkei",
+  "container": {
+    "paddingTop": "200px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "80px",
+    "fontWeight": "900",
+    "letterSpacing": "0.02em",
+    "marginBottom": "60px",
+    "useAccentTextShadow": false
+  },
+  "positions": [],
+  "items": {
+    "rotations": [],
+    "itemStyles": []
+  },
+  "subtitle": {
+    "enabled": false,
+    "bottom": "300px",
+    "fontSize": "30px",
+    "fontWeight": "800",
+    "useThemeTextShadow": false
+  }
+}

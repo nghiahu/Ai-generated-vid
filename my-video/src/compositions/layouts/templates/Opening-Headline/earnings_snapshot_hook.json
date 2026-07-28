@@ -1,0 +1,62 @@
+{
+  "id": "EarningsSnapshotHook",
+  "name": "Earnings Snapshot Hook",
+  "family": "opening",
+  "layoutMode": "earnings_snapshot",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "96px",
+    "fontWeight": "950",
+    "letterSpacing": "-0.07em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "700px",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_with_nested_pills",
+        "badgeText": "video",
+        "titleText": "",
+        "pills": []
+      }
+    }
+  ],
+  "items": {
+    "rotations": [
+      0
+    ],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "36px",
+        "padding": "34px",
+        "scale": 1,
+        "backdropBlur": "9px",
+        "useAccentBg": true,
+        "useAccentBorder": true,
+        "useAccentShadow": true,
+        "useSubtleThemeBg": false,
+        "useThemeBorder": false
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

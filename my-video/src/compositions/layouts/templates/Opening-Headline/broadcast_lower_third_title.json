@@ -1,0 +1,62 @@
+{
+  "id": "BroadcastLowerThirdTitle",
+  "name": "Broadcast Lower Third Title",
+  "family": "opening",
+  "layoutMode": "broadcast_lower_third",
+  "container": {
+    "paddingTop": "300px",
+    "maxWidth": "1000px",
+    "gap": "24px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "80px",
+    "fontWeight": "800",
+    "letterSpacing": "-0.04em",
+    "marginBottom": "100px",
+    "useAccentTextShadow": true
+  },
+  "positions": [
+    {
+      "left": "0px",
+      "top": "0px",
+      "width": "100%",
+      "height": "auto",
+      "zIndex": "1",
+      "nestedStructure": {
+        "type": "card_simple",
+        "badgeText": "AI VIẾT VIDEO",
+        "titleText": "",
+        "pills": []
+      }
+    }
+  ],
+  "items": {
+    "rotations": [
+      0
+    ],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "28px",
+        "fontWeight": "800",
+        "borderRadius": "30px",
+        "padding": "20px 22px",
+        "scale": 1,
+        "backdropBlur": "8px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}
