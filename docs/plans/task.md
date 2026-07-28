@@ -6,5 +6,5 @@
 | 2 | Tạo `CircuitBoardBg.tsx` component | ✅ completed |
 | 3 | Tạo `FintechEduMode.tsx` layout mode | ✅ completed |
 | 4 | Đăng ký mode vào `TemplateLayout.tsx` | ✅ completed |
-| 5 | Kiểm tra visual trong Remotion Studio | 🔄 in_progress |
-| 6 | Final cleanup + commit | ⬜ pending |
+| 5 | Kiểm tra visual trong Remotion Studio | ✅ completed |
+| 6 | Final cleanup + commit | ✅ completed |
