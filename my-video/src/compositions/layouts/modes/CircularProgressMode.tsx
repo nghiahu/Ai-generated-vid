@@ -67,9 +67,9 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    fontSize: "82px",
+    fontSize: "110px",
     fontWeight: 950,
-    color: accentColor,
+    color: "#ff7a00",
     fontFamily: styles.fontFamily,
   };
 
@@ -134,7 +134,7 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
     <div style={containerStyle}>
       <AnimatedBlock animation={animCircleConfig.animation} delaySeconds={0.1}>
         <div style={circleSectionStyle}>
-          <div style={{ position: "relative", width: "300px", height: "300px" }}>
+          <div style={{ position: "relative", width: "420px", height: "420px" }}>
             <svg viewBox="0 0 200 200" style={{ width: "100%", height: "100%" }}>
               {/* Background Track */}
               <circle
@@ -151,7 +151,7 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
                 cy="100"
                 r={R}
                 fill="none"
-                stroke={accentColor}
+                stroke="#ff7a00"
                 strokeWidth="14"
                 strokeLinecap="round"
                 strokeDasharray={C}
@@ -163,7 +163,7 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
               {Math.round(progress)}%
             </div>
           </div>
-          <div style={labelStyle}>{metricLabel}</div>
+
         </div>
       </AnimatedBlock>
 
