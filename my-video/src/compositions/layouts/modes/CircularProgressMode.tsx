@@ -16,6 +16,8 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
+  console.log("[CircularProgressMode] RENDER. otherComps:", otherComps);
+
   // 1. Extract circle progress value and label from Point #1
   const metricComp = otherComps[0];
   const metricValueText = String(metricComp?.data?.value || metricComp?.data?.text || "0");
@@ -62,10 +64,10 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
 
   const numberOverlayStyle: React.CSSProperties = {
     position: "absolute",
-    top: "35%",
+    top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    fontSize: "58px",
+    fontSize: "82px",
     fontWeight: 950,
     color: accentColor,
     fontFamily: styles.fontFamily,
@@ -132,7 +134,7 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
     <div style={containerStyle}>
       <AnimatedBlock animation={animCircleConfig.animation} delaySeconds={0.1}>
         <div style={circleSectionStyle}>
-          <div style={{ position: "relative", width: "200px", height: "200px" }}>
+          <div style={{ position: "relative", width: "300px", height: "300px" }}>
             <svg viewBox="0 0 200 200" style={{ width: "100%", height: "100%" }}>
               {/* Background Track */}
               <circle
