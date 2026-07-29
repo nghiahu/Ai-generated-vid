@@ -99,6 +99,26 @@ export function getVDETokens(styleName?: string): VDETokens {
     };
   }
 
+  if (name.includes("ba")) {
+    return {
+      ...(tokens || VDE_TOKENS.ba),
+      colors: {
+        background: "linear-gradient(135deg, #002691 0%, #004BBF 50%, #0059D7 100%)",
+        cardBg: "linear-gradient(135deg, rgba(0, 38, 145, 0.85) 0%, rgba(0, 75, 191, 0.8) 100%)",
+        border: "1.5px solid rgba(2, 89, 233, 0.45)",
+        accent: "#5DC8FB",
+        text: "#FFFFFF",
+        textSecondary: "#EAF8FF"
+      },
+      fonts: {
+        title: "Be Vietnam Pro",
+        body: "Be Vietnam Pro"
+      },
+      shadow: "0 8px 32px rgba(2, 89, 233, 0.15)",
+      radius: "16px"
+    };
+  }
+
   if (name.includes("claude")) {
     return {
       ...tokens,

@@ -88,5 +88,35 @@
       "style": ["slide-up", "fade"],
       "avoid": ["glitch"]
     }
+  },
+  "ba": {
+    "extends": "minimal",
+    "name": "Ba — Modern Corporate",
+    "description": "Theme Ba: Phong cách doanh nghiệp hiện đại. Nền xanh gradient sâu thẳm, thẻ nội dung Business Blue kính mờ, viền Electric Blue, chữ Pure White & Soft White và điểm nhấn Tech Cyan.",
+    "dna": {
+      "philosophy": { "oneIdeaPerScene": true, "clarity": 0.95, "minimalism": 0.8 },
+      "tone": "corporate, finance, professional, modern, clean, trust"
+    },
+    "tokens": {
+      "colors": {
+        "background": "linear-gradient(135deg, #002691 0%, #004BBF 50%, #0059D7 100%)",
+        "cardBg": "linear-gradient(135deg, rgba(0, 38, 145, 0.85) 0%, rgba(0, 75, 191, 0.8) 100%)",
+        "border": "1.5px solid rgba(2, 89, 233, 0.45)",
+        "accent": "#5DC8FB",
+        "text": "#FFFFFF",
+        "textSecondary": "#EAF8FF"
+      },
+      "fonts": {
+        "title": "Be Vietnam Pro",
+        "body": "Be Vietnam Pro"
+      },
+      "radius": "16px",
+      "shadow": "0 8px 32px rgba(2, 89, 233, 0.15)"
+    },
+    "motion": {
+      "energy": "medium",
+      "style": ["slide-up", "fade"],
+      "avoid": ["glitch"]
+    }
   }
 }
