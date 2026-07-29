@@ -243,6 +243,15 @@ const LAYOUT_CONTRACTS = {
     allowedPointTypes: ['card', 'terminal'],
     aiHint: 'Màn hình giám sát vận hành hệ thống.'
   },
+  CircularProgress: {
+    layoutId: 'CircularProgress',
+    family: 'Opening / Headline',
+    headingMaxChars: 38,
+    pointsCount: { min: 2, max: 4, default: 3 },
+    pointMaxChars: 45,
+    allowedPointTypes: ['card'],
+    aiHint: 'Màn hình vòng tròn phần trăm và các card vuông song song.'
+  },
 
   // =========================================================================
   // 2. LIST / STEPS FAMILY (4 Active Layouts)

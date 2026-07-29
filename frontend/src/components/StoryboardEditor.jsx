@@ -216,6 +216,7 @@ const LAYOUTS_BY_FAMILY = {
   ],
   "Data / Metrics": [
     { value: "OpsMonitorHook", label: "OPS Monitor Hook (Bảng giám sát)" },
+    { value: "CircularProgress", label: "Circular Progress (Vòng tròn phần trăm)" },
     { value: "HeroMetricCards", label: "Hero Metric Cards" },
     { value: "MetricCards", label: "Metric Cards" },
     { value: "GridMetrics", label: "Grid Metrics" },

@@ -50,7 +50,7 @@ const PLANNER_SCHEMA = {
       },
       layoutId: {
         type: SchemaType.STRING,
-        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'Ending'."
+        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'CircularProgress', 'Ending'."
       },
       heading: {
         type: SchemaType.STRING,
@@ -246,7 +246,7 @@ Structure the sequence of scenes logically to build a story:
 # LAYOUT SELECTION RULES (CRITICAL)
 Choose layoutId strictly according to scene content semantics:
 - **Comparison / Versus / Distinguish** (heading/voiceover contains "không phải là", "so sánh", "khác biệt", "vs", "versus", "so với"): MUST select BeforeAfterPanel or SplitProofBullet or VersusArena or SplitBandChecklist.
-- **Metrics / Statistics / Numbers** (heading/voiceover contains "%", "tỷ đô", "con số", "tăng", "giảm", "doanh thu"): MUST select HeroMetricCards, MetricCards, GridMetrics, or OpsMonitorHook.
+- **Metrics / Statistics / Numbers** (heading/voiceover contains "%", "tỷ đô", "con số", "tăng", "giảm", "doanh thu"): MUST select HeroMetricCards, MetricCards, GridMetrics, CircularProgress, or OpsMonitorHook.
 - **Timeline / Milestones / Steps** (heading/voiceover contains "bước 1", "quy trình", "thời gian", "lộ trình"): MUST select TimelineBeamRail, IntroSignalStepsImages, or FlowchartTitle.
 - **Radar / Monitoring / Scanning**: MUST select IntroRadarSignalImage or IntroMapPinsImage.
 - **Intro Hooks / Headlines**: Select IntroBriefingCard, IntroBubbleImage, IntroCutoutHeadlineImage, or IntroFullImage.

@@ -39,6 +39,7 @@ import { IntroSignalStepsMode } from "./modes/IntroSignalStepsMode";
 import { IntroMapPinsMode } from "./modes/IntroMapPinsMode";
 import { OpsMonitorMode } from "./modes/OpsMonitorMode";
 import { TimelineShiftMode } from "./modes/TimelineShiftMode";
+import { CircularProgressMode } from "./modes/CircularProgressMode";
 
 
 export interface TemplateLayoutProps extends LayoutProps {
@@ -230,6 +231,8 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
         return <IntroMapPinsMode {...modeProps} />;
       case "ops_monitor":
         return <OpsMonitorMode {...modeProps} />;
+      case "circular_progress":
+        return <CircularProgressMode {...modeProps} />;
       case "centered_text":
         return <CenteredTextMode {...modeProps} />;
       case "hust_x_rikkei":
