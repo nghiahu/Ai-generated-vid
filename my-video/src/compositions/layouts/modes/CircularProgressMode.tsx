@@ -18,7 +18,7 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
 
   // 1. Extract circle progress value and label from Point #1
   const metricComp = otherComps[0];
-  const metricValueText = metricComp?.data?.value || metricComp?.data?.text || "0";
+  const metricValueText = String(metricComp?.data?.value || metricComp?.data?.text || "0");
   const parsedValue = parseInt(metricValueText.replace(/[^\d]/g, ""), 10);
   const targetValue = isNaN(parsedValue) ? 0 : Math.min(100, Math.max(0, parsedValue));
   const metricLabel = metricComp?.data?.text || "";
@@ -124,7 +124,9 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
     fontFamily: styles.fontFamily,
   };
 
-  const animCircleConfig = getAnimationConfig(metricComp, 0, "scale-in", 0, t);
+  const animCircleConfig = metricComp
+    ? getAnimationConfig(metricComp, 0, "scale-in", 0, t)
+    : { animation: "scale-in", delay: 0.1 };
 
   return (
     <div style={containerStyle}>
@@ -172,7 +174,7 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
               <AnimatedBlock key={comp.id || idx} animation={animCardConfig.animation} delaySeconds={animCardConfig.delay}>
                 <div style={cardStyle}>
                   <div style={badgeStyle}>CHỈ TIÊU {String(idx + 1).padStart(2, "0")}</div>
-                  <div style={textStyle}>{comp.data.text}</div>
+                  <div style={textStyle}>{comp?.data?.text || ""}</div>
                 </div>
               </AnimatedBlock>
             );
