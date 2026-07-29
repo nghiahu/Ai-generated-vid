@@ -328,6 +328,22 @@ const VDE_PRESET_STYLES = [
       shadow: "0 0 30px rgba(0, 212, 255, 0.35)",
       fontFamily: "Chakra Petch, sans-serif"
     }
+  },
+  {
+    id: "ba",
+    name: "Ba — Modern Corporate",
+    description: "Theme Ba: Phong cách doanh nghiệp hiện đại. Nền xanh gradient sâu thẳm, thẻ Business Blue kính mờ, viền Electric Blue và điểm nhấn Tech Cyan.",
+    tokens: {
+      background: "linear-gradient(135deg, #002691 0%, #004BBF 50%, #0059D7 100%)",
+      cardBg: "linear-gradient(135deg, rgba(0, 38, 145, 0.85) 0%, rgba(0, 75, 191, 0.8) 100%)",
+      border: "1.5px solid rgba(2, 89, 233, 0.45)",
+      text: "#FFFFFF",
+      textSecondary: "#EAF8FF",
+      accent: "#5DC8FB",
+      radius: "16px",
+      shadow: "0 8px 32px rgba(2, 89, 233, 0.15)",
+      fontFamily: "Be Vietnam Pro, sans-serif"
+    }
   }
 ];
 
