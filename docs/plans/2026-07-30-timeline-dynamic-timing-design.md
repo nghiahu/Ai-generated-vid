@@ -28,12 +28,12 @@
   - Zoom-out phase: Cards 0/1 slide to `-170px`, Card 2 slides to `+170px`.
 
 **Timeline Chapters (Zig-Zag) Compression**
-- Retain the start node: `startPt = { x: 15, y: 12 }`.
+- Retain the start node: `startPt = { x: 15, y: 10 }`.
 - Card/node positions:
-  - Card 0: `{ x: 32, y: 30 }`
-  - Card 1: `{ x: 68, y: 49 }`
-  - Card 2: `{ x: 32, y: 68 }`
-- This lifts the bottom card to `68%` Y-position, leaving >500px clean space at the bottom for subtitles.
+  - Card 0: `{ x: 32, y: 26 }`
+  - Card 1: `{ x: 68, y: 42 }`
+  - Card 2: `{ x: 32, y: 58 }`
+- This lifts the bottom card to `58%` Y-position, leaving >600px clean space at the bottom for subtitles, completely in the Safe Zone for TikTok/Reels overlays.
 - Ball animation starts at frame 25 and segment timing draws sequentially.
 
 ## Components and Data Flow
