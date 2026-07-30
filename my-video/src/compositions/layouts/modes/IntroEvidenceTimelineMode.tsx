@@ -71,29 +71,24 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
     extrapolateRight: "clamp"
   });
 
+  const lineLeft = viewportWidth / 2 + lineX1;
+  const lineWidth = lineX2 - lineX1;
+
   return (
     <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", zIndex: 5 }}>
-      {/* SVG Line (Renders from x1 to x2 relative to viewport center) */}
-      <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 1 }}>
-        <line
-          x1={`${viewportWidth / 2 + lineX1}`}
-          y1="50%"
-          x2={`${viewportWidth / 2 + lineX2}`}
-          y2="50%"
-          stroke={`url(#timeline-grad-${accentColor.replace("#", "")})`}
-          strokeWidth="6"
-          strokeLinecap="round"
-          style={{
-            filter: `drop-shadow(0 0 10px ${accentColor}88)`
-          }}
-        />
-        <defs>
-          <linearGradient id={`timeline-grad-${accentColor.replace("#", "")}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={accentColor} />
-            <stop offset="100%" stopColor={darkAccentColor} />
-          </linearGradient>
-        </defs>
-      </svg>
+      {/* Horizontal Timeline Line (Renders as a highly reliable div) */}
+      <div style={{
+        position: "absolute",
+        left: `${lineLeft}px`,
+        width: `${lineWidth}px`,
+        top: "50%",
+        transform: "translateY(-50%)",
+        height: "6px",
+        borderRadius: "999px",
+        background: `linear-gradient(90deg, ${accentColor}, ${darkAccentColor})`,
+        boxShadow: `0 0 14px ${accentColor}`,
+        zIndex: 1
+      }} />
 
       {/* Render Sections (Cards + Nodes) */}
       {visibleComps.map((comp, idx) => {
