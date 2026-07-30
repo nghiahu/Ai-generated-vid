@@ -78,37 +78,38 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = (props) => {
     const visibleComps = otherComps.slice(0, 3); // Max 3 steps for zig-zag
     const N = visibleComps.length;
 
-    // 1. Coordinates for the path (in percentages of container)
-    const startPt = { x: 15, y: 15 };
-    const cardPts = [
-      { x: 32, y: 38 },
-      { x: 68, y: 60 },
-      { x: 32, y: 82 }
+    // 1. Coordinates for the dots forming the zig-zag path (lifted up to prevent subtitle overlap)
+    const dotPts = [
+      { x: 18, y: 20 },
+      { x: 82, y: 46 },
+      { x: 18, y: 72 }
     ];
 
-    // 2. Animate the starting node (Frame 0-25)
-    const startScale = interpolate(frame, [0, 10], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-    const startX = interpolate(frame, [12, 25], [50, startPt.x], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-    const startY = interpolate(frame, [12, 25], [50, startPt.y], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+    // Coordinates for the corresponding cards offset horizontally next to their dots
+    const cardPts = [
+      { x: 46, y: 20 },
+      { x: 54, y: 46 },
+      { x: 46, y: 72 }
+    ];
 
-    // 3. Interpolate the traveling projectile ball position (Frame 25-100)
-    let ballX = startPt.x;
-    let ballY = startPt.y;
-    const isBallActive = frame >= 25 && frame < (25 + N * 25);
+    // 2. Interpolate the traveling projectile ball position (Frame 15 to 15 + (N-1)*25)
+    let ballX = dotPts[0].x;
+    let ballY = dotPts[0].y;
+    const isBallActive = N > 1 && frame >= 15 && frame < (15 + (N - 1) * 25);
 
     if (isBallActive) {
-      const segmentIdx = Math.min(N - 1, Math.floor((frame - 25) / 25));
-      const segmentFrame = (frame - 25) % 25;
-      const fromPt = segmentIdx === 0 ? startPt : cardPts[segmentIdx - 1];
-      const toPt = cardPts[segmentIdx];
+      const segmentIdx = Math.min(N - 2, Math.floor((frame - 15) / 25));
+      const segmentFrame = (frame - 15) % 25;
+      const fromPt = dotPts[segmentIdx];
+      const toPt = dotPts[segmentIdx + 1];
       ballX = interpolate(segmentFrame, [0, 25], [fromPt.x, toPt.x], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
       ballY = interpolate(segmentFrame, [0, 25], [fromPt.y, toPt.y], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-    } else if (frame >= (25 + N * 25)) {
-      ballX = cardPts[N - 1].x;
-      ballY = cardPts[N - 1].y;
+    } else if (N > 1 && frame >= (15 + (N - 1) * 25)) {
+      ballX = dotPts[N - 1].x;
+      ballY = dotPts[N - 1].y;
     }
 
-    // 4. Animate drawing of connecting line trails
+    // 3. Animate drawing of connecting line trails
     const renderLineSegment = (from: { x: number; y: number }, to: { x: number; y: number }, startF: number, endF: number, id: number) => {
       if (frame < startF) return null;
       const curX = interpolate(frame, [startF, endF], [from.x, to.x], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -150,28 +151,37 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = (props) => {
         
         {/* Dynamic SVG Trail Line */}
         <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 1 }}>
-          {renderLineSegment(startPt, cardPts[0], 25, 50, 0)}
-          {N > 1 && renderLineSegment(cardPts[0], cardPts[1], 50, 75, 1)}
-          {N > 2 && renderLineSegment(cardPts[1], cardPts[2], 75, 100, 2)}
+          {N > 1 && renderLineSegment(dotPts[0], dotPts[1], 15, 40, 0)}
+          {N > 2 && renderLineSegment(dotPts[1], dotPts[2], 40, 65, 1)}
         </svg>
 
-        {/* Starting Node */}
-        <div style={{
-          position: "absolute",
-          left: `${startX}%`,
-          top: `${startY}%`,
-          transform: `translate(-50%, -50%) scale(${startScale})`,
-          width: "24px",
-          height: "24px",
-          borderRadius: "50%",
-          background: "#ffffff",
-          border: `3px solid ${accentColor}`,
-          boxShadow: `0 0 15px ${accentColor}`,
-          zIndex: 3
-        }} />
+        {/* Unified Node Dots Rendering */}
+        {dotPts.slice(0, N).map((pt, idx) => {
+          const triggerFrame = idx === 0 ? 0 : 15 + idx * 25;
+          const nodeScale = interpolate(frame, [triggerFrame - 8, triggerFrame], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
+          if (frame < triggerFrame - 8) return null;
+          return (
+            <div key={`dot-${idx}`} style={{
+              position: "absolute",
+              left: `${pt.x}%`,
+              top: `${pt.y}%`,
+              transform: `translate(-50%, -50%) scale(${nodeScale})`,
+              width: "24px",
+              height: "24px",
+              borderRadius: "50%",
+              background: "#ffffff",
+              border: `3px solid ${accentColor}`,
+              boxShadow: `0 0 15px ${accentColor}`,
+              zIndex: 3
+            }} />
+          );
+        })}
 
         {/* Traveling Projectile Ball */}
-        {(frame >= 25 && frame < (25 + N * 25)) && (
+        {isBallActive && (
           <div style={{
             position: "absolute",
             left: `${ballX}%`,
@@ -186,10 +196,10 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = (props) => {
           }} />
         )}
 
-        {/* Render Spring-Popping Cards */}
+        {/* Render Spring-Popping Cards next to their dots */}
         {visibleComps.map((comp, idx) => {
           const pt = cardPts[idx];
-          const triggerFrame = 50 + idx * 25;
+          const triggerFrame = idx === 0 ? 0 : 15 + idx * 25;
           const isLeft = idx % 2 === 0;
           
           // Spring scale interpolation: starts at 0, overshoots to 1.1, settles at 1.0
