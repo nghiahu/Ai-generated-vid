@@ -19,11 +19,11 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
   const visibleComps = otherComps.slice(0, 4); // Limit to max 4 cards
   const N = visibleComps.length;
 
-  // 1. Setup frame timelines dynamically
-  const panDuration = 25; 
-  const showDuration = 10; 
+  // 1. Setup frame timelines dynamically (slower, matching exact content block appearances)
+  const panDuration = 35; 
+  const showDuration = 15; 
   const segmentLength = panDuration + showDuration; 
-  const panEndFrame = segmentLength * (N - 1) + 15; 
+  const panEndFrame = segmentLength * (N - 1) + 20; 
 
   // Compute scrollX and lineProgressX dynamically
   let lineProgressX = 0;
@@ -31,7 +31,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
 
   for (let i = 0; i < N; i++) {
     const startF = i === 0 ? 0 : i * segmentLength - 10;
-    const endF = i === 0 ? 10 : i * segmentLength + 15;
+    const endF = i === 0 ? 15 : i * segmentLength + 25; 
     
     if (frame >= startF) {
       const prevVal = i === 0 ? 0 : (i - 0.5) * viewportWidth;
@@ -53,13 +53,11 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
   }
 
   // 2. Line coordinates (relative to viewport center)
-  // Panning line segment bounds
   const panningLineStartX = -viewportWidth / 2 - scrollX;
   const panningLineEndX = lineProgressX - viewportWidth / 2 - scrollX;
 
-  // Zoomed-out line segment bounds
-  const zoomedLineStartX = -250;
-  const zoomedLineEndX = 250;
+  const zoomedLineStartX = -280;
+  const zoomedLineEndX = 280;
 
   // Interpolate line boundaries during Zoom-out phase
   const lineX1 = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [panningLineStartX, zoomedLineStartX], {
@@ -76,7 +74,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", zIndex: 5 }}>
-      {/* Horizontal Timeline Line (Renders as a highly reliable div) */}
+      {/* Horizontal Timeline Line */}
       <div style={{
         position: "absolute",
         left: `${lineLeft}px`,
@@ -92,20 +90,20 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
 
       {/* Render Sections (Cards + Nodes) */}
       {visibleComps.map((comp, idx) => {
-        const sectionCenterFrame = idx * segmentLength + 10;
+        const sectionCenterFrame = idx === 0 ? 15 : idx * segmentLength + 25;
 
         // Node scale on timeline
-        const nodeScale = interpolate(frame, [sectionCenterFrame - 12, sectionCenterFrame - 2], [0, 1], {
+        const nodeScale = interpolate(frame, [sectionCenterFrame - 8, sectionCenterFrame], [0, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp"
         });
 
-        // Card emergence animation values
-        const cardYOffsetActive = interpolate(frame, [sectionCenterFrame - 8, sectionCenterFrame + 2], [100, 0], {
+        // Card emergence animation values (perfectly synchronized when node appears)
+        const cardYOffsetActive = interpolate(frame, [sectionCenterFrame, sectionCenterFrame + 10], [50, 0], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp"
         });
-        const cardOpacity = interpolate(frame, [sectionCenterFrame - 8, sectionCenterFrame + 2], [0, 1], {
+        const cardOpacity = interpolate(frame, [sectionCenterFrame, sectionCenterFrame + 10], [0, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp"
         });
@@ -116,10 +114,10 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
         const panningY = 0;
 
         let zoomedX = 0;
-        if (idx === 0) zoomedX = -200;
-        else if (idx === 1) zoomedX = 200;
-        else if (idx === 2) zoomedX = (N === 3) ? 0 : -200;
-        else if (idx === 3) zoomedX = 200;
+        if (idx === 0) zoomedX = -230;
+        else if (idx === 1) zoomedX = 230;
+        else if (idx === 2) zoomedX = (N === 3) ? 0 : -230;
+        else if (idx === 3) zoomedX = 230;
 
         const zoomedY = 0;
 
@@ -133,16 +131,16 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
           extrapolateRight: "clamp"
         });
 
-        // Card vertical offset (from above-the-line to below-the-line for Card 2 & 3)
-        const panningCardYOffset = -180; // above dot
-        const zoomedCardYOffset = (idx === 0 || idx === 1) ? -180 : 180; // Row 1 above line, Row 2 below line
+        // Card vertical offset (goes from center 0 to above/below the line in zoom-out)
+        const panningCardYOffset = 0; // Exactly centered in viewport during active panning
+        const zoomedCardYOffset = (idx === 0 || idx === 1) ? -160 : 160; 
 
         const cardYOffsetTranslate = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [panningCardYOffset, zoomedCardYOffset], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp"
         });
 
-        // Card scale zooms slightly to 0.95 (perfect fit for 2 columns in 1080px)
+        // Card scale zooms slightly to 0.95 during final view
         const scale = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [1.0, 0.95], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp"
@@ -172,9 +170,9 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
               position: "absolute",
               transform: `translate(-50%, calc(-50% + ${totalCardY}px))`,
               opacity: cardOpacity,
-              width: "360px",
-              borderRadius: "22px",
-              padding: resolvePadding("22px", paddingScale),
+              width: "440px", // Giant cards for premium legibility
+              borderRadius: "24px",
+              padding: resolvePadding("24px", paddingScale),
               background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.8)",
               border: `1.5px solid ${accentColor}33`,
               boxShadow: "0 20px 45px rgba(0,0,0,0.35)",
@@ -185,7 +183,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
               zIndex: 3
             }}>
               <div style={{
-                fontSize: "12px",
+                fontSize: "13px",
                 fontWeight: 900,
                 color: accentColor,
                 fontFamily: styles.fontFamily,
@@ -194,7 +192,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
                 PHASE 0{idx + 1}
               </div>
               <div style={{
-                fontSize: getDynamicFontSize(comp.data?.text || "", 24, fontScale),
+                fontSize: getDynamicFontSize(comp.data?.text || "", 26, fontScale),
                 fontWeight: 800,
                 color: isLight ? "#1f2937" : "#ffffff",
                 fontFamily: styles.fontFamily,
