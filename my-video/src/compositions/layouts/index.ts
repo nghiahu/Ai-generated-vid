@@ -24,7 +24,6 @@ const KEY_OVERRIDES: Record<string, string> = {
   swissgrid: "FeatureGrid",
   timelinechapters: "Timeline",
   versusarena: "VersusArena",
-  metriccards: "Dashboard",
   mediacard: "Gallery",
   walkthroughphoneexample: "LaptopMockup",
   scoreboardmeticcards: "StatsBanner",
