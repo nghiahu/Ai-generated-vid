@@ -175,9 +175,125 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "omnivoice_duyth
   const outputPath = path.join(outputDir, fileName);
 
   let effectiveVoice = voiceKey;
-  if (!effectiveVoice || !effectiveVoice.toLowerCase().startsWith("omnivoice_")) {
+  if (!effectiveVoice || (!effectiveVoice.toLowerCase().startsWith("omnivoice_") && !effectiveVoice.toLowerCase().startsWith("vbee_"))) {
     console.warn(`[generateTTS] Legacy or unsupported voice "${voiceKey}" detected. Auto-fallback to "omnivoice_duythanh".`);
     effectiveVoice = "omnivoice_duythanh";
+  }
+
+  // Nhánh xử lý Vbee (Cloud TTS)
+  if (effectiveVoice.toLowerCase().startsWith("vbee_")) {
+    try {
+      const vbeeApiKey = process.env.VBEE_API_KEY;
+      const vbeeAppId = process.env.VBEE_APP_ID;
+
+      if (!vbeeApiKey || !vbeeAppId) {
+        throw new Error("Thiếu VBEE_API_KEY hoặc VBEE_APP_ID trong cấu hình .env");
+      }
+
+      // Ánh xạ voiceKey sang voice_code của Vbee
+      const voiceMap = {
+        "vbee_ngochuyen": "hn_female_ngochuyen_full_48k-fhg",
+        "vbee_manhdung": "hn_male_manhdung_news_48k-fhg",
+        "vbee_thutrang": "hn_female_thutrang_news_48k-fhg",
+        "vbee_minhhoang": "sg_female_minhhoang_news_48k-fhg",
+        "vbee_naman": "sg_male_naman_news_48k-fhg"
+      };
+
+      const voiceCode = voiceMap[effectiveVoice.toLowerCase()] || "hn_female_ngochuyen_full_48k-fhg";
+      
+      console.log(`[TTS Engine] Calling Vbee API for text: "${text.substring(0, 30)}..." with voice: ${voiceCode}`);
+
+      // Gửi yêu cầu khởi tạo job đến Vbee
+      const ttsUrl = "https://vbee.vn/api/v1/tts";
+      const initRes = await fetch(ttsUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${vbeeApiKey}`,
+          "x-app-id": vbeeAppId
+        },
+        body: JSON.stringify({
+          app_id: vbeeAppId,
+          input_text: text,
+          voice_code: voiceCode,
+          callback_url: "https://example.com/callback"
+        })
+      });
+
+      if (!initRes.ok) {
+        const errText = await initRes.text();
+        throw new Error(`Vbee API request failed: status ${initRes.status} - ${errText}`);
+      }
+
+      const initBody = await initRes.json();
+      if (initBody.status !== 1 || !initBody.result || !initBody.result.request_id) {
+        throw new Error(`Khởi tạo Vbee job thất bại: ${JSON.stringify(initBody)}`);
+      }
+
+      const requestId = initBody.result.request_id;
+      console.log(`[TTS Engine] Created Vbee job with request_id: ${requestId}. Starting polling...`);
+
+      // Polling Vbee status
+      const statusUrl = `https://vbee.vn/api/v1/tts/${requestId}`;
+      let audioLink = "";
+      let pollAttempts = 0;
+      const maxPollAttempts = 30;
+
+      while (pollAttempts < maxPollAttempts) {
+        pollAttempts++;
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        try {
+          const checkRes = await fetch(statusUrl, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${vbeeApiKey}`,
+              "x-app-id": vbeeAppId
+            }
+          });
+
+          if (!checkRes.ok) continue;
+
+          const checkBody = await checkRes.json();
+          if (checkBody.status === 1 && checkBody.result) {
+            const currentStatus = checkBody.result.status;
+            if (currentStatus === "SUCCESS") {
+              audioLink = checkBody.result.audio_link;
+              break;
+            } else if (currentStatus === "FAILED") {
+              throw new Error("Tiến trình render giọng Vbee bị lỗi (FAILED).");
+            }
+          }
+        } catch (pollErr) {
+          console.warn(`[TTS Engine] Lỗi polling Vbee: ${pollErr.message}`);
+        }
+      }
+
+      if (!audioLink) {
+        throw new Error(`Timeout/Lỗi khi polling giọng Vbee cho request_id: ${requestId}`);
+      }
+
+      console.log(`[TTS Engine] Vbee render success. Downloading audio from: ${audioLink}`);
+
+      // Tải file audio về thư mục public/tts
+      const audioRes = await fetch(audioLink);
+      if (!audioRes.ok) {
+        throw new Error(`Không thể tải file âm thanh từ Vbee: status ${audioRes.status}`);
+      }
+
+      const audioBuffer = await audioRes.arrayBuffer();
+      fs.writeFileSync(outputPath, Buffer.from(audioBuffer));
+      console.log(`[TTS Engine] Saved downloaded audio to: ${outputPath}`);
+
+      // Áp dụng khoảng lặng/hậu kỳ
+      addSilentPadding(outputPath);
+      const duration = getAudioDuration(outputPath);
+
+      return { url: `/tts/${fileName}`, duration };
+    } catch (error) {
+      console.error(`Vbee TTS failed for scene ${sceneId}: ${error.message}`);
+      throw new Error(`Lỗi Vbee TTS: ${error.message}`);
+    }
   }
 
   // Nhánh xử lý OmniVoice (Chạy offline cục bộ qua omnivoice-infer CLI)

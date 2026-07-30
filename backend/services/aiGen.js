@@ -503,13 +503,13 @@ function safetyNetTitleHook(scene = {}, themeTokens = null) {
 import { useCurrentFrame, spring, interpolate } from "remotion";
 import { Sparkles, Zap } from "lucide-react";
 
-export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+export const GeneratedScene = ({ fps = 30, scene = {}, themeTokens }) => {
   const frame = useCurrentFrame();
   const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
   const headingText = "${safeHeading}";
   const alertText = "${alertStr}";
   const words = headingText.split(" ");
-  const THEME = ${JSON.stringify(themeObj, null, 2)};
+  const THEME = themeTokens || ${JSON.stringify(themeObj, null, 2)};
 
   const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
@@ -584,14 +584,14 @@ function safetyNetHeroMetric(scene = {}, themeTokens = null) {
   return `import React from "react";
 import { useCurrentFrame, spring, interpolate } from "remotion";
 
-export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+export const GeneratedScene = ({ fps = 30, scene = {}, themeTokens }) => {
   const frame = useCurrentFrame();
   const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 12, stiffness: 50 } });
   const heroValue = "${heroValue}";
   const label = "${heroLabel}";
   const headingText = "${safeHeading}";
   const numSp = sp(10);
-  const THEME = ${JSON.stringify(themeObj, null, 2)};
+  const THEME = themeTokens || ${JSON.stringify(themeObj, null, 2)};
 
   const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
@@ -653,11 +653,11 @@ function safetyNetDualMetric(scene = {}, themeTokens = null) {
 import { useCurrentFrame, spring } from "remotion";
 import { TrendingUp, Award } from "lucide-react";
  
-export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+export const GeneratedScene = ({ fps = 30, scene = {}, themeTokens }) => {
   const frame = useCurrentFrame();
   const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
   const headingText = "${safeHeading}";
-  const THEME = ${JSON.stringify(themeObj, null, 2)};
+  const THEME = themeTokens || ${JSON.stringify(themeObj, null, 2)};
   const metrics = [
     { value: "${v0}", label: "${l0}", color: THEME.orange, Icon: TrendingUp },
     { value: "${v1}", label: "${l1}", color: THEME.cyan, Icon: Award }
@@ -723,13 +723,13 @@ function safetyNetComparisonVersus(scene = {}, themeTokens = null) {
   return `import React from "react";
 import { useCurrentFrame, spring } from "remotion";
 
-export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+export const GeneratedScene = ({ fps = 30, scene = {}, themeTokens }) => {
   const frame = useCurrentFrame();
   const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
   const headingText = "${safeHeading}";
   const leftPoints = ${leftJson};
   const rightPoints = ${rightJson};
-  const THEME = ${JSON.stringify(themeObj, null, 2)};
+  const THEME = themeTokens || ${JSON.stringify(themeObj, null, 2)};
   const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
@@ -794,12 +794,12 @@ function safetyNetProcessTimeline(scene = {}, themeTokens = null) {
   return `import React from "react";
 import { useCurrentFrame, spring } from "remotion";
  
-export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+export const GeneratedScene = ({ fps = 30, scene = {}, themeTokens }) => {
   const frame = useCurrentFrame();
   const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
   const headingText = "${safeHeading}";
   const steps = ${stepsJson};
-  const THEME = ${JSON.stringify(themeObj, null, 2)};
+  const THEME = themeTokens || ${JSON.stringify(themeObj, null, 2)};
   const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden",
@@ -865,11 +865,11 @@ function safetyNetCodeTerminal(scene = {}, themeTokens = null) {
 import { useCurrentFrame, spring } from "remotion";
 import { Terminal, Code, Cpu } from "lucide-react";
 
-export const GeneratedScene = ({ fps = 30, scene = {} }) => {
+export const GeneratedScene = ({ fps = 30, scene = {}, themeTokens }) => {
   const frame = useCurrentFrame();
   const sp = (delay = 0) => spring({ frame: Math.max(0, frame - delay), fps, config: { damping: 14, stiffness: 55 } });
   const headingText = "${safeHeading}";
-  const THEME = ${JSON.stringify(themeObj, null, 2)};
+  const THEME = themeTokens || ${JSON.stringify(themeObj, null, 2)};
 
   const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
   return (
@@ -969,7 +969,7 @@ function generateGlassCardSafetyNetTSX(scene = {}, themeTokens = null) {
 import { useCurrentFrame, spring } from "remotion";
 import { Sparkles, Cpu, Zap, Layers } from "lucide-react";
 
-export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson?: any }> = ({ fps = 30, scene = {} }) => {
+export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson?: any; themeTokens?: any }> = ({ fps = 30, scene = {}, themeTokens }) => {
   const frame = useCurrentFrame();
   const titleSpr = spring({ frame: Math.max(0, frame - 5), fps, config: { damping: 14, stiffness: 55 } });
   const icons = [Cpu, Zap, Layers, Sparkles];
@@ -977,7 +977,7 @@ export const GeneratedScene: React.FC<{ fps?: number; scene?: any; subtitlesJson
   const headingText = "${safeHeading}";
   const cardItems = ${itemsJson};
   const alertText = "${alertStr}";
-  const THEME = ${JSON.stringify(themeObj, null, 2)};
+  const THEME = themeTokens || ${JSON.stringify(themeObj, null, 2)};
   const bgImgUrl = scene && scene.resolvedAssets && scene.resolvedAssets.bgImage;
 
   return (
@@ -2000,7 +2000,8 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
         textToRead = await phoneme.optimizeTextForPhonemes(scene.voiceover, projectId);
         console.log(`[Studio AI Gen] Scene ${index}: optimized voiceover phonemes for TTS`);
       }
-      return await tts.generateTTS(textToRead, projectId || "aigen_proj", `scene_${index}_${Date.now()}`, `omnivoice_${voiceKey}`);
+      const finalVoiceKey = voiceKey.startsWith("vbee_") ? voiceKey : `omnivoice_${voiceKey}`;
+      return await tts.generateTTS(textToRead, projectId || "aigen_proj", `scene_${index}_${Date.now()}`, finalVoiceKey);
     } catch (ttsErr) {
       console.warn(`[Studio AI Gen] TTS warning for scene ${index}:`, ttsErr.message);
       return null;

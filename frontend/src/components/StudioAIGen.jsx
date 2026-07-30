@@ -1276,6 +1276,11 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
               >
                 <option value="duythanh">OmniVoice - Duy Thanh (Offline Voice)</option>
                 <option value="quanganh">OmniVoice - Quang Anh (Offline Voice)</option>
+                <option value="vbee_ngochuyen">Vbee - Ngọc Huyền (Nữ miền Bắc)</option>
+                <option value="vbee_manhdung">Vbee - Mạnh Dũng (Nam miền Bắc)</option>
+                <option value="vbee_thutrang">Vbee - Thu Trang (Nữ miền Bắc)</option>
+                <option value="vbee_minhhoang">Vbee - Minh Hoàng (Nữ miền Nam)</option>
+                <option value="vbee_naman">Vbee - Nam An (Nam miền Nam)</option>
               </select>
             </div>
 
@@ -2342,8 +2347,13 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                 onChange={(e) => setRegenVoice(e.target.value)}
                 style={{ width: "100%", padding: "12px", borderRadius: "10px", border: "1.5px solid #cbd5e1", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}
               >
-                <option value="quanganh">OmniVoice - Quang Anh (Offline Voice)</option>
                 <option value="duythanh">OmniVoice - Duy Thanh (Offline Voice)</option>
+                <option value="quanganh">OmniVoice - Quang Anh (Offline Voice)</option>
+                <option value="vbee_ngochuyen">Vbee - Ngọc Huyền (Nữ miền Bắc)</option>
+                <option value="vbee_manhdung">Vbee - Mạnh Dũng (Nam miền Bắc)</option>
+                <option value="vbee_thutrang">Vbee - Thu Trang (Nữ miền Bắc)</option>
+                <option value="vbee_minhhoang">Vbee - Minh Hoàng (Nữ miền Nam)</option>
+                <option value="vbee_naman">Vbee - Nam An (Nam miền Nam)</option>
               </select>
             </div>
 
