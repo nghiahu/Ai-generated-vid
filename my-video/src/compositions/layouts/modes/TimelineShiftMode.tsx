@@ -145,7 +145,13 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = (props) => {
     `;
 
     return (
-      <div style={{ position: "relative", width: "100%", height: "100%", zIndex: 5 }}>
+      <div style={{ 
+        position: "relative", 
+        width: "100%", 
+        height: "100%", 
+        marginTop: "-200px", // Pull the entire timeline up to sit directly below the title, leaving bottom clear
+        zIndex: 5 
+      }}>
         <style>{animStyles}</style>
         
         {/* Dynamic SVG Trail Line */}
