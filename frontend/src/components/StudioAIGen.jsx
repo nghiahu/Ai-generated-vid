@@ -1281,6 +1281,7 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                 <option value="vbee_thutrang">Vbee - Thu Trang (Nữ miền Bắc)</option>
                 <option value="vbee_minhhoang">Vbee - Minh Hoàng (Nữ miền Nam)</option>
                 <option value="vbee_naman">Vbee - Nam An (Nam miền Nam)</option>
+                <option value="vbee_minhquan">Vbee - Minh Quân (Nam miền Bắc)</option>
               </select>
             </div>
 
@@ -2354,6 +2355,7 @@ export const StudioAIGen = ({ projectId = null, onBack = null, onUpdateProjectsL
                 <option value="vbee_thutrang">Vbee - Thu Trang (Nữ miền Bắc)</option>
                 <option value="vbee_minhhoang">Vbee - Minh Hoàng (Nữ miền Nam)</option>
                 <option value="vbee_naman">Vbee - Nam An (Nam miền Nam)</option>
+                <option value="vbee_minhquan">Vbee - Minh Quân (Nam miền Bắc)</option>
               </select>
             </div>
 

@@ -804,6 +804,7 @@ function App() {
                 <option value="vbee_thutrang">Vbee - Giọng Thu Trang (Nữ miền Bắc)</option>
                 <option value="vbee_minhhoang">Vbee - Giọng Minh Hoàng (Nữ miền Nam)</option>
                 <option value="vbee_naman">Vbee - Giọng Nam An (Nam miền Nam)</option>
+                <option value="vbee_minhquan">Vbee - Giọng Minh Quân (Nam miền Bắc)</option>
                 <option value="microsoft_hoaimy">Microsoft Hoài My (Free, Fluent Female)</option>
                 <option value="microsoft_namminh">Microsoft Nam Minh (Free, Fluent Male)</option>
                 <option value="rachel">Hoai My (Rachel - English Accent)</option>

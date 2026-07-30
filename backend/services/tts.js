@@ -196,7 +196,8 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "omnivoice_duyth
         "vbee_manhdung": "hn_male_manhdung_news_48k-fhg",
         "vbee_thutrang": "hn_female_thutrang_news_48k-fhg",
         "vbee_minhhoang": "sg_female_minhhoang_news_48k-fhg",
-        "vbee_naman": "sg_male_naman_news_48k-fhg"
+        "vbee_naman": "sg_male_naman_news_48k-fhg",
+        "vbee_minhquan": "hn_male_minhquan_yt_24k-pre"
       };
 
       const voiceCode = voiceMap[effectiveVoice.toLowerCase()] || "hn_female_ngochuyen_full_48k-fhg";
