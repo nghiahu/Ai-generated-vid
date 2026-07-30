@@ -22,7 +22,6 @@ export const LAYOUT_REGISTRY: Record<string, LayoutMetadata> = {};
 const KEY_OVERRIDES: Record<string, string> = {
   spliteditorial: "SplitScreen",
   swissgrid: "FeatureGrid",
-  timelinechapters: "Timeline",
   versusarena: "VersusArena",
   mediacard: "Gallery",
   walkthroughphoneexample: "LaptopMockup",

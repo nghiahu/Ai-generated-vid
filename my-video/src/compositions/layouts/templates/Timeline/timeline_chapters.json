@@ -1,0 +1,46 @@
+{
+  "id": "TimelineChapters",
+  "name": "Timeline Chapters",
+  "family": "timeline",
+  "layoutMode": "timeline_shift",
+  "container": {
+    "paddingTop": "260px",
+    "maxWidth": "960px",
+    "gap": "24px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "86px",
+    "fontWeight": "950",
+    "letterSpacing": "-0.05em",
+    "marginBottom": "60px",
+    "useAccentTextShadow": true
+  },
+  "positions": [],
+  "items": {
+    "rotations": [0],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "26px",
+        "fontWeight": "800",
+        "borderRadius": "24px",
+        "padding": "24px",
+        "scale": 1.0,
+        "backdropBlur": "8px",
+        "useAccentBg": false,
+        "useAccentBorder": true,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "28px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}
