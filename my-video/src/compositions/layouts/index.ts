@@ -1,4 +1,4 @@
-import React from "react"; // trigger rebuild for circular_progress, ending, metrics, & custom scale and header timeline templates
+import React from "react"; // trigger rebuild for circular_progress, ending, metrics, & custom square timeline templates
 import { LayoutProps } from "./LayoutTypes";
 import { TemplateLayout } from "./TemplateLayout";
 
