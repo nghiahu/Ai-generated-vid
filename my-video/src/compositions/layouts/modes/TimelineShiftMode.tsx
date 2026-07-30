@@ -21,9 +21,9 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = ({
   // 1. Coordinates for the path (in percentages of container)
   const startPt = { x: 15, y: 15 };
   const cardPts = [
-    { x: 25, y: 38 },
-    { x: 75, y: 60 },
-    { x: 25, y: 82 }
+    { x: 32, y: 38 },
+    { x: 68, y: 60 },
+    { x: 32, y: 82 }
   ];
 
   // 2. Animate the starting node (Frame 0-25)
@@ -147,7 +147,7 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = ({
           left: `${pt.x}%`,
           top: `${pt.y}%`,
           transform: `translate(-50%, -50%) scale(${scale})`,
-          width: "250px",
+          width: "360px",
           borderRadius: "20px",
           padding: resolvePadding("20px", paddingScale),
           background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.8)",
