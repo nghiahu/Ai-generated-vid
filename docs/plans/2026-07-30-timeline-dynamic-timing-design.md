@@ -16,12 +16,15 @@
   - Positions shift to final 2-row grid offsets.
   - Timeline line shrinks to centered `560px` segment.
 
-**Option A: Enlarge Cards and Offset Upwards**
-- Card width: `600px` (enlarged for legibility).
-- Font size: `32px` base for contents.
-- Padding: `28px` for premium spacing.
-- Panning offset: Cards sit above the circle dot at Y-offset `-150px` during active phase.
-- Zoom-out offsets: Cards 0/1 slide to Y-offset `-180px`, Card 2 slides to Y-offset `+180px`.
+**Option A: Moderate squarish cards, left aligned**
+- Card dimensions:
+  - Active: width `420px`, height `320px`, padding `24px`
+  - Zoomed: width `380px`, height `280px`, padding `20px`
+- Text alignment: Left aligned (`textAlign: "left"`, `alignItems: "flex-start"`).
+- Font size base: active `30px`, zoomed `22px`.
+- Y-offsets (above the line):
+  - Active panning phase: `-190px` (above the circle dot).
+  - Zoom-out phase: Cards 0/1 slide to `-170px`, Card 2 slides to `+170px`.
 
 ## Components and Data Flow
 
