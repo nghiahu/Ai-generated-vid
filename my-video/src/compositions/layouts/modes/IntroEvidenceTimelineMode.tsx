@@ -2,7 +2,7 @@ import React from "react";
 import { useCurrentFrame, interpolate, useVideoConfig } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
-import { getDynamicFontSize, resolvePadding } from "./LayoutNestedRenderers";
+import { getDynamicFontSize, resolvePadding, getAnimationConfig } from "./LayoutNestedRenderers";
 import { highlightHeadingText } from "../../../components/layout/UIBlocks";
 
 export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
