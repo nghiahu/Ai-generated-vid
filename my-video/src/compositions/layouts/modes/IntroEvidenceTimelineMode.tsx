@@ -39,9 +39,13 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
     }
   }
 
-  // 3. Static horizontal timeline line scale & opacity
+  // 3. Horizontal timeline line bounds: shrinks from full viewport width to a centered segment
   const lineScaleX = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const lineOpacity = interpolate(frame, [panEndFrame + 10, panEndFrame + 25], [1, 0], {
+  const lineLeft = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [0, viewportWidth / 2 - 220], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp"
+  });
+  const lineRight = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [0, viewportWidth / 2 - 220], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp"
   });
@@ -51,14 +55,13 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
       {/* Static Horizontal Timeline Line */}
       <div style={{
         position: "absolute",
-        left: 0,
-        right: 0,
+        left: `${lineLeft}px`,
+        right: `${lineRight}px`,
         top: "50%",
         transform: `translateY(-50%) scaleX(${lineScaleX})`,
         height: "6px",
         background: `linear-gradient(90deg, ${accentColor}, ${darkAccentColor})`,
         boxShadow: `0 0 12px ${accentColor}`,
-        opacity: lineOpacity,
         zIndex: 1
       }} />
 
@@ -66,8 +69,14 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
       {visibleComps.map((comp, idx) => {
         const sectionCenterFrame = idx * segmentLength + 10;
 
-        // Card emergence
-        const cardYOffset = interpolate(frame, [sectionCenterFrame - 8, sectionCenterFrame + 2], [100, 0], {
+        // Node scale on timeline
+        const nodeScale = interpolate(frame, [sectionCenterFrame - 12, sectionCenterFrame - 2], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp"
+        });
+
+        // Card emergence animation values
+        const cardYOffsetActive = interpolate(frame, [sectionCenterFrame - 8, sectionCenterFrame + 2], [100, 0], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp"
         });
@@ -76,24 +85,20 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
           extrapolateRight: "clamp"
         });
 
-        // Node scale on timeline
-        const nodeScale = interpolate(frame, [sectionCenterFrame - 12, sectionCenterFrame - 2], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp"
-        });
-
-        // Calculate card coordinates dynamically
-        // Panning position
+        // 4. Custom Grid Coordinates for Zoom-Out Phase
+        // Dot coordinates (X, Y)
         const panningX = idx * viewportWidth - scrollX;
         const panningY = 0;
 
-        // Zoomed final position: 
-        // - Vertical (9:16): vertical stack of cards in center (X = 0, Y is stacked)
-        // - Landscape (16:9): horizontal row of cards in center (X is row, Y = 0)
-        const zoomedX = isVertical ? 0 : (idx - (N - 1) / 2) * 320;
-        const zoomedY = isVertical ? (idx - (N - 1) / 2) * 310 : 0;
+        let zoomedX = 0;
+        if (idx === 0) zoomedX = -170;
+        else if (idx === 1) zoomedX = 170;
+        else if (idx === 2) zoomedX = (N === 3) ? 0 : -170;
+        else if (idx === 3) zoomedX = 170;
 
-        // Smooth transition to zoomed out layout
+        const zoomedY = 0; // Dots are always centered on the timeline line
+
+        // Transition dot coordinates
         const x = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [panningX, zoomedX], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp"
@@ -103,19 +108,32 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
           extrapolateRight: "clamp"
         });
 
-        // Card scale: stays 1.0 during panning, zooms slightly down to 0.85/0.8 (NOT tiny 0.3)
-        const scale = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [1.0, isVertical ? 0.85 : 0.8], {
+        // Card vertical offset (from above-the-line to below-the-line for Card 2 & 3)
+        const panningCardYOffset = -160; // above dot
+        const zoomedCardYOffset = (idx === 0 || idx === 1) ? -160 : 160; // Row 1 above line, Row 2 below line
+
+        const cardYOffsetTranslate = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [panningCardYOffset, zoomedCardYOffset], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp"
         });
 
+        // Card scale zooms slightly down to 0.9 (perfect fit for 2 columns in 1080px)
+        const scale = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [1.0, 0.9], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp"
+        });
+
+        // Card vertical Y translation combining emergence offset and row position offset
+        const totalCardY = cardYOffsetTranslate + cardYOffsetActive;
+
         const sectionStyle: React.CSSProperties = {
           position: "absolute",
+          left: "50%",
+          top: "50%",
           transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`,
-          width: "320px",
-          height: "100%",
+          width: "0px",
+          height: "0px",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           boxSizing: "border-box",
@@ -127,8 +145,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
             {/* Card Container */}
             <div style={{
               position: "absolute",
-              bottom: "54%", // Above node dot
-              transform: `translateY(${cardYOffset}px)`,
+              transform: `translate(-50%, calc(-50% + ${totalCardY}px))`,
               opacity: cardOpacity,
               width: "300px",
               borderRadius: "22px",
@@ -162,11 +179,10 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
               </div>
             </div>
 
-            {/* Node Dot */}
+            {/* Node Dot (Centered exactly at X, Y relative to timeline line) */}
             <div style={{
               position: "absolute",
-              top: "50%",
-              transform: `translateY(-50%) scale(${nodeScale})`,
+              transform: `translate(-50%, -50%) scale(${nodeScale})`,
               width: "22px",
               height: "22px",
               borderRadius: "50%",
