@@ -2,12 +2,10 @@ import React from "react";
 import { useCurrentFrame, interpolate } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
-import { getAnimationConfig } from "./LayoutNestedRenderers";
-import { highlightHeadingText } from "../../../components/layout/UIBlocks";
+import { getDynamicFontSize, resolvePadding } from "./LayoutNestedRenderers";
 
 export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
   otherComps,
-  t,
   accentColor,
   darkAccentColor,
   rgb,
@@ -15,285 +13,176 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
   styles,
   fontScale,
   paddingScale,
-  titleText,
-  category,
-  theme,
-  highlightWords
 }) => {
   const frame = useCurrentFrame();
-  const lineProgress = interpolate(frame, [10, 50], [0, 100], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const beamY = interpolate(frame, [15, 65], [0, 96], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const isBeamVisible = frame > 15 && frame < 70;
-  const mainTitle = titleText || "Code Ra Video";
+  const visibleComps = otherComps.slice(0, 4); // Limit to max 4 cards
+  const N = visibleComps.length;
 
-  // Category pill tag at the bottom
-  const bottomCategory = category || (t.categoryPill?.text?.trim().toLowerCase() !== "ai viết video" && t.categoryPill?.text?.trim().toLowerCase() !== "ai viet video" ? t.categoryPill?.text : "");
-  const hasCategory = !!bottomCategory;
+  // 1. Setup frame timelines
+  const panDuration = 25; // frames to pan between sections
+  const showDuration = 10; // frames holding on section
+  const segmentLength = panDuration + showDuration; // 35 frames per section
+  const panEndFrame = segmentLength * (N - 1) + 15; // end of horizontal panning phase
 
-  // Timeline step configurations matching the design
-  const stepConfigs = [
-    {
-      num: "01",
-      badgeText: "FIRST SIGNAL",
-      marginLeft: "0px",
-      maxWidth: "580px",
-      isHighlighted: false
-    },
-    {
-      num: "02",
-      badgeText: "THEN EVIDENCE",
-      marginLeft: "64px",
-      maxWidth: "520px",
-      isHighlighted: false
-    },
-    {
-      num: "03",
-      badgeText: "NOW IMPACT",
-      marginLeft: "0px",
-      maxWidth: "580px",
-      isHighlighted: true // Highlight the final step
+  // 2. Interpolate Zoom/Scale and Translation
+  const targetScale = Math.max(0.24, 0.8 / N);
+  const scale = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [1.0, targetScale], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp"
+  });
+
+  // Calculate translateX panning offset
+  let currentTranslateX = 0; // in percent of section width
+  for (let i = 1; i < N; i++) {
+    const startF = i * segmentLength - 10;
+    const endF = i * segmentLength + 15;
+    if (frame >= startF) {
+      const stepVal = interpolate(frame, [startF, endF], [-(i - 1) * 100, -i * 100], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp"
+      });
+      currentTranslateX = stepVal;
     }
-  ];
+  }
 
-  // Limit rendering to existing otherComps (max 3 steps) without hardcoded fallbacks
-  const renderedConfigs = stepConfigs.slice(0, otherComps.length);
+  // Zoom-out transition resets translation back to 0% to center the full row
+  const translateX = interpolate(frame, [panEndFrame + 10, panEndFrame + 35], [currentTranslateX / N, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp"
+  });
+
+  // 3. Draw horizontal timeline beam line
+  const lineEndProgress = interpolate(frame, [0, panEndFrame], [0, N * 100], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp"
+  });
+
+  const outerContainerStyle: React.CSSProperties = {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "visible",
+    zIndex: 5
+  };
+
+  const scrollContainerStyle: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "row",
+    width: `${N * 100}%`,
+    height: "100%",
+    transform: `scale(${scale}) translateX(${translateX}%)`,
+    transformOrigin: "center center",
+    alignItems: "center",
+    position: "relative",
+  };
 
   return (
-    <div style={{
-      position: "relative",
-      width: "100%",
-      maxWidth: "920px",
-      minHeight: "1050px",
-      alignSelf: "center",
-      zIndex: 5,
-      boxSizing: "border-box",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between"
-    }}>
-
-      {/* Top Section: Timeline Box Area */}
-      <div style={{ position: "relative", width: "100%", height: "620px" }}>
-
-        {/* Vertical gradient timeline line */}
+    <div style={outerContainerStyle}>
+      <div style={scrollContainerStyle}>
+        
+        {/* Continuous Horizontal Timeline Line */}
         <div style={{
           position: "absolute",
-          left: "26px", // Centered exactly at the middle of the 54px circles (26px + 27px circle radius = 53px)
-          top: "15px",
-          height: `${lineProgress * 0.95}%`, // grows timeline line dynamically
-          width: "4px",
-          borderRadius: "999px",
-          background: `linear-gradient(180deg, rgb(253, 230, 138), ${accentColor}, ${darkAccentColor})`,
-          boxShadow: `rgba(${rgb}, 0.26) 0px 0px 24px`,
-          pointerEvents: "none",
-          zIndex: 2
+          left: 0,
+          right: `${100 - (lineEndProgress / N)}%`,
+          height: "6px",
+          background: `linear-gradient(90deg, ${accentColor}, ${darkAccentColor})`,
+          boxShadow: `0 0 12px ${accentColor}`,
+          zIndex: 1
         }} />
 
-        {/* Traveling light beam particle */}
-        {isBeamVisible && (
-          <div style={{
-            position: "absolute",
-            left: "22px", // Centered on the 4px line (26px - 4px radius = 22px)
-            top: `${beamY}%`,
-            width: "12px",
-            height: "24px",
-            borderRadius: "6px",
-            background: "#ffffff",
-            boxShadow: `0 0 15px #ffffff, 0 0 30px ${accentColor}`,
-            zIndex: 4,
-            pointerEvents: "none",
-            opacity: 0.95
-          }} />
-        )}
+        {/* Sections */}
+        {visibleComps.map((comp, idx) => {
+          const sectionCenterFrame = idx * segmentLength + 10;
+          
+          // Card slides up from line when current section is reached
+          const cardY = interpolate(frame, [sectionCenterFrame - 8, sectionCenterFrame + 2], [100, 0], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
+          const cardOpacity = interpolate(frame, [sectionCenterFrame - 8, sectionCenterFrame + 2], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
 
-        {/* Timeline content wrapper */}
-        <div style={{
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          gap: "28px",
-          zIndex: 3
-        }}>
-          {renderedConfigs.map((config, idx) => {
-            const comp = otherComps[idx];
-            const textVal = comp?.data?.text || "";
+          // Section Node on the timeline
+          const nodeScale = interpolate(frame, [sectionCenterFrame - 12, sectionCenterFrame - 2], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
 
-            // Animation configs
-            const animConfig = comp
-              ? getAnimationConfig(comp, idx, "slide-right", 0.15 + idx * 0.12, t)
-              : { animation: "slide-right" as const, delay: 0.15 + idx * 0.12 };
+          const sectionStyle: React.CSSProperties = {
+            width: `${100 / N}%`,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            boxSizing: "border-box"
+          };
 
-            const isHighlighted = config.isHighlighted;
-
-            // Custom style matching both Light & Dark Theme
-            let nodeBg = "";
-            let nodeBorder = "";
-            let nodeShadow = "";
-
-            let cardBg = "";
-            let cardBorder = "";
-            let cardShadow = "";
-            let cardTextColor = "";
-
-            if (isHighlighted) {
-              // Circle Node styling
-              nodeBg = `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})`;
-              nodeBorder = `2px solid ${accentColor}`;
-              nodeShadow = `rgba(${rgb}, 0.3) 0px 0px 22px`;
-
-              // Card styling
-              cardBg = isLight
-                ? `linear-gradient(90deg, #ffffff, rgba(${rgb}, 0.08))`
-                : (styles?.cardStyle?.background || styles?.cardStyle?.backgroundColor || `linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(${rgb}, 0.15))`);
-              cardBorder = `2px solid ${accentColor}`;
-              cardShadow = isLight
-                ? `rgba(0,0,0,0.1) 0px 20px 46px, rgba(${rgb},0.15) 0px 0px 22px`
-                : `rgba(0, 0, 0, 0.4) 0px 24px 56px, rgba(${rgb}, 0.25) 0px 0px 32px, rgba(255, 255, 255, 0.08) 0px 0px 0px 1px inset`;
-              cardTextColor = isLight ? "#0f172a" : "rgb(249, 247, 255)";
-            } else {
-              // Circle Node styling
-              nodeBg = isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(15, 23, 42, 0.9)";
-              nodeBorder = isLight ? `2px solid rgba(${rgb}, 0.4)` : `2px solid rgba(${rgb}, 0.6)`;
-              nodeShadow = "none";
-
-              // Card styling
-              cardBg = isLight
-                ? "linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9))"
-                : (styles?.cardStyle?.background || styles?.cardStyle?.backgroundColor || "linear-gradient(90deg, rgba(2, 6, 23, 0.82), rgba(15, 23, 42, 0.54))");
-              cardBorder = isLight
-                ? "1px solid rgba(0,0,0,0.08)"
-                : `1px solid rgba(${rgb}, 0.36)`;
-              cardShadow = isLight
-                ? "rgba(0, 0, 0, 0.04) 0px 18px 40px"
-                : `rgba(0, 0, 0, 0.34) 0px 20px 46px, rgba(${rgb}, 0.1) 0px 0px 22px, rgba(255, 255, 255, 0.06) 0px 0px 0px 1px inset`;
-              cardTextColor = isLight ? "#1e293b" : "rgb(249, 247, 255)";
-            }
-
-            return (
-              <div
-                key={idx}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "54px minmax(0px, 1fr)",
-                  alignItems: "center",
-                  gap: "18px",
-                  maxWidth: config.maxWidth,
-                  marginLeft: config.marginLeft,
-                  width: "100%",
-                  boxSizing: "border-box"
-                }}
-              >
-                {/* 1. Circle step node */}
+          return (
+            <div key={comp.id || idx} style={sectionStyle}>
+              {/* Card Container above the line */}
+              <div style={{
+                position: "absolute",
+                bottom: "55%", // Above horizontal center line
+                transform: `translateY(${cardY}px)`,
+                opacity: cardOpacity,
+                width: "280px",
+                borderRadius: "22px",
+                padding: resolvePadding("22px", paddingScale),
+                background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.8)",
+                border: `1.5px solid ${accentColor}33`,
+                boxShadow: "0 20px 45px rgba(0,0,0,0.35)",
+                backdropFilter: "blur(12px)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                zIndex: 3
+              }}>
                 <div style={{
-                  width: "54px",
-                  height: "54px",
-                  borderRadius: "999px",
-                  background: nodeBg,
-                  border: nodeBorder,
-                  boxShadow: nodeShadow,
-                  color: isHighlighted ? "#ffffff" : accentColor,
-                  display: "grid",
-                  placeItems: "center",
-                  fontSize: "15px",
+                  fontSize: "12px",
                   fontWeight: 900,
-                  letterSpacing: "0.08em",
+                  color: accentColor,
                   fontFamily: styles.fontFamily,
-                  zIndex: 4
+                  letterSpacing: "0.1em"
                 }}>
-                  {config.num}
+                  PHASE 0{idx + 1}
                 </div>
-
-                {/* 2. Side content card */}
-                <AnimatedBlock animation={animConfig.animation} delaySeconds={animConfig.delay}>
-                  <div style={{
-                    display: "grid",
-                    gap: "8px",
-                    borderRadius: "18px",
-                    padding: "16px 18px",
-                    background: cardBg,
-                    border: cardBorder,
-                    boxShadow: cardShadow,
-                    backdropFilter: "blur(16px)",
-                    boxSizing: "border-box"
-                  }}>
-                    {/* Badge */}
-                    <div style={{
-                      color: isHighlighted ? accentColor : accentColor,
-                      fontSize: "11px",
-                      fontWeight: 900,
-                      letterSpacing: "0.17em",
-                      textTransform: "uppercase",
-                      fontFamily: styles.fontFamily
-                    }}>
-                      {config.badgeText}
-                    </div>
-                    {/* Step Title text */}
-                    <div style={{
-                      fontSize: `${Math.round(29 * fontScale)}px`,
-                      lineHeight: 1.4,
-                      fontWeight: 900,
-                      letterSpacing: "-0.04em",
-                      textTransform: "uppercase",
-                      color: cardTextColor,
-                      fontFamily: styles.fontFamily
-                    }}>
-                      {textVal}
-                    </div>
-                  </div>
-                </AnimatedBlock>
+                <div style={{
+                  fontSize: getDynamicFontSize(comp.data?.text || "", 22, fontScale),
+                  fontWeight: 800,
+                  color: isLight ? "#1f2937" : "#ffffff",
+                  fontFamily: styles.fontFamily,
+                  lineHeight: 1.3
+                }}>
+                  {comp.data?.text || ""}
+                </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* Bottom Section: Headline */}
-      <AnimatedBlock animation="slide-up" delaySeconds={0.5}>
-        <div style={{
-          display: "grid",
-          gap: "18px",
-          width: "100%",
-          paddingBottom: "16px",
-          boxSizing: "border-box"
-        }}>
-          {/* Badge pill */}
-          {hasCategory && (
-            <div style={{
-              width: "fit-content",
-              borderRadius: "999px",
-              padding: "10px 16px",
-              background: isLight ? "rgba(0,0,0,0.05)" : "rgba(2, 6, 23, 0.78)",
-              color: isLight ? "#1f2937" : "rgb(255, 255, 255)",
-              border: `1px solid rgba(${rgb}, 0.4)`,
-              fontSize: "18px",
-              lineHeight: 1,
-              fontWeight: 900,
-              letterSpacing: "0.24em",
-              textTransform: "uppercase",
-              boxShadow: isLight ? "none" : `rgba(0, 0, 0, 0.32) 0px 18px 40px, rgba(${rgb}, 0.12) 0px 0px 22px`,
-              fontFamily: styles.fontFamily
-            }}>
-              {bottomCategory}
+              {/* Node Dot on the timeline */}
+              <div style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: `translate(-50%, -50%) scale(${nodeScale})`,
+                width: "22px",
+                height: "22px",
+                borderRadius: "50%",
+                background: "#ffffff",
+                border: `4px solid ${accentColor}`,
+                boxShadow: `0 0 15px ${accentColor}`,
+                zIndex: 2
+              }} />
             </div>
-          )}
-
-          {/* Main Title */}
-          <div style={{
-            maxWidth: "820px",
-            fontSize: `${Math.round(106 * fontScale)}px`,
-            lineHeight: 1.32,
-            fontWeight: 900,
-            letterSpacing: "-0.075em",
-            color: isLight ? "#1f2937" : "rgb(248, 250, 252)",
-            textTransform: "uppercase",
-            fontFamily: styles.fontFamily,
-            textShadow: isLight ? "none" : `rgba(0, 0, 0, 0.62) 0px 22px 54px, rgba(${rgb}, 0.14) 0px 0px 34px`
-          }}>
-            {highlightHeadingText(mainTitle, accentColor, theme, highlightWords)}
-          </div>
-        </div>
-      </AnimatedBlock>
-
+          );
+        })}
+      </div>
     </div>
   );
 };
