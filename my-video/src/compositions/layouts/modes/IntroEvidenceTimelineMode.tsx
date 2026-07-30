@@ -21,7 +21,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
   highlightWords,
 }) => {
   const frame = useCurrentFrame();
-  const { width: viewportWidth, fps } = useVideoConfig();
+  const { width: viewportWidth, fps, durationInFrames } = useVideoConfig();
 
   // Separate rendering logic based on template ID
   if (t.id === "TimelineBeamRail") {
@@ -83,12 +83,12 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
     const panningLineStartX = -viewportWidth / 2 - scrollX;
     const panningLineEndX = lineProgressX - viewportWidth / 2 - scrollX;
 
-    const zoomedLineStartX = -280;
-    const zoomedLineEndX = 280;
+    const zoomedLineStartX = -290;
+    const zoomedLineEndX = 290;
 
-    // Zoom-out phase starts 25 frames after the last card has appeared
-    const zoomOutStart = lastTrigger + 25;
-    const zoomOutEnd = zoomOutStart + 25;
+    // Zoom-out phase starts exactly 40 frames before the end of the composition to guarantee completeness
+    const zoomOutStart = Math.max(lastTrigger + 10, durationInFrames - 40);
+    const zoomOutEnd = durationInFrames - 15;
 
     // Interpolate line boundaries during Zoom-out phase
     const lineX1 = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningLineStartX, zoomedLineStartX], {
@@ -108,16 +108,16 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
     const bottomCategory = category || (t.categoryPill?.text?.trim().toLowerCase() !== "ai viết video" && t.categoryPill?.text?.trim().toLowerCase() !== "ai viet video" ? t.categoryPill?.text : "");
     const hasCategory = !!bottomCategory;
 
-    // Card Width and Padding interpolation to shrink and fit without overlapping in Zoom-out Grid
-    const cardWidth = interpolate(frame, [zoomOutStart, zoomOutEnd], [600, 440], {
+    // Card dimensions: Active phase is a 500x500 square, zoom-out shrinks to a 400x400 square to fit side-by-side
+    const cardSize = interpolate(frame, [zoomOutStart, zoomOutEnd], [500, 400], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp"
     });
-    const cardPadding = interpolate(frame, [zoomOutStart, zoomOutEnd], [28, 20], {
+    const cardPadding = interpolate(frame, [zoomOutStart, zoomOutEnd], [32, 22], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp"
     });
-    const cardBaseFontSize = interpolate(frame, [zoomOutStart, zoomOutEnd], [32, 24], {
+    const cardBaseFontSize = interpolate(frame, [zoomOutStart, zoomOutEnd], [36, 26], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp"
     });
@@ -128,43 +128,47 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
         width: "100%",
         height: "100%",
         boxSizing: "border-box",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "80px 40px",
         zIndex: 5
       }}>
-        {/* Top Section: Title & Category Pill */}
-        <AnimatedBlock animation="slide-down" delaySeconds={0.2}>
-          <div style={{ display: "grid", gap: "14px", width: "100%" }}>
-            {hasCategory && (
+        {/* Absolute Top Header (Always centered and fully visible) */}
+        <div style={{
+          position: "absolute",
+          top: "80px",
+          left: "40px",
+          right: "40px",
+          zIndex: 10
+        }}>
+          <AnimatedBlock animation="slide-down" delaySeconds={0.2}>
+            <div style={{ display: "grid", gap: "14px", width: "100%" }}>
+              {hasCategory && (
+                <div style={{
+                  width: "fit-content",
+                  borderRadius: "999px",
+                  padding: "8px 14px",
+                  background: isLight ? "rgba(0,0,0,0.05)" : "rgba(2, 6, 23, 0.78)",
+                  color: isLight ? "#1f2937" : "rgb(255, 255, 255)",
+                  border: `1px solid rgba(${rgb}, 0.4)`,
+                  fontSize: "14px",
+                  fontWeight: 900,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  fontFamily: styles.fontFamily
+                }}>{bottomCategory}</div>
+              )}
               <div style={{
-                width: "fit-content",
-                borderRadius: "999px",
-                padding: "8px 14px",
-                background: isLight ? "rgba(0,0,0,0.05)" : "rgba(2, 6, 23, 0.78)",
-                color: isLight ? "#1f2937" : "rgb(255, 255, 255)",
-                border: `1px solid rgba(${rgb}, 0.4)`,
-                fontSize: "14px",
-                fontWeight: 900,
-                letterSpacing: "0.2em",
+                fontSize: `${Math.round(72 * fontScale)}px`,
+                lineHeight: 1.25,
+                fontWeight: 950,
+                color: isLight ? "#1f2937" : "rgb(248, 250, 252)",
                 textTransform: "uppercase",
-                fontFamily: styles.fontFamily
-              }}>{bottomCategory}</div>
-            )}
-            <div style={{
-              fontSize: `${Math.round(72 * fontScale)}px`,
-              lineHeight: 1.25,
-              fontWeight: 950,
-              color: isLight ? "#1f2937" : "rgb(248, 250, 252)",
-              textTransform: "uppercase",
-              fontFamily: styles.fontFamily,
-              textShadow: isLight ? "none" : `rgba(0, 0, 0, 0.6) 0px 15px 35px, rgba(${rgb}, 0.15) 0px 0px 25px`
-            }}>
-              {highlightHeadingText(mainTitle, accentColor, theme, highlightWords)}
+                fontFamily: styles.fontFamily,
+                textShadow: isLight ? "none" : `rgba(0, 0, 0, 0.6) 0px 15px 35px, rgba(${rgb}, 0.15) 0px 0px 25px`
+              }}>
+                {highlightHeadingText(mainTitle, accentColor, theme, highlightWords)}
+              </div>
             </div>
-          </div>
-        </AnimatedBlock>
+          </AnimatedBlock>
+        </div>
 
         {/* Middle Section: Timeline Rail Container */}
         <div style={{
@@ -216,10 +220,10 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
             const panningY = 0;
 
             let zoomedX = 0;
-            if (idx === 0) zoomedX = -240;
-            else if (idx === 1) zoomedX = 240;
-            else if (idx === 2) zoomedX = (N === 3) ? 0 : -240;
-            else if (idx === 3) zoomedX = 240;
+            if (idx === 0) zoomedX = -250;
+            else if (idx === 1) zoomedX = 250;
+            else if (idx === 2) zoomedX = (N === 3) ? 0 : -250;
+            else if (idx === 3) zoomedX = 250;
 
             const zoomedY = 0;
 
@@ -233,9 +237,11 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
               extrapolateRight: "clamp"
             });
 
-            // Symmetrical vertical offsets: active panning is at -160px, zoom-out cards 0/1 are at -160px, card 2 is at +160px
-            const panningCardYOffset = -160; 
-            const zoomedCardYOffset = (idx === 0 || idx === 1) ? -160 : 160; 
+            // Symmetrical vertical offsets based on card height: 
+            // Active phase is height 500 -> offset -290px (bottom sits 40px above line)
+            // Zoom-out is height 400 -> offset -240px (above) or +240px (below)
+            const panningCardYOffset = -290; 
+            const zoomedCardYOffset = (idx === 0 || idx === 1) ? -240 : 240; 
 
             const cardYOffsetTranslate = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningCardYOffset, zoomedCardYOffset], {
               extrapolateLeft: "clamp",
@@ -267,31 +273,36 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
 
             return (
               <div key={comp.id || idx} style={sectionStyle}>
-                {/* Card Container */}
+                {/* Card Container (Centered dynamically as a square) */}
                 <div style={{
                   position: "absolute",
                   left: "0px",
                   top: "0px",
                   transform: `translate(-50%, calc(-50% + ${totalCardY}px))`,
                   opacity: cardOpacity,
-                  width: `${cardWidth}px`, 
-                  borderRadius: "24px",
+                  width: `${cardSize}px`, 
+                  height: `${cardSize}px`, 
+                  borderRadius: "32px", // Smooth rounded corners for square cards
                   padding: resolvePadding(`${cardPadding}px`, paddingScale), 
-                  background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.8)",
+                  background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.82)",
                   border: `1.5px solid ${accentColor}33`,
-                  boxShadow: "0 20px 45px rgba(0,0,0,0.35)",
-                  backdropFilter: "blur(12px)",
+                  boxShadow: "0 22px 50px rgba(0,0,0,0.38)",
+                  backdropFilter: "blur(16px)",
                   display: "flex",
                   flexDirection: "column",
-                  gap: "8px",
+                  justifyContent: "center", // Center contents vertically in square
+                  alignItems: "center",     // Center contents horizontally
+                  textAlign: "center",       // Center text
+                  gap: "16px",
                   zIndex: 3
                 }}>
                   <div style={{
-                    fontSize: "13px",
+                    fontSize: "12px",
                     fontWeight: 900,
                     color: accentColor,
                     fontFamily: styles.fontFamily,
-                    letterSpacing: "0.1em"
+                    letterSpacing: "0.15em",
+                    textTransform: "uppercase"
                   }}>
                     PHASE 0{idx + 1}
                   </div>
@@ -300,7 +311,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
                     fontWeight: 800,
                     color: isLight ? "#1f2937" : "#ffffff",
                     fontFamily: styles.fontFamily,
-                    lineHeight: 1.3
+                    lineHeight: 1.35
                   }}>
                     {comp.data?.text || ""}
                   </div>
