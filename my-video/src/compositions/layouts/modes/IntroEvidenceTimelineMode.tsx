@@ -199,6 +199,8 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
               {/* Card Container */}
               <div style={{
                 position: "absolute",
+                left: "0px",
+                top: "0px",
                 transform: `translate(-50%, calc(-50% + ${totalCardY}px))`,
                 opacity: cardOpacity,
                 width: "600px", // Option A: Enlarged width
@@ -236,6 +238,8 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
               {/* Node Dot (Centered exactly at X, Y relative to timeline line) */}
               <div style={{
                 position: "absolute",
+                left: "0px",
+                top: "0px",
                 transform: `translate(-50%, -50%) scale(${nodeScale})`,
                 width: "22px",
                 height: "22px",
