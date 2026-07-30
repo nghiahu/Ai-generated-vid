@@ -78,12 +78,12 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = (props) => {
     const visibleComps = otherComps.slice(0, 3); // Max 3 steps for zig-zag
     const N = visibleComps.length;
 
-    // 1. Coordinates for the path (in percentages of container, compressed vertically)
-    const startPt = { x: 15, y: 12 };
+    // 1. Coordinates for the path (in percentages of container, compressed vertically for Safe Zone)
+    const startPt = { x: 15, y: 10 };
     const cardPts = [
-      { x: 32, y: 30 },
-      { x: 68, y: 49 },
-      { x: 32, y: 68 }
+      { x: 32, y: 26 },
+      { x: 68, y: 42 },
+      { x: 32, y: 58 }
     ];
 
     // 2. Animate the starting node (Frame 0-25)
