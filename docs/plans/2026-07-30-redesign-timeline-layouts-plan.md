@@ -1,15 +1,15 @@
-# Redesign Timeline Layouts Implementation Plan (Grid Zoom Fix)
+# Redesign Timeline Layouts Implementation Plan (Camera Scroll Fix)
 
 > **For Antigravity:** REQUIRED WORKFLOW: Use `.agent/workflows/execute-plan.md` to execute this plan in single-flow mode.
 
-**Goal:** Fix the timeline alignment and grid zoom-out structure for **Timeline Beam Rail**:
-- Align node dots and cards perfectly on the vertical axis.
-- Render cards directly above the center nodes during panning.
-- During the final zoom-out phase, arrange cards into a grid: 2 columns on the top row (above the center line) and the 3rd card on the bottom row (centered below the line), with a highly legible card size of `300px` at `0.9` scale.
+**Goal:** Implement horizontal camera scrolling and left-edge line drawing for **Timeline Beam Rail**:
+- Draw horizontal line from left edge of screen to center.
+- Scroll camera horizontally following the line tip.
+- Increase card width to `360px`.
 
 ---
 
-### Task 1: Rewrite IntroEvidenceTimelineMode.tsx with perfect grid alignment and 2-row zoom-out
+### Task 1: Rewrite IntroEvidenceTimelineMode.tsx with horizontal camera pan and left-edge line draw
 
 **Files:**
 - Modify: `my-video/src/compositions/layouts/modes/IntroEvidenceTimelineMode.tsx`
