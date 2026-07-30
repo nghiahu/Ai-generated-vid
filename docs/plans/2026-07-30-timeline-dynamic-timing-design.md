@@ -27,6 +27,15 @@
   - Active panning phase: `-190px` (above the circle dot).
   - Zoom-out phase: Cards 0/1 slide to `-170px`, Card 2 slides to `+170px`.
 
+**Timeline Chapters (Zig-Zag) Compression**
+- Retain the start node: `startPt = { x: 15, y: 12 }`.
+- Card/node positions:
+  - Card 0: `{ x: 32, y: 30 }`
+  - Card 1: `{ x: 68, y: 49 }`
+  - Card 2: `{ x: 32, y: 68 }`
+- This lifts the bottom card to `68%` Y-position, leaving >500px clean space at the bottom for subtitles.
+- Ball animation starts at frame 25 and segment timing draws sequentially.
+
 ## Components and Data Flow
 
 ```mermaid
