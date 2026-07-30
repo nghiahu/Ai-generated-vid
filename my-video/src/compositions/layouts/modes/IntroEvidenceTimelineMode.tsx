@@ -31,34 +31,38 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
     const visibleComps = otherComps.slice(0, 4); // Limit to max 4 cards
     const N = visibleComps.length;
 
-    // 1. Calculate trigger frames by dividing half of the scene duration equally among cards
+    // 1. Calculate trigger frames by dividing half of the scene duration, pausing 30 frames at each dot
     const halfDuration = Math.round(durationInFrames / 2);
-    const interval = N > 1 ? halfDuration / (N - 1) : 0;
-    const triggerFrames = visibleComps.map((_, idx) => Math.round(idx * interval));
+    const holdFrames = 30; // Pause for 30 frames at each node dot
+    const numSegments = N - 1;
+    const totalTransitionFrames = Math.max(50, halfDuration - numSegments * holdFrames);
+    const panDuration = numSegments > 0 ? totalTransitionFrames / numSegments : 0;
+
+    const triggerFrames = visibleComps.map((_, idx) => {
+      if (idx === 0) return 0;
+      return Math.round(idx * holdFrames + idx * panDuration);
+    });
 
     const lastTrigger = triggerFrames[N - 1]; // This is exactly halfDuration
 
-    // Compute scrollX and lineProgressX dynamically using triggerFrames
-    let lineProgressX = 0;
+    // Compute scrollX and lineProgressX dynamically using triggerFrames with pauses
     let scrollX = 0;
+    let lineProgressX = viewportWidth / 2;
 
-    // Segment 0: 0 to triggerFrames[0] (which is 0)
+    // Segment 0 logic: before any panning happens
     if (frame < triggerFrames[0]) {
+      scrollX = 0;
       lineProgressX = 0;
-      scrollX = 0;
-    } else {
-      lineProgressX = viewportWidth / 2;
-      scrollX = 0;
     }
 
-    // Subsequent segments
+    // Subsequent segments with holds
     for (let i = 1; i < N; i++) {
       const prevTrigger = triggerFrames[i - 1];
       const currTrigger = triggerFrames[i];
-      const panStart = prevTrigger;
+      const panStart = prevTrigger + holdFrames;
       const panEnd = currTrigger;
 
-      if (frame >= panStart) {
+      if (frame >= panStart && frame <= panEnd) {
         scrollX = interpolate(frame, [panStart, panEnd], [(i - 1) * viewportWidth, i * viewportWidth], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp"
@@ -67,12 +71,10 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp"
         });
+      } else if (frame > panEnd) {
+        scrollX = i * viewportWidth;
+        lineProgressX = (i + 0.5) * viewportWidth;
       }
-    }
-
-    if (frame > lastTrigger) {
-      scrollX = (N - 1) * viewportWidth;
-      lineProgressX = (N - 0.5) * viewportWidth;
     }
 
     // 2. Line coordinates (relative to viewport center)
@@ -95,9 +97,6 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp"
     });
-
-    const lineLeft = viewportWidth / 2 + lineX1;
-    const lineWidth = lineX2 - lineX1;
 
     // Header parameters
     const mainTitle = titleText || "Code Ra Video";
@@ -180,13 +179,13 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
           transform: "translateY(-50%)",
           overflow: "visible"
         }}>
-          {/* Horizontal Timeline Line */}
+          {/* Horizontal Timeline Line - Positioned perfectly using coordinate calc to avoid shift */}
           <div style={{
             position: "absolute",
-            left: `${lineLeft}px`,
-            width: `${lineWidth}px`,
+            left: `calc(50% + ${(lineX1 + lineX2) / 2}px)`,
+            width: `${lineX2 - lineX1}px`,
             top: "50%",
-            transform: "translateY(-50%)",
+            transform: "translate(-50%, -50%)",
             height: "6px",
             borderRadius: "999px",
             background: `linear-gradient(90deg, ${accentColor}, ${darkAccentColor})`,
@@ -290,7 +289,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
                   backdropFilter: "blur(16px)",
                   display: "flex",
                   flexDirection: "column",
-                  justifyContent: "center", 
+                  justifyContent: "flex-start", // Align contents to top
                   alignItems: "flex-start",     // Left align items horizontally
                   textAlign: "left",           // Left align text
                   gap: "12px",
