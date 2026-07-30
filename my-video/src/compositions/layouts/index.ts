@@ -1,4 +1,4 @@
-import React from "react"; // trigger rebuild for circular_progress, ending, metrics, & custom restored chapter height timeline templates
+import React from "react"; // trigger rebuild for circular_progress, ending, metrics, & custom restored and compressed chapter height timeline templates
 import { LayoutProps } from "./LayoutTypes";
 import { TemplateLayout } from "./TemplateLayout";
 
