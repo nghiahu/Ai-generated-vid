@@ -1,0 +1,46 @@
+{
+  "id": "GridMetrics",
+  "name": "Grid Metrics",
+  "family": "data",
+  "layoutMode": "grid_metrics",
+  "container": {
+    "paddingTop": "320px",
+    "maxWidth": "920px",
+    "gap": "24px"
+  },
+  "categoryPill": null,
+  "accentDivider": null,
+  "title": {
+    "fontSize": "84px",
+    "fontWeight": "950",
+    "letterSpacing": "-0.05em",
+    "marginBottom": "60px",
+    "useAccentTextShadow": true
+  },
+  "positions": [],
+  "items": {
+    "rotations": [0],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "26px",
+        "fontWeight": "800",
+        "borderRadius": "24px",
+        "padding": "24px",
+        "scale": 1.0,
+        "backdropBlur": "8px",
+        "useAccentBg": false,
+        "useAccentBorder": true,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "28px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}
