@@ -108,16 +108,20 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
     const bottomCategory = category || (t.categoryPill?.text?.trim().toLowerCase() !== "ai viết video" && t.categoryPill?.text?.trim().toLowerCase() !== "ai viet video" ? t.categoryPill?.text : "");
     const hasCategory = !!bottomCategory;
 
-    // Card dimensions: Active phase is a 500x500 square, zoom-out shrinks to a 400x400 square to fit side-by-side
-    const cardSize = interpolate(frame, [zoomOutStart, zoomOutEnd], [500, 400], {
+    // Card dimensions: Active phase is 420x320, zoom-out shrinks to 380x280 to fit side-by-side
+    const cardWidth = interpolate(frame, [zoomOutStart, zoomOutEnd], [420, 380], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp"
     });
-    const cardPadding = interpolate(frame, [zoomOutStart, zoomOutEnd], [32, 22], {
+    const cardHeight = interpolate(frame, [zoomOutStart, zoomOutEnd], [320, 280], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp"
     });
-    const cardBaseFontSize = interpolate(frame, [zoomOutStart, zoomOutEnd], [36, 26], {
+    const cardPadding = interpolate(frame, [zoomOutStart, zoomOutEnd], [24, 20], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+    const cardBaseFontSize = interpolate(frame, [zoomOutStart, zoomOutEnd], [30, 22], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp"
     });
@@ -237,11 +241,11 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
               extrapolateRight: "clamp"
             });
 
-            // Symmetrical vertical offsets based on card height: 
-            // Active phase is height 500 -> offset -290px (bottom sits 40px above line)
-            // Zoom-out is height 400 -> offset -240px (above) or +240px (below)
-            const panningCardYOffset = -290; 
-            const zoomedCardYOffset = (idx === 0 || idx === 1) ? -240 : 240; 
+            // Symmetrical vertical offsets:
+            // Active phase is height 320 -> offset -190px (bottom sits 30px above line)
+            // Zoom-out is height 280 -> offset -170px (above) or +170px (below)
+            const panningCardYOffset = -190; 
+            const zoomedCardYOffset = (idx === 0 || idx === 1) ? -170 : 170; 
 
             const cardYOffsetTranslate = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningCardYOffset, zoomedCardYOffset], {
               extrapolateLeft: "clamp",
@@ -273,27 +277,27 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
 
             return (
               <div key={comp.id || idx} style={sectionStyle}>
-                {/* Card Container (Centered dynamically as a square) */}
+                {/* Card Container (Centered dynamically as a moderate squarish box) */}
                 <div style={{
                   position: "absolute",
                   left: "0px",
                   top: "0px",
                   transform: `translate(-50%, calc(-50% + ${totalCardY}px))`,
                   opacity: cardOpacity,
-                  width: `${cardSize}px`, 
-                  height: `${cardSize}px`, 
-                  borderRadius: "32px", // Smooth rounded corners for square cards
+                  width: `${cardWidth}px`, 
+                  height: `${cardHeight}px`, 
+                  borderRadius: "24px", 
                   padding: resolvePadding(`${cardPadding}px`, paddingScale), 
                   background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.82)",
                   border: `1.5px solid ${accentColor}33`,
-                  boxShadow: "0 22px 50px rgba(0,0,0,0.38)",
+                  boxShadow: "0 20px 45px rgba(0,0,0,0.35)",
                   backdropFilter: "blur(16px)",
                   display: "flex",
                   flexDirection: "column",
-                  justifyContent: "center", // Center contents vertically in square
-                  alignItems: "center",     // Center contents horizontally
-                  textAlign: "center",       // Center text
-                  gap: "16px",
+                  justifyContent: "center", 
+                  alignItems: "flex-start",     // Left align items horizontally
+                  textAlign: "left",           // Left align text
+                  gap: "12px",
                   zIndex: 3
                 }}>
                   <div style={{
