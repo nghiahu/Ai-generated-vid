@@ -163,8 +163,8 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
           });
 
           // Card vertical offset (goes from center 0 to above/below the line in zoom-out)
-          const panningCardYOffset = 0; // Exactly centered in viewport during active panning
-          const zoomedCardYOffset = (idx === 0 || idx === 1) ? -160 : 160; 
+          const panningCardYOffset = -150; // Offset above the circle dot during active panning
+          const zoomedCardYOffset = (idx === 0 || idx === 1) ? -180 : 180; 
 
           const cardYOffsetTranslate = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningCardYOffset, zoomedCardYOffset], {
             extrapolateLeft: "clamp",
@@ -201,9 +201,9 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
                 position: "absolute",
                 transform: `translate(-50%, calc(-50% + ${totalCardY}px))`,
                 opacity: cardOpacity,
-                width: "440px", 
+                width: "600px", // Option A: Enlarged width
                 borderRadius: "24px",
-                padding: resolvePadding("24px", paddingScale),
+                padding: resolvePadding("28px", paddingScale), // Option A: Enlarged padding
                 background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.8)",
                 border: `1.5px solid ${accentColor}33`,
                 boxShadow: "0 20px 45px rgba(0,0,0,0.35)",
@@ -223,7 +223,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
                   PHASE 0{idx + 1}
                 </div>
                 <div style={{
-                  fontSize: getDynamicFontSize(comp.data?.text || "", 26, fontScale),
+                  fontSize: getDynamicFontSize(comp.data?.text || "", 32, fontScale), // Option A: base size 32px
                   fontWeight: 800,
                   color: isLight ? "#1f2937" : "#ffffff",
                   fontFamily: styles.fontFamily,
