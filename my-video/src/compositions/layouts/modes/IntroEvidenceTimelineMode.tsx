@@ -103,155 +103,227 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
     const lineLeft = viewportWidth / 2 + lineX1;
     const lineWidth = lineX2 - lineX1;
 
+    // Header parameters
+    const mainTitle = titleText || "Code Ra Video";
+    const bottomCategory = category || (t.categoryPill?.text?.trim().toLowerCase() !== "ai viết video" && t.categoryPill?.text?.trim().toLowerCase() !== "ai viet video" ? t.categoryPill?.text : "");
+    const hasCategory = !!bottomCategory;
+
+    // Card Width and Padding interpolation to shrink and fit without overlapping in Zoom-out Grid
+    const cardWidth = interpolate(frame, [zoomOutStart, zoomOutEnd], [600, 440], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+    const cardPadding = interpolate(frame, [zoomOutStart, zoomOutEnd], [28, 20], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+    const cardBaseFontSize = interpolate(frame, [zoomOutStart, zoomOutEnd], [32, 24], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+
     return (
-      <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", zIndex: 5 }}>
-        {/* Horizontal Timeline Line */}
+      <div style={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        padding: "80px 40px",
+        zIndex: 5
+      }}>
+        {/* Top Section: Title & Category Pill */}
+        <AnimatedBlock animation="slide-down" delaySeconds={0.2}>
+          <div style={{ display: "grid", gap: "14px", width: "100%" }}>
+            {hasCategory && (
+              <div style={{
+                width: "fit-content",
+                borderRadius: "999px",
+                padding: "8px 14px",
+                background: isLight ? "rgba(0,0,0,0.05)" : "rgba(2, 6, 23, 0.78)",
+                color: isLight ? "#1f2937" : "rgb(255, 255, 255)",
+                border: `1px solid rgba(${rgb}, 0.4)`,
+                fontSize: "14px",
+                fontWeight: 900,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                fontFamily: styles.fontFamily
+              }}>{bottomCategory}</div>
+            )}
+            <div style={{
+              fontSize: `${Math.round(72 * fontScale)}px`,
+              lineHeight: 1.25,
+              fontWeight: 950,
+              color: isLight ? "#1f2937" : "rgb(248, 250, 252)",
+              textTransform: "uppercase",
+              fontFamily: styles.fontFamily,
+              textShadow: isLight ? "none" : `rgba(0, 0, 0, 0.6) 0px 15px 35px, rgba(${rgb}, 0.15) 0px 0px 25px`
+            }}>
+              {highlightHeadingText(mainTitle, accentColor, theme, highlightWords)}
+            </div>
+          </div>
+        </AnimatedBlock>
+
+        {/* Middle Section: Timeline Rail Container */}
         <div style={{
           position: "absolute",
-          left: `${lineLeft}px`,
-          width: `${lineWidth}px`,
-          top: "50%",
+          left: 0,
+          right: 0,
+          top: "55%",
+          height: "400px",
           transform: "translateY(-50%)",
-          height: "6px",
-          borderRadius: "999px",
-          background: `linear-gradient(90deg, ${accentColor}, ${darkAccentColor})`,
-          boxShadow: `0 0 14px ${accentColor}`,
-          zIndex: 1
-        }} />
-
-        {/* Render Sections (Cards + Nodes) */}
-        {visibleComps.map((comp, idx) => {
-          const triggerFrame = triggerFrames[idx];
-
-          // Node scale on timeline
-          const nodeScale = interpolate(frame, [triggerFrame - 8, triggerFrame], [0, 1], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp"
-          });
-
-          // Card emergence animation values (perfectly synchronized when node appears)
-          const cardYOffsetActive = interpolate(frame, [triggerFrame, triggerFrame + 12], [50, 0], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp"
-          });
-          const cardOpacity = interpolate(frame, [triggerFrame, triggerFrame + 12], [0, 1], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp"
-          });
-
-          // Grid Coordinates for Zoom-Out Phase
-          // Dot coordinates (X, Y) relative to viewport center
-          const panningX = idx * viewportWidth - scrollX;
-          const panningY = 0;
-
-          let zoomedX = 0;
-          if (idx === 0) zoomedX = -230;
-          else if (idx === 1) zoomedX = 230;
-          else if (idx === 2) zoomedX = (N === 3) ? 0 : -230;
-          else if (idx === 3) zoomedX = 230;
-
-          const zoomedY = 0;
-
-          // Transition dot coordinates
-          const x = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningX, zoomedX], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp"
-          });
-          const y = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningY, zoomedY], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp"
-          });
-
-          // Card vertical offset (goes from center 0 to above/below the line in zoom-out)
-          const panningCardYOffset = -150; // Offset above the circle dot during active panning
-          const zoomedCardYOffset = (idx === 0 || idx === 1) ? -180 : 180; 
-
-          const cardYOffsetTranslate = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningCardYOffset, zoomedCardYOffset], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp"
-          });
-
-          // Card scale zooms slightly to 0.95 during final view
-          const scale = interpolate(frame, [zoomOutStart, zoomOutEnd], [1.0, 0.95], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp"
-          });
-
-          // Card vertical Y translation combining emergence offset and row position offset
-          const totalCardY = cardYOffsetTranslate + cardYOffsetActive;
-
-          const sectionStyle: React.CSSProperties = {
+          overflow: "visible"
+        }}>
+          {/* Horizontal Timeline Line */}
+          <div style={{
             position: "absolute",
-            left: "50%",
+            left: `${lineLeft}px`,
+            width: `${lineWidth}px`,
             top: "50%",
-            transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`,
-            width: "0px",
-            height: "0px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxSizing: "border-box",
-            zIndex: 2
-          };
+            transform: "translateY(-50%)",
+            height: "6px",
+            borderRadius: "999px",
+            background: `linear-gradient(90deg, ${accentColor}, ${darkAccentColor})`,
+            boxShadow: `0 0 14px ${accentColor}`,
+            zIndex: 1
+          }} />
 
-          return (
-            <div key={comp.id || idx} style={sectionStyle}>
-              {/* Card Container */}
-              <div style={{
-                position: "absolute",
-                left: "0px",
-                top: "0px",
-                transform: `translate(-50%, calc(-50% + ${totalCardY}px))`,
-                opacity: cardOpacity,
-                width: "600px", // Option A: Enlarged width
-                borderRadius: "24px",
-                padding: resolvePadding("28px", paddingScale), // Option A: Enlarged padding
-                background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.8)",
-                border: `1.5px solid ${accentColor}33`,
-                boxShadow: "0 20px 45px rgba(0,0,0,0.35)",
-                backdropFilter: "blur(12px)",
-                display: "flex",
-                flexDirection: "column",
-                gap: "8px",
-                zIndex: 3
-              }}>
+          {/* Render Sections (Cards + Nodes) */}
+          {visibleComps.map((comp, idx) => {
+            const triggerFrame = triggerFrames[idx];
+
+            // Node scale on timeline
+            const nodeScale = interpolate(frame, [triggerFrame - 8, triggerFrame], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp"
+            });
+
+            // Card emergence animation values (perfectly synchronized when node appears)
+            const cardYOffsetActive = interpolate(frame, [triggerFrame, triggerFrame + 12], [50, 0], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp"
+            });
+            const cardOpacity = interpolate(frame, [triggerFrame, triggerFrame + 12], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp"
+            });
+
+            // Grid Coordinates for Zoom-Out Phase
+            // Dot coordinates (X, Y) relative to viewport center
+            const panningX = idx * viewportWidth - scrollX;
+            const panningY = 0;
+
+            let zoomedX = 0;
+            if (idx === 0) zoomedX = -240;
+            else if (idx === 1) zoomedX = 240;
+            else if (idx === 2) zoomedX = (N === 3) ? 0 : -240;
+            else if (idx === 3) zoomedX = 240;
+
+            const zoomedY = 0;
+
+            // Transition dot coordinates
+            const x = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningX, zoomedX], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp"
+            });
+            const y = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningY, zoomedY], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp"
+            });
+
+            // Symmetrical vertical offsets: active panning is at -160px, zoom-out cards 0/1 are at -160px, card 2 is at +160px
+            const panningCardYOffset = -160; 
+            const zoomedCardYOffset = (idx === 0 || idx === 1) ? -160 : 160; 
+
+            const cardYOffsetTranslate = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningCardYOffset, zoomedCardYOffset], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp"
+            });
+
+            // Card scale zooms slightly to 0.95 during final view
+            const scale = interpolate(frame, [zoomOutStart, zoomOutEnd], [1.0, 0.95], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp"
+            });
+
+            // Card vertical Y translation combining emergence offset and row position offset
+            const totalCardY = cardYOffsetTranslate + cardYOffsetActive;
+
+            const sectionStyle: React.CSSProperties = {
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`,
+              width: "0px",
+              height: "0px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxSizing: "border-box",
+              zIndex: 2
+            };
+
+            return (
+              <div key={comp.id || idx} style={sectionStyle}>
+                {/* Card Container */}
                 <div style={{
-                  fontSize: "13px",
-                  fontWeight: 900,
-                  color: accentColor,
-                  fontFamily: styles.fontFamily,
-                  letterSpacing: "0.1em"
+                  position: "absolute",
+                  left: "0px",
+                  top: "0px",
+                  transform: `translate(-50%, calc(-50% + ${totalCardY}px))`,
+                  opacity: cardOpacity,
+                  width: `${cardWidth}px`, 
+                  borderRadius: "24px",
+                  padding: resolvePadding(`${cardPadding}px`, paddingScale), 
+                  background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.8)",
+                  border: `1.5px solid ${accentColor}33`,
+                  boxShadow: "0 20px 45px rgba(0,0,0,0.35)",
+                  backdropFilter: "blur(12px)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "8px",
+                  zIndex: 3
                 }}>
-                  PHASE 0{idx + 1}
+                  <div style={{
+                    fontSize: "13px",
+                    fontWeight: 900,
+                    color: accentColor,
+                    fontFamily: styles.fontFamily,
+                    letterSpacing: "0.1em"
+                  }}>
+                    PHASE 0{idx + 1}
+                  </div>
+                  <div style={{
+                    fontSize: getDynamicFontSize(comp.data?.text || "", cardBaseFontSize, fontScale), 
+                    fontWeight: 800,
+                    color: isLight ? "#1f2937" : "#ffffff",
+                    fontFamily: styles.fontFamily,
+                    lineHeight: 1.3
+                  }}>
+                    {comp.data?.text || ""}
+                  </div>
                 </div>
+
+                {/* Node Dot (Centered exactly at X, Y relative to timeline line) */}
                 <div style={{
-                  fontSize: getDynamicFontSize(comp.data?.text || "", 32, fontScale), // Option A: base size 32px
-                  fontWeight: 800,
-                  color: isLight ? "#1f2937" : "#ffffff",
-                  fontFamily: styles.fontFamily,
-                  lineHeight: 1.3
-                }}>
-                  {comp.data?.text || ""}
-                </div>
+                  position: "absolute",
+                  left: "0px",
+                  top: "0px",
+                  transform: `translate(-50%, -50%) scale(${nodeScale})`,
+                  width: "22px",
+                  height: "22px",
+                  borderRadius: "50%",
+                  background: "#ffffff",
+                  border: `4px solid ${accentColor}`,
+                  boxShadow: `0 0 15px ${accentColor}`,
+                  zIndex: 2
+                }} />
               </div>
-
-              {/* Node Dot (Centered exactly at X, Y relative to timeline line) */}
-              <div style={{
-                position: "absolute",
-                left: "0px",
-                top: "0px",
-                transform: `translate(-50%, -50%) scale(${nodeScale})`,
-                width: "22px",
-                height: "22px",
-                borderRadius: "50%",
-                background: "#ffffff",
-                border: `4px solid ${accentColor}`,
-                boxShadow: `0 0 15px ${accentColor}`,
-                zIndex: 2
-              }} />
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     );
   } else {
