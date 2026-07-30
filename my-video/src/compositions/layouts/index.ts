@@ -1,4 +1,4 @@
-import React from "react"; // trigger rebuild for circular_progress
+import React from "react"; // trigger rebuild for circular_progress & ending layout template
 import { LayoutProps } from "./LayoutTypes";
 import { TemplateLayout } from "./TemplateLayout";
 
