@@ -36,6 +36,10 @@
 - This lifts the bottom card to `58%` Y-position, leaving >600px clean space at the bottom for subtitles, completely in the Safe Zone for TikTok/Reels overlays.
 - Ball animation starts at frame 25 and segment timing draws sequentially.
 
+**Subtitle Safe Zone Synchronization**
+- Default and threshold subtitle bottom spacing: set to `300px` globally in `DynamicSubtitle.tsx` (Way 1).
+- Automatically overrides smaller layout values (like `28px` or `120px`) to safeguard subtitles from social media overlays.
+
 ## Components and Data Flow
 
 ```mermaid
