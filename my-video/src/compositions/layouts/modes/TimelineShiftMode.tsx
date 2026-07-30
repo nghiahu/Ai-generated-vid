@@ -1,4 +1,5 @@
 import React from "react";
+import { useCurrentFrame } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
 import { 
@@ -72,12 +73,26 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = ({
   inactiveCardTextColor,
   highlightWords
 }) => {
+  const frame = useCurrentFrame();
   const safeComps = otherComps.length > 0 ? otherComps : [
     { id: "fallback_1", type: "card", data: { text: "Kỹ năng hot nhất 2026" } },
     { id: "fallback_2", type: "card", data: { text: "Chỉ có ba bước 3 bước" } }
   ];
   const compLeft = safeComps[0];
   const compRight = safeComps[1] || safeComps[0];
+
+  const animStyles = `
+    @keyframes timeline-card-float-left {
+      0% { transform: perspective(1000px) rotateY(10deg) rotateX(-6deg) scale(0.92) translateY(0px); }
+      50% { transform: perspective(1000px) rotateY(10deg) rotateX(-6deg) scale(0.92) translateY(-8px); }
+      100% { transform: perspective(1000px) rotateY(10deg) rotateX(-6deg) scale(0.92) translateY(0px); }
+    }
+    @keyframes timeline-card-float-right {
+      0% { transform: perspective(1000px) rotateY(-10deg) rotateX(6deg) scale(1.08) translateY(0px); }
+      50% { transform: perspective(1000px) rotateY(-10deg) rotateX(6deg) scale(1.08) translateY(8px); }
+      100% { transform: perspective(1000px) rotateY(-10deg) rotateX(6deg) scale(1.08) translateY(0px); }
+    }
+  `;
 
   const outerContainerStyle: React.CSSProperties = {
     position: "relative",
@@ -132,6 +147,9 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = ({
       transform: isLeft 
         ? "perspective(1000px) rotateY(10deg) rotateX(-6deg) scale(0.92)"
         : "perspective(1000px) rotateY(-10deg) rotateX(6deg) scale(1.08)",
+      animation: isLeft 
+        ? "timeline-card-float-left 6s ease-in-out infinite"
+        : "timeline-card-float-right 6s ease-in-out infinite",
       opacity: isLeft ? 0.88 : 1.0,
       display: "flex",
       flexDirection: "column",
@@ -212,6 +230,7 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = ({
 
   return (
     <div style={outerContainerStyle}>
+      <style>{animStyles}</style>
       {/* Decorative vertical red indicator line on top left */}
       <div style={{
         position: "absolute",
@@ -246,6 +265,7 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = ({
           stroke="#EAB308"
           strokeWidth="2"
           strokeDasharray="6 6"
+          strokeDashoffset={-frame * 1.5}
           strokeOpacity="0.75"
         />
       </svg>
