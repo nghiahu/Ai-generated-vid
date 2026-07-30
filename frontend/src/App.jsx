@@ -142,8 +142,9 @@ function App() {
       );
 
       if (!isAIGen) {
-        project.config = { visualStyle: "rikkei", ...(project.config || {}) };
-        if (!project.config.visualStyle) project.config.visualStyle = "rikkei";
+        const defaultStyle = project.config?.theme || project.config?.videoTheme || "rikkei";
+        project.config = { visualStyle: defaultStyle, ...(project.config || {}) };
+        if (!project.config.visualStyle) project.config.visualStyle = defaultStyle;
       }
 
       setCurrentProject(project);
@@ -798,6 +799,11 @@ function App() {
               >
                 <option value="omnivoice_duythanh">OmniVoice - Giọng Duy Thanh (Offline Clone)</option>
                 <option value="omnivoice_quanganh">OmniVoice - Giọng Quang Anh (Offline Clone)</option>
+                <option value="vbee_ngochuyen">Vbee - Giọng Ngọc Huyền (Nữ miền Bắc)</option>
+                <option value="vbee_manhdung">Vbee - Giọng Mạnh Dũng (Nam miền Bắc)</option>
+                <option value="vbee_thutrang">Vbee - Giọng Thu Trang (Nữ miền Bắc)</option>
+                <option value="vbee_minhhoang">Vbee - Giọng Minh Hoàng (Nữ miền Nam)</option>
+                <option value="vbee_naman">Vbee - Giọng Nam An (Nam miền Nam)</option>
                 <option value="microsoft_hoaimy">Microsoft Hoài My (Free, Fluent Female)</option>
                 <option value="microsoft_namminh">Microsoft Nam Minh (Free, Fluent Male)</option>
                 <option value="rachel">Hoai My (Rachel - English Accent)</option>

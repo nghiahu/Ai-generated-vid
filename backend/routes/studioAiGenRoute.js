@@ -35,6 +35,8 @@ router.post("/generate", async (req, res) => {
       script: script.trim(),
       targetLength,
       theme,
+      visualStyle: theme,
+      videoTheme: theme,
       voiceKey,
       bgImage,
       refImages,

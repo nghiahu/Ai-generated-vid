@@ -42,17 +42,23 @@ export function registerCompiledTokens(tokens: any) { // eslint-disable-line @ty
 }
 
 export function getVDETokens(styleName?: string): VDETokens {
-  let tokens = activeCompiledTokens;
+  let tokens: VDETokens | null = null;
   
-  if (!tokens) {
-    if (!styleName) return VDE_TOKENS.rikkei || VDE_TOKENS.minimal;
+  if (styleName) {
     const name = styleName.toLowerCase();
-    
     if (name.includes("cyberpunk") || name.includes("neon")) tokens = VDE_TOKENS.cyberpunk;
     else if (name.includes("anime") || name.includes("manga")) tokens = VDE_TOKENS.anime;
     else if (name.includes("apple") || name.includes("keynote")) tokens = VDE_TOKENS.apple;
     else if (name.includes("flat") || name.includes("vector")) tokens = VDE_TOKENS.anime;
-    else tokens = VDE_TOKENS[name] || VDE_TOKENS.rikkei || VDE_TOKENS.minimal;
+    else if (VDE_TOKENS[name]) tokens = VDE_TOKENS[name];
+  }
+  
+  if (!tokens) {
+    tokens = activeCompiledTokens;
+  }
+  
+  if (!tokens) {
+    tokens = VDE_TOKENS.rikkei || VDE_TOKENS.minimal;
   }
   
   // Force local static overrides for borders, backgrounds, and shadows to prevent stale database fields from overriding visual style guidelines
@@ -104,8 +110,8 @@ export function getVDETokens(styleName?: string): VDETokens {
       ...(tokens || VDE_TOKENS.ba),
       colors: {
         background: "linear-gradient(135deg, #002691 0%, #004BBF 50%, #0059D7 100%)",
-        cardBg: "linear-gradient(135deg, rgba(0, 38, 145, 0.85) 0%, rgba(0, 75, 191, 0.8) 100%)",
-        border: "1.5px solid rgba(2, 89, 233, 0.45)",
+        cardBg: "linear-gradient(135deg, #0059D7 0%, #0259E9 100%)",
+        border: "1.5px solid rgba(93, 200, 251, 0.7)",
         accent: "#5DC8FB",
         text: "#FFFFFF",
         textSecondary: "#EAF8FF"

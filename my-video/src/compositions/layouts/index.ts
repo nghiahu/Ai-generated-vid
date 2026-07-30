@@ -1,4 +1,4 @@
-import React from "react"; // trigger rebuild for hust_x_rikkei
+import React from "react"; // trigger rebuild for circular_progress
 import { LayoutProps } from "./LayoutTypes";
 import { TemplateLayout } from "./TemplateLayout";
 

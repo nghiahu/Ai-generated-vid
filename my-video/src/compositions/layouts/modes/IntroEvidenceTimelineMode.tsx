@@ -122,7 +122,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
               // Card styling
               cardBg = isLight
                 ? `linear-gradient(90deg, #ffffff, rgba(${rgb}, 0.08))`
-                : `linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(${rgb}, 0.15))`;
+                : (styles?.cardStyle?.background || styles?.cardStyle?.backgroundColor || `linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(${rgb}, 0.15))`);
               cardBorder = `2px solid ${accentColor}`;
               cardShadow = isLight
                 ? `rgba(0,0,0,0.1) 0px 20px 46px, rgba(${rgb},0.15) 0px 0px 22px`
@@ -137,7 +137,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
               // Card styling
               cardBg = isLight
                 ? "linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9))"
-                : "linear-gradient(90deg, rgba(2, 6, 23, 0.82), rgba(15, 23, 42, 0.54))";
+                : (styles?.cardStyle?.background || styles?.cardStyle?.backgroundColor || "linear-gradient(90deg, rgba(2, 6, 23, 0.82), rgba(15, 23, 42, 0.54))");
               cardBorder = isLight
                 ? "1px solid rgba(0,0,0,0.08)"
                 : `1px solid rgba(${rgb}, 0.36)`;

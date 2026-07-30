@@ -53,7 +53,7 @@ export const IntroBriefingCardMode: React.FC<ModeRendererProps> = ({
     minHeight: "480px",
     borderRadius: "38px",
     padding: resolvePadding("54px 36px 44px", paddingScale),
-    background: styles?.cardStyle?.backgroundColor || (isLight 
+    background: styles?.cardStyle?.background || styles?.cardStyle?.backgroundColor || (isLight 
       ? "rgba(255, 255, 255, 0.85)"
       : "linear-gradient(rgba(2, 6, 23, 0.45), rgba(15, 23, 42, 0.28))"),
     border: styles?.cardStyle?.border || (isLight ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255, 255, 255, 0.12)"),

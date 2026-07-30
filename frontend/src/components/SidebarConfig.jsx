@@ -140,6 +140,11 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
             >
               <option value="omnivoice_duythanh">OmniVoice - Giọng Duy Thanh (Offline Clone)</option>
               <option value="omnivoice_quanganh">OmniVoice - Giọng Quang Anh (Offline Clone)</option>
+              <option value="vbee_ngochuyen">Vbee - Giọng Ngọc Huyền (Nữ miền Bắc)</option>
+              <option value="vbee_manhdung">Vbee - Giọng Mạnh Dũng (Nam miền Bắc)</option>
+              <option value="vbee_thutrang">Vbee - Giọng Thu Trang (Nữ miền Bắc)</option>
+              <option value="vbee_minhhoang">Vbee - Giọng Minh Hoàng (Nữ miền Nam)</option>
+              <option value="vbee_naman">Vbee - Giọng Nam An (Nam miền Nam)</option>
             </select>
           </div>
 

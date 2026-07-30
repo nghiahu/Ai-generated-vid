@@ -43,12 +43,14 @@ export const getThemeStyles = (themeName: string, accentColor: string): ThemeSty
   const borderVal = hasCustomBorder ? tokens.colors.border : `1px solid ${tokens.colors?.border || "rgba(255,255,255,0.1)"}`;
 
   // Base card styling using compiler tokens
+  const cardBgVal = tokens.colors?.cardBg || "rgba(255, 255, 255, 0.03)";
   const cardStyle: React.CSSProperties = {
     padding: "32px 40px",
     width: "100%",
     boxSizing: "border-box",
     transition: "all 0.2s ease-in-out",
-    backgroundColor: tokens.colors?.cardBg || "rgba(255, 255, 255, 0.03)",
+    background: cardBgVal.includes("gradient") ? cardBgVal : undefined,
+    backgroundColor: cardBgVal.includes("gradient") ? undefined : cardBgVal,
     border: borderVal,
     boxShadow: tokens.shadow && tokens.shadow !== "none" ? tokens.shadow : "none",
     borderRadius: tokens.radius || "24px",

@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"; // trigger rebuild for CircularProgress
 import { AbsoluteFill, Audio, Sequence, useVideoConfig, useCurrentFrame, staticFile } from "remotion";
 import * as Remotion from "remotion";
 import * as LucideIcons from "lucide-react";
@@ -33,13 +33,15 @@ const SafeLucideIcons = new Proxy(LucideIcons as any, {
 });
 
 // Dynamically evaluates compiled JS code strings into live React components during CLI export
-function evalAIComponent(compiledJS: string) {
+function evalAIComponent(compiledJS: string, themeTokens?: any) {
   if (!compiledJS || typeof compiledJS !== "string" || compiledJS.trim() === "") {
     return null;
   }
 
   try {
     let rewrittenJS = compiledJS;
+    // Replace static THEME definition to inject dynamic themeTokens passed from args
+    rewrittenJS = rewrittenJS.replace(/const\s+THEME\s*=\s*/g, "const THEME = args.themeTokens || ");
     rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]react['"];?/gi, (match, imports) => {
       let result = "const React = args.React;";
       if (imports.includes("{")) {
@@ -79,7 +81,7 @@ function evalAIComponent(compiledJS: string) {
       return typeof GeneratedScene !== 'undefined' ? GeneratedScene : null;
     `);
 
-    const Comp = fn({ React, Remotion, LucideIcons: SafeLucideIcons });
+    const Comp = fn({ React, Remotion, LucideIcons: SafeLucideIcons, themeTokens });
     return Comp;
   } catch (err: any) {
     console.error("[MainComposition] Error evaluating compiledJS for scene:", err?.message || err);
@@ -301,7 +303,8 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
   // Calculate cumulative frames for each sequence
   let currentFrameOffset = 0;
 
-  const vdeStyle = (config?.visualStyle || config?.videoTheme || config?.theme || "rikkei").toLowerCase();
+  const firstSceneTheme = scenes[0]?.theme && scenes[0]?.theme !== "default" ? scenes[0]?.theme : null;
+  const vdeStyle = (firstSceneTheme || config?.visualStyle || config?.videoTheme || config?.theme || "rikkei").toLowerCase();
   const vdeTokens = getVDETokens(vdeStyle);
   const isRikkei = vdeStyle.includes("rikkei") || vdeStyle.includes("academic");
   const isLightTheme = isRikkei || vdeStyle.includes("light") || vdeStyle.includes("claude") || vdeStyle === "minimal";
@@ -407,13 +410,26 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                   return "IntroMediaHero";
                 })();
 
-                const sceneComp = (scene as any).Component || ((scene as any).compiledJS ? evalAIComponent((scene as any).compiledJS) : null);
+                const flatThemeTokens = {
+                  bg: vdeTokens.colors.background,
+                  cardBg: vdeTokens.colors.cardBg,
+                  border: vdeTokens.colors.border,
+                  accent: vdeTokens.colors.accent,
+                  text: vdeTokens.colors.text,
+                  textSec: vdeTokens.colors.textSecondary,
+                  radius: vdeTokens.radius,
+                  shadow: vdeTokens.shadow,
+                  font: vdeTokens.fonts.body,
+                  orange: "#f97316",
+                  cyan: vdeTokens.colors.accent
+                };
+                const sceneComp = (scene as any).Component || ((scene as any).compiledJS ? evalAIComponent((scene as any).compiledJS, flatThemeTokens) : null);
 
                 if (sceneComp) {
                   const Comp = sceneComp;
                   return (
                     <>
-                      <Comp fps={30} scene={scene} subtitlesJson={scene.subtitlesJson || (scene as any).voiceoverTtsJson} />
+                      <Comp fps={30} scene={scene} subtitlesJson={scene.subtitlesJson || (scene as any).voiceoverTtsJson} themeTokens={flatThemeTokens} />
                       <DynamicSubtitle
                         voiceover={scene.voiceover}
                         durationSeconds={safeParseFloat(scene.duration)}
@@ -435,8 +451,8 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                       points={scene.points}
                       imageUrl={imageUrl}
                       accentColor={scene.accentColor}
-                      theme={config?.videoTheme || config?.theme || "glassmorphism"}
-                      visualStyle={config?.visualStyle}
+                      theme={scene.theme && scene.theme !== "default" ? scene.theme : (config?.videoTheme || config?.theme || "glassmorphism")}
+                      visualStyle={scene.theme && scene.theme !== "default" ? scene.theme : (config?.visualStyle || "rikkei")}
                       voiceover={scene.voiceover}
                       layoutData={(scene as any).layout}
                       themeMetadata={(scene as any).themeMetadata}

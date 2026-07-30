@@ -108,7 +108,7 @@ export const IntroEvidenceReadlineMode: React.FC<ModeRendererProps> = ({
           if (isHighlighted) {
             cardBg = isLight
               ? `linear-gradient(90deg, rgba(255,255,255,0.98), rgba(${rgb}, 0.08))`
-              : `linear-gradient(90deg, rgba(2, 6, 23, 0.88), rgba(${rgb}, 0.15))`;
+              : (styles?.cardStyle?.background || styles?.cardStyle?.backgroundColor || `linear-gradient(90deg, rgba(2, 6, 23, 0.88), rgba(${rgb}, 0.15))`);
             cardBorder = `1px solid ${accentColor}`;
             cardShadow = isLight
               ? `rgba(0,0,0,0.12) 0px 24px 58px, rgba(${rgb},0.2) 0px 0px 28px`
@@ -117,7 +117,7 @@ export const IntroEvidenceReadlineMode: React.FC<ModeRendererProps> = ({
           } else {
             cardBg = isLight
               ? "linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9))"
-              : "linear-gradient(90deg, rgba(2, 6, 23, 0.84), rgba(15, 23, 42, 0.58))";
+              : (styles?.cardStyle?.background || styles?.cardStyle?.backgroundColor || "linear-gradient(90deg, rgba(2, 6, 23, 0.84), rgba(15, 23, 42, 0.58))");
             cardBorder = isLight
               ? "1px solid rgba(0,0,0,0.08)"
               : `1px solid rgba(${rgb}, 0.3)`;

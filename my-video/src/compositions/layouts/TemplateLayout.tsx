@@ -232,6 +232,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
       case "ops_monitor":
         return <OpsMonitorMode {...modeProps} />;
       case "circular_progress":
+        console.log("[TemplateLayout] Rendering circular_progress with props:", modeProps);
         return <CircularProgressMode {...modeProps} />;
       case "centered_text":
         return <CenteredTextMode {...modeProps} />;

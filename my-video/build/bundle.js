@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 9309
+/***/ 2203
 (__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -55548,7 +55548,7 @@ const { fontFamily: fontChakraPetch } = ChakraPetch_loadFont("normal", {
 });
 
 ;// ./src/styles/vde_themes.json
-const vde_themes_namespaceObject = /*#__PURE__*/JSON.parse('{"rikkei":{"extends":"minimal","name":"Rikkei Academic Premium","description":"Phong cách nhận diện Rikkei Edu: Nền trắng hồng hạt siêu sạch, viền đỏ Crimson, thẻ học tập 3D bo góc 16px, khung tiêu đề Brackets.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"professional, educational, academic, clean, corporate, structured"},"tokens":{"colors":{"background":"linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)","cardBg":"linear-gradient(135deg, #FFFFFF 0%, #FFF8F8 100%)","border":"1.5px solid rgba(168, 35, 42, 0.18)","accent":"#A8232A","text":"#191919","textSecondary":"#595959"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 10px 30px rgba(168, 35, 42, 0.08)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["bounce"]}},"ai_hub_grid":{"extends":"minimal","name":"AI Hub Grid","description":"Nền chàm tối với lưới tọa độ kỹ thuật số, quầng sáng xanh dương và các thẻ kính mờ phát sáng viền cyan.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"tech, futuristic, ambient grid, glow glassmorphism"},"tokens":{"colors":{"background":"#030712","cardBg":"linear-gradient(135deg, rgba(8, 17, 37, 0.7) 0%, rgba(3, 7, 18, 0.4) 100%)","border":"1px solid rgba(59, 130, 246, 0.35)","accent":"#3b82f6","text":"#ffffff","textSecondary":"rgba(255, 255, 255, 0.65)"},"fonts":{"title":"Be Vietnam Pro, sans-serif","body":"Be Vietnam Pro, sans-serif"},"radius":"16px","shadow":"0 0 25px rgba(59, 130, 246, 0.15)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}}}');
+const vde_themes_namespaceObject = /*#__PURE__*/JSON.parse('{"rikkei":{"extends":"minimal","name":"Rikkei Academic Premium","description":"Phong cách nhận diện Rikkei Edu: Nền trắng hồng hạt siêu sạch, viền đỏ Crimson, thẻ học tập 3D bo góc 16px, khung tiêu đề Brackets.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"professional, educational, academic, clean, corporate, structured"},"tokens":{"colors":{"background":"linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)","cardBg":"linear-gradient(135deg, #FFFFFF 0%, #FFF8F8 100%)","border":"1.5px solid rgba(168, 35, 42, 0.18)","accent":"#A8232A","text":"#191919","textSecondary":"#595959"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 10px 30px rgba(168, 35, 42, 0.08)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["bounce"]}},"fintech_edu":{"extends":"ai_hub_grid","name":"FinTech Edu — Deep Blue AI","description":"Deep Royal Blue Navy gradient, circuit board SVG texture, Electric Cyan glow, Gold CTA. Phong cách RKKEIEdu AI tech poster.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.92,"minimalism":0.7},"tone":"tech, futuristic, education, glow, circuit, deep-blue"},"tokens":{"colors":{"background":"linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)","cardBg":"linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(0, 100, 240, 0.35) 100%)","border":"1.5px solid rgba(0, 229, 255, 0.6)","accent":"#00e5ff","text":"#FFFFFF","textSecondary":"rgba(255, 255, 255, 0.95)"},"fonts":{"title":"Chakra Petch","body":"Be Vietnam Pro"},"radius":"12px","shadow":"0 0 30px rgba(0, 212, 255, 0.35), 0 0 60px rgba(0, 212, 255, 0.1)"},"motion":{"energy":"high","style":["slide-up","fade","glow-pulse"],"avoid":["bounce","glitch"]}},"ai_hub_grid":{"extends":"minimal","name":"AI Hub Grid","description":"Nền chàm tối với lưới tọa độ kỹ thuật số, quầng sáng xanh dương và các thẻ kính mờ phát sáng viền cyan.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"tech, futuristic, ambient grid, glow glassmorphism"},"tokens":{"colors":{"background":"#030712","cardBg":"linear-gradient(135deg, rgba(8, 17, 37, 0.7) 0%, rgba(3, 7, 18, 0.4) 100%)","border":"1px solid rgba(59, 130, 246, 0.35)","accent":"#3b82f6","text":"#ffffff","textSecondary":"rgba(255, 255, 255, 0.65)"},"fonts":{"title":"Be Vietnam Pro, sans-serif","body":"Be Vietnam Pro, sans-serif"},"radius":"16px","shadow":"0 0 25px rgba(59, 130, 246, 0.15)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}},"ba":{"extends":"minimal","name":"Ba — Modern Corporate","description":"Theme Ba: Phong cách doanh nghiệp hiện đại. Nền xanh gradient sâu thẳm, thẻ nội dung Business Blue kính mờ, viền Electric Blue, chữ Pure White & Soft White và điểm nhấn Tech Cyan.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"corporate, finance, professional, modern, clean, trust"},"tokens":{"colors":{"background":"linear-gradient(135deg, #002691 0%, #004BBF 50%, #0059D7 100%)","cardBg":"linear-gradient(135deg, #0059D7 0%, #0259E9 100%)","border":"1.5px solid rgba(93, 200, 251, 0.7)","accent":"#5DC8FB","text":"#FFFFFF","textSecondary":"#EAF8FF"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 8px 32px rgba(2, 89, 233, 0.15)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}}}');
 ;// ./src/styles/vdeTokens.ts
 
 
@@ -55573,15 +55573,20 @@ function registerCompiledTokens(tokens) {
   }
 }
 function getVDETokens(styleName) {
-  let tokens = activeCompiledTokens;
-  if (!tokens) {
-    if (!styleName) return VDE_TOKENS.rikkei || VDE_TOKENS.minimal;
+  let tokens = null;
+  if (styleName) {
     const name2 = styleName.toLowerCase();
     if (name2.includes("cyberpunk") || name2.includes("neon")) tokens = VDE_TOKENS.cyberpunk;
     else if (name2.includes("anime") || name2.includes("manga")) tokens = VDE_TOKENS.anime;
     else if (name2.includes("apple") || name2.includes("keynote")) tokens = VDE_TOKENS.apple;
     else if (name2.includes("flat") || name2.includes("vector")) tokens = VDE_TOKENS.anime;
-    else tokens = VDE_TOKENS[name2] || VDE_TOKENS.rikkei || VDE_TOKENS.minimal;
+    else if (VDE_TOKENS[name2]) tokens = VDE_TOKENS[name2];
+  }
+  if (!tokens) {
+    tokens = activeCompiledTokens;
+  }
+  if (!tokens) {
+    tokens = VDE_TOKENS.rikkei || VDE_TOKENS.minimal;
   }
   const name = (styleName || "").toLowerCase();
   const isRikkei = !styleName || name.includes("rikkei") || name.includes("academic") || name === "minimal" || name === "default";
@@ -55601,6 +55606,44 @@ function getVDETokens(styleName) {
         body: "Be Vietnam Pro"
       },
       shadow: "0 10px 30px rgba(168, 35, 42, 0.08)",
+      radius: "16px"
+    };
+  }
+  if (name.includes("fintech_edu") || name.includes("fintech-edu")) {
+    return {
+      ...tokens || VDE_TOKENS.fintech_edu,
+      colors: {
+        background: "linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)",
+        cardBg: "linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(0, 100, 240, 0.35) 100%)",
+        border: "1.5px solid rgba(0, 229, 255, 0.6)",
+        accent: "#00e5ff",
+        text: "#FFFFFF",
+        textSecondary: "rgba(255, 255, 255, 0.95)"
+      },
+      fonts: {
+        title: "Chakra Petch",
+        body: "Be Vietnam Pro"
+      },
+      shadow: "0 0 30px rgba(0, 212, 255, 0.35), 0 0 60px rgba(0, 212, 255, 0.1)",
+      radius: "12px"
+    };
+  }
+  if (name.includes("ba")) {
+    return {
+      ...tokens || VDE_TOKENS.ba,
+      colors: {
+        background: "linear-gradient(135deg, #002691 0%, #004BBF 50%, #0059D7 100%)",
+        cardBg: "linear-gradient(135deg, #0059D7 0%, #0259E9 100%)",
+        border: "1.5px solid rgba(93, 200, 251, 0.7)",
+        accent: "#5DC8FB",
+        text: "#FFFFFF",
+        textSecondary: "#EAF8FF"
+      },
+      fonts: {
+        title: "Be Vietnam Pro",
+        body: "Be Vietnam Pro"
+      },
+      shadow: "0 8px 32px rgba(2, 89, 233, 0.15)",
       radius: "16px"
     };
   }
@@ -55688,12 +55731,14 @@ const getThemeStyles = (themeName, accentColor) => {
   const backgroundColor = ((_b = tokens.colors) == null ? void 0 : _b.background) || "#090d1a";
   const hasCustomBorder = ((_c = tokens.colors) == null ? void 0 : _c.border) && (tokens.colors.border.includes("solid") || tokens.colors.border.includes("px"));
   const borderVal = hasCustomBorder ? tokens.colors.border : `1px solid ${((_d = tokens.colors) == null ? void 0 : _d.border) || "rgba(255,255,255,0.1)"}`;
+  const cardBgVal = ((_e = tokens.colors) == null ? void 0 : _e.cardBg) || "rgba(255, 255, 255, 0.03)";
   const cardStyle = {
     padding: "32px 40px",
     width: "100%",
     boxSizing: "border-box",
     transition: "all 0.2s ease-in-out",
-    backgroundColor: ((_e = tokens.colors) == null ? void 0 : _e.cardBg) || "rgba(255, 255, 255, 0.03)",
+    background: cardBgVal.includes("gradient") ? cardBgVal : void 0,
+    backgroundColor: cardBgVal.includes("gradient") ? void 0 : cardBgVal,
     border: borderVal,
     boxShadow: tokens.shadow && tokens.shadow !== "none" ? tokens.shadow : "none",
     borderRadius: tokens.radius || "24px",
@@ -55769,6 +55814,20 @@ const highlightHeadingText = (text, accentColor, theme, highlightWords) => {
   return parts.map((part, index) => {
     const isMatch = sortedKeywords.some((k) => k.toLowerCase() === part.toLowerCase());
     if (isMatch) {
+      if (theme === "fintech_edu" || (theme == null ? void 0 : theme.includes("fintech"))) {
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "span",
+          {
+            style: {
+              color: "#00e5ff",
+              textShadow: "0 2px 12px rgba(0, 0, 0, 0.95), 0 0 20px rgba(0, 229, 255, 0.8)",
+              fontWeight: 900
+            },
+            children: part
+          },
+          index
+        );
+      }
       if (theme === "ai_hub_grid") {
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(
           "span",
@@ -55777,6 +55836,7 @@ const highlightHeadingText = (text, accentColor, theme, highlightWords) => {
               background: "linear-gradient(to bottom, #ffffff 10%, #00e5ff 60%, #3b82f6 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
+              filter: "drop-shadow(0 2px 10px rgba(0, 0, 0, 0.85))",
               display: "inline-block",
               paddingTop: "0.22em",
               marginTop: "-0.22em",
@@ -56537,7 +56597,7 @@ const HeadlineText = ({
   letterSpacing,
   lineHeight,
   color: colorRgba,
-  textShadow: "none",
+  textShadow: textShadow || "0 4px 20px rgba(0, 0, 0, 0.85), 0 2px 8px rgba(0, 0, 0, 0.95)",
   maxWidth,
   textAlign: align,
   fontFamily,
@@ -60350,7 +60410,7 @@ const IntroBriefingCardMode = ({
   paddingScale,
   titleText
 }) => {
-  var _a;
+  var _a, _b, _c, _d, _e;
   const mainTitle = titleText || "CODE RA VIDEO";
   const cleanTitleWords = mainTitle.trim().split(/\s+/).map((w) => w.replace(/[:.,!?]/g, "").toUpperCase()).filter((w) => w.length > 0);
   const labelLeft = cleanTitleWords[0] || "AI";
@@ -60361,8 +60421,8 @@ const IntroBriefingCardMode = ({
   const titleLine2 = titleWords.slice(Math.ceil(titleWords.length / 2)).join(" ");
   const ICONS = ["zap", "arrow", "star"];
   const pillData = otherComps.slice(0, 3).map((comp, i) => {
-    var _a2, _b;
-    if (!comp || !((_b = (_a2 = comp.data) == null ? void 0 : _a2.text) == null ? void 0 : _b.trim())) return null;
+    var _a2, _b2;
+    if (!comp || !((_b2 = (_a2 = comp.data) == null ? void 0 : _a2.text) == null ? void 0 : _b2.trim())) return null;
     const words = comp.data.text.trim().split(/\s+/);
     const badge = words[0] || "";
     const text = words.slice(1).join(" ");
@@ -60375,9 +60435,9 @@ const IntroBriefingCardMode = ({
     minHeight: "480px",
     borderRadius: "38px",
     padding: resolvePadding("54px 36px 44px", paddingScale),
-    background: isLight ? "rgba(255, 255, 255, 0.85)" : "linear-gradient(rgba(2, 6, 23, 0.45), rgba(15, 23, 42, 0.28))",
-    border: isLight ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255, 255, 255, 0.12)",
-    boxShadow: isLight ? "0 28px 70px rgba(0,0,0,0.06)" : "rgba(0, 0, 0, 0.24) 0px 30px 78px",
+    background: ((_b = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _b.background) || ((_c = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _c.backgroundColor) || (isLight ? "rgba(255, 255, 255, 0.85)" : "linear-gradient(rgba(2, 6, 23, 0.45), rgba(15, 23, 42, 0.28))"),
+    border: ((_d = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _d.border) || (isLight ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255, 255, 255, 0.12)"),
+    boxShadow: ((_e = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _e.boxShadow) || (isLight ? "0 28px 70px rgba(0,0,0,0.06)" : "rgba(0, 0, 0, 0.24) 0px 30px 78px"),
     backdropFilter: "blur(14px) saturate(1.1)",
     display: "flex",
     flexDirection: "column",
@@ -61556,7 +61616,7 @@ const IntroEvidenceReadlineMode = ({
         zIndex: 2
       } }),
       renderedConfigs.map((config, idx) => {
-        var _a2;
+        var _a2, _b2, _c2, _d2, _e2;
         const comp = otherComps[idx];
         const textVal = ((_a2 = comp == null ? void 0 : comp.data) == null ? void 0 : _a2.text) || "";
         const animConfig = comp ? getAnimationConfig(comp, idx, "slide-left", 0.15 + idx * 0.12, t) : { animation: "slide-left", delay: 0.15 + idx * 0.12 };
@@ -61566,12 +61626,12 @@ const IntroEvidenceReadlineMode = ({
         let cardShadow = "";
         let cardTextColor = "";
         if (isHighlighted) {
-          cardBg = isLight ? `linear-gradient(90deg, rgba(255,255,255,0.98), rgba(${rgb}, 0.08))` : `linear-gradient(90deg, rgba(2, 6, 23, 0.88), rgba(${rgb}, 0.15))`;
+          cardBg = isLight ? `linear-gradient(90deg, rgba(255,255,255,0.98), rgba(${rgb}, 0.08))` : ((_b2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _b2.background) || ((_c2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _c2.backgroundColor) || `linear-gradient(90deg, rgba(2, 6, 23, 0.88), rgba(${rgb}, 0.15))`;
           cardBorder = `1px solid ${accentColor}`;
           cardShadow = isLight ? `rgba(0,0,0,0.12) 0px 24px 58px, rgba(${rgb},0.2) 0px 0px 28px` : `rgba(0, 0, 0, 0.44) 0px 24px 58px, rgba(${rgb}, 0.22) 0px 0px 34px`;
           cardTextColor = isLight ? "#0f172a" : "rgb(249, 247, 255)";
         } else {
-          cardBg = isLight ? "linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9))" : "linear-gradient(90deg, rgba(2, 6, 23, 0.84), rgba(15, 23, 42, 0.58))";
+          cardBg = isLight ? "linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9))" : ((_d2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _d2.background) || ((_e2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _e2.backgroundColor) || "linear-gradient(90deg, rgba(2, 6, 23, 0.84), rgba(15, 23, 42, 0.58))";
           cardBorder = isLight ? "1px solid rgba(0,0,0,0.08)" : `1px solid rgba(${rgb}, 0.3)`;
           cardShadow = isLight ? "rgba(0, 0, 0, 0.05) 0px 18px 40px" : `rgba(0, 0, 0, 0.38) 0px 20px 48px, rgba(${rgb}, 0.1) 0px 0px 24px`;
           cardTextColor = isLight ? "#1e293b" : "rgb(249, 247, 255)";
@@ -61804,7 +61864,7 @@ const IntroEvidenceScanlineMode = ({
         zIndex: 3
       } }),
       renderedConfigs.map((config, idx) => {
-        var _a2, _b2;
+        var _a2, _b2, _c2, _d2, _e2, _f;
         const comp = otherComps[idx];
         const textVal = ((_a2 = comp == null ? void 0 : comp.data) == null ? void 0 : _a2.text) || "";
         const animConfig = comp ? getAnimationConfig(comp, idx, "slide-right", 0.15 + idx * 0.12, t) : { animation: "slide-right", delay: 0.15 + idx * 0.12 };
@@ -61814,18 +61874,18 @@ const IntroEvidenceScanlineMode = ({
         let cardShadow = "";
         let cardTextColor = "";
         if (isHighlighted) {
-          cardBg = isLight ? `linear-gradient(90deg, #ffffff, rgba(${rgb}, 0.12))` : `linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(${rgb}, 0.16))`;
+          cardBg = isLight ? `linear-gradient(90deg, #ffffff, rgba(${rgb}, 0.12))` : ((_b2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _b2.background) || ((_c2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _c2.backgroundColor) || `linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(${rgb}, 0.16))`;
           cardBorder = `1.5px solid ${accentColor}`;
           cardShadow = isLight ? `rgba(15, 23, 42, 0.08) 0px 24px 48px, rgba(${rgb}, 0.1) 0px 0px 16px` : `rgba(0, 0, 0, 0.44) 0px 24px 62px, rgba(${rgb}, 0.2) 0px 0px 24px, rgba(255, 255, 255, 0.04) 0px 0px 0px 1px inset`;
           cardTextColor = isLight ? "#0f172a" : "rgb(249, 247, 255)";
         } else {
-          cardBg = isLight ? "rgba(255, 255, 255, 0.98)" : "rgba(15, 23, 42, 0.96)";
+          cardBg = isLight ? "rgba(255, 255, 255, 0.98)" : ((_d2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _d2.background) || ((_e2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _e2.backgroundColor) || "rgba(15, 23, 42, 0.96)";
           cardBorder = isLight ? `1px solid rgba(${rgb}, 0.15)` : `1px solid rgba(255, 255, 255, 0.06)`;
           cardShadow = isLight ? "rgba(15, 23, 42, 0.04) 0px 18px 40px" : `rgba(0, 0, 0, 0.44) 0px 20px 48px, rgba(255, 255, 255, 0.04) 0px 0px 0px 1px inset`;
           cardTextColor = isLight ? "#1e293b" : "rgb(249, 247, 255)";
         }
         const cardWords = textVal.trim().split(/\s+/);
-        const cardBadge = ((_b2 = cardWords[0]) == null ? void 0 : _b2.toUpperCase()) || "AI";
+        const cardBadge = ((_f = cardWords[0]) == null ? void 0 : _f.toUpperCase()) || "AI";
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(
           "div",
           {
@@ -62010,7 +62070,7 @@ const IntroEvidenceTimelineMode = ({
         gap: "28px",
         zIndex: 3
       }, children: renderedConfigs.map((config, idx) => {
-        var _a2;
+        var _a2, _b2, _c2, _d2, _e2;
         const comp = otherComps[idx];
         const textVal = ((_a2 = comp == null ? void 0 : comp.data) == null ? void 0 : _a2.text) || "";
         const animConfig = comp ? getAnimationConfig(comp, idx, "slide-right", 0.15 + idx * 0.12, t) : { animation: "slide-right", delay: 0.15 + idx * 0.12 };
@@ -62026,7 +62086,7 @@ const IntroEvidenceTimelineMode = ({
           nodeBg = `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})`;
           nodeBorder = `2px solid ${accentColor}`;
           nodeShadow = `rgba(${rgb}, 0.3) 0px 0px 22px`;
-          cardBg = isLight ? `linear-gradient(90deg, #ffffff, rgba(${rgb}, 0.08))` : `linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(${rgb}, 0.15))`;
+          cardBg = isLight ? `linear-gradient(90deg, #ffffff, rgba(${rgb}, 0.08))` : ((_b2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _b2.background) || ((_c2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _c2.backgroundColor) || `linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(${rgb}, 0.15))`;
           cardBorder = `2px solid ${accentColor}`;
           cardShadow = isLight ? `rgba(0,0,0,0.1) 0px 20px 46px, rgba(${rgb},0.15) 0px 0px 22px` : `rgba(0, 0, 0, 0.4) 0px 24px 56px, rgba(${rgb}, 0.25) 0px 0px 32px, rgba(255, 255, 255, 0.08) 0px 0px 0px 1px inset`;
           cardTextColor = isLight ? "#0f172a" : "rgb(249, 247, 255)";
@@ -62034,7 +62094,7 @@ const IntroEvidenceTimelineMode = ({
           nodeBg = isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(15, 23, 42, 0.9)";
           nodeBorder = isLight ? `2px solid rgba(${rgb}, 0.4)` : `2px solid rgba(${rgb}, 0.6)`;
           nodeShadow = "none";
-          cardBg = isLight ? "linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9))" : "linear-gradient(90deg, rgba(2, 6, 23, 0.82), rgba(15, 23, 42, 0.54))";
+          cardBg = isLight ? "linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9))" : ((_d2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _d2.background) || ((_e2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _e2.backgroundColor) || "linear-gradient(90deg, rgba(2, 6, 23, 0.82), rgba(15, 23, 42, 0.54))";
           cardBorder = isLight ? "1px solid rgba(0,0,0,0.08)" : `1px solid rgba(${rgb}, 0.36)`;
           cardShadow = isLight ? "rgba(0, 0, 0, 0.04) 0px 18px 40px" : `rgba(0, 0, 0, 0.34) 0px 20px 46px, rgba(${rgb}, 0.1) 0px 0px 22px, rgba(255, 255, 255, 0.06) 0px 0px 0px 1px inset`;
           cardTextColor = isLight ? "#1e293b" : "rgb(249, 247, 255)";
@@ -63100,6 +63160,437 @@ const HustXRikkeiMode = ({
   ] });
 };
 
+;// ./src/components/CircuitBoardBg.tsx
+
+
+
+const CircuitBoardBg = ({
+  glowColor = "#00d4ff",
+  circuitOpacity = 0.25
+}) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const pulseProgress = frame % (fps * 3) / (fps * 3);
+  const orbOpacity = 0.3 + 0.3 * Math.sin(pulseProgress * Math.PI * 2);
+  const hexToRgba = (hex, alpha) => {
+    const c = hex.replace("#", "");
+    const r = parseInt(c.substring(0, 2), 16);
+    const g = parseInt(c.substring(2, 4), 16);
+    const b = parseInt(c.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+  const glowRgba = (alpha) => hexToRgba(glowColor, alpha);
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        inset: 0,
+        overflow: "hidden",
+        zIndex: 0
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)"
+            }
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "svg",
+          {
+            style: {
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              opacity: circuitOpacity
+            },
+            xmlns: "http://www.w3.org/2000/svg",
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsxs)("defs", { children: [
+                /* @__PURE__ */ (0,jsx_runtime.jsxs)("pattern", { id: "circuit-grid", x: "0", y: "0", width: "40", height: "40", patternUnits: "userSpaceOnUse", children: [
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("line", { x1: "0", y1: "20", x2: "40", y2: "20", stroke: glowColor, strokeWidth: "0.5" }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("line", { x1: "20", y1: "0", x2: "20", y2: "40", stroke: glowColor, strokeWidth: "0.5" }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "20", cy: "20", r: "1.5", fill: glowColor, opacity: "1.3" }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "0", cy: "0", r: "1", fill: glowColor, opacity: "0.8" }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "40", cy: "0", r: "1", fill: glowColor, opacity: "0.8" }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "0", cy: "40", r: "1", fill: glowColor, opacity: "0.8" }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "40", cy: "40", r: "1", fill: glowColor, opacity: "0.8" })
+                ] }),
+                /* @__PURE__ */ (0,jsx_runtime.jsxs)("pattern", { id: "circuit-traces", x: "0", y: "0", width: "120", height: "120", patternUnits: "userSpaceOnUse", children: [
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("line", { x1: "0", y1: "60", x2: "60", y2: "60", stroke: glowColor, strokeWidth: "1", opacity: "0.5" }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("line", { x1: "60", y1: "60", x2: "60", y2: "20", stroke: glowColor, strokeWidth: "1", opacity: "0.5" }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("line", { x1: "60", y1: "20", x2: "120", y2: "20", stroke: glowColor, strokeWidth: "1", opacity: "0.5" }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "60", cy: "60", r: "3", fill: glowColor, opacity: "0.7" }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "60", cy: "20", r: "3", fill: glowColor, opacity: "0.7" })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { width: "100%", height: "100%", fill: "url(#circuit-grid)" }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { width: "100%", height: "100%", fill: "url(#circuit-traces)", opacity: "0.5" })
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              bottom: "-100px",
+              left: "-100px",
+              width: "500px",
+              height: "500px",
+              borderRadius: "50%",
+              background: `radial-gradient(circle, ${glowRgba(orbOpacity)} 0%, transparent 70%)`,
+              pointerEvents: "none"
+            }
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              top: "-80px",
+              right: "-80px",
+              width: "400px",
+              height: "400px",
+              borderRadius: "50%",
+              background: `radial-gradient(circle, rgba(100, 180, 255, ${orbOpacity * 0.7}) 0%, transparent 70%)`,
+              pointerEvents: "none"
+            }
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              top: "30%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "600px",
+              height: "300px",
+              borderRadius: "50%",
+              background: `radial-gradient(ellipse, ${glowRgba(orbOpacity * 0.4)} 0%, transparent 70%)`,
+              pointerEvents: "none"
+            }
+          }
+        )
+      ]
+    }
+  );
+};
+
+;// ./src/compositions/layouts/modes/FintechEduMode.tsx
+
+
+
+
+
+const CYAN = "#00d4ff";
+const GOLD = "#FFD700";
+const WHITE = "#FFFFFF";
+const WHITE_75 = "rgba(255,255,255,0.75)";
+const CARD_BG = "rgba(0, 40, 160, 0.35)";
+const CYAN_BORDER = "1.5px solid rgba(0, 212, 255, 0.4)";
+const CYAN_GLOW = "0 0 20px rgba(0,212,255,0.3), 0 0 40px rgba(0,212,255,0.1)";
+const NumberedItem = ({ index, title, description, delay, frame, fps }) => {
+  const progress = (0,esm.spring)({
+    frame: frame - delay,
+    fps,
+    config: { damping: 18, stiffness: 120 }
+  });
+  const opacity = (0,esm.interpolate)(frame - delay, [0, 10], [0, 1], { extrapolateRight: "clamp" });
+  const translateY = (0,esm.interpolate)(progress, [0, 1], [30, 0]);
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      style: {
+        opacity,
+        transform: `translateY(${translateY}px)`,
+        display: "flex",
+        alignItems: "flex-start",
+        gap: "20px",
+        padding: "20px 24px",
+        backgroundColor: CARD_BG,
+        border: CYAN_BORDER,
+        borderRadius: "12px",
+        backdropFilter: "blur(12px)",
+        boxShadow: CYAN_GLOW
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              minWidth: "44px",
+              height: "44px",
+              borderRadius: "50%",
+              border: `2px solid ${CYAN}`,
+              boxShadow: `0 0 12px ${CYAN}66`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: fontChakraPetch,
+              fontWeight: 700,
+              fontSize: "20px",
+              color: CYAN,
+              backgroundColor: "rgba(0, 212, 255, 0.08)"
+            },
+            children: index
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            "div",
+            {
+              style: {
+                fontFamily: fontChakraPetch,
+                fontWeight: 700,
+                fontSize: "22px",
+                color: CYAN,
+                textTransform: "uppercase",
+                letterSpacing: "0.03em",
+                marginBottom: "6px"
+              },
+              children: title
+            }
+          ),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            "div",
+            {
+              style: {
+                fontFamily: fontBeVietnamPro,
+                fontWeight: 400,
+                fontSize: "18px",
+                color: WHITE_75,
+                lineHeight: 1.5
+              },
+              children: description
+            }
+          )
+        ] })
+      ]
+    }
+  );
+};
+const MetricsRow = ({ metrics, frame, fps }) => {
+  const opacity = (0,esm.interpolate)(frame, [0, 15], [0, 1], { extrapolateRight: "clamp" });
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "flex", gap: "16px", width: "100%", opacity }, children: metrics.map((m, i) => {
+    const itemProgress = (0,esm.spring)({
+      frame: frame - i * 5,
+      fps,
+      config: { damping: 18, stiffness: 120 }
+    });
+    const translateY = (0,esm.interpolate)(itemProgress, [0, 1], [20, 0]);
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+      "div",
+      {
+        style: {
+          flex: 1,
+          padding: "16px 20px",
+          backgroundColor: CARD_BG,
+          border: CYAN_BORDER,
+          borderRadius: "12px",
+          backdropFilter: "blur(12px)",
+          boxShadow: CYAN_GLOW,
+          transform: `translateY(${translateY}px)`
+        },
+        children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontFamily: fontBeVietnamPro, fontSize: "13px", color: WHITE_75, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.08em" }, children: m.label }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontFamily: fontChakraPetch, fontSize: "28px", fontWeight: 800, color: GOLD, marginBottom: "4px" }, children: m.value }),
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { fontFamily: fontBeVietnamPro, fontSize: "14px", color: CYAN }, children: [
+            "\u2191 ",
+            m.change
+          ] })
+        ]
+      },
+      i
+    );
+  }) });
+};
+const FintechEduMode = ({
+  otherComps,
+  titleText,
+  category,
+  accentColor,
+  fontScale
+}) => {
+  var _a, _b, _c, _d;
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const badgeText = category || "K\u1EF2 NGUY\xCAN AI";
+  const heroTitle = titleText || "DATA ANALYST WITH AI";
+  const subheadline = ((_b = (_a = otherComps[0]) == null ? void 0 : _a.data) == null ? void 0 : _b.text) || "X\xF3a b\u1ECF r\xE0o c\u1EA3n s\u1EE3 code\nB\u1EE9t ph\xE1 s\u1EF1 nghi\u1EC7p c\xF9ng AI.";
+  const rawItems = otherComps.slice(1);
+  const DEFAULT_ITEMS = [
+    { title: "H\u1ECCC T\u01AF DUY, AI VI\u1EBET CODE", description: "L\xE0m ch\u1EE7 SQL & Python kh\xF4ng lo c\xFA ph\xE1p ph\u1EE9c t\u1EA1p" },
+    { title: "DASHBOARD B\xC1O C\xC1O TH\xD4NG MINH", description: "T\xEDch h\u1EE3p AI di\u1EC5n gi\u1EA3i s\u1ED1 li\u1EC7u t\u1EF1 \u0111\u1ED9ng tr\u1EF1c quan" },
+    { title: "GI\u1EA2I PH\xD3NG T\xC1C V\u1EE4 L\u1EB6P L\u1EA0I", description: "Thi\u1EBFt l\u1EADp quy tr\xECnh t\u1EF1 ch\u1EA1y d\u1EEF li\u1EC7u kh\xE9p k\xEDn b\u1EB1ng AI" }
+  ];
+  const items = rawItems.length >= 1 ? rawItems.map((c, i) => {
+    var _a2, _b2, _c2;
+    const parts = (((_a2 = c.data) == null ? void 0 : _a2.text) || "").split("|");
+    return { title: ((_b2 = parts[0]) == null ? void 0 : _b2.trim()) || DEFAULT_ITEMS[i % DEFAULT_ITEMS.length].title, description: ((_c2 = parts[1]) == null ? void 0 : _c2.trim()) || DEFAULT_ITEMS[i % DEFAULT_ITEMS.length].description };
+  }) : DEFAULT_ITEMS;
+  const ctaText = ((_d = (_c = otherComps.find((c) => c.type === "cta")) == null ? void 0 : _c.data) == null ? void 0 : _d.text) || "\u0110\u0102NG K\xDD NGAY";
+  const metrics = [
+    { label: "TOTAL REVENUE", value: "$12.45M", change: "23.1%" },
+    { label: "NEW USERS", value: "8,542", change: "18.7%" },
+    { label: "CONVERSION RATE", value: "3.62%", change: "11.3%" }
+  ];
+  const heroDelay = 5;
+  const metricsDelay = 15;
+  const itemsStartDelay = 25;
+  const heroScale = (0,esm.spring)({ frame: frame - heroDelay, fps, config: { damping: 20, stiffness: 80 } });
+  const heroOpacity = (0,esm.interpolate)(frame - heroDelay, [0, 12], [0, 1], { extrapolateRight: "clamp" });
+  const heroScaleVal = (0,esm.interpolate)(heroScale, [0, 1], [0.92, 1]);
+  const badgeOpacity = (0,esm.interpolate)(frame, [0, 8], [0, 1], { extrapolateRight: "clamp" });
+  const ctaDelay = itemsStartDelay + items.length * 8;
+  const ctaOpacity = (0,esm.interpolate)(frame - ctaDelay, [0, 12], [0, 1], { extrapolateRight: "clamp" });
+  const ctaY = (0,esm.interpolate)(
+    (0,esm.spring)({ frame: frame - ctaDelay, fps, config: { damping: 18, stiffness: 100 } }),
+    [0, 1],
+    [20, 0]
+  );
+  const fs = fontScale || 1;
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { position: "absolute", inset: 0 }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(CircuitBoardBg, { glowColor: accentColor === "#00d4ff" || !accentColor ? CYAN : accentColor }),
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          flexDirection: "column",
+          padding: "48px 52px",
+          gap: "24px",
+          zIndex: 1
+        },
+        children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            "div",
+            {
+              style: {
+                opacity: badgeOpacity,
+                display: "inline-flex",
+                alignSelf: "flex-start",
+                padding: "8px 20px",
+                border: CYAN_BORDER,
+                borderRadius: "4px",
+                boxShadow: CYAN_GLOW,
+                backgroundColor: "rgba(0, 212, 255, 0.08)",
+                fontFamily: fontChakraPetch,
+                fontWeight: 700,
+                fontSize: `${16 * fs}px`,
+                color: WHITE,
+                textTransform: "uppercase",
+                letterSpacing: "0.1em"
+              },
+              children: badgeText
+            }
+          ),
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+            "div",
+            {
+              style: {
+                opacity: heroOpacity,
+                transform: `scale(${heroScaleVal})`,
+                transformOrigin: "left center"
+              },
+              children: [
+                /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                  "div",
+                  {
+                    style: {
+                      fontFamily: fontChakraPetch,
+                      fontWeight: 900,
+                      fontSize: `${56 * fs}px`,
+                      color: WHITE,
+                      textTransform: "uppercase",
+                      lineHeight: 1.05,
+                      letterSpacing: "-0.01em",
+                      textShadow: `0 0 40px ${CYAN}66, 0 0 80px ${CYAN}22`
+                    },
+                    children: heroTitle
+                  }
+                ),
+                subheadline && /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                  "div",
+                  {
+                    style: {
+                      fontFamily: fontBeVietnamPro,
+                      fontSize: `${20 * fs}px`,
+                      color: WHITE_75,
+                      marginTop: "12px",
+                      lineHeight: 1.5,
+                      whiteSpace: "pre-line"
+                    },
+                    children: subheadline
+                  }
+                )
+              ]
+            }
+          ),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(MetricsRow, { metrics, frame: frame - metricsDelay, fps }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: "12px" }, children: items.map((item, i) => /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            NumberedItem,
+            {
+              index: i + 1,
+              title: item.title,
+              description: item.description,
+              delay: itemsStartDelay + i * 8,
+              frame,
+              fps
+            },
+            i
+          )) }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            "div",
+            {
+              style: {
+                opacity: ctaOpacity,
+                transform: `translateY(${ctaY}px)`,
+                marginTop: "auto",
+                display: "flex",
+                justifyContent: "center"
+              },
+              children: /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+                "div",
+                {
+                  style: {
+                    padding: "18px 60px",
+                    backgroundColor: WHITE,
+                    borderRadius: "40px",
+                    fontFamily: fontChakraPetch,
+                    fontWeight: 800,
+                    fontSize: `${22 * fs}px`,
+                    color: "#001060",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    boxShadow: `0 0 30px rgba(255,255,255,0.3), 0 8px 25px rgba(0,0,0,0.3)`
+                  },
+                  children: [
+                    "\xBB ",
+                    ctaText,
+                    " \xAB"
+                  ]
+                }
+              )
+            }
+          )
+        ]
+      }
+    )
+  ] });
+};
+
 ;// ./src/compositions/layouts/modes/IntroRadarSignalMode.tsx
 
 
@@ -64009,9 +64500,9 @@ const OpsMonitorMode = ({
           style: {
             width: "100%",
             borderRadius: "24px",
-            background: "linear-gradient(180deg, rgba(12, 18, 32, 0.97) 0%, rgba(6, 10, 20, 0.99) 100%)",
-            border: `2px solid rgba(${rgb}, 0.3)`,
-            boxShadow: `0 24px 64px rgba(0, 0, 0, 0.6), 0 0 20px rgba(${rgb}, 0.1)`,
+            background: isLight ? "rgba(255, 255, 255, 0.45)" : "linear-gradient(180deg, rgba(12, 18, 32, 0.97) 0%, rgba(6, 10, 20, 0.99) 100%)",
+            border: isLight ? "1.5px solid rgba(0, 0, 0, 0.08)" : `2px solid rgba(${rgb}, 0.3)`,
+            boxShadow: isLight ? "0 24px 64px rgba(0, 0, 0, 0.06), inset 0 0 30px rgba(255, 255, 255, 0.8)" : `0 24px 64px rgba(0, 0, 0, 0.6), 0 0 20px rgba(${rgb}, 0.1)`,
             padding: "20px 22px",
             boxSizing: "border-box",
             display: "flex",
@@ -64063,14 +64554,13 @@ const OpsMonitorMode = ({
                                 style: {
                                   flex: 1,
                                   borderRadius: "16px",
-                                  background: "rgba(20, 28, 48, 0.85)",
-                                  borderLeft: `3px solid ${accentColor}`,
-                                  border: `1.5px solid rgba(${rgb}, 0.2)`,
+                                  background: isLight ? styles.cardStyle.background || styles.cardStyle.backgroundColor || "rgba(255, 255, 255, 0.9)" : "rgba(20, 28, 48, 0.85)",
+                                  border: isLight ? styles.cardStyle.border || "1px solid rgba(0, 0, 0, 0.08)" : `1.5px solid rgba(${rgb}, 0.2)`,
                                   borderLeftWidth: "3px",
                                   borderLeftColor: accentColor,
                                   padding: "14px 16px",
                                   boxSizing: "border-box",
-                                  boxShadow: `0 4px 14px rgba(0, 0, 0, 0.3), inset 0 0 12px rgba(${rgb}, 0.05)`,
+                                  boxShadow: isLight ? "0 4px 14px rgba(0, 0, 0, 0.04)" : `0 4px 14px rgba(0, 0, 0, 0.3), inset 0 0 12px rgba(${rgb}, 0.05)`,
                                   display: "flex",
                                   flexDirection: "column",
                                   justifyContent: "center",
@@ -64099,7 +64589,7 @@ const OpsMonitorMode = ({
                                         fontSize: dynamicFontSize,
                                         lineHeight: 1.25,
                                         fontWeight: 850,
-                                        color: "#ffffff",
+                                        color: isLight ? "#191919" : "#ffffff",
                                         fontFamily: styles.fontFamily
                                       },
                                       children: item.text
@@ -64154,7 +64644,7 @@ const OpsMonitorMode = ({
                                       style: {
                                         fontSize: "11px",
                                         fontWeight: 800,
-                                        color: "rgba(255, 255, 255, 0.55)",
+                                        color: isLight ? "rgba(25, 25, 25, 0.55)" : "rgba(255, 255, 255, 0.55)",
                                         letterSpacing: "0.08em",
                                         fontFamily: styles.fontFamily,
                                         minWidth: "40px",
@@ -64171,7 +64661,7 @@ const OpsMonitorMode = ({
                                         flex: 1,
                                         height: "10px",
                                         borderRadius: "6px",
-                                        background: "rgba(255, 255, 255, 0.07)",
+                                        background: isLight ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.07)",
                                         overflow: "hidden",
                                         position: "relative"
                                       },
@@ -64199,7 +64689,7 @@ const OpsMonitorMode = ({
                                       style: {
                                         fontSize: "11px",
                                         fontWeight: 800,
-                                        color: "rgba(255, 255, 255, 0.7)",
+                                        color: isLight ? "rgba(25, 25, 25, 0.8)" : "rgba(255, 255, 255, 0.7)",
                                         fontFamily: styles.fontFamily,
                                         minWidth: "34px",
                                         textAlign: "left",
@@ -64229,7 +64719,7 @@ const OpsMonitorMode = ({
                   alignItems: "center",
                   gap: "7px",
                   paddingTop: "10px",
-                  borderTop: "1px solid rgba(255, 255, 255, 0.07)"
+                  borderTop: isLight ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.07)"
                 },
                 children: [
                   /* @__PURE__ */ (0,jsx_runtime.jsx)(
@@ -64239,8 +64729,8 @@ const OpsMonitorMode = ({
                         width: "9px",
                         height: "9px",
                         borderRadius: "50%",
-                        background: "#ef4444",
-                        boxShadow: "0 0 10px #ef4444",
+                        background: accentColor || "#ef4444",
+                        boxShadow: `0 0 10px ${accentColor || "#ef4444"}`,
                         opacity: liveBlink
                       }
                     }
@@ -64251,7 +64741,7 @@ const OpsMonitorMode = ({
                       style: {
                         fontSize: "12px",
                         fontWeight: 900,
-                        color: "#ef4444",
+                        color: accentColor || "#ef4444",
                         letterSpacing: "0.14em",
                         textTransform: "uppercase",
                         fontFamily: styles.fontFamily
@@ -64344,9 +64834,9 @@ const TimelineShiftMode = ({
     width: "100%",
     maxWidth: "1000px",
     borderRadius: "36px",
-    backgroundColor: "rgba(10, 16, 30, 0.65)",
-    border: "1.5px solid rgba(255, 255, 255, 0.12)",
-    boxShadow: "0 25px 60px rgba(0, 0, 0, 0.55), inset 0 0 35px rgba(255, 255, 255, 0.02)",
+    backgroundColor: isLight ? "rgba(255, 255, 255, 0.45)" : "rgba(10, 16, 30, 0.65)",
+    border: isLight ? "1.5px solid rgba(0, 0, 0, 0.08)" : "1.5px solid rgba(255, 255, 255, 0.12)",
+    boxShadow: isLight ? "0 25px 60px rgba(0, 0, 0, 0.08), inset 0 0 35px rgba(255, 255, 255, 0.8)" : "0 25px 60px rgba(0, 0, 0, 0.55), inset 0 0 35px rgba(255, 255, 255, 0.02)",
     backdropFilter: "blur(20px)",
     padding: isVertical ? "40px 24px" : "52px 36px",
     display: "flex",
@@ -64367,14 +64857,15 @@ const TimelineShiftMode = ({
     const sidePillText = isLeft ? "PAST PHASE" : "UPGRADED FUTURE";
     const sideLabelText = isLeft ? body || "K\u1EF8 N\u0102NG HOT NH\u1EA4T" : body || "CH\u1EC8 C\xD3 BA B\u01AF\u1EDAC";
     const itemStyleSetting = t.items.itemStyles[cardIdx] || { fontSize: "26px", fontWeight: "800" };
+    const defaultThemeBg = styles.cardStyle.background || styles.cardStyle.backgroundColor || "rgba(255, 255, 255, 0.95)";
     const cardStyle = {
       width: isVertical ? "72%" : "68%",
       alignSelf: isLeft ? "flex-start" : "flex-end",
       borderRadius: itemStyleSetting.borderRadius || "24px",
       padding: resolvePadding(itemStyleSetting.padding || "22px", paddingScale),
-      backgroundColor: isLeft ? "rgba(8, 14, 28, 0.88)" : "rgba(12, 20, 36, 0.95)",
-      border: isLeft ? `1.5px solid ${sideColor}55` : `2px solid ${sideColor}`,
-      boxShadow: isLeft ? `0 12px 36px rgba(0, 0, 0, 0.45), 0 0 20px ${sideColor}15` : `0 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px ${sideColor}44`,
+      background: styles.cardStyle.background || styles.cardStyle.backgroundColor || (isLeft ? isLight ? "rgba(245, 245, 247, 0.82)" : "rgba(8, 25, 80, 0.65)" : isLight ? defaultThemeBg : "rgba(12, 35, 100, 0.75)"),
+      border: isLeft ? isLight ? "1px solid rgba(0, 0, 0, 0.08)" : styles.cardStyle.border || `1.5px solid ${sideColor}55` : styles.cardStyle.border || `2px solid ${sideColor}`,
+      boxShadow: isLeft ? isLight ? "0 10px 30px rgba(0, 0, 0, 0.04)" : `0 12px 36px rgba(0, 0, 0, 0.45), 0 0 20px ${sideColor}15` : isLight ? `0 20px 40px rgba(0, 0, 0, 0.06), 0 0 25px ${sideColor}18` : `0 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px ${sideColor}44`,
       backdropFilter: "blur(16px)",
       transform: isLeft ? "perspective(1000px) rotateY(10deg) rotateX(-6deg) scale(0.92)" : "perspective(1000px) rotateY(-10deg) rotateX(6deg) scale(1.08)",
       opacity: isLeft ? 0.88 : 1,
@@ -64407,8 +64898,8 @@ const TimelineShiftMode = ({
       padding: "4px 10px",
       borderRadius: "12px",
       color: sideColor,
-      backgroundColor: isLeft ? "rgba(148, 163, 184, 0.12)" : "rgba(234, 179, 8, 0.15)",
-      border: isLeft ? "1px solid rgba(255, 255, 255, 0.15)" : `1.5px solid ${sideColor}`
+      backgroundColor: isLeft ? isLight ? "rgba(0, 0, 0, 0.05)" : "rgba(148, 163, 184, 0.12)" : "rgba(234, 179, 8, 0.15)",
+      border: isLeft ? isLight ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.15)" : `1.5px solid ${sideColor}`
     };
     const animConfig = getAnimationConfig(comp, cardIdx, "scale-in", 0.3, t);
     return /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animConfig.animation, delaySeconds: animConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: cardStyle, children: [
@@ -64419,7 +64910,7 @@ const TimelineShiftMode = ({
       /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
         fontSize: getDynamicFontSize(body || text, 26, fontScale),
         fontWeight: 700,
-        color: activeCardTextColor || "#ffffff",
+        color: isLight ? "#191919" : "#ffffff",
         fontFamily: styles.fontFamily,
         lineHeight: 1.35
       }, children: body || text }),
@@ -64474,7 +64965,165 @@ const TimelineShiftMode = ({
   ] });
 };
 
+;// ./src/compositions/layouts/modes/CircularProgressMode.tsx
+
+
+
+
+
+const CircularProgressMode = ({
+  otherComps,
+  t,
+  accentColor,
+  darkAccentColor,
+  isLight,
+  styles,
+  gap
+}) => {
+  var _a, _b, _c, _d, _e;
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  console.log("[CircularProgressMode] RENDER. otherComps:", otherComps);
+  const metricComp = otherComps[0];
+  const metricValueText = String(((_a = metricComp == null ? void 0 : metricComp.data) == null ? void 0 : _a.value) || ((_b = metricComp == null ? void 0 : metricComp.data) == null ? void 0 : _b.text) || "0");
+  const parsedValue = parseInt(metricValueText.replace(/[^\d]/g, ""), 10);
+  const targetValue = isNaN(parsedValue) ? 0 : Math.min(100, Math.max(0, parsedValue));
+  const metricLabel = ((_c = metricComp == null ? void 0 : metricComp.data) == null ? void 0 : _c.text) || "";
+  const cardComps = otherComps.slice(1, 4);
+  const R = 70;
+  const C = 2 * Math.PI * R;
+  const startFrame = Math.round(0.3 * fps);
+  const durationFrames = Math.round(1 * fps);
+  const progress = (0,esm.interpolate)(frame - startFrame, [0, durationFrames], [0, targetValue], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: esm.Easing.bezier(0.25, 1, 0.5, 1)
+  });
+  const strokeDashoffset = C * (1 - progress / 100);
+  const containerStyle = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "100%",
+    maxWidth: ((_d = t.container) == null ? void 0 : _d.maxWidth) || "960px",
+    zIndex: 5
+  };
+  const circleSectionStyle = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    position: "relative",
+    marginBottom: "20px"
+  };
+  const numberOverlayStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    fontSize: "110px",
+    fontWeight: 950,
+    color: "#ff7a00",
+    fontFamily: styles.fontFamily
+  };
+  const labelStyle = {
+    fontSize: "24px",
+    fontWeight: 800,
+    color: isLight ? "#1f2937" : "#ffffff",
+    fontFamily: styles.fontFamily,
+    marginTop: "16px",
+    textAlign: "center",
+    maxWidth: "500px",
+    lineHeight: 1.3
+  };
+  const cardsContainerStyle = {
+    display: "flex",
+    flexDirection: "row",
+    gap: gap !== void 0 ? `${gap}px` : ((_e = t.container) == null ? void 0 : _e.gap) || "24px",
+    width: "100%",
+    justifyContent: "center",
+    marginTop: "24px"
+  };
+  const cardStyle = {
+    flex: 1,
+    borderRadius: "24px",
+    padding: "24px",
+    background: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(255, 255, 255, 0.05)",
+    border: `1px solid ${isLight ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.12)"}`,
+    boxShadow: `0 14px 34px rgba(0, 0, 0, 0.15)`,
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    boxSizing: "border-box",
+    minHeight: "140px"
+  };
+  const badgeStyle = {
+    fontSize: "16px",
+    fontWeight: 900,
+    color: accentColor,
+    textTransform: "uppercase",
+    letterSpacing: "0.1em",
+    fontFamily: styles.fontFamily
+  };
+  const textStyle = {
+    fontSize: "20px",
+    fontWeight: 800,
+    color: isLight ? "#1f2937" : "#ffffff",
+    lineHeight: 1.3,
+    fontFamily: styles.fontFamily
+  };
+  const animCircleConfig = metricComp ? getAnimationConfig(metricComp, 0, "scale-in", 0, t) : { animation: "scale-in", delay: 0.1 };
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: containerStyle, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animCircleConfig.animation, delaySeconds: 0.1, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: circleSectionStyle, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", width: "420px", height: "420px" }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("svg", { viewBox: "0 0 200 200", style: { width: "100%", height: "100%" }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "circle",
+          {
+            cx: "100",
+            cy: "100",
+            r: R,
+            fill: "none",
+            stroke: isLight ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)",
+            strokeWidth: "14"
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "circle",
+          {
+            cx: "100",
+            cy: "100",
+            r: R,
+            fill: "none",
+            stroke: "#ff7a00",
+            strokeWidth: "14",
+            strokeLinecap: "round",
+            strokeDasharray: C,
+            strokeDashoffset,
+            transform: "rotate(-90 100 100)"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: numberOverlayStyle, children: [
+        Math.round(progress),
+        "%"
+      ] })
+    ] }) }) }),
+    cardComps.length > 0 && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: cardsContainerStyle, children: cardComps.map((comp, idx) => {
+      var _a2;
+      const animCardConfig = getAnimationConfig(comp, idx, "slide-up", 1.2 + 0.3 * idx, t);
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animCardConfig.animation, delaySeconds: animCardConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: cardStyle, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: badgeStyle, children: [
+          "CH\u1EC8 TI\xCAU ",
+          String(idx + 1).padStart(2, "0")
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: textStyle, children: ((_a2 = comp == null ? void 0 : comp.data) == null ? void 0 : _a2.text) || "" })
+      ] }) }, comp.id || idx);
+    }) })
+  ] });
+};
+
 ;// ./src/compositions/layouts/TemplateLayout.tsx
+
+
 
 
 
@@ -64544,7 +65193,7 @@ const TemplateLayout = ({
   imageUrl,
   highlightWords
 }) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i;
   const resolvedTheme = visualStyle || theme;
   const styles = getThemeStyles(resolvedTheme, accentColor);
   const t = templateJson;
@@ -64564,9 +65213,9 @@ const TemplateLayout = ({
     const vals = rgb.split(",").map((n) => parseInt(n.trim()));
     return getLuminance(vals[0] || 239, vals[1] || 68, vals[2] || 68) > 180;
   })();
-  const activeCardTextColor = isAccentLight ? "#111111" : "#ffffff";
-  const activeCardBadgeColor = isAccentLight ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.8)";
-  const inactiveCardTextColor = isLight ? "#191919" : "rgb(249, 247, 255)";
+  const activeCardTextColor = isLight ? isAccentLight ? "#111111" : "#ffffff" : "#ffffff";
+  const activeCardBadgeColor = isLight ? isAccentLight ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.8)" : "rgba(255, 255, 255, 0.9)";
+  const inactiveCardTextColor = isLight ? "#191919" : "#ffffff";
   const cleanCategory = category || (((_b = (_a = t.categoryPill) == null ? void 0 : _a.text) == null ? void 0 : _b.trim().toLowerCase()) !== "ai vi\u1EBFt video" && ((_d = (_c = t.categoryPill) == null ? void 0 : _c.text) == null ? void 0 : _d.trim().toLowerCase()) !== "ai viet video" ? (_e = t.categoryPill) == null ? void 0 : _e.text : "");
   const titleComp = resolvedComponents.find((c) => c.type === "title");
   const otherComps = resolvedComponents.filter(
@@ -64585,7 +65234,7 @@ const TemplateLayout = ({
     alignItems: isCenteredLayout ? "center" : isBottomAligned ? "flex-start" : "center",
     padding: isCenteredLayout ? "0 64px" : "86px",
     justifyContent: isCenteredLayout ? "center" : isBottomAligned ? "flex-end" : "flex-start",
-    paddingTop: isCenteredLayout ? "0px" : isBottomAligned ? "0px" : layoutMode === "intro_briefing_card" || layoutMode === "chapter_stack" || layoutMode === "cutout_headline" || layoutMode === "evidence_readline" || layoutMode === "evidence_scanline" || layoutMode === "evidence_timeline" || layoutMode === "intro_full_image" || layoutMode === "split_headline" || layoutMode === "intro_radar_signal" || layoutMode === "intro_signal_steps" || layoutMode === "intro_map_pins" || layoutMode === "ops_monitor" || layoutMode === "orbital_bubbles" || layoutMode === "venn_spheres" ? "380px" : layoutMode === "split_horizontal" || layoutMode === "before_after_panel" || layoutMode === "broadcast_lower_third" || layoutMode === "case_study_editorial" || layoutMode === "dossier_notes" || layoutMode === "earnings_snapshot" || layoutMode === "fear_greed" || layoutMode === "feed_scroll" ? "420px" : t.container.paddingTop || "300px",
+    paddingTop: isCenteredLayout ? "0px" : isBottomAligned ? "0px" : layoutMode === "fintech_edu" || layoutMode === "hust_x_rikkei" ? "0px" : ((_f = t.container) == null ? void 0 : _f.paddingTop) || "380px",
     paddingBottom: isCenteredLayout ? "0px" : isBottomAligned ? "480px" : "86px",
     boxSizing: "border-box",
     position: "relative",
@@ -64679,10 +65328,15 @@ const TemplateLayout = ({
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(IntroMapPinsMode, { ...modeProps });
       case "ops_monitor":
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(OpsMonitorMode, { ...modeProps });
+      case "circular_progress":
+        console.log("[TemplateLayout] Rendering circular_progress with props:", modeProps);
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(CircularProgressMode, { ...modeProps });
       case "centered_text":
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(CenteredTextMode, { ...modeProps });
       case "hust_x_rikkei":
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(HustXRikkeiMode, { ...modeProps });
+      case "fintech_edu":
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(FintechEduMode, { ...modeProps });
       case "blank":
         return null;
       default:
@@ -64691,15 +65345,15 @@ const TemplateLayout = ({
   };
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { position: "absolute", inset: 0, pointerEvents: "none" }, children: [
     renderBackground(),
-    layoutMode !== "blank" && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+    layoutMode !== "blank" && resolvedTheme !== "fintech_edu" && !(resolvedTheme == null ? void 0 : resolvedTheme.includes("fintech")) && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
       position: "absolute",
       inset: 0,
-      background: isLight ? "linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.55) 45%, rgba(255, 255, 255, 0.76) 100%)" : "linear-gradient(180deg, rgba(0, 0, 0, 0.36) 0%, rgba(0, 0, 0, 0.46) 45%, rgba(0, 0, 0, 0.78) 100%)",
+      background: isLight ? "linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.35) 45%, rgba(255, 255, 255, 0.5) 100%)" : "linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.25) 45%, rgba(0, 0, 0, 0.45) 100%)",
       zIndex: 0,
       pointerEvents: "none"
     } }),
     /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { ...containerStyle, position: "relative", zIndex: 1, fontFamily: styles.fontFamily }, children: [
-      titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "blank" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "fintech_edu" && layoutMode !== "blank" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
         marginBottom: `${parseInt(String(t.title.marginBottom || 100)) + 50}px`,
         zIndex: 10,
         display: "flex",
@@ -64711,9 +65365,9 @@ const TemplateLayout = ({
           CategoryPill,
           {
             text: cleanCategory,
-            bgRgba: ((_f = t.categoryPill) == null ? void 0 : _f.bgRgba) || `rgba(2, 6, 23, 0.72)`,
-            borderRgba: ((_g = t.categoryPill) == null ? void 0 : _g.borderRgba) || `rgba(${rgb}, 0.4)`,
-            textRgba: ((_h = t.categoryPill) == null ? void 0 : _h.textRgba) || accentColor,
+            bgRgba: ((_g = t.categoryPill) == null ? void 0 : _g.bgRgba) || `rgba(2, 6, 23, 0.72)`,
+            borderRgba: ((_h = t.categoryPill) == null ? void 0 : _h.borderRgba) || `rgba(${rgb}, 0.4)`,
+            textRgba: ((_i = t.categoryPill) == null ? void 0 : _i.textRgba) || accentColor,
             fontFamily: styles.fontFamily
           }
         ) }),
@@ -64928,8 +65582,16 @@ const AICodeLayout = ({
 
 
 
+
 const DynamicLayout_hexToRgb = (hex) => {
-  const c = hex.replace("#", "");
+  let cleaned = hex.trim();
+  if (cleaned.includes("gradient")) {
+    const match = cleaned.match(/#[0-9A-Fa-f]{3,6}/);
+    if (match) {
+      cleaned = match[0];
+    }
+  }
+  const c = cleaned.replace("#", "");
   if (c.length === 3) {
     const r = parseInt(c[0] + c[0], 16);
     const g = parseInt(c[1] + c[1], 16);
@@ -64967,7 +65629,27 @@ const DynamicLayout = ({
     var _a;
     const isRikkei = theme === "rikkei";
     const isAiHubGrid = theme === "ai_hub_grid";
-    if (isRikkei && !imageUrl) {
+    const isFintechEdu = theme === "fintech_edu" || theme && theme.includes("fintech");
+    if (imageUrl) {
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "img",
+        {
+          src: imageUrl,
+          style: {
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: 1
+          }
+        }
+      ) });
+    }
+    if (isFintechEdu) {
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(CircuitBoardBg, { glowColor: "#00d4ff", circuitOpacity: 0.25 }) });
+    }
+    if (isRikkei) {
       return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { position: "absolute", inset: 0, zIndex: -1, backgroundColor: "#ffffff" } });
     }
     const bgImgUrl = imageUrl || (isAiHubGrid ? "/ai_hub_grid_bg.png" : "");
@@ -65017,7 +65699,7 @@ const DynamicLayout = ({
           alt: "Scene Background"
         }
       ),
-      layoutType.toLowerCase() !== "blank" && /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: {
+      layoutType.toLowerCase() !== "blank" && !isRikkei && /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: {
         background: overlayGradient,
         zIndex: 1,
         mixBlendMode: isFullImageBg ? void 0 : isLight ? "multiply" : "normal"
@@ -65487,18 +66169,18 @@ const DynamicSubtitle = ({
     }
   })();
   const styleName = (visualStyle || "").toLowerCase();
-  const isRikkei = !visualStyle || styleName.includes("rikkei") || styleName.includes("academic") || styleName === "minimal" || styleName === "default";
+  const isRikkei = styleName.includes("rikkei") || styleName.includes("academic");
   const isLightBg = isRikkei || styleName.includes("claude") || styleName.includes("light") || styleName.includes("anime");
-  const inactiveColor = isLightBg ? "rgba(25, 25, 25, 0.65)" : "rgba(255, 255, 255, 0.45)";
+  const inactiveColor = isLightBg ? "rgba(25, 25, 25, 0.65)" : "rgba(255, 255, 255, 0.70)";
   const textColor = isLightBg ? "#191919" : "#ffffff";
-  const effectiveAccentColor = isRikkei ? "#A8232A" : accentColor;
+  const effectiveAccentColor = isRikkei ? "#A8232A" : styleName.includes("fintech") ? "#00e5ff" : accentColor;
   const accent = parseRGB(effectiveAccentColor);
   const rawBottom = (customSubtitle == null ? void 0 : customSubtitle.bottom) || "120px";
   const bottomPx = parseInt(rawBottom);
   const bottom = isNaN(bottomPx) || bottomPx < 100 ? "115px" : `${bottomPx}px`;
   const fontSize = (customSubtitle == null ? void 0 : customSubtitle.fontSize) || "46px";
   const fontWeight = (customSubtitle == null ? void 0 : customSubtitle.fontWeight) ? parseInt(customSubtitle.fontWeight) : 800;
-  const textShadow = "none";
+  const textShadow = isLightBg ? "0px 1px 2px rgba(255, 255, 255, 0.9), 0px 0px 4px rgba(255, 255, 255, 0.5)" : "0px 2px 8px rgba(0, 0, 0, 0.95), 0px 4px 16px rgba(0, 0, 0, 0.8), 0px 0px 4px rgba(0, 0, 0, 0.9)";
   let groupOpacity;
   if (hasTimestamps && words.length > 0) {
     const groupFirstWord = words[Math.min(safeGroupStartWordIdx, words.length - 1)];
@@ -65542,12 +66224,10 @@ const DynamicSubtitle = ({
             lineHeight: 1.45,
             textShadow,
             margin: 0,
-            padding: "12px 28px",
-            borderRadius: "20px",
-            background: isLightBg ? "rgba(255, 255, 255, 0.95)" : "rgba(9, 11, 16, 0.82)",
-            boxShadow: isRikkei ? "0 10px 30px rgba(168, 35, 42, 0.1)" : isLightBg ? "0 10px 30px rgba(0,0,0,0.08)" : "0 10px 30px rgba(0,0,0,0.4)",
-            backdropFilter: "blur(14px)",
-            border: isRikkei ? "1.5px solid rgba(168, 35, 42, 0.2)" : isLightBg ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255,255,255,0.1)",
+            padding: 0,
+            background: "none",
+            boxShadow: "none",
+            border: "none",
             display: "flex",
             flexWrap: "wrap",
             justifyContent: "center",
@@ -65743,12 +66423,13 @@ const SafeLucideIcons = new Proxy(lucide_react_namespaceObject, {
     return SafeFallbackIcon;
   }
 });
-function evalAIComponent(compiledJS) {
+function evalAIComponent(compiledJS, themeTokens) {
   if (!compiledJS || typeof compiledJS !== "string" || compiledJS.trim() === "") {
     return null;
   }
   try {
     let rewrittenJS = compiledJS;
+    rewrittenJS = rewrittenJS.replace(/const\s+THEME\s*=\s*/g, "const THEME = args.themeTokens || ");
     rewrittenJS = rewrittenJS.replace(/import\s+([\s\S]*?)\s+from\s+['"]react['"];?/gi, (match, imports) => {
       let result = "const React = args.React;";
       if (imports.includes("{")) {
@@ -65784,7 +66465,7 @@ const { ${named[1].replace(/[\r\n]+/g, " ").trim()} } = args.React;`;
       ${rewrittenJS}
       return typeof GeneratedScene !== 'undefined' ? GeneratedScene : null;
     `);
-    const Comp = fn({ React: react, Remotion: esm, LucideIcons: SafeLucideIcons });
+    const Comp = fn({ React: react, Remotion: esm, LucideIcons: SafeLucideIcons, themeTokens });
     return Comp;
   } catch (err) {
     console.error("[MainComposition] Error evaluating compiledJS for scene:", (err == null ? void 0 : err.message) || err);
@@ -65878,7 +66559,7 @@ const MainComposition = ({
   config,
   backendUrl = defaultBackendUrl
 }) => {
-  var _a, _b;
+  var _a, _b, _c, _d, _e, _f;
   const { fps } = (0,esm.useVideoConfig)();
   const frame = (0,esm.useCurrentFrame)();
   registerCompiledTokens(config == null ? void 0 : config.vdeTokens);
@@ -65910,14 +66591,18 @@ const MainComposition = ({
     return `${backendUrl.replace(/\/$/, "")}/${url.replace(/^\//, "")}`;
   };
   let currentFrameOffset = 0;
-  const vdeStyle = ((config == null ? void 0 : config.visualStyle) || (config == null ? void 0 : config.videoTheme) || "rikkei").toLowerCase();
+  const firstSceneTheme = ((_a = scenes[0]) == null ? void 0 : _a.theme) && ((_b = scenes[0]) == null ? void 0 : _b.theme) !== "default" ? (_c = scenes[0]) == null ? void 0 : _c.theme : null;
+  const vdeStyle = (firstSceneTheme || (config == null ? void 0 : config.visualStyle) || (config == null ? void 0 : config.videoTheme) || (config == null ? void 0 : config.theme) || "rikkei").toLowerCase();
   const vdeTokens = getVDETokens(vdeStyle);
   const isRikkei = vdeStyle.includes("rikkei") || vdeStyle.includes("academic");
   const isLightTheme = isRikkei || vdeStyle.includes("light") || vdeStyle.includes("claude") || vdeStyle === "minimal";
-  const hasOverlayEffects = !isLightTheme && vdeStyle !== "apple";
-  const bgStyle = isLightTheme ? { background: vdeTokens.colors.background || "linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)" } : { backgroundColor: "#030712" };
+  const isFintechEdu = vdeStyle.includes("fintech");
+  const hasOverlayEffects = !isLightTheme && vdeStyle !== "apple" && !isFintechEdu;
+  const bgStyle = {
+    background: vdeTokens.colors.background || (isLightTheme ? "linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)" : "#030712")
+  };
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { ...bgStyle, overflow: "hidden" }, children: [
-    !isLightTheme && /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }, children: [
+    !isLightTheme && !isFintechEdu && /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }, children: [
       /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
         position: "absolute",
         inset: 0,
@@ -65984,27 +66669,40 @@ const MainComposition = ({
               hasOverlayEffects && (scene.theme === "ai_hub_grid" || vdeStyle === "ai_hub_grid") && /* @__PURE__ */ (0,jsx_runtime.jsx)(AIHubGridOverlay, {}),
               hasOverlayEffects && scene.theme === "default" && /* @__PURE__ */ (0,jsx_runtime.jsx)(DefaultBokehOverlay, {}),
               (() => {
-                var _a2, _b2, _c;
+                var _a2, _b2, _c2;
                 const layoutId = (() => {
-                  var _a3, _b3, _c2, _d;
+                  var _a3, _b3, _c3, _d2;
                   if (scene.visualLayout) return scene.visualLayout;
                   if (scene.sceneIntent) {
                     const descriptors = {
                       pointCount: ((_a3 = scene.points) == null ? void 0 : _a3.length) || 0,
                       headingLength: ((_b3 = scene.heading) == null ? void 0 : _b3.length) || 0,
                       hasImage: !!imageUrl,
-                      hasMetrics: ((_c2 = scene.points) == null ? void 0 : _c2.some((p) => p && p.type === "metric")) || false,
-                      hasTerminal: ((_d = scene.points) == null ? void 0 : _d.some((p) => p && p.type === "terminal")) || false
+                      hasMetrics: ((_c3 = scene.points) == null ? void 0 : _c3.some((p) => p && p.type === "metric")) || false,
+                      hasTerminal: ((_d2 = scene.points) == null ? void 0 : _d2.some((p) => p && p.type === "terminal")) || false
                     };
                     return selectBestLayout(scene.sceneIntent, descriptors, LAYOUT_REGISTRY);
                   }
                   return "IntroMediaHero";
                 })();
-                const sceneComp = scene.Component || (scene.compiledJS ? evalAIComponent(scene.compiledJS) : null);
+                const flatThemeTokens = {
+                  bg: vdeTokens.colors.background,
+                  cardBg: vdeTokens.colors.cardBg,
+                  border: vdeTokens.colors.border,
+                  accent: vdeTokens.colors.accent,
+                  text: vdeTokens.colors.text,
+                  textSec: vdeTokens.colors.textSecondary,
+                  radius: vdeTokens.radius,
+                  shadow: vdeTokens.shadow,
+                  font: vdeTokens.fonts.body,
+                  orange: "#f97316",
+                  cyan: vdeTokens.colors.accent
+                };
+                const sceneComp = scene.Component || (scene.compiledJS ? evalAIComponent(scene.compiledJS, flatThemeTokens) : null);
                 if (sceneComp) {
                   const Comp = sceneComp;
                   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
-                    /* @__PURE__ */ (0,jsx_runtime.jsx)(Comp, { fps: 30, scene, subtitlesJson: scene.subtitlesJson || scene.voiceoverTtsJson }),
+                    /* @__PURE__ */ (0,jsx_runtime.jsx)(Comp, { fps: 30, scene, subtitlesJson: scene.subtitlesJson || scene.voiceoverTtsJson, themeTokens: flatThemeTokens }),
                     /* @__PURE__ */ (0,jsx_runtime.jsx)(
                       DynamicSubtitle,
                       {
@@ -66013,7 +66711,7 @@ const MainComposition = ({
                         voiceoverDuration: scene.voiceoverDuration,
                         subtitlesJson: scene.subtitlesJson || scene.voiceoverTtsJson,
                         accentColor: scene.accentColor || "#f97316",
-                        visualStyle: config == null ? void 0 : config.visualStyle
+                        visualStyle: vdeStyle
                       }
                     )
                   ] });
@@ -66028,8 +66726,8 @@ const MainComposition = ({
                       points: scene.points,
                       imageUrl,
                       accentColor: scene.accentColor,
-                      theme: (config == null ? void 0 : config.videoTheme) || "glassmorphism",
-                      visualStyle: config == null ? void 0 : config.visualStyle,
+                      theme: scene.theme && scene.theme !== "default" ? scene.theme : (config == null ? void 0 : config.videoTheme) || (config == null ? void 0 : config.theme) || "glassmorphism",
+                      visualStyle: scene.theme && scene.theme !== "default" ? scene.theme : (config == null ? void 0 : config.visualStyle) || "rikkei",
                       voiceover: scene.voiceover,
                       layoutData: scene.layout,
                       themeMetadata: scene.themeMetadata,
@@ -66044,8 +66742,8 @@ const MainComposition = ({
                       voiceoverDuration: scene.voiceoverDuration,
                       subtitlesJson: scene.subtitlesJson,
                       accentColor: scene.accentColor,
-                      visualStyle: config == null ? void 0 : config.visualStyle,
-                      customSubtitle: (_c = (_b2 = getLayoutById(layoutId)) == null ? void 0 : _b2.templateJson) == null ? void 0 : _c.subtitle
+                      visualStyle: vdeStyle,
+                      customSubtitle: (_c2 = (_b2 = getLayoutById(layoutId)) == null ? void 0 : _b2.templateJson) == null ? void 0 : _c2.subtitle
                     }
                   )
                 ] });
@@ -66068,7 +66766,7 @@ const MainComposition = ({
         scene.id || index
       );
     }),
-    ((_a = config == null ? void 0 : config.watermark) == null ? void 0 : _a.enabled) && ((_b = config == null ? void 0 : config.watermark) == null ? void 0 : _b.text) && /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    ((_d = config == null ? void 0 : config.watermark) == null ? void 0 : _d.enabled) !== false && (((_e = config == null ? void 0 : config.watermark) == null ? void 0 : _e.text) || "yupclip.com") && /* @__PURE__ */ (0,jsx_runtime.jsx)(
       "div",
       {
         style: {
@@ -66088,7 +66786,7 @@ const MainComposition = ({
           opacity: 0.85,
           ...(() => {
             var _a2;
-            switch ((_a2 = config == null ? void 0 : config.watermark) == null ? void 0 : _a2.position) {
+            switch (((_a2 = config == null ? void 0 : config.watermark) == null ? void 0 : _a2.position) || "top-right") {
               case "top-left":
                 return { top: "35px", left: "35px" };
               case "bottom-left":
@@ -66103,7 +66801,7 @@ const MainComposition = ({
             }
           })()
         },
-        children: config.watermark.text
+        children: ((_f = config == null ? void 0 : config.watermark) == null ? void 0 : _f.text) || "yupclip.com"
       }
     ),
     (config == null ? void 0 : config.visualStyle) === "ai_hub_grid" && /* @__PURE__ */ (0,jsx_runtime.jsx)(
@@ -83762,6 +84460,7 @@ var map = {
 	"./Opening-Headline/broadcast_lower_third_title.json": 4145,
 	"./Opening-Headline/candlestick_breakout_hook.json": 1402,
 	"./Opening-Headline/case_study_editorial.json": 6521,
+	"./Opening-Headline/circular_progress.json": 8866,
 	"./Opening-Headline/dossier_notes.json": 1444,
 	"./Opening-Headline/earnings_snapshot_hook.json": 8707,
 	"./Opening-Headline/evidence_board_concept.json": 2916,
@@ -98249,6 +98948,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"CaseStudyEditorial","name":"Cas
 
 /***/ },
 
+/***/ 8866
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"CircularProgress","name":"Circular Progress","family":"opening","layoutMode":"circular_progress","container":{"paddingTop":"260px","maxWidth":"960px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"86px","fontWeight":"950","letterSpacing":"-0.05em","marginBottom":"60px","useAccentTextShadow":true},"positions":[{"left":"0px","top":"0px","width":"100%","height":"680px","zIndex":"1","nestedStructure":{"type":"vertical_item_list","badgeText":"CircularProgress","titleText":"","pills":[]}}],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"24px","fontWeight":"800","borderRadius":"24px","padding":"24px","scale":1,"backdropBlur":"12px","useAccentBg":false,"useAccentBorder":false,"useAccentShadow":false,"useSubtleThemeBg":true,"useThemeBorder":true}]},"subtitle":{"bottom":"28px","fontSize":"46px","fontWeight":"950","useThemeTextShadow":true}}');
+
+/***/ },
+
 /***/ 1444
 (module) {
 
@@ -98723,7 +99430,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"VersusArena","name":"Versus Are
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
 /******/ 	__webpack_require__(6507);
-/******/ 	__webpack_require__(9309);
+/******/ 	__webpack_require__(2203);
 /******/ 	__webpack_require__(3610);
 /******/ 	var __webpack_exports__ = __webpack_require__(3482);
 /******/ 	
