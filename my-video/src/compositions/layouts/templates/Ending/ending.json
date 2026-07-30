@@ -1,0 +1,49 @@
+{
+  "id": "Ending",
+  "name": "Ending / CTA Screen",
+  "family": "ending",
+  "layoutMode": "centered_text",
+  "container": {
+    "paddingTop": "340px",
+    "maxWidth": "1000px",
+    "gap": "30px"
+  },
+  "categoryPill": null,
+  "accentDivider": {
+    "width": "180px",
+    "height": "4px"
+  },
+  "title": {
+    "fontSize": "94px",
+    "fontWeight": "950",
+    "letterSpacing": "-0.06em",
+    "marginBottom": "80px",
+    "useAccentTextShadow": true
+  },
+  "positions": [],
+  "items": {
+    "rotations": [0],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "26px",
+        "fontWeight": "900",
+        "borderRadius": "999px",
+        "padding": "14px 28px",
+        "scale": 1.0,
+        "backdropBlur": "12px",
+        "useAccentBg": true,
+        "useAccentBorder": true,
+        "useAccentShadow": true,
+        "useSubtleThemeBg": false,
+        "useThemeBorder": false
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}
