@@ -16,6 +16,13 @@
   - Positions shift to final 2-row grid offsets.
   - Timeline line shrinks to centered `560px` segment.
 
+**Option A: Enlarge Cards and Offset Upwards**
+- Card width: `600px` (enlarged for legibility).
+- Font size: `32px` base for contents.
+- Padding: `28px` for premium spacing.
+- Panning offset: Cards sit above the circle dot at Y-offset `-150px` during active phase.
+- Zoom-out offsets: Cards 0/1 slide to Y-offset `-180px`, Card 2 slides to Y-offset `+180px`.
+
 ## Components and Data Flow
 
 ```mermaid
