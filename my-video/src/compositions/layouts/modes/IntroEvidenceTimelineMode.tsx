@@ -31,24 +31,20 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
     const visibleComps = otherComps.slice(0, 4); // Limit to max 4 cards
     const N = visibleComps.length;
 
-    // 1. Get dynamic trigger frames based on card configurations
-    const triggerFrames = visibleComps.map((comp, idx) => {
-      const animConfig = getAnimationConfig(comp, idx, "slide-up", 0.5 + idx * 2.0, t);
-      return Math.round(animConfig.delay * fps);
-    });
+    // 1. Calculate trigger frames by dividing half of the scene duration equally among cards
+    const halfDuration = Math.round(durationInFrames / 2);
+    const interval = N > 1 ? halfDuration / (N - 1) : 0;
+    const triggerFrames = visibleComps.map((_, idx) => Math.round(idx * interval));
 
-    const lastTrigger = triggerFrames[N - 1];
+    const lastTrigger = triggerFrames[N - 1]; // This is exactly halfDuration
 
     // Compute scrollX and lineProgressX dynamically using triggerFrames
     let lineProgressX = 0;
     let scrollX = 0;
 
-    // Segment 0: 0 to triggerFrames[0]
+    // Segment 0: 0 to triggerFrames[0] (which is 0)
     if (frame < triggerFrames[0]) {
-      lineProgressX = interpolate(frame, [0, triggerFrames[0]], [0, viewportWidth / 2], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp"
-      });
+      lineProgressX = 0;
       scrollX = 0;
     } else {
       lineProgressX = viewportWidth / 2;
@@ -59,7 +55,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
     for (let i = 1; i < N; i++) {
       const prevTrigger = triggerFrames[i - 1];
       const currTrigger = triggerFrames[i];
-      const panStart = Math.min(currTrigger - 12, prevTrigger + 8);
+      const panStart = prevTrigger;
       const panEnd = currTrigger;
 
       if (frame >= panStart) {
@@ -86,9 +82,9 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
     const zoomedLineStartX = -290;
     const zoomedLineEndX = 290;
 
-    // Zoom-out phase starts exactly 40 frames before the end of the composition to guarantee completeness
-    const zoomOutStart = Math.max(lastTrigger + 10, durationInFrames - 40);
-    const zoomOutEnd = durationInFrames - 15;
+    // Zoom-out phase starts 30 frames after the last card has appeared, takes 25 frames
+    const zoomOutStart = lastTrigger + 30;
+    const zoomOutEnd = zoomOutStart + 25;
 
     // Interpolate line boundaries during Zoom-out phase
     const lineX1 = interpolate(frame, [zoomOutStart, zoomOutEnd], [panningLineStartX, zoomedLineStartX], {
