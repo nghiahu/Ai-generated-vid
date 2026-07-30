@@ -260,9 +260,9 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
     : (styleName.includes("fintech") ? "#00e5ff" : accentColor);
   const accent = parseRGB(effectiveAccentColor);
 
-  const rawBottom = customSubtitle?.bottom || "120px";
+  const rawBottom = customSubtitle?.bottom || "300px";
   const bottomPx = parseInt(rawBottom);
-  const bottom = isNaN(bottomPx) || bottomPx < 100 ? "115px" : `${bottomPx}px`;
+  const bottom = isNaN(bottomPx) || bottomPx < 300 ? "300px" : `${bottomPx}px`;
   const fontSize = customSubtitle?.fontSize || "46px";
   const fontWeight = customSubtitle?.fontWeight ? parseInt(customSubtitle.fontWeight) : 800;
   const textShadow = isLightBg 
