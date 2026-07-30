@@ -1,4 +1,5 @@
 import React from "react";
+import { useCurrentFrame, interpolate } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
 import { getAnimationConfig } from "./LayoutNestedRenderers";
@@ -19,6 +20,10 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
   theme,
   highlightWords
 }) => {
+  const frame = useCurrentFrame();
+  const lineProgress = interpolate(frame, [10, 50], [0, 100], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const beamY = interpolate(frame, [15, 65], [0, 96], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const isBeamVisible = frame > 15 && frame < 70;
   const mainTitle = titleText || "Code Ra Video";
 
   // Category pill tag at the bottom
@@ -75,7 +80,7 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
           position: "absolute",
           left: "26px", // Centered exactly at the middle of the 54px circles (26px + 27px circle radius = 53px)
           top: "15px",
-          bottom: "15px",
+          height: `${lineProgress * 0.95}%`, // grows timeline line dynamically
           width: "4px",
           borderRadius: "999px",
           background: `linear-gradient(180deg, rgb(253, 230, 138), ${accentColor}, ${darkAccentColor})`,
@@ -83,6 +88,23 @@ export const IntroEvidenceTimelineMode: React.FC<ModeRendererProps> = ({
           pointerEvents: "none",
           zIndex: 2
         }} />
+
+        {/* Traveling light beam particle */}
+        {isBeamVisible && (
+          <div style={{
+            position: "absolute",
+            left: "22px", // Centered on the 4px line (26px - 4px radius = 22px)
+            top: `${beamY}%`,
+            width: "12px",
+            height: "24px",
+            borderRadius: "6px",
+            background: "#ffffff",
+            boxShadow: `0 0 15px #ffffff, 0 0 30px ${accentColor}`,
+            zIndex: 4,
+            pointerEvents: "none",
+            opacity: 0.95
+          }} />
+        )}
 
         {/* Timeline content wrapper */}
         <div style={{
