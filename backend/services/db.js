@@ -108,6 +108,8 @@ async function initDb() {
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS scene_intent JSONB`);
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS voiceover_duration DOUBLE PRECISION`);
     await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS subtitles_json JSONB DEFAULT '[]'::jsonb`);
+    await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS bg_media_list JSONB DEFAULT '[]'::jsonb`);
+    await pool.query(`ALTER TABLE scenes ADD COLUMN IF NOT EXISTS selected_bg_media_index INTEGER DEFAULT -1`);
 
     // Seed standard developer abbreviations and terms to prevent conflicts and incorrect CMU pronunciations
     const seedQueries = [
@@ -217,6 +219,8 @@ module.exports = {
         placement: s.placement,
         mediaList: s.media_list,
         selectedMediaIndex: s.selected_media_index,
+        bgMediaList: s.bg_media_list,
+        selectedBgMediaIndex: s.selected_bg_media_index ?? -1,
         theme: s.theme || 'default',
         accentColor: s.accent_color || '#FFB7C5',
         voiceoverDuration: s.voiceover_duration,
@@ -278,8 +282,9 @@ module.exports = {
         INSERT INTO scenes (
           id, project_id, scene_index, duration, layout_family, visual_layout, scene_intent,
           heading, points, voiceover, voiceover_tts, voiceover_audio_url, placement, media_list, selected_media_index,
+          bg_media_list, selected_bg_media_index,
           theme, accent_color, voiceover_duration, subtitles_json
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
       `;
 
       for (const scene of scenes) {
@@ -299,6 +304,8 @@ module.exports = {
           scene.placement,
           JSON.stringify(scene.mediaList),
           scene.selectedMediaIndex,
+          JSON.stringify(scene.bgMediaList || []),
+          scene.selectedBgMediaIndex ?? -1,
           scene.theme || 'default',
           scene.accentColor || '#FFB7C5',
           scene.voiceoverDuration || null,
@@ -340,6 +347,8 @@ module.exports = {
       placement: 'placement',
       mediaList: 'media_list',
       selectedMediaIndex: 'selected_media_index',
+      bgMediaList: 'bg_media_list',
+      selectedBgMediaIndex: 'selected_bg_media_index',
       theme: 'theme',
       accentColor: 'accent_color',
       voiceoverDuration: 'voiceover_duration',
@@ -350,7 +359,7 @@ module.exports = {
       if (sceneData[key] !== undefined) {
         fields.push(`${dbCol} = $${placeholderIndex}`);
         let val = sceneData[key];
-        if (key === 'points' || key === 'mediaList' || key === 'subtitlesJson' || key === 'sceneIntent') {
+        if (key === 'points' || key === 'mediaList' || key === 'bgMediaList' || key === 'subtitlesJson' || key === 'sceneIntent') {
           val = JSON.stringify(val);
         }
         values.push(val);
@@ -393,6 +402,8 @@ module.exports = {
       placement: s.placement,
       mediaList: s.media_list,
       selectedMediaIndex: s.selected_media_index,
+      bgMediaList: s.bg_media_list,
+      selectedBgMediaIndex: s.selected_bg_media_index ?? -1,
       theme: s.theme || 'default',
       accentColor: s.accent_color || '#FFB7C5',
       voiceoverDuration: s.voiceover_duration,
