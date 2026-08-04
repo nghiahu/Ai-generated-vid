@@ -509,6 +509,7 @@ export const StoryboardEditor = ({
 
   // Media Modal & Upload states
   const [selectedMedia, setSelectedMedia] = useState([]);
+  const [selectedBgMedia, setSelectedBgMedia] = useState(config.bgMediaList || []);
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [mediaTab, setMediaTab] = useState("YOUR_MEDIA"); // YOUR_MEDIA, UPLOAD, STOCK, AI
   const [previousMedia, setPreviousMedia] = useState([]);
@@ -517,6 +518,12 @@ export const StoryboardEditor = ({
   const [uploading, setUploading] = useState(false);
   const [mediaModalContext, setMediaModalContext] = useState(null); // 'scene-editor' or null
   const [activeUploadSceneId, setActiveUploadSceneId] = useState(null);
+
+  useEffect(() => {
+    if (config.bgMediaList) {
+      setSelectedBgMedia(config.bgMediaList);
+    }
+  }, [config.bgMediaList]);
 
   useEffect(() => {
     const handleOpenBg = () => {
@@ -555,15 +562,19 @@ export const StoryboardEditor = ({
 
   const playerRefs = useRef({});
 
-  const handleImageUploadClick = (sceneId) => {
+  const handleOpenContentMediaModal = (sceneId) => {
     const scene = scenes.find(s => s.id === sceneId);
-    if (scene) {
-      setSelectedMedia(scene.mediaList || []);
-    } else {
-      setSelectedMedia([]);
-    }
+    setSelectedMedia(scene?.mediaList || []);
     setActiveUploadSceneId(sceneId);
-    setMediaModalContext('scene-editor');
+    setMediaModalContext('scene-content');
+    setShowMediaModal(true);
+  };
+
+  const handleOpenBgMediaModal = (sceneId) => {
+    const scene = scenes.find(s => s.id === sceneId);
+    setSelectedMedia(scene?.bgMediaList || []);
+    setActiveUploadSceneId(sceneId);
+    setMediaModalContext('scene-background');
     setShowMediaModal(true);
   };
 
@@ -574,7 +585,7 @@ export const StoryboardEditor = ({
   };
 
   const handleMediaModalConfirm = () => {
-    if (mediaModalContext === 'scene-editor' && activeUploadSceneId) {
+    if (mediaModalContext === 'scene-content' && activeUploadSceneId) {
       // Update ALL scenes' mediaList with the selectedMedia
       scenes.forEach(scene => {
         const currentMediaList = scene.mediaList || [];
@@ -602,6 +613,34 @@ export const StoryboardEditor = ({
           ...updateData
         });
       });
+    } else if (mediaModalContext === 'scene-background' && activeUploadSceneId) {
+      // Update ALL scenes' bgMediaList with the selectedMedia
+      scenes.forEach(scene => {
+        const currentBgMediaList = scene.bgMediaList || [];
+        // Union of current bg media list and selected media, preserving order and uniqueness
+        const unionList = [...currentBgMediaList];
+        selectedMedia.forEach(url => {
+          if (!unionList.includes(url)) {
+            unionList.push(url);
+          }
+        });
+
+        const updateData = { bgMediaList: unionList };
+
+        // For the active scene that initiated the upload, set selectedBgMediaIndex to the last selected/added image
+        if (scene.id === activeUploadSceneId && selectedMedia.length > 0) {
+          const lastSelectedUrl = selectedMedia[selectedMedia.length - 1];
+          const newIdx = unionList.indexOf(lastSelectedUrl);
+          if (newIdx !== -1) {
+            updateData.selectedBgMediaIndex = newIdx;
+          }
+        }
+
+        onUpdateScene(scene.id, {
+          ...scene,
+          ...updateData
+        });
+      });
     } else if (mediaModalContext === 'project-background') {
       const selectedBgImage = selectedMedia[selectedMedia.length - 1] || "";
       if (onUpdateConfig) {
@@ -610,6 +649,16 @@ export const StoryboardEditor = ({
           bgImage: selectedBgImage
         });
       }
+    } else if (mediaModalContext === 'project-background-list') {
+      setSelectedBgMedia(selectedMedia);
+      if (onUpdateConfig) {
+        onUpdateConfig({
+          ...config,
+          bgMediaList: selectedMedia
+        });
+      }
+    } else if (mediaModalContext === 'project-content-list') {
+      setSelectedMedia(selectedMedia);
     }
 
     // Reset state and close modal
@@ -664,6 +713,8 @@ export const StoryboardEditor = ({
 
   const [searchQueries, setSearchQueries] = useState({});
   const [searchingImages, setSearchingImages] = useState({});
+  const [bgSearchQueries, setBgSearchQueries] = useState({});
+  const [searchingBgImages, setSearchingBgImages] = useState({});
 
   const handleGenerate = () => {
     if (!scriptText.trim()) return;
@@ -738,6 +789,25 @@ export const StoryboardEditor = ({
       console.error("Failed to search Unsplash images:", error);
     } finally {
       setSearchingImages(prev => ({ ...prev, [sceneId]: false }));
+    }
+  };
+
+  const handleSearchBgImages = async (sceneId) => {
+    const query = bgSearchQueries[sceneId];
+    if (!query || !query.trim()) return;
+
+    setSearchingBgImages(prev => ({ ...prev, [sceneId]: true }));
+    try {
+      const response = await axios.get(`http://localhost:5000/api/media/search?query=${encodeURIComponent(query)}`);
+      const images = response.data;
+      if (images && images.length > 0) {
+        handleFieldChange(sceneId, "bgMediaList", images);
+        handleFieldChange(sceneId, "selectedBgMediaIndex", 0);
+      }
+    } catch (error) {
+      console.error("Failed to search Unsplash background images:", error);
+    } finally {
+      setSearchingBgImages(prev => ({ ...prev, [sceneId]: false }));
     }
   };
 
@@ -1284,40 +1354,79 @@ export const StoryboardEditor = ({
             </div>
 
             <div style={{ borderTop: "1px solid rgba(15, 23, 42, 0.08)", paddingTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setMediaModalContext(null);
-                  setActiveUploadSceneId(null);
-                  setShowMediaModal(true);
-                }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "12px 24px",
-                  borderRadius: "30px",
-                  border: "1px solid rgba(15, 23, 42, 0.12)",
-                  background: "#ffffff",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  color: "var(--text-primary)",
-                  cursor: "pointer",
-                  boxShadow: "0 2px 6px rgba(0, 0, 0, 0.04)",
-                  transition: "all 0.2s ease"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--color-primary)";
-                  e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
-                  e.currentTarget.style.backgroundColor = "#ffffff";
-                }}
-              >
-                <span style={{ fontSize: "16px" }}>🖼️</span>
-                Media ({selectedMedia.length})
-              </button>
+              <div style={{ display: "flex", gap: "12px" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMediaModalContext('project-content-list');
+                    setActiveUploadSceneId(null);
+                    setSelectedMedia(selectedMedia || []);
+                    setShowMediaModal(true);
+                  }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "12px 20px",
+                    borderRadius: "30px",
+                    border: "1px solid rgba(15, 23, 42, 0.12)",
+                    background: "#ffffff",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    color: "var(--text-primary)",
+                    cursor: "pointer",
+                    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.04)",
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--color-primary)";
+                    e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                  }}
+                >
+                  <span style={{ fontSize: "14px" }}>🖼️</span>
+                  Ảnh Nội Dung ({selectedMedia.length})
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMediaModalContext('project-background-list');
+                    setActiveUploadSceneId(null);
+                    setSelectedMedia(selectedBgMedia || []);
+                    setShowMediaModal(true);
+                  }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "12px 20px",
+                    borderRadius: "30px",
+                    border: "1px solid rgba(15, 23, 42, 0.12)",
+                    background: "#ffffff",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    color: "var(--text-primary)",
+                    cursor: "pointer",
+                    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.04)",
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--color-primary)";
+                    e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                  }}
+                >
+                  <span style={{ fontSize: "14px" }}>🧱</span>
+                  Ảnh Nền ({selectedBgMedia.length})
+                </button>
+              </div>
 
               <button
                 className="btn-mono btn-mono-primary"
@@ -1793,13 +1902,13 @@ export const StoryboardEditor = ({
                     </button>
                   </div>
 
-                  {/* Unsplash Search & Suggestion Panel */}
-                  <div style={{ borderTop: "1px solid #000000", paddingTop: "15px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                      <label className="form-label-mono" style={{ fontSize: "11px", marginBottom: 0 }}>Background Media</label>
+                  {/* 1. Content Media Search & Suggestion Panel */}
+                  <div style={{ borderTop: "1px solid #000000", paddingTop: "12px", paddingBottom: "8px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                      <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Content Media (Ảnh mockup)</label>
                       <button
                         type="button"
-                        onClick={() => handleImageUploadClick(scene.id)}
+                        onClick={() => handleOpenContentMediaModal(scene.id)}
                         disabled={uploadingScenes[scene.id]}
                         style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
                       >
@@ -1807,11 +1916,11 @@ export const StoryboardEditor = ({
                       </button>
                     </div>
 
-                    <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
+                    <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
                       <input
                         className="form-input-mono"
                         type="text"
-                        placeholder="Search English keywords (e.g., code, zen)..."
+                        placeholder="Tìm ảnh Unsplash (e.g. logo, app)..."
                         value={searchQueries[scene.id] || ""}
                         onChange={(e) => {
                           const val = e.target.value;
@@ -1820,11 +1929,11 @@ export const StoryboardEditor = ({
                         onKeyDown={(e) => {
                           if (e.key === "Enter") handleSearchImages(scene.id);
                         }}
-                        style={{ padding: "8px", fontSize: "12px" }}
+                        style={{ padding: "6px 8px", fontSize: "11px", height: "30px" }}
                       />
                       <button
                         className="btn-mono btn-mono-secondary"
-                        style={{ padding: "8px 15px", whiteSpace: "nowrap", height: "auto" }}
+                        style={{ padding: "0 10px", whiteSpace: "nowrap", height: "30px", fontSize: "11px" }}
                         disabled={searchingImages[scene.id]}
                         onClick={() => handleSearchImages(scene.id)}
                       >
@@ -1832,21 +1941,106 @@ export const StoryboardEditor = ({
                       </button>
                     </div>
 
-                    {/* Image Suggestions Grid */}
-                    <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
-                      {/* Default Accent HEX Gradient choice */}
+                    {/* Content Image Suggestions Grid */}
+                    <div className="custom-scrollbar" style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "5px" }}>
                       <div
                         onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", -1)}
                         style={{
-                          width: "48px",
-                          height: "48px",
+                          width: "44px",
+                          height: "44px",
                           flexShrink: 0,
                           borderRadius: "4px",
                           border: scene.selectedMediaIndex === -1 ? "3px solid #000000" : "1px solid #cccccc",
+                          background: "#e2e8f0",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "8px",
+                          fontWeight: "bold",
+                          color: "#475569",
+                          textAlign: "center",
+                          padding: "2px",
+                          fontFamily: "Space Grotesk, sans-serif",
+                          lineHeight: "1.1",
+                          boxSizing: "border-box"
+                        }}
+                      >
+                        Mặc định Mock UI
+                      </div>
+
+                      {((scene.mediaList && scene.mediaList.length > 0) ? scene.mediaList : selectedMedia).map((imgUrl, imgIdx) => (
+                        <div
+                          key={imgIdx}
+                          onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", imgIdx)}
+                          style={{
+                            width: "44px",
+                            height: "44px",
+                            flexShrink: 0,
+                            borderRadius: "4px",
+                            border: scene.selectedMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
+                            overflow: "hidden",
+                            cursor: "pointer"
+                          }}
+                        >
+                          <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 2. Background Media Search & Suggestion Panel */}
+                  <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: "12px", paddingBottom: "5px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                      <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Background Media (Nền cảnh)</label>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenBgMediaModal(scene.id)}
+                        disabled={uploadingScenes[scene.id]}
+                        style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
+                      >
+                        📁 Upload
+                      </button>
+                    </div>
+
+                    <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+                      <input
+                        className="form-input-mono"
+                        type="text"
+                        placeholder="Tìm ảnh nền Unsplash (e.g. bg, dark)..."
+                        value={bgSearchQueries[scene.id] || ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setBgSearchQueries(prev => ({ ...prev, [scene.id]: val }));
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSearchBgImages(scene.id);
+                        }}
+                        style={{ padding: "6px 8px", fontSize: "11px", height: "30px" }}
+                      />
+                      <button
+                        className="btn-mono btn-mono-secondary"
+                        style={{ padding: "0 10px", whiteSpace: "nowrap", height: "30px", fontSize: "11px" }}
+                        disabled={searchingBgImages[scene.id]}
+                        onClick={() => handleSearchBgImages(scene.id)}
+                      >
+                        {searchingBgImages[scene.id] ? "..." : "Tìm"}
+                      </button>
+                    </div>
+
+                    {/* Background Image Suggestions Grid */}
+                    <div className="custom-scrollbar" style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "5px" }}>
+                      <div
+                        onClick={() => handleFieldChange(scene.id, "selectedBgMediaIndex", -1)}
+                        style={{
+                          width: "44px",
+                          height: "44px",
+                          flexShrink: 0,
+                          borderRadius: "4px",
+                          border: (scene.selectedBgMediaIndex ?? -1) === -1 ? "3px solid #000000" : "1px solid #cccccc",
                           background: `linear-gradient(135deg, ${scene.accentColor || "#FFB7C5"}aa 0%, #060813 100%)`,
                           cursor: "pointer",
                           display: "flex",
-                          flexDirection: "column",
                           alignItems: "center",
                           justifyContent: "center",
                           fontSize: "8px",
@@ -1856,28 +2050,27 @@ export const StoryboardEditor = ({
                           padding: "2px",
                           fontFamily: "Space Grotesk, sans-serif",
                           lineHeight: "1.1",
-                          boxSizing: "border-box",
-                          textTransform: "uppercase"
+                          boxSizing: "border-box"
                         }}
                       >
-                        Nền màu nhấn
+                        Mặc định Nền dự án
                       </div>
 
-                      {scene.mediaList && scene.mediaList.map((imgUrl, imgIdx) => (
+                      {((scene.bgMediaList && scene.bgMediaList.length > 0) ? scene.bgMediaList : selectedBgMedia).map((imgUrl, imgIdx) => (
                         <div
                           key={imgIdx}
-                          onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", imgIdx)}
+                          onClick={() => handleFieldChange(scene.id, "selectedBgMediaIndex", imgIdx)}
                           style={{
-                            width: "48px",
-                            height: "48px",
+                            width: "44px",
+                            height: "44px",
                             flexShrink: 0,
                             borderRadius: "4px",
-                            border: scene.selectedMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
+                            border: scene.selectedBgMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
                             overflow: "hidden",
                             cursor: "pointer"
                           }}
                         >
-                          <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
+                          <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="bg option" />
                         </div>
                       ))}
                     </div>

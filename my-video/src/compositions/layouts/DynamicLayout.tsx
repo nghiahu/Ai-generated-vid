@@ -55,6 +55,7 @@ export interface DynamicLayoutProps {
   category?: string;
   highlightWords?: string[];
   config?: any;
+  bgImageUrl?: string;
 }
 
 export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
@@ -70,7 +71,8 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
   themeMetadata,
   category,
   highlightWords,
-  config
+  config,
+  bgImageUrl
 }) => {
   const theme = visualStyle || defaultTheme;
   const frame = useCurrentFrame();
@@ -86,15 +88,16 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
     const isAiHubGrid = theme === "ai_hub_grid";
     const isFintechEdu = theme === "fintech_edu" || (theme && theme.includes("fintech"));
 
-    // Resolve global video background image from project config
+    // Resolve final background image (scene-specific bgImageUrl or project-wide globalBgImage)
     const globalBgImage = config?.bgImage;
+    const finalBgImage = bgImageUrl || globalBgImage;
 
-    // If global background image is set, render it!
-    if (globalBgImage) {
+    // If a background image is resolved, render it!
+    if (finalBgImage) {
       return (
         <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
           <img 
-            src={globalBgImage} 
+            src={finalBgImage} 
             style={{ 
               position: "absolute",
               inset: 0,

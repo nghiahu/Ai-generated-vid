@@ -374,6 +374,11 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
             ? scene.mediaList[scene.selectedMediaIndex || 0]
             : "";
 
+        const bgImageUrl =
+          scene.bgMediaList && scene.bgMediaList.length > 0 && scene.selectedBgMediaIndex !== -1
+            ? scene.bgMediaList[scene.selectedBgMediaIndex || 0]
+            : "";
+
         return (
           <Sequence
             key={scene.id || index}
@@ -460,6 +465,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                       themeMetadata={(scene as any).themeMetadata}
                       highlightWords={scene.sceneIntent?.highlightWords}
                       config={config}
+                      bgImageUrl={bgImageUrl}
                     />
                     
                     {/* Synchronized Subtitles */}
