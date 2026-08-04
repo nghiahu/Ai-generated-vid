@@ -1,0 +1,17 @@
+{
+  "id": "VignelliQuote",
+  "name": "Vignelli Quote",
+  "family": "quote",
+  "layoutMode": "vignelliquote",
+  "container": {
+    "paddingTop": "220px",
+    "maxWidth": "860px",
+    "gap": "32px"
+  },
+  "title": {
+    "fontSize": "80px",
+    "fontWeight": "900",
+    "letterSpacing": "-0.04em",
+    "marginBottom": "20px"
+  }
+}

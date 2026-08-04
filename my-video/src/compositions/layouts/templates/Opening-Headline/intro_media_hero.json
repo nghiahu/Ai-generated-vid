@@ -1,0 +1,17 @@
+{
+  "id": "IntroMediaHero",
+  "name": "Intro Media Hero",
+  "family": "media",
+  "layoutMode": "intro_media_hero",
+  "container": {
+    "paddingTop": "220px",
+    "maxWidth": "960px",
+    "gap": "32px"
+  },
+  "title": {
+    "fontSize": "80px",
+    "fontWeight": "900",
+    "letterSpacing": "-0.04em",
+    "marginBottom": "24px"
+  }
+}

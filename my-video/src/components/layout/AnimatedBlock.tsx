@@ -20,6 +20,13 @@ export const AnimatedBlock: React.FC<{
     config: { damping: 18, mass: 1, stiffness: 80 },
   });
 
+  // Custom bouncy spring for physical swing/drop animations
+  const bouncySpr = spring({
+    frame: Math.max(0, relativeFrame),
+    fps,
+    config: { damping: 11, mass: 1.1, stiffness: 85 },
+  });
+
   const linearProgress = Math.min(Math.max(0, relativeFrame) / Math.round(fps * 0.5), 1);
 
   let style: React.CSSProperties = {};
@@ -29,16 +36,28 @@ export const AnimatedBlock: React.FC<{
     style = {
       opacity: 0,
       transform: animation === "slide-up" ? "translateY(80px)" : 
+                 animation === "slide-down" ? "translateY(-200px) rotate(-15deg)" : 
                  animation === "scale-in" ? "scale(0.5)" : 
                  animation === "slide-left" ? "translateX(150px)" : 
                  animation === "slide-right" ? "translateX(-150px)" : "none",
-      filter: animation === "blur-in" ? "blur(25px)" : "none"
+      filter: animation === "blur-in" ? "blur(25px)" : "none",
+      transformOrigin: animation === "slide-down" ? "center top" : undefined
     };
   } else {
     switch (animation) {
       case "slide-up": {
         const translateY = interpolate(spr, [0, 1], [80, 0]);
         style = { opacity: spr, transform: `translateY(${translateY}px)` };
+        break;
+      }
+      case "slide-down": {
+        const translateY = interpolate(bouncySpr, [0, 1], [-200, 0]);
+        const rotateVal = interpolate(bouncySpr, [0, 1], [-15, 0]);
+        style = { 
+          opacity: bouncySpr, 
+          transform: `translateY(${translateY}px) rotate(${rotateVal}deg)`,
+          transformOrigin: "center top"
+        };
         break;
       }
       case "scale-in": {

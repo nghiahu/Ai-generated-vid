@@ -147,9 +147,19 @@ module.exports = {
   initDb,
   getProjects: async () => {
     await initDb();
-    // Filter out incomplete/ghost AIGEN drafts that have no generated TSX code
     const res = await pool.query(`
-      SELECT * FROM projects 
+      SELECT p.*, 
+             (SELECT jsonb_build_object(
+                'id', s.id,
+                'duration', s.duration,
+                'media_list', s.media_list,
+                'selected_media_index', s.selected_media_index
+              )
+              FROM scenes s 
+              WHERE s.project_id = p.id 
+              ORDER BY s.scene_index ASC 
+              LIMIT 1) as first_scene
+      FROM projects p 
       WHERE type != 'AIGEN' 
          OR status = 'COMPLETED' 
          OR (
@@ -158,7 +168,7 @@ module.exports = {
            AND config->'scenes'->0->>'compiledJS' IS NOT NULL 
            AND config->'scenes'->0->>'compiledJS' != ''
          )
-      ORDER BY created_at DESC
+      ORDER BY p.created_at DESC
     `);
     return res.rows.map(row => ({
       ...row,

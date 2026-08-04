@@ -105,13 +105,33 @@ export function getVDETokens(styleName?: string): VDETokens {
     };
   }
 
+  if (name.includes("ai_driven") || name.includes("ai-driven")) {
+    return {
+      ...(tokens || VDE_TOKENS.ai_driven),
+      colors: {
+        background: "linear-gradient(180deg, #000A3A 0%, #001060 40%, #0026A8 80%, #0015C0 100%)",
+        cardBg: "linear-gradient(135deg, rgba(0, 30, 100, 0.55) 0%, rgba(0, 10, 58, 0.75) 100%)",
+        border: "1.5px solid rgba(0, 200, 255, 0.55)",
+        accent: "#00C8FF",
+        text: "#FFFFFF",
+        textSecondary: "rgba(200, 230, 255, 0.85)"
+      },
+      fonts: {
+        title: "Chakra Petch",
+        body: "Be Vietnam Pro"
+      },
+      shadow: "0 0 40px rgba(0, 200, 255, 0.4), 0 0 80px rgba(27, 111, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+      radius: "12px"
+    };
+  }
+
   if (name.includes("ba")) {
     return {
       ...(tokens || VDE_TOKENS.ba),
       colors: {
-        background: "linear-gradient(135deg, #002691 0%, #004BBF 50%, #0059D7 100%)",
-        cardBg: "linear-gradient(135deg, #0059D7 0%, #0259E9 100%)",
-        border: "1.5px solid rgba(93, 200, 251, 0.7)",
+        background: "linear-gradient(135deg, #050a1a 0%, #0c1535 50%, #030612 100%)",
+        cardBg: "linear-gradient(135deg, rgba(8, 20, 52, 0.72) 0%, rgba(4, 10, 32, 0.55) 100%)",
+        border: "1.5px solid rgba(93, 200, 251, 0.35)",
         accent: "#5DC8FB",
         text: "#FFFFFF",
         textSecondary: "#EAF8FF"

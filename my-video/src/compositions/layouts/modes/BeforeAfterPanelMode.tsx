@@ -123,7 +123,7 @@ export const BeforeAfterPanelMode: React.FC<ModeRendererProps> = ({
     // Contrast colors based on whether card background is accent-filled vs default
     const sideLabelColor = isAccent 
       ? "rgba(255, 255, 255, 0.85)" 
-      : (isLeft ? "#E53E3E" : (accentColor || "#22C55E"));
+      : (isLeft ? "#F87171" : (accentColor || "#34D399"));
 
     const bodyTextColor = isAccent 
       ? "#FFFFFF" 
@@ -131,7 +131,7 @@ export const BeforeAfterPanelMode: React.FC<ModeRendererProps> = ({
 
     const sideHighlightColor = isAccent 
       ? "#FFFFFF" 
-      : (isLeft ? "#EAB308" : (accentColor || "#EF4444"));
+      : (isLeft ? "#FBBF24" : (accentColor || "#F87171"));
 
     const { body, highlight } = extractBodyAndHighlight(text, highlightWords);
 
@@ -247,8 +247,8 @@ export const BeforeAfterPanelMode: React.FC<ModeRendererProps> = ({
           width: "48px",
           height: "48px",
           borderRadius: "50%",
-          background: "linear-gradient(135deg, #B8191C 0%, #E62B32 100%)",
-          boxShadow: "0 4px 14px rgba(184, 25, 28, 0.4)",
+          background: "linear-gradient(135deg, #e11d48 0%, #9f1239 100%)",
+          boxShadow: "0 4px 12px rgba(225, 29, 72, 0.35)",
           color: "#FFFFFF",
           fontSize: "16px",
           fontWeight: 900,

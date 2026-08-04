@@ -97,7 +97,7 @@ export const HeadlineText: React.FC<HeadlineTextProps> = ({
     letterSpacing,
     lineHeight,
     color: colorRgba,
-    textShadow: textShadow || "0 4px 20px rgba(0, 0, 0, 0.85), 0 2px 8px rgba(0, 0, 0, 0.95)",
+    textShadow: textShadow || "0 4px 16px rgba(0, 0, 0, 0.45)",
     maxWidth,
     textAlign: align,
     fontFamily,

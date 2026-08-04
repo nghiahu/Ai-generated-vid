@@ -1,6 +1,6 @@
-import React from "react";
+import React from "react"; // trigger rebuild for pullquote layout template addition
 import { Player } from "@remotion/player";
-import { MainComposition, safeParseFloat } from "../../../my-video/src/compositions/MainComposition";
+import { MainComposition, safeParseFloat, getSceneDurationFrames } from "../../../my-video/src/compositions/MainComposition";
 
 export const MasterPlayer = ({ 
   scenes = [], 
@@ -16,10 +16,9 @@ export const MasterPlayer = ({
   regeneratingTts
 }) => {
   const fps = 30;
-  const totalSeconds = scenes.reduce((sum, scene) => sum + safeParseFloat(scene.duration), 0);
   const totalFrames = Math.max(
     30,
-    Math.round(totalSeconds * fps)
+    scenes.reduce((sum, scene) => sum + getSceneDurationFrames(scene, fps), 0)
   );
 
   const handleDownloadVideo = async () => {

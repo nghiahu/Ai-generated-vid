@@ -21,7 +21,8 @@ export const GridMetricsMode: React.FC<ModeRendererProps> = ({
   paddingScale,
   gap,
   activeCardTextColor,
-  inactiveCardTextColor
+  inactiveCardTextColor,
+  theme
 }) => {
   const frame = useCurrentFrame();
   const visibleComps = otherComps.slice(0, 4); // Limit to max 4 cards
@@ -92,18 +93,27 @@ export const GridMetricsMode: React.FC<ModeRendererProps> = ({
               }
           : {};
 
+        const isAIDriven = theme === "ai_driven" || theme?.includes("ai_driven");
         const cardStyle: React.CSSProperties = {
           borderRadius: itemStyleSetting.borderRadius || "28px",
           padding: resolvePadding(itemStyleSetting.padding || "28px", paddingScale),
           background: isAccentMetric
-            ? `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})`
+            ? (isAIDriven
+                ? "linear-gradient(135deg, rgba(0, 15, 60, 0.85) 0%, rgba(0, 8, 36, 0.95) 100%)"
+                : `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})`)
             : isLight
               ? "rgba(255, 255, 255, 0.95)"
               : "rgba(255, 255, 255, 0.05)",
-          border: isAccentMetric ? "none" : `1px solid rgba(${rgb}, 0.26)`,
-          boxShadow: isMetricCards 
-            ? `0 24px 50px rgba(${rgb}, 0.15)` 
-            : `0 18px 44px rgba(0, 0, 0, 0.2)`,
+          border: isAccentMetric
+            ? (isAIDriven
+                ? "1.5px solid rgba(0, 200, 255, 0.55)"
+                : "none")
+            : `1px solid rgba(${rgb}, 0.26)`,
+          boxShadow: isAccentMetric && isAIDriven
+            ? "0 0 25px rgba(0, 200, 255, 0.35)"
+            : (isMetricCards 
+                ? `0 24px 50px rgba(${rgb}, 0.15)` 
+                : `0 18px 44px rgba(0, 0, 0, 0.2)`),
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",

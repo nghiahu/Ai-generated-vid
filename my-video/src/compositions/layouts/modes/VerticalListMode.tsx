@@ -27,6 +27,7 @@ export const VerticalListMode: React.FC<ModeRendererProps> = ({
   activeCardTextColor,
   activeCardBadgeColor,
   inactiveCardTextColor,
+  category,
   theme
 }) => {
   const layoutMode = t.layoutMode;
@@ -192,9 +193,12 @@ export const VerticalListMode: React.FC<ModeRendererProps> = ({
 
     const containerStyle: React.CSSProperties = {
       width: "100%",
-      maxWidth: t.container?.maxWidth || "860px",
-      display: "grid",
-      gap: "0px",
+      maxWidth: t.container?.maxWidth || "960px",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "48px",
       background: "transparent",
       boxSizing: "border-box",
       zIndex: 5,
@@ -213,97 +217,289 @@ export const VerticalListMode: React.FC<ModeRendererProps> = ({
 
     return (
       <div style={containerStyle}>
-        {visibleComps.map((comp, idx) => {
-          const animConfig = getAnimationConfig(comp, idx, "slide-up", 0.3 * idx, t);
-          const itemColor = getBlendedColor(idx, visibleComps.length);
-
-          const text = comp.data?.text || "";
-          const parts = text.split(/[:\-]/);
-          let badgeLabel = "";
-          let cleanText = "";
-          if (parts.length >= 2) {
-            badgeLabel = parts[0].trim().toUpperCase();
-            cleanText = parts.slice(1).join(":").trim();
-          } else {
-            badgeLabel = `STEP 0${idx + 1}`;
-            cleanText = text.trim();
+        {/* Style tag for CSS animations */}
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes scanLine {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { top: 100%; opacity: 0; }
           }
-          if (!cleanText) cleanText = text;
+          @keyframes cursorBlink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+          }
+        `}} />
 
-          const itemStyle: React.CSSProperties = {
-            position: "relative",
+        {/* Left Column: Vertical Signal Rail List */}
+        <div style={{ flex: 1.1, display: "flex", flexDirection: "column", width: "100%" }}>
+          {visibleComps.map((comp, idx) => {
+            const animConfig = getAnimationConfig(comp, idx, "slide-up", 0.3 * idx, t);
+            const itemColor = getBlendedColor(idx, visibleComps.length);
+
+            const text = comp.data?.text || "";
+            const parts = text.split(/[:\-]/);
+            let badgeLabel = "";
+            let cleanText = "";
+            if (parts.length >= 2) {
+              badgeLabel = parts[0].trim().toUpperCase();
+              cleanText = parts.slice(1).join(":").trim();
+            } else {
+              badgeLabel = `STEP 0${idx + 1}`;
+              cleanText = text.trim();
+            }
+            if (!cleanText) cleanText = text;
+
+            const itemStyle: React.CSSProperties = {
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              paddingLeft: "76px",
+              paddingBottom: idx === visibleComps.length - 1 ? "0px" : "48px",
+              minHeight: "90px",
+              boxSizing: "border-box",
+              width: "100%"
+            };
+
+            const dotStyle: React.CSSProperties = {
+              position: "absolute",
+              left: "11px",
+              top: "4px",
+              width: "26px",
+              height: "26px",
+              borderRadius: "50%",
+              background: itemColor,
+              boxShadow: `0 0 16px ${itemColor}`,
+              zIndex: 10
+            };
+
+            const lineStyle: React.CSSProperties = {
+              position: "absolute",
+              left: "22px",
+              top: "14px",
+              bottom: "-14px",
+              width: "4px",
+              background: `linear-gradient(180deg, ${itemColor}, ${getBlendedColor(idx + 1, visibleComps.length)})`,
+              zIndex: 5,
+              transformOrigin: "top center"
+            };
+
+            return (
+              <div key={comp.id || idx} style={{ position: "relative", width: "100%" }}>
+                {idx < visibleComps.length - 1 && <div style={lineStyle} />}
+
+                <AnimatedBlock animation={animConfig.animation} delaySeconds={animConfig.delay}>
+                  <div style={itemStyle}>
+                    <div style={dotStyle} />
+                    <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
+                      <span style={{
+                        fontSize: "15px",
+                        fontWeight: 900,
+                        letterSpacing: "0.15em",
+                        color: itemColor,
+                        textTransform: "uppercase",
+                        marginBottom: "6px",
+                        fontFamily: styles.fontFamily
+                      }}>
+                        {badgeLabel}
+                      </span>
+                      <span style={{
+                        fontSize: getDynamicFontSize(cleanText, 32, fontScale),
+                        lineHeight: 1.25,
+                        fontWeight: 700,
+                        color: isLight ? "#1f2937" : "#ffffff",
+                        fontFamily: styles.fontFamily,
+                        textTransform: "uppercase"
+                      }}>
+                        {cleanText}
+                      </span>
+                    </div>
+                  </div>
+                </AnimatedBlock>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Right Column: Glassmorphic macOS Terminal */}
+        <div style={{
+          flex: 1.3,
+          height: "380px",
+          position: "relative",
+          borderRadius: "24px",
+          background: isLight
+            ? "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 240, 0.7) 100%)"
+            : "linear-gradient(135deg, rgba(8, 17, 37, 0.72) 0%, rgba(3, 7, 18, 0.85) 100%)",
+          border: isLight ? `1.5px solid rgba(0, 0, 0, 0.08)` : `1.5px solid rgba(255, 255, 255, 0.08)`,
+          boxShadow: isLight
+            ? "rgba(0, 0, 0, 0.08) 0px 24px 60px, rgba(0, 0, 0, 0.03) 0px 0px 1px inset"
+            : `rgba(0, 0, 0, 0.5) 0px 24px 60px, rgba(${rgb}, 0.15) 0px 0px 30px, rgba(255, 255, 255, 0.04) 0px 0px 1px inset`,
+          backdropFilter: "blur(20px)",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          boxSizing: "border-box"
+        }}>
+          {/* Scanning Line overlay */}
+          <div style={{
+            position: "absolute",
+            left: 0,
+            width: "100%",
+            height: "4px",
+            background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)`,
+            boxShadow: `0 0 12px ${accentColor}`,
+            animation: "scanLine 4s infinite linear",
+            pointerEvents: "none",
+            zIndex: 10
+          }} />
+
+          {/* Terminal Titlebar */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "16px 20px",
+            borderBottom: isLight ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.06)",
+            background: isLight ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.01)"
+          }}>
+            {/* macOS Buttons */}
+            <div style={{ display: "flex", gap: "8px", marginRight: "20px" }}>
+              <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#ff5f56" }} />
+              <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#ffbd2e" }} />
+              <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#27c93f" }} />
+            </div>
+            <div style={{
+              fontSize: "12px",
+              fontWeight: 600,
+              color: isLight ? "rgba(0, 0, 0, 0.4)" : "rgba(255, 255, 255, 0.4)",
+              fontFamily: "monospace",
+              letterSpacing: "0.05em",
+              textTransform: "uppercase"
+            }}>
+              {(category || "Process").trim()} Console
+            </div>
+          </div>
+
+          {/* Console Area */}
+          <div style={{
+            padding: "24px 28px",
+            flex: 1,
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start",
-            paddingLeft: "64px",
-            paddingBottom: idx === visibleComps.length - 1 ? "0px" : "32px",
-            minHeight: "80px",
-            boxSizing: "border-box",
-            width: "100%"
-          };
-
-          const dotStyle: React.CSSProperties = {
-            position: "absolute",
-            left: "14px",
-            top: "4px",
-            width: "20px",
-            height: "20px",
-            borderRadius: "50%",
-            background: itemColor,
-            boxShadow: `0 0 12px ${itemColor}`,
-            zIndex: 10
-          };
-
-          const lineStyle: React.CSSProperties = {
-            position: "absolute",
-            left: "22.5px",
-            top: "14px",
-            bottom: "-14px",
-            width: "3px",
-            background: `linear-gradient(180deg, ${itemColor}, ${getBlendedColor(idx + 1, visibleComps.length)})`,
-            zIndex: 5,
-            transformOrigin: "top center"
-          };
-
-          return (
-            <div key={comp.id || idx} style={{ position: "relative", width: "100%" }}>
-              {/* Connector Line segment to next dot (rendered statically) */}
-              {idx < visibleComps.length - 1 && <div style={lineStyle} />}
-
-              <AnimatedBlock animation={animConfig.animation} delaySeconds={animConfig.delay}>
-                <div style={itemStyle}>
-                  {/* Connector Dot */}
-                  <div style={dotStyle} />
-
-                  {/* Content Block */}
-                  <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
-                    <span style={{
-                      fontSize: "13px",
-                      fontWeight: 900,
-                      letterSpacing: "0.15em",
-                      color: itemColor,
-                      textTransform: "uppercase",
-                      marginBottom: "4px",
-                      fontFamily: styles.fontFamily
-                    }}>
-                      {badgeLabel}
-                    </span>
-                    <span style={{
-                      fontSize: getDynamicFontSize(cleanText, 25, fontScale),
-                      lineHeight: 1.2,
-                      fontWeight: 700,
-                      color: isLight ? "#1f2937" : "#ffffff",
-                      fontFamily: styles.fontFamily,
-                      textTransform: "uppercase"
-                    }}>
-                      {cleanText}
-                    </span>
-                  </div>
-                </div>
-              </AnimatedBlock>
+            fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace",
+            fontSize: "14px",
+            lineHeight: 1.6,
+            textAlign: "left",
+            justifyContent: "center"
+          }}>
+            <div style={{
+              color: isLight ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.4)",
+              marginBottom: "12px",
+              fontSize: "11px",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase"
+            }}>
+              Initializing Process Log...
             </div>
-          );
-        })}
+
+            {visibleComps.map((comp, idx) => {
+              const text = comp.data?.text || "";
+              const parts = text.split(/[:\-]/);
+              let badgeLabel = "";
+              let cleanText = "";
+              if (parts.length >= 2) {
+                badgeLabel = parts[0].trim().toUpperCase();
+                cleanText = parts.slice(1).join(":").trim();
+              } else {
+                badgeLabel = `STEP 0${idx + 1}`;
+                cleanText = text.trim();
+              }
+              if (!cleanText) cleanText = text;
+
+              // Calculate animation state based on frame
+              // Delay is 0.3 * idx seconds = 9 * idx frames at 30fps
+              const startFrame = Math.round(9 * idx);
+              const nextStartFrame = Math.round(9 * (idx + 1));
+
+              let status = "PENDING";
+              let statusColor = isLight ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.3)";
+              let textColor = isLight ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.4)";
+
+              if (frame >= nextStartFrame) {
+                status = "SUCCESS";
+                statusColor = "#10b981"; // Emerald green
+                textColor = isLight ? "#1f2937" : "#ffffff";
+              } else if (frame >= startFrame) {
+                status = "RUNNING";
+                statusColor = accentColor;
+                textColor = accentColor;
+              }
+
+              return (
+                <div key={idx} style={{
+                  marginBottom: "8px",
+                  color: textColor,
+                  fontSize: "13px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  opacity: status === "PENDING" ? 0.35 : 1,
+                  transition: "opacity 0.2s ease, color 0.2s ease"
+                }}>
+                  <span style={{ color: statusColor, fontWeight: 700 }}>&gt;</span>
+                  <span style={{ fontWeight: 800, color: statusColor }}>[{badgeLabel}]</span>
+                  <span style={{
+                    textTransform: "uppercase",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    maxWidth: "200px"
+                  }}>
+                    {cleanText}
+                  </span>
+                  <span style={{ marginLeft: "auto", color: isLight ? "rgba(0,0,0,0.2)" : "rgba(255,255,255,0.2)" }}>...</span>
+                  <span style={{
+                    fontWeight: 900,
+                    color: statusColor,
+                    display: "flex",
+                    alignItems: "center"
+                  }}>
+                    {status}
+                    {status === "RUNNING" && (
+                      <span style={{
+                        width: "6px",
+                        height: "12px",
+                        background: accentColor,
+                        display: "inline-block",
+                        marginLeft: "4px",
+                        animation: "cursorBlink 1s infinite"
+                      }} />
+                    )}
+                  </span>
+                </div>
+              );
+            })}
+
+            <div style={{
+              marginTop: "12px",
+              fontSize: "11px",
+              color: frame >= Math.round(9 * visibleComps.length)
+                ? "#10b981"
+                : (isLight ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.3)"),
+              fontWeight: 700,
+              textTransform: "uppercase",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px"
+            }}>
+              <span>Status:</span>
+              <span>
+                {frame >= Math.round(9 * visibleComps.length) ? "ALL STEPS COMPLETED SUCCESSFULLY" : "PROCESSING..."}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -358,7 +554,8 @@ export const VerticalListMode: React.FC<ModeRendererProps> = ({
             styles,
             rgb,
             isLight,
-            isAccentLight
+            isAccentLight,
+            theme
           });
           const animConfig = getAnimationConfig(leftComp, 0, "scale-in", 0.15, t);
 
@@ -476,7 +673,8 @@ export const VerticalListMode: React.FC<ModeRendererProps> = ({
               styles,
               rgb,
               isLight,
-              isAccentLight
+              isAccentLight,
+              theme
             });
 
             const text = comp.data?.text || "";
@@ -628,7 +826,8 @@ export const VerticalListMode: React.FC<ModeRendererProps> = ({
             styles,
             rgb,
             isLight,
-            isAccentLight
+            isAccentLight,
+            theme
           });
           return (
             <AnimatedBlock key={comp.id || idx} animation={comp.data.animation || "slide-up"} delaySeconds={comp.data.delay || 0.2 * idx}>
@@ -692,7 +891,8 @@ export const VerticalListMode: React.FC<ModeRendererProps> = ({
           styles,
           rgb,
           isLight,
-          isAccentLight
+          isAccentLight,
+          theme
         });
         const animConfig = getAnimationConfig(comp, idx, "slide-up", 0.3 * idx, t);
         const pos = resolvedPositions[idx % resolvedPositions.length];

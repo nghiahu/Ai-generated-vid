@@ -1,0 +1,46 @@
+{
+  "id": "Pullquote",
+  "name": "Pullquote Highlight",
+  "family": "quote",
+  "layoutMode": "pullquote",
+  "container": {
+    "paddingTop": "320px",
+    "maxWidth": "960px",
+    "gap": "32px"
+  },
+  "categoryPill": {
+    "bgRgba": "rgba(249, 115, 22, 0.1)",
+    "borderRgba": "rgba(249, 115, 22, 0.2)",
+    "textRgba": "#f97316"
+  },
+  "accentDivider": {
+    "width": "180px",
+    "height": "4px"
+  },
+  "title": {
+    "fontSize": "90px",
+    "fontWeight": "900",
+    "letterSpacing": "-0.04em",
+    "marginBottom": "48px",
+    "useAccentTextShadow": true
+  },
+  "positions": [],
+  "items": {
+    "rotations": [],
+    "itemStyles": [
+      {
+        "fontSize": "32px",
+        "padding": "12px 28px",
+        "borderRadius": "999px",
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": {
+    "bottom": "300px",
+    "fontSize": "46px",
+    "fontWeight": "950",
+    "useThemeTextShadow": true
+  }
+}

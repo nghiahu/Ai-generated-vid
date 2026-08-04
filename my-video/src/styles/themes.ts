@@ -59,7 +59,7 @@ export const getThemeStyles = (themeName: string, accentColor: string): ThemeSty
 
   // Title styles per VDE style
   const isSerif = tokens.fonts?.title.includes("Playfair") || tokens.fonts?.title.includes("Lora") || tokens.fonts?.title.includes("Georgia") || tokens.fonts?.title.includes("serif");
-  const isCyberpunk = themeName.includes("cyberpunk") || themeName.includes("neon");
+  const isCyberpunk = themeName.includes("cyberpunk") || themeName.includes("neon") || themeName.includes("ai_driven") || themeName.includes("fintech_edu");
   const titleStyle: React.CSSProperties = {
     color: tokens.colors?.text || "#ffffff",
     fontFamily,

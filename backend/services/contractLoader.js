@@ -323,15 +323,6 @@ const LAYOUT_CONTRACTS = {
     allowedPointTypes: ['button', 'card'],
     aiHint: 'Outro căn giữa đường kẻ định vị.'
   },
-  HustXRikkei: {
-    layoutId: 'HustXRikkei',
-    family: 'Ending',
-    headingMaxChars: 40,
-    pointsCount: { min: 1, max: 2, default: 1 },
-    pointMaxChars: 45,
-    allowedPointTypes: ['button', 'card'],
-    aiHint: 'Màn hình hợp tác HUST x Rikkei Education.'
-  },
   ContactCardEnding: {
     layoutId: 'ContactCardEnding',
     family: 'Ending',

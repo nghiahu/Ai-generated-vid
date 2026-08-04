@@ -1,4 +1,4 @@
-import React from "react"; // trigger rebuild for circular_progress, ending, metrics, & custom negative margin timeline templates
+import React from "react"; // trigger rebuild for circular_progress, ending, metrics, pullquote, & custom negative margin timeline templates
 import { LayoutProps } from "./LayoutTypes";
 import { TemplateLayout } from "./TemplateLayout";
 
@@ -30,7 +30,7 @@ const KEY_OVERRIDES: Record<string, string> = {
   introbubbleimage: "IntroBubbleImage",
   intrometricpillimage: "IntroMetricPillImage",
   mappinshook: "IntegrationCloud",
-  vignelliquote: "Quote",
+  vignelliquote: "VignelliQuote",
   quietlogomark: "Ending",
 };
 
@@ -67,6 +67,10 @@ if (!templates || Object.keys(templates).length === 0) {
   }
 }
 
+import introMediaHeroJson from "./templates/Opening-Headline/intro_media_hero.json";
+import vignelliQuoteJson from "./templates/Opening-Headline/vignelli_quote.json";
+import mediaShowcaseCardJson from "./templates/Opening-Headline/media_showcase_card.json";
+
 Object.entries(templates).forEach(([path, module]: [string, any]) => {
   const json = module.default || module;
   if (!json || !json.id) return;
@@ -84,11 +88,45 @@ Object.entries(templates).forEach(([path, module]: [string, any]) => {
   };
 });
 
+// Explicit static registrations to ensure hot-reloading works instantly for newly added layouts
+const staticTemplates = [
+  introMediaHeroJson,
+  vignelliQuoteJson,
+  mediaShowcaseCardJson
+];
+
+staticTemplates.forEach((json: any) => {
+  const normId = json.id.replace(/[-_\s]+/g, "").toLowerCase();
+  const key = KEY_OVERRIDES[normId] || formatPascalCase(json.id);
+  
+  if (!LAYOUT_REGISTRY[key]) {
+    LAYOUT_REGISTRY[key] = {
+      id: key,
+      name: json.name || json.id,
+      family: json.family || "opening",
+      component: (props: LayoutProps) => React.createElement(TemplateLayout, { ...props, templateJson: json }),
+      templateJson: json,
+      description: json.description || `Khung xương layout cho phân cảnh ${json.family || "opening"} phong cách YupVid.`
+    };
+  }
+});
+
 export const getLayoutById = (id: string): LayoutMetadata => {
   const cleanId = id.trim().replace(/\s+/g, "");
+  const normId = cleanId.toLowerCase();
+  
+  // Try mapping via overrides (e.g. mediacard -> Gallery)
+  const overrideKey = KEY_OVERRIDES[normId];
+  const matchKey = overrideKey || cleanId;
+
   // Find layout ignoring case and space formatting
-  const match = Object.keys(LAYOUT_REGISTRY).find(
-    (key) => key.toLowerCase() === cleanId.toLowerCase()
+  let match = Object.keys(LAYOUT_REGISTRY).find(
+    (key) => key.toLowerCase() === matchKey.toLowerCase()
   );
+  if (!match && cleanId.toLowerCase() === "quote") {
+    match = Object.keys(LAYOUT_REGISTRY).find(
+      (key) => key.toLowerCase() === "vignelliquote"
+    );
+  }
   return match ? LAYOUT_REGISTRY[match] : LAYOUT_REGISTRY[Object.keys(LAYOUT_REGISTRY)[0]];
 };

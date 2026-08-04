@@ -27,13 +27,14 @@ export const highlightHeadingText = (text: string, accentColor: string, theme?: 
   return parts.map((part, index) => {
     const isMatch = sortedKeywords.some(k => k.toLowerCase() === part.toLowerCase());
     if (isMatch) {
-      if (theme === "fintech_edu" || theme?.includes("fintech")) {
+      if (theme === "ai_driven" || theme === "fintech_edu" || theme?.includes("fintech")) {
+        const glowColor = theme === "ai_driven" ? "#00C8FF" : "#00e5ff";
         return (
           <span 
             key={index} 
             style={{ 
-              color: "#00e5ff",
-              textShadow: "0 2px 12px rgba(0, 0, 0, 0.95), 0 0 20px rgba(0, 229, 255, 0.8)",
+              color: glowColor,
+              textShadow: `0 2px 12px rgba(0, 0, 0, 0.95), 0 0 20px ${glowColor}cc`,
               fontWeight: 900
             }}
           >

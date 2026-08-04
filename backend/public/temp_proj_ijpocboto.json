@@ -1,0 +1,2196 @@
+{
+  "id": "proj_ijpocboto",
+  "title": "Video-8",
+  "status": "DRAFT",
+  "createdAt": "2026-08-04T08:47:15.454Z",
+  "type": "STORYBOARD",
+  "config": {
+    "voice": "omnivoice_quanganh",
+    "length": "Medium (~2m)",
+    "traits": [],
+    "language": "Vietnamese",
+    "watermark": {
+      "text": "AI LAB",
+      "color": "#000000",
+      "enabled": false,
+      "position": "top-right"
+    },
+    "tokenUsage": {
+      "totalTokens": 7686,
+      "promptTokens": 5496,
+      "completionTokens": 2190
+    },
+    "visualStyle": "fintech_edu",
+    "backgroundMusic": "Chill Lofi Beats",
+    "backgroundMusicVolume": 0.025,
+    "vdeTokens": {
+      "dna": {
+        "philosophy": {
+          "oneIdeaPerScene": true,
+          "clarity": 0.92,
+          "minimalism": 0.7
+        },
+        "tone": "tech, futuristic, education, glow, circuit, deep-blue"
+      },
+      "tokens": {
+        "colors": {
+          "background": "linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)",
+          "cardBg": "linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(0, 100, 240, 0.35) 100%)",
+          "border": "1.5px solid rgba(0, 229, 255, 0.6)",
+          "accent": "#00e5ff",
+          "text": "#FFFFFF",
+          "textSecondary": "rgba(255, 255, 255, 0.95)"
+        },
+        "fonts": {
+          "title": "Chakra Petch",
+          "body": "Be Vietnam Pro"
+        },
+        "radius": "12px",
+        "shadow": "0 0 30px rgba(0, 212, 255, 0.35), 0 0 60px rgba(0, 212, 255, 0.1)"
+      },
+      "motion": {
+        "energy": "high",
+        "style": [
+          "slide-up",
+          "fade",
+          "glow-pulse"
+        ],
+        "avoid": [
+          "bounce",
+          "glitch"
+        ]
+      },
+      "styleId": "fintech_edu",
+      "meta": {
+        "compiledAt": "2026-08-04T10:29:52.485Z",
+        "inheritanceChain": [
+          "ai_hub_grid",
+          "fintech_edu"
+        ],
+        "appliedTraits": []
+      }
+    }
+  },
+  "scenes": [
+    {
+      "id": "scene_proj_ijpocboto_0_i7tq",
+      "sceneIndex": 0,
+      "duration": 8.251625,
+      "layoutFamily": "Media",
+      "visualLayout": "IntroMediaHero",
+      "sceneIntent": {
+        "type": "opening",
+        "density": "sparse",
+        "emotion": "exciting",
+        "importance": "high",
+        "highlightWords": [
+          "TUYỂN DỤNG"
+        ]
+      },
+      "heading": "BÍ MẬT NHÀ TUYỂN DỤNG",
+      "points": [
+        {
+          "text": "HR chỉ có 3 giây",
+          "delay": 0.4,
+          "animation": "slide-up"
+        },
+        {
+          "text": "CV bị loại nhanh chóng",
+          "delay": 0,
+          "animation": "slide-up"
+        },
+        {
+          "text": "Ý chính mới",
+          "delay": 2.4,
+          "animation": "slide-up"
+        }
+      ],
+      "voiceover": "Bạn rải CV Data Analyst mòn mỏi mà không bên nào gọi phỏng vấn? Để tôi tiết lộ bí mật phũ phàng: HR chỉ mất đúng 3 giây để ném CV của bạn vào thùng rác!",
+      "voiceoverTts": "Bạn rải xê-vê đa-ta a-na-lít mòn mỏi mà không bên nào gọi phỏng vấn? Để tôi tiết lộ bí mật phũ phàng: át-chơ-a chỉ mất đúng 3 giây để ném xê-vê của bạn vào thùng rác!",
+      "voiceoverAudioUrl": "/tts/tts_proj_ijpocboto_scene_proj_ijpocboto_0_i7tq_8tyx.wav",
+      "placement": "Full",
+      "mediaList": [
+        "https://res.cloudinary.com/dimxrq8bs/image/upload/v1785382115/ai-video-storyboards/bhpnerbcxwfrboqb8sba.png",
+        "https://res.cloudinary.com/dimxrq8bs/image/upload/v1785833533/ai-video-storyboards/h6xyqnrep0dlzsfiruhr.jpg"
+      ],
+      "selectedMediaIndex": 0,
+      "theme": "fintech_edu",
+      "accentColor": "#00e5ff",
+      "voiceoverDuration": 8.251625,
+      "subtitlesJson": [
+        {
+          "word": "Bạn",
+          "speechEnd": 0.32,
+          "displayEnd": 0.5,
+          "speechStart": 0,
+          "displayStart": 0,
+          "highlightEnd": 0.5,
+          "highlightPeak": 0.06,
+          "highlightStart": 0
+        },
+        {
+          "word": "rải",
+          "speechEnd": 0.68,
+          "displayEnd": 0.68,
+          "speechStart": 0.5,
+          "displayStart": 0.46,
+          "highlightEnd": 0.68,
+          "highlightPeak": 0.56,
+          "highlightStart": 0.5
+        },
+        {
+          "word": "CV",
+          "speechEnd": 0.82,
+          "displayEnd": 0.82,
+          "speechStart": 0.68,
+          "displayStart": 0.64,
+          "highlightEnd": 0.82,
+          "highlightPeak": 0.74,
+          "highlightStart": 0.68
+        },
+        {
+          "word": "Data",
+          "speechEnd": 1,
+          "displayEnd": 1,
+          "speechStart": 0.82,
+          "displayStart": 0.78,
+          "highlightEnd": 1,
+          "highlightPeak": 0.88,
+          "highlightStart": 0.82
+        },
+        {
+          "word": "Analyst",
+          "speechEnd": 1.18,
+          "displayEnd": 1.18,
+          "speechStart": 1,
+          "displayStart": 0.96,
+          "highlightEnd": 1.18,
+          "highlightPeak": 1.06,
+          "highlightStart": 1
+        },
+        {
+          "word": "mòn",
+          "speechEnd": 1.64,
+          "displayEnd": 1.64,
+          "speechStart": 1.18,
+          "displayStart": 1.14,
+          "highlightEnd": 1.64,
+          "highlightPeak": 1.24,
+          "highlightStart": 1.18
+        },
+        {
+          "word": "mỏi",
+          "speechEnd": 1.98,
+          "displayEnd": 1.98,
+          "speechStart": 1.64,
+          "displayStart": 1.6,
+          "highlightEnd": 1.98,
+          "highlightPeak": 1.7,
+          "highlightStart": 1.64
+        },
+        {
+          "word": "mà",
+          "speechEnd": 2.38,
+          "displayEnd": 2.38,
+          "speechStart": 1.98,
+          "displayStart": 1.94,
+          "highlightEnd": 2.38,
+          "highlightPeak": 2.04,
+          "highlightStart": 1.98
+        },
+        {
+          "word": "không",
+          "speechEnd": 2.52,
+          "displayEnd": 2.52,
+          "speechStart": 2.38,
+          "displayStart": 2.34,
+          "highlightEnd": 2.52,
+          "highlightPeak": 2.44,
+          "highlightStart": 2.38
+        },
+        {
+          "word": "bên",
+          "speechEnd": 2.66,
+          "displayEnd": 2.66,
+          "speechStart": 2.52,
+          "displayStart": 2.48,
+          "highlightEnd": 2.66,
+          "highlightPeak": 2.58,
+          "highlightStart": 2.52
+        },
+        {
+          "word": "nào",
+          "speechEnd": 2.78,
+          "displayEnd": 2.78,
+          "speechStart": 2.66,
+          "displayStart": 2.62,
+          "highlightEnd": 2.78,
+          "highlightPeak": 2.72,
+          "highlightStart": 2.66
+        },
+        {
+          "word": "gọi",
+          "speechEnd": 2.88,
+          "displayEnd": 2.88,
+          "speechStart": 2.78,
+          "displayStart": 2.74,
+          "highlightEnd": 2.88,
+          "highlightPeak": 2.84,
+          "highlightStart": 2.78
+        },
+        {
+          "word": "phỏng",
+          "speechEnd": 3.04,
+          "displayEnd": 3.04,
+          "speechStart": 2.88,
+          "displayStart": 2.84,
+          "highlightEnd": 3.04,
+          "highlightPeak": 2.94,
+          "highlightStart": 2.88
+        },
+        {
+          "word": "vấn?",
+          "speechEnd": 3.34,
+          "displayEnd": 3.34,
+          "speechStart": 3.04,
+          "displayStart": 3,
+          "highlightEnd": 3.34,
+          "highlightPeak": 3.1,
+          "highlightStart": 3.04
+        },
+        {
+          "word": "Để",
+          "speechEnd": 3.64,
+          "displayEnd": 3.64,
+          "speechStart": 3.34,
+          "displayStart": 3.3,
+          "highlightEnd": 3.64,
+          "highlightPeak": 3.4,
+          "highlightStart": 3.34
+        },
+        {
+          "word": "tôi",
+          "speechEnd": 3.78,
+          "displayEnd": 3.78,
+          "speechStart": 3.64,
+          "displayStart": 3.6,
+          "highlightEnd": 3.78,
+          "highlightPeak": 3.7,
+          "highlightStart": 3.64
+        },
+        {
+          "word": "tiết",
+          "speechEnd": 3.88,
+          "displayEnd": 3.88,
+          "speechStart": 3.78,
+          "displayStart": 3.74,
+          "highlightEnd": 3.88,
+          "highlightPeak": 3.84,
+          "highlightStart": 3.78
+        },
+        {
+          "word": "lộ",
+          "speechEnd": 4.02,
+          "displayEnd": 4.02,
+          "speechStart": 3.88,
+          "displayStart": 3.84,
+          "highlightEnd": 4.02,
+          "highlightPeak": 3.94,
+          "highlightStart": 3.88
+        },
+        {
+          "word": "bí",
+          "speechEnd": 4.16,
+          "displayEnd": 4.16,
+          "speechStart": 4.02,
+          "displayStart": 3.98,
+          "highlightEnd": 4.16,
+          "highlightPeak": 4.08,
+          "highlightStart": 4.02
+        },
+        {
+          "word": "mật",
+          "speechEnd": 4.32,
+          "displayEnd": 4.37,
+          "speechStart": 4.16,
+          "displayStart": 4.12,
+          "highlightEnd": 4.37,
+          "highlightPeak": 4.22,
+          "highlightStart": 4.16
+        },
+        {
+          "word": "phũ",
+          "speechEnd": 5.4,
+          "displayEnd": 5.4,
+          "speechStart": 5.3,
+          "displayStart": 5.26,
+          "highlightEnd": 5.4,
+          "highlightPeak": 5.36,
+          "highlightStart": 5.3
+        },
+        {
+          "word": "phàng:",
+          "speechEnd": 5.5,
+          "displayEnd": 5.5,
+          "speechStart": 5.4,
+          "displayStart": 5.36,
+          "highlightEnd": 5.5,
+          "highlightPeak": 5.46,
+          "highlightStart": 5.4
+        },
+        {
+          "word": "HR",
+          "speechEnd": 5.66,
+          "displayEnd": 5.66,
+          "speechStart": 5.5,
+          "displayStart": 5.46,
+          "highlightEnd": 5.66,
+          "highlightPeak": 5.56,
+          "highlightStart": 5.5
+        },
+        {
+          "word": "chỉ",
+          "speechEnd": 5.82,
+          "displayEnd": 5.82,
+          "speechStart": 5.66,
+          "displayStart": 5.62,
+          "highlightEnd": 5.82,
+          "highlightPeak": 5.72,
+          "highlightStart": 5.66
+        },
+        {
+          "word": "mất",
+          "speechEnd": 5.92,
+          "displayEnd": 5.92,
+          "speechStart": 5.82,
+          "displayStart": 5.78,
+          "highlightEnd": 5.92,
+          "highlightPeak": 5.88,
+          "highlightStart": 5.82
+        },
+        {
+          "word": "đúng",
+          "speechEnd": 6.08,
+          "displayEnd": 6.08,
+          "speechStart": 5.92,
+          "displayStart": 5.88,
+          "highlightEnd": 6.08,
+          "highlightPeak": 5.98,
+          "highlightStart": 5.92
+        },
+        {
+          "word": "3",
+          "speechEnd": 6.28,
+          "displayEnd": 6.28,
+          "speechStart": 6.08,
+          "displayStart": 6.04,
+          "highlightEnd": 6.28,
+          "highlightPeak": 6.14,
+          "highlightStart": 6.08
+        },
+        {
+          "word": "giây",
+          "speechEnd": 6.5,
+          "displayEnd": 6.5,
+          "speechStart": 6.28,
+          "displayStart": 6.24,
+          "highlightEnd": 6.5,
+          "highlightPeak": 6.34,
+          "highlightStart": 6.28
+        },
+        {
+          "word": "để",
+          "speechEnd": 6.88,
+          "displayEnd": 7.06,
+          "speechStart": 6.5,
+          "displayStart": 6.46,
+          "highlightEnd": 7.06,
+          "highlightPeak": 6.56,
+          "highlightStart": 6.5
+        },
+        {
+          "word": "ném",
+          "speechEnd": 7.2,
+          "displayEnd": 7.2,
+          "speechStart": 7.06,
+          "displayStart": 7.02,
+          "highlightEnd": 7.2,
+          "highlightPeak": 7.12,
+          "highlightStart": 7.06
+        },
+        {
+          "word": "CV",
+          "speechEnd": 7.34,
+          "displayEnd": 7.34,
+          "speechStart": 7.2,
+          "displayStart": 7.16,
+          "highlightEnd": 7.34,
+          "highlightPeak": 7.26,
+          "highlightStart": 7.2
+        },
+        {
+          "word": "của",
+          "speechEnd": 7.44,
+          "displayEnd": 7.44,
+          "speechStart": 7.34,
+          "displayStart": 7.3,
+          "highlightEnd": 7.44,
+          "highlightPeak": 7.4,
+          "highlightStart": 7.34
+        },
+        {
+          "word": "bạn",
+          "speechEnd": 7.56,
+          "displayEnd": 7.56,
+          "speechStart": 7.44,
+          "displayStart": 7.4,
+          "highlightEnd": 7.56,
+          "highlightPeak": 7.5,
+          "highlightStart": 7.44
+        },
+        {
+          "word": "vào",
+          "speechEnd": 7.7,
+          "displayEnd": 7.7,
+          "speechStart": 7.56,
+          "displayStart": 7.52,
+          "highlightEnd": 7.7,
+          "highlightPeak": 7.62,
+          "highlightStart": 7.56
+        },
+        {
+          "word": "thùng",
+          "speechEnd": 7.82,
+          "displayEnd": 7.82,
+          "speechStart": 7.7,
+          "displayStart": 7.66,
+          "highlightEnd": 7.82,
+          "highlightPeak": 7.76,
+          "highlightStart": 7.7
+        },
+        {
+          "word": "rác!",
+          "speechEnd": 8.24,
+          "displayEnd": 8.252,
+          "speechStart": 7.82,
+          "displayStart": 7.78,
+          "highlightEnd": 8.252,
+          "highlightPeak": 7.88,
+          "highlightStart": 7.82
+        }
+      ]
+    },
+    {
+      "id": "scene_proj_ijpocboto_1_swdj",
+      "sceneIndex": 1,
+      "duration": 15.144667,
+      "layoutFamily": "Opening / Headline",
+      "visualLayout": "IntroRadarSignalImage",
+      "sceneIntent": {
+        "type": "list",
+        "density": "dense",
+        "emotion": "informative",
+        "importance": "high",
+        "highlightWords": [
+          "TÌM KHÓA"
+        ]
+      },
+      "heading": "3 GIÂY TÌM TỪ KHÓA",
+      "points": [
+        {
+          "text": "Loại bỏ project Titanic",
+          "type": "card",
+          "delay": 0.4,
+          "logos": [],
+          "value": "",
+          "badges": [],
+          "subtext": "",
+          "animation": "slide-up"
+        },
+        {
+          "text": "Portfolio giải quyết bài toán thật",
+          "type": "card",
+          "delay": 5.6,
+          "logos": [],
+          "value": "",
+          "badges": [],
+          "subtext": "",
+          "animation": "slide-up"
+        }
+      ],
+      "voiceover": "Khóc lóc cái gì? Lỗi tại bạn chứ ai! Trong 3 giây đó, mắt của nhà tuyển dụng sẽ đảo qua những từ khóa nào? Một, Portfolio thực chiến: Đừng có đưa mấy cái project Titanic hay Iris hoa hòe đồ cổ vào nữa! Họ muốn thấy project giải quyết bài toán kinh doanh thật: Sales, Marketing, Logistics.",
+      "voiceoverTts": "Khóc lóc cái gì? Lỗi tại bạn chứ ai! Trong 3 giây đó, mắt của nhà tuyển dụng sẽ đảo qua những từ khóa nào? Một, pọt-phô-li-ô thực chiến: Đừng có đưa mấy cái project tai-ta-ních hay ai-rít hoa hòe đồ cổ vào nữa! Họ muốn thấy project giải quyết bài toán kinh doanh thật: xêu, mác-két-tinh, lơ-dít-tích.",
+      "voiceoverAudioUrl": "/tts/tts_proj_ijpocboto_scene_proj_ijpocboto_1_swdj_fsnq.wav",
+      "placement": "Split",
+      "mediaList": [
+        "https://res.cloudinary.com/dimxrq8bs/image/upload/v1785382115/ai-video-storyboards/bhpnerbcxwfrboqb8sba.png",
+        "https://res.cloudinary.com/dimxrq8bs/image/upload/v1785833533/ai-video-storyboards/h6xyqnrep0dlzsfiruhr.jpg"
+      ],
+      "selectedMediaIndex": 0,
+      "theme": "fintech_edu",
+      "accentColor": "#00e5ff",
+      "voiceoverDuration": 15.144667,
+      "subtitlesJson": [
+        {
+          "word": "Khóc",
+          "speechEnd": 0.36,
+          "displayEnd": 0.36,
+          "speechStart": 0,
+          "displayStart": 0,
+          "highlightEnd": 0.36,
+          "highlightPeak": 0.06,
+          "highlightStart": 0
+        },
+        {
+          "word": "lóc",
+          "speechEnd": 0.5,
+          "displayEnd": 0.5,
+          "speechStart": 0.36,
+          "displayStart": 0.32,
+          "highlightEnd": 0.5,
+          "highlightPeak": 0.42,
+          "highlightStart": 0.36
+        },
+        {
+          "word": "cái",
+          "speechEnd": 0.64,
+          "displayEnd": 0.64,
+          "speechStart": 0.5,
+          "displayStart": 0.46,
+          "highlightEnd": 0.64,
+          "highlightPeak": 0.56,
+          "highlightStart": 0.5
+        },
+        {
+          "word": "gì?",
+          "speechEnd": 1.14,
+          "displayEnd": 1.14,
+          "speechStart": 0.64,
+          "displayStart": 0.6,
+          "highlightEnd": 1.14,
+          "highlightPeak": 0.7,
+          "highlightStart": 0.64
+        },
+        {
+          "word": "Lỗi",
+          "speechEnd": 1.14,
+          "displayEnd": 1.15,
+          "speechStart": 1.14,
+          "displayStart": 1.1,
+          "highlightEnd": 1.14,
+          "highlightPeak": 1.14,
+          "highlightStart": 1.14
+        },
+        {
+          "word": "tại",
+          "speechEnd": 1.26,
+          "displayEnd": 1.26,
+          "speechStart": 1.14,
+          "displayStart": 1.1,
+          "highlightEnd": 1.26,
+          "highlightPeak": 1.2,
+          "highlightStart": 1.14
+        },
+        {
+          "word": "bạn",
+          "speechEnd": 1.44,
+          "displayEnd": 1.44,
+          "speechStart": 1.26,
+          "displayStart": 1.22,
+          "highlightEnd": 1.44,
+          "highlightPeak": 1.32,
+          "highlightStart": 1.26
+        },
+        {
+          "word": "chứ",
+          "speechEnd": 1.58,
+          "displayEnd": 1.58,
+          "speechStart": 1.44,
+          "displayStart": 1.4,
+          "highlightEnd": 1.58,
+          "highlightPeak": 1.5,
+          "highlightStart": 1.44
+        },
+        {
+          "word": "ai!",
+          "speechEnd": 2.22,
+          "displayEnd": 2.22,
+          "speechStart": 1.58,
+          "displayStart": 1.54,
+          "highlightEnd": 2.22,
+          "highlightPeak": 1.64,
+          "highlightStart": 1.58
+        },
+        {
+          "word": "Trong",
+          "speechEnd": 2.3,
+          "displayEnd": 2.3,
+          "speechStart": 2.22,
+          "displayStart": 2.18,
+          "highlightEnd": 2.3,
+          "highlightPeak": 2.28,
+          "highlightStart": 2.22
+        },
+        {
+          "word": "3",
+          "speechEnd": 2.44,
+          "displayEnd": 2.44,
+          "speechStart": 2.3,
+          "displayStart": 2.26,
+          "highlightEnd": 2.44,
+          "highlightPeak": 2.36,
+          "highlightStart": 2.3
+        },
+        {
+          "word": "giây",
+          "speechEnd": 2.58,
+          "displayEnd": 2.58,
+          "speechStart": 2.44,
+          "displayStart": 2.4,
+          "highlightEnd": 2.58,
+          "highlightPeak": 2.5,
+          "highlightStart": 2.44
+        },
+        {
+          "word": "đó,",
+          "speechEnd": 3.08,
+          "displayEnd": 3.08,
+          "speechStart": 2.58,
+          "displayStart": 2.54,
+          "highlightEnd": 3.08,
+          "highlightPeak": 2.64,
+          "highlightStart": 2.58
+        },
+        {
+          "word": "mắt",
+          "speechEnd": 3.3,
+          "displayEnd": 3.3,
+          "speechStart": 3.08,
+          "displayStart": 3.04,
+          "highlightEnd": 3.3,
+          "highlightPeak": 3.14,
+          "highlightStart": 3.08
+        },
+        {
+          "word": "của",
+          "speechEnd": 3.4,
+          "displayEnd": 3.4,
+          "speechStart": 3.3,
+          "displayStart": 3.26,
+          "highlightEnd": 3.4,
+          "highlightPeak": 3.36,
+          "highlightStart": 3.3
+        },
+        {
+          "word": "nhà",
+          "speechEnd": 3.54,
+          "displayEnd": 3.54,
+          "speechStart": 3.4,
+          "displayStart": 3.36,
+          "highlightEnd": 3.54,
+          "highlightPeak": 3.46,
+          "highlightStart": 3.4
+        },
+        {
+          "word": "tuyển",
+          "speechEnd": 3.7,
+          "displayEnd": 3.7,
+          "speechStart": 3.54,
+          "displayStart": 3.5,
+          "highlightEnd": 3.7,
+          "highlightPeak": 3.6,
+          "highlightStart": 3.54
+        },
+        {
+          "word": "dụng",
+          "speechEnd": 4,
+          "displayEnd": 4,
+          "speechStart": 3.7,
+          "displayStart": 3.66,
+          "highlightEnd": 4,
+          "highlightPeak": 3.76,
+          "highlightStart": 3.7
+        },
+        {
+          "word": "sẽ",
+          "speechEnd": 4.26,
+          "displayEnd": 4.26,
+          "speechStart": 4,
+          "displayStart": 3.96,
+          "highlightEnd": 4.26,
+          "highlightPeak": 4.06,
+          "highlightStart": 4
+        },
+        {
+          "word": "đảo",
+          "speechEnd": 4.48,
+          "displayEnd": 4.48,
+          "speechStart": 4.26,
+          "displayStart": 4.22,
+          "highlightEnd": 4.48,
+          "highlightPeak": 4.32,
+          "highlightStart": 4.26
+        },
+        {
+          "word": "qua",
+          "speechEnd": 4.66,
+          "displayEnd": 4.66,
+          "speechStart": 4.48,
+          "displayStart": 4.44,
+          "highlightEnd": 4.66,
+          "highlightPeak": 4.54,
+          "highlightStart": 4.48
+        },
+        {
+          "word": "những",
+          "speechEnd": 4.82,
+          "displayEnd": 4.82,
+          "speechStart": 4.66,
+          "displayStart": 4.62,
+          "highlightEnd": 4.82,
+          "highlightPeak": 4.72,
+          "highlightStart": 4.66
+        },
+        {
+          "word": "từ",
+          "speechEnd": 5.1,
+          "displayEnd": 5.1,
+          "speechStart": 4.82,
+          "displayStart": 4.78,
+          "highlightEnd": 5.1,
+          "highlightPeak": 4.88,
+          "highlightStart": 4.82
+        },
+        {
+          "word": "khóa",
+          "speechEnd": 5.32,
+          "displayEnd": 5.32,
+          "speechStart": 5.1,
+          "displayStart": 5.06,
+          "highlightEnd": 5.32,
+          "highlightPeak": 5.16,
+          "highlightStart": 5.1
+        },
+        {
+          "word": "nào?",
+          "speechEnd": 5.58,
+          "displayEnd": 5.58,
+          "speechStart": 5.32,
+          "displayStart": 5.28,
+          "highlightEnd": 5.58,
+          "highlightPeak": 5.38,
+          "highlightStart": 5.32
+        },
+        {
+          "word": "Một,",
+          "speechEnd": 6,
+          "displayEnd": 6,
+          "speechStart": 5.58,
+          "displayStart": 5.54,
+          "highlightEnd": 6,
+          "highlightPeak": 5.64,
+          "highlightStart": 5.58
+        },
+        {
+          "word": "Portfolio",
+          "speechEnd": 6.48,
+          "displayEnd": 6.48,
+          "speechStart": 6,
+          "displayStart": 5.96,
+          "highlightEnd": 6.48,
+          "highlightPeak": 6.06,
+          "highlightStart": 6
+        },
+        {
+          "word": "thực",
+          "speechEnd": 6.84,
+          "displayEnd": 6.84,
+          "speechStart": 6.48,
+          "displayStart": 6.44,
+          "highlightEnd": 6.84,
+          "highlightPeak": 6.54,
+          "highlightStart": 6.48
+        },
+        {
+          "word": "chiến:",
+          "speechEnd": 7.56,
+          "displayEnd": 7.68,
+          "speechStart": 6.84,
+          "displayStart": 6.8,
+          "highlightEnd": 7.68,
+          "highlightPeak": 6.9,
+          "highlightStart": 6.84
+        },
+        {
+          "word": "Đừng",
+          "speechEnd": 7.72,
+          "displayEnd": 7.72,
+          "speechStart": 7.68,
+          "displayStart": 7.64,
+          "highlightEnd": 7.72,
+          "highlightPeak": 7.72,
+          "highlightStart": 7.68
+        },
+        {
+          "word": "có",
+          "speechEnd": 7.84,
+          "displayEnd": 7.84,
+          "speechStart": 7.72,
+          "displayStart": 7.68,
+          "highlightEnd": 7.84,
+          "highlightPeak": 7.78,
+          "highlightStart": 7.72
+        },
+        {
+          "word": "đưa",
+          "speechEnd": 7.94,
+          "displayEnd": 7.94,
+          "speechStart": 7.84,
+          "displayStart": 7.8,
+          "highlightEnd": 7.94,
+          "highlightPeak": 7.9,
+          "highlightStart": 7.84
+        },
+        {
+          "word": "mấy",
+          "speechEnd": 8.08,
+          "displayEnd": 8.08,
+          "speechStart": 7.94,
+          "displayStart": 7.9,
+          "highlightEnd": 8.08,
+          "highlightPeak": 8,
+          "highlightStart": 7.94
+        },
+        {
+          "word": "cái",
+          "speechEnd": 8.24,
+          "displayEnd": 8.24,
+          "speechStart": 8.08,
+          "displayStart": 8.04,
+          "highlightEnd": 8.24,
+          "highlightPeak": 8.14,
+          "highlightStart": 8.08
+        },
+        {
+          "word": "project",
+          "speechEnd": 8.48,
+          "displayEnd": 8.72,
+          "speechStart": 8.24,
+          "displayStart": 8.2,
+          "highlightEnd": 8.72,
+          "highlightPeak": 8.3,
+          "highlightStart": 8.24
+        },
+        {
+          "word": "Titanic",
+          "speechEnd": 8.82,
+          "displayEnd": 8.87,
+          "speechStart": 8.72,
+          "displayStart": 8.68,
+          "highlightEnd": 8.87,
+          "highlightPeak": 8.78,
+          "highlightStart": 8.72
+        },
+        {
+          "word": "hay",
+          "speechEnd": 9.4,
+          "displayEnd": 9.4,
+          "speechStart": 9.24,
+          "displayStart": 9.2,
+          "highlightEnd": 9.4,
+          "highlightPeak": 9.3,
+          "highlightStart": 9.24
+        },
+        {
+          "word": "Iris",
+          "speechEnd": 9.48,
+          "displayEnd": 9.48,
+          "speechStart": 9.4,
+          "displayStart": 9.36,
+          "highlightEnd": 9.48,
+          "highlightPeak": 9.46,
+          "highlightStart": 9.4
+        },
+        {
+          "word": "hoa",
+          "speechEnd": 9.68,
+          "displayEnd": 9.86,
+          "speechStart": 9.48,
+          "displayStart": 9.44,
+          "highlightEnd": 9.86,
+          "highlightPeak": 9.54,
+          "highlightStart": 9.48
+        },
+        {
+          "word": "hòe",
+          "speechEnd": 9.88,
+          "displayEnd": 9.88,
+          "speechStart": 9.86,
+          "displayStart": 9.82,
+          "highlightEnd": 9.88,
+          "highlightPeak": 9.88,
+          "highlightStart": 9.86
+        },
+        {
+          "word": "đồ",
+          "speechEnd": 10.04,
+          "displayEnd": 10.04,
+          "speechStart": 9.88,
+          "displayStart": 9.84,
+          "highlightEnd": 10.04,
+          "highlightPeak": 9.94,
+          "highlightStart": 9.88
+        },
+        {
+          "word": "cổ",
+          "speechEnd": 10.22,
+          "displayEnd": 10.22,
+          "speechStart": 10.04,
+          "displayStart": 10,
+          "highlightEnd": 10.22,
+          "highlightPeak": 10.1,
+          "highlightStart": 10.04
+        },
+        {
+          "word": "vào",
+          "speechEnd": 10.32,
+          "displayEnd": 10.32,
+          "speechStart": 10.22,
+          "displayStart": 10.18,
+          "highlightEnd": 10.32,
+          "highlightPeak": 10.28,
+          "highlightStart": 10.22
+        },
+        {
+          "word": "nữa!",
+          "speechEnd": 11.14,
+          "displayEnd": 11.22,
+          "speechStart": 10.32,
+          "displayStart": 10.28,
+          "highlightEnd": 11.22,
+          "highlightPeak": 10.38,
+          "highlightStart": 10.32
+        },
+        {
+          "word": "Họ",
+          "speechEnd": 11.32,
+          "displayEnd": 11.32,
+          "speechStart": 11.22,
+          "displayStart": 11.18,
+          "highlightEnd": 11.32,
+          "highlightPeak": 11.28,
+          "highlightStart": 11.22
+        },
+        {
+          "word": "muốn",
+          "speechEnd": 11.42,
+          "displayEnd": 11.42,
+          "speechStart": 11.32,
+          "displayStart": 11.28,
+          "highlightEnd": 11.42,
+          "highlightPeak": 11.38,
+          "highlightStart": 11.32
+        },
+        {
+          "word": "thấy",
+          "speechEnd": 11.58,
+          "displayEnd": 11.58,
+          "speechStart": 11.42,
+          "displayStart": 11.38,
+          "highlightEnd": 11.58,
+          "highlightPeak": 11.48,
+          "highlightStart": 11.42
+        },
+        {
+          "word": "project",
+          "speechEnd": 11.92,
+          "displayEnd": 11.92,
+          "speechStart": 11.58,
+          "displayStart": 11.54,
+          "highlightEnd": 11.92,
+          "highlightPeak": 11.64,
+          "highlightStart": 11.58
+        },
+        {
+          "word": "giải",
+          "speechEnd": 12.16,
+          "displayEnd": 12.16,
+          "speechStart": 11.92,
+          "displayStart": 11.88,
+          "highlightEnd": 12.16,
+          "highlightPeak": 11.98,
+          "highlightStart": 11.92
+        },
+        {
+          "word": "quyết",
+          "speechEnd": 12.26,
+          "displayEnd": 12.26,
+          "speechStart": 12.16,
+          "displayStart": 12.12,
+          "highlightEnd": 12.26,
+          "highlightPeak": 12.22,
+          "highlightStart": 12.16
+        },
+        {
+          "word": "bài",
+          "speechEnd": 12.46,
+          "displayEnd": 12.46,
+          "speechStart": 12.26,
+          "displayStart": 12.22,
+          "highlightEnd": 12.46,
+          "highlightPeak": 12.32,
+          "highlightStart": 12.26
+        },
+        {
+          "word": "toán",
+          "speechEnd": 12.52,
+          "displayEnd": 12.52,
+          "speechStart": 12.46,
+          "displayStart": 12.42,
+          "highlightEnd": 12.52,
+          "highlightPeak": 12.52,
+          "highlightStart": 12.46
+        },
+        {
+          "word": "kinh",
+          "speechEnd": 12.7,
+          "displayEnd": 12.7,
+          "speechStart": 12.52,
+          "displayStart": 12.48,
+          "highlightEnd": 12.7,
+          "highlightPeak": 12.58,
+          "highlightStart": 12.52
+        },
+        {
+          "word": "doanh",
+          "speechEnd": 12.8,
+          "displayEnd": 12.8,
+          "speechStart": 12.7,
+          "displayStart": 12.66,
+          "highlightEnd": 12.8,
+          "highlightPeak": 12.76,
+          "highlightStart": 12.7
+        },
+        {
+          "word": "thật:",
+          "speechEnd": 13.38,
+          "displayEnd": 13.43,
+          "speechStart": 12.8,
+          "displayStart": 12.76,
+          "highlightEnd": 13.43,
+          "highlightPeak": 12.86,
+          "highlightStart": 12.8
+        },
+        {
+          "word": "Sales,",
+          "speechEnd": 14.64,
+          "displayEnd": 14.64,
+          "speechStart": 14.58,
+          "displayStart": 14.54,
+          "highlightEnd": 14.64,
+          "highlightPeak": 14.64,
+          "highlightStart": 14.58
+        },
+        {
+          "word": "Marketing,",
+          "speechEnd": 14.84,
+          "displayEnd": 14.84,
+          "speechStart": 14.64,
+          "displayStart": 14.6,
+          "highlightEnd": 14.84,
+          "highlightPeak": 14.7,
+          "highlightStart": 14.64
+        },
+        {
+          "word": "Logistics.",
+          "speechEnd": 15.12,
+          "displayEnd": 15.145,
+          "speechStart": 14.84,
+          "displayStart": 14.8,
+          "highlightEnd": 15.145,
+          "highlightPeak": 14.9,
+          "highlightStart": 14.84
+        }
+      ]
+    },
+    {
+      "id": "scene_proj_ijpocboto_2_fqym",
+      "sceneIndex": 2,
+      "duration": 9.084458,
+      "layoutFamily": "Opening / Headline",
+      "visualLayout": "MetricCards",
+      "sceneIntent": {
+        "type": "metric",
+        "density": "dense",
+        "emotion": "informative",
+        "importance": "high",
+        "highlightWords": [
+          "CỦA LIỆU"
+        ]
+      },
+      "heading": "TÁC ĐỘNG CỦA DỮ LIỆU",
+      "points": [
+        {
+          "text": "Đừng liệt kê kỹ năng suông",
+          "type": "card",
+          "delay": 0.4,
+          "logos": [],
+          "value": "",
+          "badges": [],
+          "subtext": "",
+          "animation": "slide-up"
+        },
+        {
+          "text": "Chứng minh bằng con số cụ thể",
+          "type": "card",
+          "delay": 3.5,
+          "logos": [],
+          "value": "",
+          "badges": [],
+          "subtext": "",
+          "animation": "slide-up"
+        },
+        {
+          "text": "Giảm 15% chi phí vận hành",
+          "type": "card",
+          "delay": 6.7,
+          "logos": [],
+          "value": "",
+          "badges": [],
+          "subtext": "",
+          "animation": "slide-up"
+        }
+      ],
+      "voiceover": "Hai, Impact: Bạn viết em biết dùng SQL, Tableau. HR chê! Phải viết: Dùng SQL tối ưu hóa dữ liệu, giúp giảm 15% chi phí vận hành. Có con số chứng minh năng lực đàng hoàng!",
+      "voiceoverTts": "Hai, Impact: Bạn viết em biết dùng SQL, ta-blô. át-chơ-a chê! Phải viết: Dùng SQL tối ưu hóa dữ liệu, giúp giảm 15% chi phí vận hành. Có con số chứng minh năng lực đàng hoàng!",
+      "voiceoverAudioUrl": "/tts/tts_proj_ijpocboto_scene_proj_ijpocboto_2_fqym_ykm3.wav",
+      "placement": "Full",
+      "mediaList": [
+        "https://res.cloudinary.com/dimxrq8bs/image/upload/v1785382115/ai-video-storyboards/bhpnerbcxwfrboqb8sba.png",
+        "https://res.cloudinary.com/dimxrq8bs/image/upload/v1785833533/ai-video-storyboards/h6xyqnrep0dlzsfiruhr.jpg"
+      ],
+      "selectedMediaIndex": 0,
+      "theme": "fintech_edu",
+      "accentColor": "#00e5ff",
+      "voiceoverDuration": 9.084458,
+      "subtitlesJson": [
+        {
+          "word": "Hai,",
+          "speechEnd": 0.96,
+          "displayEnd": 0.96,
+          "speechStart": 0,
+          "displayStart": 0,
+          "highlightEnd": 0.96,
+          "highlightPeak": 0.06,
+          "highlightStart": 0
+        },
+        {
+          "word": "Impact:",
+          "speechEnd": 1.88,
+          "displayEnd": 1.88,
+          "speechStart": 0.96,
+          "displayStart": 0.92,
+          "highlightEnd": 1.88,
+          "highlightPeak": 1.02,
+          "highlightStart": 0.96
+        },
+        {
+          "word": "Bạn",
+          "speechEnd": 2.04,
+          "displayEnd": 2.04,
+          "speechStart": 1.88,
+          "displayStart": 1.84,
+          "highlightEnd": 2.04,
+          "highlightPeak": 1.94,
+          "highlightStart": 1.88
+        },
+        {
+          "word": "viết",
+          "speechEnd": 2.48,
+          "displayEnd": 2.48,
+          "speechStart": 2.04,
+          "displayStart": 2,
+          "highlightEnd": 2.48,
+          "highlightPeak": 2.1,
+          "highlightStart": 2.04
+        },
+        {
+          "word": "em",
+          "speechEnd": 2.62,
+          "displayEnd": 2.62,
+          "speechStart": 2.48,
+          "displayStart": 2.44,
+          "highlightEnd": 2.62,
+          "highlightPeak": 2.54,
+          "highlightStart": 2.48
+        },
+        {
+          "word": "biết",
+          "speechEnd": 2.68,
+          "displayEnd": 2.68,
+          "speechStart": 2.62,
+          "displayStart": 2.58,
+          "highlightEnd": 2.68,
+          "highlightPeak": 2.68,
+          "highlightStart": 2.62
+        },
+        {
+          "word": "dùng",
+          "speechEnd": 2.82,
+          "displayEnd": 2.82,
+          "speechStart": 2.68,
+          "displayStart": 2.64,
+          "highlightEnd": 2.82,
+          "highlightPeak": 2.74,
+          "highlightStart": 2.68
+        },
+        {
+          "word": "SQL,",
+          "speechEnd": 2.82,
+          "displayEnd": 2.83,
+          "speechStart": 2.82,
+          "displayStart": 2.78,
+          "highlightEnd": 2.82,
+          "highlightPeak": 2.82,
+          "highlightStart": 2.82
+        },
+        {
+          "word": "Tableau.",
+          "speechEnd": 2.82,
+          "displayEnd": 2.83,
+          "speechStart": 2.82,
+          "displayStart": 2.78,
+          "highlightEnd": 2.82,
+          "highlightPeak": 2.82,
+          "highlightStart": 2.82
+        },
+        {
+          "word": "HR",
+          "speechEnd": 2.82,
+          "displayEnd": 2.83,
+          "speechStart": 2.82,
+          "displayStart": 2.78,
+          "highlightEnd": 2.82,
+          "highlightPeak": 2.82,
+          "highlightStart": 2.82
+        },
+        {
+          "word": "chê!",
+          "speechEnd": 2.82,
+          "displayEnd": 2.83,
+          "speechStart": 2.82,
+          "displayStart": 2.78,
+          "highlightEnd": 2.82,
+          "highlightPeak": 2.82,
+          "highlightStart": 2.82
+        },
+        {
+          "word": "Phải",
+          "speechEnd": 3.16,
+          "displayEnd": 3.16,
+          "speechStart": 2.82,
+          "displayStart": 2.78,
+          "highlightEnd": 3.16,
+          "highlightPeak": 2.88,
+          "highlightStart": 2.82
+        },
+        {
+          "word": "viết:",
+          "speechEnd": 3.7,
+          "displayEnd": 3.7,
+          "speechStart": 3.16,
+          "displayStart": 3.12,
+          "highlightEnd": 3.7,
+          "highlightPeak": 3.22,
+          "highlightStart": 3.16
+        },
+        {
+          "word": "Dùng",
+          "speechEnd": 3.84,
+          "displayEnd": 3.84,
+          "speechStart": 3.7,
+          "displayStart": 3.66,
+          "highlightEnd": 3.84,
+          "highlightPeak": 3.76,
+          "highlightStart": 3.7
+        },
+        {
+          "word": "SQL",
+          "speechEnd": 4.12,
+          "displayEnd": 4.12,
+          "speechStart": 3.84,
+          "displayStart": 3.8,
+          "highlightEnd": 4.12,
+          "highlightPeak": 3.9,
+          "highlightStart": 3.84
+        },
+        {
+          "word": "tối",
+          "speechEnd": 4.28,
+          "displayEnd": 4.28,
+          "speechStart": 4.12,
+          "displayStart": 4.08,
+          "highlightEnd": 4.28,
+          "highlightPeak": 4.18,
+          "highlightStart": 4.12
+        },
+        {
+          "word": "ưu",
+          "speechEnd": 4.38,
+          "displayEnd": 4.38,
+          "speechStart": 4.28,
+          "displayStart": 4.24,
+          "highlightEnd": 4.38,
+          "highlightPeak": 4.34,
+          "highlightStart": 4.28
+        },
+        {
+          "word": "hóa",
+          "speechEnd": 4.56,
+          "displayEnd": 4.56,
+          "speechStart": 4.38,
+          "displayStart": 4.34,
+          "highlightEnd": 4.56,
+          "highlightPeak": 4.44,
+          "highlightStart": 4.38
+        },
+        {
+          "word": "dữ",
+          "speechEnd": 4.74,
+          "displayEnd": 4.74,
+          "speechStart": 4.56,
+          "displayStart": 4.52,
+          "highlightEnd": 4.74,
+          "highlightPeak": 4.62,
+          "highlightStart": 4.56
+        },
+        {
+          "word": "liệu,",
+          "speechEnd": 5.42,
+          "displayEnd": 5.46,
+          "speechStart": 4.74,
+          "displayStart": 4.7,
+          "highlightEnd": 5.46,
+          "highlightPeak": 4.8,
+          "highlightStart": 4.74
+        },
+        {
+          "word": "giúp",
+          "speechEnd": 5.54,
+          "displayEnd": 5.54,
+          "speechStart": 5.46,
+          "displayStart": 5.42,
+          "highlightEnd": 5.54,
+          "highlightPeak": 5.52,
+          "highlightStart": 5.46
+        },
+        {
+          "word": "giảm",
+          "speechEnd": 5.82,
+          "displayEnd": 5.87,
+          "speechStart": 5.54,
+          "displayStart": 5.5,
+          "highlightEnd": 5.87,
+          "highlightPeak": 5.6,
+          "highlightStart": 5.54
+        },
+        {
+          "word": "15%",
+          "speechEnd": 6.34,
+          "displayEnd": 6.34,
+          "speechStart": 6.2,
+          "displayStart": 6.16,
+          "highlightEnd": 6.34,
+          "highlightPeak": 6.26,
+          "highlightStart": 6.2
+        },
+        {
+          "word": "chi",
+          "speechEnd": 6.6,
+          "displayEnd": 6.6,
+          "speechStart": 6.34,
+          "displayStart": 6.3,
+          "highlightEnd": 6.6,
+          "highlightPeak": 6.4,
+          "highlightStart": 6.34
+        },
+        {
+          "word": "phí",
+          "speechEnd": 6.6,
+          "displayEnd": 6.61,
+          "speechStart": 6.6,
+          "displayStart": 6.56,
+          "highlightEnd": 6.6,
+          "highlightPeak": 6.6,
+          "highlightStart": 6.6
+        },
+        {
+          "word": "vận",
+          "speechEnd": 6.8,
+          "displayEnd": 6.8,
+          "speechStart": 6.6,
+          "displayStart": 6.56,
+          "highlightEnd": 6.8,
+          "highlightPeak": 6.66,
+          "highlightStart": 6.6
+        },
+        {
+          "word": "hành.",
+          "speechEnd": 7.5,
+          "displayEnd": 7.5,
+          "speechStart": 6.8,
+          "displayStart": 6.76,
+          "highlightEnd": 7.5,
+          "highlightPeak": 6.86,
+          "highlightStart": 6.8
+        },
+        {
+          "word": "Có",
+          "speechEnd": 7.62,
+          "displayEnd": 7.62,
+          "speechStart": 7.5,
+          "displayStart": 7.46,
+          "highlightEnd": 7.62,
+          "highlightPeak": 7.56,
+          "highlightStart": 7.5
+        },
+        {
+          "word": "con",
+          "speechEnd": 7.76,
+          "displayEnd": 7.76,
+          "speechStart": 7.62,
+          "displayStart": 7.58,
+          "highlightEnd": 7.76,
+          "highlightPeak": 7.68,
+          "highlightStart": 7.62
+        },
+        {
+          "word": "số",
+          "speechEnd": 7.9,
+          "displayEnd": 7.9,
+          "speechStart": 7.76,
+          "displayStart": 7.72,
+          "highlightEnd": 7.9,
+          "highlightPeak": 7.82,
+          "highlightStart": 7.76
+        },
+        {
+          "word": "chứng",
+          "speechEnd": 8.06,
+          "displayEnd": 8.06,
+          "speechStart": 7.9,
+          "displayStart": 7.86,
+          "highlightEnd": 8.06,
+          "highlightPeak": 7.96,
+          "highlightStart": 7.9
+        },
+        {
+          "word": "minh",
+          "speechEnd": 8.16,
+          "displayEnd": 8.16,
+          "speechStart": 8.06,
+          "displayStart": 8.02,
+          "highlightEnd": 8.16,
+          "highlightPeak": 8.12,
+          "highlightStart": 8.06
+        },
+        {
+          "word": "năng",
+          "speechEnd": 8.32,
+          "displayEnd": 8.32,
+          "speechStart": 8.16,
+          "displayStart": 8.12,
+          "highlightEnd": 8.32,
+          "highlightPeak": 8.22,
+          "highlightStart": 8.16
+        },
+        {
+          "word": "lực",
+          "speechEnd": 8.46,
+          "displayEnd": 8.46,
+          "speechStart": 8.32,
+          "displayStart": 8.28,
+          "highlightEnd": 8.46,
+          "highlightPeak": 8.38,
+          "highlightStart": 8.32
+        },
+        {
+          "word": "đàng",
+          "speechEnd": 8.62,
+          "displayEnd": 8.62,
+          "speechStart": 8.46,
+          "displayStart": 8.42,
+          "highlightEnd": 8.62,
+          "highlightPeak": 8.52,
+          "highlightStart": 8.46
+        },
+        {
+          "word": "hoàng!",
+          "speechEnd": 9.06,
+          "displayEnd": 9.084,
+          "speechStart": 8.62,
+          "displayStart": 8.58,
+          "highlightEnd": 9.084,
+          "highlightPeak": 8.68,
+          "highlightStart": 8.62
+        }
+      ]
+    },
+    {
+      "id": "scene_proj_ijpocboto_3_nwmd",
+      "sceneIndex": 3,
+      "duration": 8.3975,
+      "layoutFamily": "Opening / Headline",
+      "visualLayout": "IntroCutoutHeadlineImage",
+      "sceneIntent": {
+        "type": "quote",
+        "density": "sparse",
+        "emotion": "serious",
+        "importance": "medium",
+        "highlightWords": [
+          "DUY DATA"
+        ]
+      },
+      "heading": "TƯ DUY DATA",
+      "points": [
+        {
+          "text": "CV không phải tiểu thuyết",
+          "type": "card",
+          "delay": 0.4,
+          "logos": [],
+          "value": "",
+          "badges": [],
+          "subtext": "",
+          "animation": "slide-up"
+        },
+        {
+          "text": "Tư duy Data Analyst chuyên nghiệp",
+          "type": "card",
+          "delay": 3.5,
+          "logos": [],
+          "value": "",
+          "badges": [],
+          "subtext": "",
+          "animation": "slide-up"
+        }
+      ],
+      "voiceover": "Cứ viết CV như một cuốn tiểu thuyết thì chỉ có thất nghiệp dài dài. Phải viết CV dưới lăng kính của một Data Analyst: Có bằng chứng, có số liệu, có kết quả rõ ràng!",
+      "voiceoverTts": "Cứ viết xê-vê như một cuốn tiểu thuyết thì chỉ có thất nghiệp dài dài. Phải viết xê-vê dưới lăng kính của một Data Analyst: Có bằng chứng, có số liệu, có kết quả rõ ràng!",
+      "voiceoverAudioUrl": "/tts/tts_proj_ijpocboto_scene_proj_ijpocboto_3_nwmd_uwak.wav",
+      "placement": "Full",
+      "mediaList": [
+        "https://res.cloudinary.com/dimxrq8bs/image/upload/v1785382115/ai-video-storyboards/bhpnerbcxwfrboqb8sba.png",
+        "https://res.cloudinary.com/dimxrq8bs/image/upload/v1785833533/ai-video-storyboards/h6xyqnrep0dlzsfiruhr.jpg"
+      ],
+      "selectedMediaIndex": 0,
+      "theme": "fintech_edu",
+      "accentColor": "#00e5ff",
+      "voiceoverDuration": 8.3975,
+      "subtitlesJson": [
+        {
+          "word": "Cứ",
+          "speechEnd": 0.36,
+          "displayEnd": 0.36,
+          "speechStart": 0,
+          "displayStart": 0,
+          "highlightEnd": 0.36,
+          "highlightPeak": 0.06,
+          "highlightStart": 0
+        },
+        {
+          "word": "viết",
+          "speechEnd": 0.42,
+          "displayEnd": 0.6,
+          "speechStart": 0.36,
+          "displayStart": 0.32,
+          "highlightEnd": 0.6,
+          "highlightPeak": 0.42,
+          "highlightStart": 0.36
+        },
+        {
+          "word": "CV",
+          "speechEnd": 0.76,
+          "displayEnd": 0.76,
+          "speechStart": 0.6,
+          "displayStart": 0.56,
+          "highlightEnd": 0.76,
+          "highlightPeak": 0.66,
+          "highlightStart": 0.6
+        },
+        {
+          "word": "như",
+          "speechEnd": 0.9,
+          "displayEnd": 0.9,
+          "speechStart": 0.76,
+          "displayStart": 0.72,
+          "highlightEnd": 0.9,
+          "highlightPeak": 0.82,
+          "highlightStart": 0.76
+        },
+        {
+          "word": "một",
+          "speechEnd": 1.08,
+          "displayEnd": 1.08,
+          "speechStart": 0.9,
+          "displayStart": 0.86,
+          "highlightEnd": 1.08,
+          "highlightPeak": 0.96,
+          "highlightStart": 0.9
+        },
+        {
+          "word": "cuốn",
+          "speechEnd": 1.18,
+          "displayEnd": 1.18,
+          "speechStart": 1.08,
+          "displayStart": 1.04,
+          "highlightEnd": 1.18,
+          "highlightPeak": 1.14,
+          "highlightStart": 1.08
+        },
+        {
+          "word": "tiểu",
+          "speechEnd": 1.36,
+          "displayEnd": 1.36,
+          "speechStart": 1.18,
+          "displayStart": 1.14,
+          "highlightEnd": 1.36,
+          "highlightPeak": 1.24,
+          "highlightStart": 1.18
+        },
+        {
+          "word": "thuyết",
+          "speechEnd": 1.72,
+          "displayEnd": 1.72,
+          "speechStart": 1.36,
+          "displayStart": 1.32,
+          "highlightEnd": 1.72,
+          "highlightPeak": 1.42,
+          "highlightStart": 1.36
+        },
+        {
+          "word": "thì",
+          "speechEnd": 2.02,
+          "displayEnd": 2.02,
+          "speechStart": 1.72,
+          "displayStart": 1.68,
+          "highlightEnd": 2.02,
+          "highlightPeak": 1.78,
+          "highlightStart": 1.72
+        },
+        {
+          "word": "chỉ",
+          "speechEnd": 2.18,
+          "displayEnd": 2.18,
+          "speechStart": 2.02,
+          "displayStart": 1.98,
+          "highlightEnd": 2.18,
+          "highlightPeak": 2.08,
+          "highlightStart": 2.02
+        },
+        {
+          "word": "có",
+          "speechEnd": 2.24,
+          "displayEnd": 2.24,
+          "speechStart": 2.18,
+          "displayStart": 2.14,
+          "highlightEnd": 2.24,
+          "highlightPeak": 2.24,
+          "highlightStart": 2.18
+        },
+        {
+          "word": "thất",
+          "speechEnd": 2.36,
+          "displayEnd": 2.36,
+          "speechStart": 2.24,
+          "displayStart": 2.2,
+          "highlightEnd": 2.36,
+          "highlightPeak": 2.3,
+          "highlightStart": 2.24
+        },
+        {
+          "word": "nghiệp",
+          "speechEnd": 2.52,
+          "displayEnd": 2.52,
+          "speechStart": 2.36,
+          "displayStart": 2.32,
+          "highlightEnd": 2.52,
+          "highlightPeak": 2.42,
+          "highlightStart": 2.36
+        },
+        {
+          "word": "dài",
+          "speechEnd": 2.7,
+          "displayEnd": 2.7,
+          "speechStart": 2.52,
+          "displayStart": 2.48,
+          "highlightEnd": 2.7,
+          "highlightPeak": 2.58,
+          "highlightStart": 2.52
+        },
+        {
+          "word": "dài.",
+          "speechEnd": 3.28,
+          "displayEnd": 3.28,
+          "speechStart": 2.7,
+          "displayStart": 2.66,
+          "highlightEnd": 3.28,
+          "highlightPeak": 2.76,
+          "highlightStart": 2.7
+        },
+        {
+          "word": "Phải",
+          "speechEnd": 3.4,
+          "displayEnd": 3.4,
+          "speechStart": 3.28,
+          "displayStart": 3.24,
+          "highlightEnd": 3.4,
+          "highlightPeak": 3.34,
+          "highlightStart": 3.28
+        },
+        {
+          "word": "viết",
+          "speechEnd": 3.48,
+          "displayEnd": 3.68,
+          "speechStart": 3.4,
+          "displayStart": 3.36,
+          "highlightEnd": 3.68,
+          "highlightPeak": 3.46,
+          "highlightStart": 3.4
+        },
+        {
+          "word": "CV",
+          "speechEnd": 3.9,
+          "displayEnd": 3.9,
+          "speechStart": 3.68,
+          "displayStart": 3.64,
+          "highlightEnd": 3.9,
+          "highlightPeak": 3.74,
+          "highlightStart": 3.68
+        },
+        {
+          "word": "dưới",
+          "speechEnd": 4.08,
+          "displayEnd": 4.08,
+          "speechStart": 3.9,
+          "displayStart": 3.86,
+          "highlightEnd": 4.08,
+          "highlightPeak": 3.96,
+          "highlightStart": 3.9
+        },
+        {
+          "word": "lăng",
+          "speechEnd": 4.24,
+          "displayEnd": 4.24,
+          "speechStart": 4.08,
+          "displayStart": 4.04,
+          "highlightEnd": 4.24,
+          "highlightPeak": 4.14,
+          "highlightStart": 4.08
+        },
+        {
+          "word": "kính",
+          "speechEnd": 4.48,
+          "displayEnd": 4.48,
+          "speechStart": 4.24,
+          "displayStart": 4.2,
+          "highlightEnd": 4.48,
+          "highlightPeak": 4.3,
+          "highlightStart": 4.24
+        },
+        {
+          "word": "của",
+          "speechEnd": 4.6,
+          "displayEnd": 4.6,
+          "speechStart": 4.48,
+          "displayStart": 4.44,
+          "highlightEnd": 4.6,
+          "highlightPeak": 4.54,
+          "highlightStart": 4.48
+        },
+        {
+          "word": "một",
+          "speechEnd": 4.78,
+          "displayEnd": 4.9,
+          "speechStart": 4.6,
+          "displayStart": 4.56,
+          "highlightEnd": 4.9,
+          "highlightPeak": 4.66,
+          "highlightStart": 4.6
+        },
+        {
+          "word": "Data",
+          "speechEnd": 5.02,
+          "displayEnd": 5.02,
+          "speechStart": 4.9,
+          "displayStart": 4.86,
+          "highlightEnd": 5.02,
+          "highlightPeak": 4.96,
+          "highlightStart": 4.9
+        },
+        {
+          "word": "Analyst:",
+          "speechEnd": 5.98,
+          "displayEnd": 5.98,
+          "speechStart": 5.02,
+          "displayStart": 4.98,
+          "highlightEnd": 5.98,
+          "highlightPeak": 5.08,
+          "highlightStart": 5.02
+        },
+        {
+          "word": "Có",
+          "speechEnd": 6.12,
+          "displayEnd": 6.12,
+          "speechStart": 5.98,
+          "displayStart": 5.94,
+          "highlightEnd": 6.12,
+          "highlightPeak": 6.04,
+          "highlightStart": 5.98
+        },
+        {
+          "word": "bằng",
+          "speechEnd": 6.3,
+          "displayEnd": 6.3,
+          "speechStart": 6.12,
+          "displayStart": 6.08,
+          "highlightEnd": 6.3,
+          "highlightPeak": 6.18,
+          "highlightStart": 6.12
+        },
+        {
+          "word": "chứng,",
+          "speechEnd": 6.52,
+          "displayEnd": 6.52,
+          "speechStart": 6.3,
+          "displayStart": 6.26,
+          "highlightEnd": 6.52,
+          "highlightPeak": 6.36,
+          "highlightStart": 6.3
+        },
+        {
+          "word": "có",
+          "speechEnd": 6.72,
+          "displayEnd": 6.72,
+          "speechStart": 6.52,
+          "displayStart": 6.48,
+          "highlightEnd": 6.72,
+          "highlightPeak": 6.58,
+          "highlightStart": 6.52
+        },
+        {
+          "word": "số",
+          "speechEnd": 6.86,
+          "displayEnd": 6.86,
+          "speechStart": 6.72,
+          "displayStart": 6.68,
+          "highlightEnd": 6.86,
+          "highlightPeak": 6.78,
+          "highlightStart": 6.72
+        },
+        {
+          "word": "liệu,",
+          "speechEnd": 7.14,
+          "displayEnd": 7.14,
+          "speechStart": 6.86,
+          "displayStart": 6.82,
+          "highlightEnd": 7.14,
+          "highlightPeak": 6.92,
+          "highlightStart": 6.86
+        },
+        {
+          "word": "có",
+          "speechEnd": 7.48,
+          "displayEnd": 7.48,
+          "speechStart": 7.14,
+          "displayStart": 7.1,
+          "highlightEnd": 7.48,
+          "highlightPeak": 7.2,
+          "highlightStart": 7.14
+        },
+        {
+          "word": "kết",
+          "speechEnd": 7.62,
+          "displayEnd": 7.62,
+          "speechStart": 7.48,
+          "displayStart": 7.44,
+          "highlightEnd": 7.62,
+          "highlightPeak": 7.54,
+          "highlightStart": 7.48
+        },
+        {
+          "word": "quả",
+          "speechEnd": 7.8,
+          "displayEnd": 7.8,
+          "speechStart": 7.62,
+          "displayStart": 7.58,
+          "highlightEnd": 7.8,
+          "highlightPeak": 7.68,
+          "highlightStart": 7.62
+        },
+        {
+          "word": "rõ",
+          "speechEnd": 7.94,
+          "displayEnd": 7.94,
+          "speechStart": 7.8,
+          "displayStart": 7.76,
+          "highlightEnd": 7.94,
+          "highlightPeak": 7.86,
+          "highlightStart": 7.8
+        },
+        {
+          "word": "ràng!",
+          "speechEnd": 8.38,
+          "displayEnd": 8.398,
+          "speechStart": 7.94,
+          "displayStart": 7.9,
+          "highlightEnd": 8.398,
+          "highlightPeak": 8,
+          "highlightStart": 7.94
+        }
+      ]
+    },
+    {
+      "id": "scene_proj_ijpocboto_4_30c9",
+      "sceneIndex": 4,
+      "duration": 5.059375,
+      "layoutFamily": "Blank",
+      "visualLayout": "Blank",
+      "sceneIntent": {
+        "type": "ending",
+        "density": "sparse",
+        "emotion": "exciting",
+        "importance": "high",
+        "highlightWords": [
+          "Portfolio"
+        ]
+      },
+      "heading": "XÂY DỰNG PORTFOLIO THỰC CHIẾN",
+      "points": [
+        {
+          "text": "Xây dựng Portfolio thực chiến ngay",
+          "type": "card",
+          "delay": 0.4,
+          "logos": [],
+          "value": "",
+          "badges": [],
+          "subtext": "",
+          "animation": "slide-up"
+        }
+      ],
+      "voiceover": "Muốn sở hữu Portfolio thực chiến đốn gục mọi HR? Tìm hiểu ngay lộ trình của HUST tại Bio nhé!",
+      "voiceoverTts": "Muốn sở hữu pọt-phô-li-ô thực chiến đốn gục mọi át-chơ-a? Tìm hiểu ngay lộ trình của hớt tại bai-ô nhé!",
+      "voiceoverAudioUrl": "/tts/tts_proj_ijpocboto_scene_proj_ijpocboto_4_30c9_0do6.wav",
+      "placement": "Full",
+      "mediaList": [
+        "https://res.cloudinary.com/dimxrq8bs/image/upload/v1785382115/ai-video-storyboards/bhpnerbcxwfrboqb8sba.png",
+        "https://res.cloudinary.com/dimxrq8bs/image/upload/v1785833533/ai-video-storyboards/h6xyqnrep0dlzsfiruhr.jpg"
+      ],
+      "selectedMediaIndex": 1,
+      "theme": "fintech_edu",
+      "accentColor": "#00e5ff",
+      "voiceoverDuration": 5.059375,
+      "subtitlesJson": [
+        {
+          "word": "Muốn",
+          "speechEnd": 0.36,
+          "displayEnd": 0.36,
+          "speechStart": 0,
+          "displayStart": 0,
+          "highlightEnd": 0.36,
+          "highlightPeak": 0.06,
+          "highlightStart": 0
+        },
+        {
+          "word": "sở",
+          "speechEnd": 0.52,
+          "displayEnd": 0.52,
+          "speechStart": 0.36,
+          "displayStart": 0.32,
+          "highlightEnd": 0.52,
+          "highlightPeak": 0.42,
+          "highlightStart": 0.36
+        },
+        {
+          "word": "hữu",
+          "speechEnd": 0.64,
+          "displayEnd": 0.88,
+          "speechStart": 0.52,
+          "displayStart": 0.48,
+          "highlightEnd": 0.88,
+          "highlightPeak": 0.58,
+          "highlightStart": 0.52
+        },
+        {
+          "word": "Portfolio",
+          "speechEnd": 1.26,
+          "displayEnd": 1.26,
+          "speechStart": 0.88,
+          "displayStart": 0.84,
+          "highlightEnd": 1.26,
+          "highlightPeak": 0.94,
+          "highlightStart": 0.88
+        },
+        {
+          "word": "thực",
+          "speechEnd": 1.52,
+          "displayEnd": 1.52,
+          "speechStart": 1.26,
+          "displayStart": 1.22,
+          "highlightEnd": 1.52,
+          "highlightPeak": 1.32,
+          "highlightStart": 1.26
+        },
+        {
+          "word": "chiến",
+          "speechEnd": 1.74,
+          "displayEnd": 1.74,
+          "speechStart": 1.52,
+          "displayStart": 1.48,
+          "highlightEnd": 1.74,
+          "highlightPeak": 1.58,
+          "highlightStart": 1.52
+        },
+        {
+          "word": "đốn",
+          "speechEnd": 1.86,
+          "displayEnd": 1.86,
+          "speechStart": 1.74,
+          "displayStart": 1.7,
+          "highlightEnd": 1.86,
+          "highlightPeak": 1.8,
+          "highlightStart": 1.74
+        },
+        {
+          "word": "gục",
+          "speechEnd": 2.04,
+          "displayEnd": 2.04,
+          "speechStart": 1.86,
+          "displayStart": 1.82,
+          "highlightEnd": 2.04,
+          "highlightPeak": 1.92,
+          "highlightStart": 1.86
+        },
+        {
+          "word": "mọi",
+          "speechEnd": 2.34,
+          "displayEnd": 2.34,
+          "speechStart": 2.04,
+          "displayStart": 2,
+          "highlightEnd": 2.34,
+          "highlightPeak": 2.1,
+          "highlightStart": 2.04
+        },
+        {
+          "word": "HR?",
+          "speechEnd": 3.02,
+          "displayEnd": 3.22,
+          "speechStart": 2.34,
+          "displayStart": 2.3,
+          "highlightEnd": 3.22,
+          "highlightPeak": 2.4,
+          "highlightStart": 2.34
+        },
+        {
+          "word": "Tìm",
+          "speechEnd": 3.38,
+          "displayEnd": 3.38,
+          "speechStart": 3.22,
+          "displayStart": 3.18,
+          "highlightEnd": 3.38,
+          "highlightPeak": 3.28,
+          "highlightStart": 3.22
+        },
+        {
+          "word": "hiểu",
+          "speechEnd": 3.5,
+          "displayEnd": 3.5,
+          "speechStart": 3.38,
+          "displayStart": 3.34,
+          "highlightEnd": 3.5,
+          "highlightPeak": 3.44,
+          "highlightStart": 3.38
+        },
+        {
+          "word": "ngay",
+          "speechEnd": 3.62,
+          "displayEnd": 3.62,
+          "speechStart": 3.5,
+          "displayStart": 3.46,
+          "highlightEnd": 3.62,
+          "highlightPeak": 3.56,
+          "highlightStart": 3.5
+        },
+        {
+          "word": "lộ",
+          "speechEnd": 3.78,
+          "displayEnd": 3.78,
+          "speechStart": 3.62,
+          "displayStart": 3.58,
+          "highlightEnd": 3.78,
+          "highlightPeak": 3.68,
+          "highlightStart": 3.62
+        },
+        {
+          "word": "trình",
+          "speechEnd": 3.94,
+          "displayEnd": 3.94,
+          "speechStart": 3.78,
+          "displayStart": 3.74,
+          "highlightEnd": 3.94,
+          "highlightPeak": 3.84,
+          "highlightStart": 3.78
+        },
+        {
+          "word": "của",
+          "speechEnd": 4.06,
+          "displayEnd": 4.06,
+          "speechStart": 3.94,
+          "displayStart": 3.9,
+          "highlightEnd": 4.06,
+          "highlightPeak": 4,
+          "highlightStart": 3.94
+        },
+        {
+          "word": "HUST",
+          "speechEnd": 4.24,
+          "displayEnd": 4.24,
+          "speechStart": 4.06,
+          "displayStart": 4.02,
+          "highlightEnd": 4.24,
+          "highlightPeak": 4.12,
+          "highlightStart": 4.06
+        },
+        {
+          "word": "tại",
+          "speechEnd": 4.38,
+          "displayEnd": 4.54,
+          "speechStart": 4.24,
+          "displayStart": 4.2,
+          "highlightEnd": 4.54,
+          "highlightPeak": 4.3,
+          "highlightStart": 4.24
+        },
+        {
+          "word": "Bio",
+          "speechEnd": 4.62,
+          "displayEnd": 4.62,
+          "speechStart": 4.54,
+          "displayStart": 4.5,
+          "highlightEnd": 4.62,
+          "highlightPeak": 4.6,
+          "highlightStart": 4.54
+        },
+        {
+          "word": "nhé!",
+          "speechEnd": 5.04,
+          "displayEnd": 5.059,
+          "speechStart": 4.62,
+          "displayStart": 4.58,
+          "highlightEnd": 5.059,
+          "highlightPeak": 4.68,
+          "highlightStart": 4.62
+        }
+      ]
+    }
+  ]
+}

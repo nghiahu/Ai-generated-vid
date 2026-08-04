@@ -89,23 +89,32 @@ export const SplitHorizontalMode: React.FC<ModeRendererProps> = ({
     if (!comp) return null;
     const isLeft = side === "left";
     const isAccent = itemStyleSetting.useAccentBg;
-    const sideAccentColor = isLeft ? (accentColor || "#EF4444") : "#EAB308";
+    const sideAccentColor = isLeft ? (accentColor || "#EF4444") : "#F59E0B";
     const rotation = t.items.rotations && t.items.rotations[cardIdx % t.items.rotations.length] !== undefined
       ? t.items.rotations[cardIdx % t.items.rotations.length]
       : (isLeft ? -2.2 : 2.2);
     const pos = resolvedPositions[cardIdx % resolvedPositions.length];
 
+    const isAIDriven = theme === "ai_driven" || theme?.includes("ai_driven");
     const cardStyle: React.CSSProperties = {
       minHeight: isVertical ? "340px" : "400px",
       borderRadius: itemStyleSetting.borderRadius || "34px",
       padding: resolvePadding(itemStyleSetting.padding || "34px", paddingScale),
       transform: `rotate(${rotation}deg)`,
       background: isAccent
-        ? `linear-gradient(135deg, ${sideAccentColor}, ${darkAccentColor})`
+        ? (isAIDriven
+            ? "linear-gradient(135deg, rgba(0, 15, 60, 0.85) 0%, rgba(0, 8, 36, 0.95) 100%)"
+            : `linear-gradient(135deg, ${sideAccentColor}, ${darkAccentColor})`)
         : styles.cardStyle.background || styles.cardStyle.backgroundColor || "rgba(15, 23, 42, 0.75)",
-      border: isAccent ? "none" : `1.5px solid ${sideAccentColor}77`,
+      border: isAccent
+        ? (isAIDriven
+            ? "1.5px solid rgba(0, 200, 255, 0.55)"
+            : "none")
+        : `1.5px solid ${sideAccentColor}77`,
       boxShadow: isAccent 
-        ? "none" 
+        ? (isAIDriven
+            ? "0 0 25px rgba(0, 200, 255, 0.35)"
+            : "none") 
         : `0 16px 48px rgba(0, 0, 0, 0.4), 0 0 25px ${sideAccentColor}22`,
       backdropFilter: "blur(16px) saturate(1.15)",
       display: "flex",

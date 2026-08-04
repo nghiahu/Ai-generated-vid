@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 2203
+/***/ 932
 (__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -55548,7 +55548,7 @@ const { fontFamily: fontChakraPetch } = ChakraPetch_loadFont("normal", {
 });
 
 ;// ./src/styles/vde_themes.json
-const vde_themes_namespaceObject = /*#__PURE__*/JSON.parse('{"rikkei":{"extends":"minimal","name":"Rikkei Academic Premium","description":"Phong cách nhận diện Rikkei Edu: Nền trắng hồng hạt siêu sạch, viền đỏ Crimson, thẻ học tập 3D bo góc 16px, khung tiêu đề Brackets.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"professional, educational, academic, clean, corporate, structured"},"tokens":{"colors":{"background":"linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)","cardBg":"linear-gradient(135deg, #FFFFFF 0%, #FFF8F8 100%)","border":"1.5px solid rgba(168, 35, 42, 0.18)","accent":"#A8232A","text":"#191919","textSecondary":"#595959"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 10px 30px rgba(168, 35, 42, 0.08)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["bounce"]}},"fintech_edu":{"extends":"ai_hub_grid","name":"FinTech Edu — Deep Blue AI","description":"Deep Royal Blue Navy gradient, circuit board SVG texture, Electric Cyan glow, Gold CTA. Phong cách RKKEIEdu AI tech poster.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.92,"minimalism":0.7},"tone":"tech, futuristic, education, glow, circuit, deep-blue"},"tokens":{"colors":{"background":"linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)","cardBg":"linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(0, 100, 240, 0.35) 100%)","border":"1.5px solid rgba(0, 229, 255, 0.6)","accent":"#00e5ff","text":"#FFFFFF","textSecondary":"rgba(255, 255, 255, 0.95)"},"fonts":{"title":"Chakra Petch","body":"Be Vietnam Pro"},"radius":"12px","shadow":"0 0 30px rgba(0, 212, 255, 0.35), 0 0 60px rgba(0, 212, 255, 0.1)"},"motion":{"energy":"high","style":["slide-up","fade","glow-pulse"],"avoid":["bounce","glitch"]}},"ai_hub_grid":{"extends":"minimal","name":"AI Hub Grid","description":"Nền chàm tối với lưới tọa độ kỹ thuật số, quầng sáng xanh dương và các thẻ kính mờ phát sáng viền cyan.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"tech, futuristic, ambient grid, glow glassmorphism"},"tokens":{"colors":{"background":"#030712","cardBg":"linear-gradient(135deg, rgba(8, 17, 37, 0.7) 0%, rgba(3, 7, 18, 0.4) 100%)","border":"1px solid rgba(59, 130, 246, 0.35)","accent":"#3b82f6","text":"#ffffff","textSecondary":"rgba(255, 255, 255, 0.65)"},"fonts":{"title":"Be Vietnam Pro, sans-serif","body":"Be Vietnam Pro, sans-serif"},"radius":"16px","shadow":"0 0 25px rgba(59, 130, 246, 0.15)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}},"ba":{"extends":"minimal","name":"Ba — Modern Corporate","description":"Theme Ba: Phong cách doanh nghiệp hiện đại. Nền xanh gradient sâu thẳm, thẻ nội dung Business Blue kính mờ, viền Electric Blue, chữ Pure White & Soft White và điểm nhấn Tech Cyan.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"corporate, finance, professional, modern, clean, trust"},"tokens":{"colors":{"background":"linear-gradient(135deg, #002691 0%, #004BBF 50%, #0059D7 100%)","cardBg":"linear-gradient(135deg, #0059D7 0%, #0259E9 100%)","border":"1.5px solid rgba(93, 200, 251, 0.7)","accent":"#5DC8FB","text":"#FFFFFF","textSecondary":"#EAF8FF"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 8px 32px rgba(2, 89, 233, 0.15)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}}}');
+const vde_themes_namespaceObject = /*#__PURE__*/JSON.parse('{"rikkei":{"extends":"minimal","name":"Rikkei Academic Premium","description":"Phong cách nhận diện Rikkei Edu: Nền trắng hồng hạt siêu sạch, viền đỏ Crimson, thẻ học tập 3D bo góc 16px, khung tiêu đề Brackets.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"professional, educational, academic, clean, corporate, structured"},"tokens":{"colors":{"background":"linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)","cardBg":"linear-gradient(135deg, #FFFFFF 0%, #FFF8F8 100%)","border":"1.5px solid rgba(168, 35, 42, 0.18)","accent":"#A8232A","text":"#191919","textSecondary":"#595959"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 10px 30px rgba(168, 35, 42, 0.08)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["bounce"]}},"fintech_edu":{"extends":"ai_hub_grid","name":"FinTech Edu — Deep Blue AI","description":"Deep Royal Blue Navy gradient, circuit board SVG texture, Electric Cyan glow, Gold CTA. Phong cách RKKEIEdu AI tech poster.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.92,"minimalism":0.7},"tone":"tech, futuristic, education, glow, circuit, deep-blue"},"tokens":{"colors":{"background":"linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)","cardBg":"linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(0, 100, 240, 0.35) 100%)","border":"1.5px solid rgba(0, 229, 255, 0.6)","accent":"#00e5ff","text":"#FFFFFF","textSecondary":"rgba(255, 255, 255, 0.95)"},"fonts":{"title":"Chakra Petch","body":"Be Vietnam Pro"},"radius":"12px","shadow":"0 0 30px rgba(0, 212, 255, 0.35), 0 0 60px rgba(0, 212, 255, 0.1)"},"motion":{"energy":"high","style":["slide-up","fade","glow-pulse"],"avoid":["bounce","glitch"]}},"ai_hub_grid":{"extends":"minimal","name":"AI Hub Grid","description":"Nền chàm tối với lưới tọa độ kỹ thuật số, quầng sáng xanh dương và các thẻ kính mờ phát sáng viền cyan.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"tech, futuristic, ambient grid, glow glassmorphism"},"tokens":{"colors":{"background":"#030712","cardBg":"linear-gradient(135deg, rgba(8, 17, 37, 0.7) 0%, rgba(3, 7, 18, 0.4) 100%)","border":"1px solid rgba(59, 130, 246, 0.35)","accent":"#3b82f6","text":"#ffffff","textSecondary":"rgba(255, 255, 255, 0.65)"},"fonts":{"title":"Be Vietnam Pro, sans-serif","body":"Be Vietnam Pro, sans-serif"},"radius":"16px","shadow":"0 0 25px rgba(59, 130, 246, 0.15)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}},"ai_driven":{"extends":"fintech_edu","name":"AI-Driven — Electric Blue Sci-Fi","description":"Phong cách poster AI-DRIVEN SOFTWARE DEVELOPMENT của Rikkei Academy. Nền Navy-to-Midnight gradient sâu thẳm, particle dots xanh, hào quang trung tâm Cyan-White, viền Electric Cyan glow, thẻ kính mờ Navy. Font Chakra Petch heading + Be Vietnam Pro body.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.93,"minimalism":0.65},"tone":"tech, futuristic, educational, electric-blue, cyberpunk-edu, glow-particle, sci-fi"},"tokens":{"colors":{"background":"linear-gradient(180deg, #000A3A 0%, #001060 40%, #0026A8 80%, #0015C0 100%)","cardBg":"linear-gradient(135deg, rgba(0, 30, 100, 0.55) 0%, rgba(0, 10, 58, 0.75) 100%)","border":"1.5px solid rgba(0, 200, 255, 0.55)","accent":"#00C8FF","text":"#FFFFFF","textSecondary":"rgba(200, 230, 255, 0.85)"},"fonts":{"title":"Chakra Petch","body":"Be Vietnam Pro"},"radius":"12px","shadow":"0 0 40px rgba(0, 200, 255, 0.4), 0 0 80px rgba(27, 111, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)"},"motion":{"energy":"high","style":["slide-up","fade","glow-pulse","particle-stream"],"avoid":["bounce","glitch"]}},"ba":{"extends":"minimal","name":"Ba — Modern Corporate","description":"Theme Ba: Phong cách doanh nghiệp hiện đại. Nền xanh gradient sâu thẳm, thẻ nội dung Business Blue kính mờ, viền Electric Blue, chữ Pure White & Soft White và điểm nhấn Tech Cyan.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"corporate, finance, professional, modern, clean, trust"},"tokens":{"colors":{"background":"linear-gradient(135deg, #050a1a 0%, #0c1535 50%, #030612 100%)","cardBg":"linear-gradient(135deg, rgba(8, 20, 52, 0.72) 0%, rgba(4, 10, 32, 0.55) 100%)","border":"1.5px solid rgba(93, 200, 251, 0.35)","accent":"#5DC8FB","text":"#FFFFFF","textSecondary":"#EAF8FF"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 8px 32px rgba(2, 89, 233, 0.15)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}}}');
 ;// ./src/styles/vdeTokens.ts
 
 
@@ -55628,13 +55628,32 @@ function getVDETokens(styleName) {
       radius: "12px"
     };
   }
+  if (name.includes("ai_driven") || name.includes("ai-driven")) {
+    return {
+      ...tokens || VDE_TOKENS.ai_driven,
+      colors: {
+        background: "linear-gradient(180deg, #000A3A 0%, #001060 40%, #0026A8 80%, #0015C0 100%)",
+        cardBg: "linear-gradient(135deg, rgba(0, 30, 100, 0.55) 0%, rgba(0, 10, 58, 0.75) 100%)",
+        border: "1.5px solid rgba(0, 200, 255, 0.55)",
+        accent: "#00C8FF",
+        text: "#FFFFFF",
+        textSecondary: "rgba(200, 230, 255, 0.85)"
+      },
+      fonts: {
+        title: "Chakra Petch",
+        body: "Be Vietnam Pro"
+      },
+      shadow: "0 0 40px rgba(0, 200, 255, 0.4), 0 0 80px rgba(27, 111, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+      radius: "12px"
+    };
+  }
   if (name.includes("ba")) {
     return {
       ...tokens || VDE_TOKENS.ba,
       colors: {
-        background: "linear-gradient(135deg, #002691 0%, #004BBF 50%, #0059D7 100%)",
-        cardBg: "linear-gradient(135deg, #0059D7 0%, #0259E9 100%)",
-        border: "1.5px solid rgba(93, 200, 251, 0.7)",
+        background: "linear-gradient(135deg, #050a1a 0%, #0c1535 50%, #030612 100%)",
+        cardBg: "linear-gradient(135deg, rgba(8, 20, 52, 0.72) 0%, rgba(4, 10, 32, 0.55) 100%)",
+        border: "1.5px solid rgba(93, 200, 251, 0.35)",
         accent: "#5DC8FB",
         text: "#FFFFFF",
         textSecondary: "#EAF8FF"
@@ -55745,7 +55764,7 @@ const getThemeStyles = (themeName, accentColor) => {
     color: ((_f = tokens.colors) == null ? void 0 : _f.text) || "#ffffff"
   };
   const isSerif = ((_g = tokens.fonts) == null ? void 0 : _g.title.includes("Playfair")) || ((_h = tokens.fonts) == null ? void 0 : _h.title.includes("Lora")) || ((_i = tokens.fonts) == null ? void 0 : _i.title.includes("Georgia")) || ((_j = tokens.fonts) == null ? void 0 : _j.title.includes("serif"));
-  const isCyberpunk = themeName.includes("cyberpunk") || themeName.includes("neon");
+  const isCyberpunk = themeName.includes("cyberpunk") || themeName.includes("neon") || themeName.includes("ai_driven") || themeName.includes("fintech_edu");
   const titleStyle = {
     color: ((_k = tokens.colors) == null ? void 0 : _k.text) || "#ffffff",
     fontFamily,
@@ -55814,13 +55833,14 @@ const highlightHeadingText = (text, accentColor, theme, highlightWords) => {
   return parts.map((part, index) => {
     const isMatch = sortedKeywords.some((k) => k.toLowerCase() === part.toLowerCase());
     if (isMatch) {
-      if (theme === "fintech_edu" || (theme == null ? void 0 : theme.includes("fintech"))) {
+      if (theme === "ai_driven" || theme === "fintech_edu" || (theme == null ? void 0 : theme.includes("fintech"))) {
+        const glowColor = theme === "ai_driven" ? "#00C8FF" : "#00e5ff";
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(
           "span",
           {
             style: {
-              color: "#00e5ff",
-              textShadow: "0 2px 12px rgba(0, 0, 0, 0.95), 0 0 20px rgba(0, 229, 255, 0.8)",
+              color: glowColor,
+              textShadow: `0 2px 12px rgba(0, 0, 0, 0.95), 0 0 20px ${glowColor}cc`,
               fontWeight: 900
             },
             children: part
@@ -56487,19 +56507,35 @@ const AnimatedBlock = ({ animation, delaySeconds, children, style: customStyle }
     fps,
     config: { damping: 18, mass: 1, stiffness: 80 }
   });
+  const bouncySpr = (0,esm.spring)({
+    frame: Math.max(0, relativeFrame),
+    fps,
+    config: { damping: 11, mass: 1.1, stiffness: 85 }
+  });
   const linearProgress = Math.min(Math.max(0, relativeFrame) / Math.round(fps * 0.5), 1);
   let style = {};
   if (relativeFrame < 0) {
     style = {
       opacity: 0,
-      transform: animation === "slide-up" ? "translateY(80px)" : animation === "scale-in" ? "scale(0.5)" : animation === "slide-left" ? "translateX(150px)" : animation === "slide-right" ? "translateX(-150px)" : "none",
-      filter: animation === "blur-in" ? "blur(25px)" : "none"
+      transform: animation === "slide-up" ? "translateY(80px)" : animation === "slide-down" ? "translateY(-200px) rotate(-15deg)" : animation === "scale-in" ? "scale(0.5)" : animation === "slide-left" ? "translateX(150px)" : animation === "slide-right" ? "translateX(-150px)" : "none",
+      filter: animation === "blur-in" ? "blur(25px)" : "none",
+      transformOrigin: animation === "slide-down" ? "center top" : void 0
     };
   } else {
     switch (animation) {
       case "slide-up": {
         const translateY = (0,esm.interpolate)(spr, [0, 1], [80, 0]);
         style = { opacity: spr, transform: `translateY(${translateY}px)` };
+        break;
+      }
+      case "slide-down": {
+        const translateY = (0,esm.interpolate)(bouncySpr, [0, 1], [-200, 0]);
+        const rotateVal = (0,esm.interpolate)(bouncySpr, [0, 1], [-15, 0]);
+        style = {
+          opacity: bouncySpr,
+          transform: `translateY(${translateY}px) rotate(${rotateVal}deg)`,
+          transformOrigin: "center top"
+        };
         break;
       }
       case "scale-in": {
@@ -56597,7 +56633,7 @@ const HeadlineText = ({
   letterSpacing,
   lineHeight,
   color: colorRgba,
-  textShadow: textShadow || "0 4px 20px rgba(0, 0, 0, 0.85), 0 2px 8px rgba(0, 0, 0, 0.95)",
+  textShadow: textShadow || "0 4px 16px rgba(0, 0, 0, 0.45)",
   maxWidth,
   textAlign: align,
   fontFamily,
@@ -56780,11 +56816,13 @@ const resolveItemColors = ({
   styles,
   rgb,
   isLight,
-  isAccentLight
+  isAccentLight,
+  theme
 }) => {
   const isAccent = item == null ? void 0 : item.useAccentBg;
-  const fallbackBg = isAccent ? `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})` : styles.cardStyle.backgroundColor || styles.cardStyle.background || `rgba(2, 6, 23, 0.48)`;
-  const fallbackBorder = isAccent ? "none" : styles.cardStyle.border || `1px solid rgba(${rgb}, 0.22)`;
+  const isAIDriven = theme === "ai_driven" || (theme == null ? void 0 : theme.includes("ai_driven"));
+  const fallbackBg = isAccent ? isAIDriven ? "linear-gradient(135deg, rgba(0, 15, 60, 0.85) 0%, rgba(0, 8, 36, 0.95) 100%)" : `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})` : styles.cardStyle.backgroundColor || styles.cardStyle.background || `rgba(2, 6, 23, 0.48)`;
+  const fallbackBorder = isAccent ? isAIDriven ? "1.5px solid rgba(0, 200, 255, 0.55)" : "none" : styles.cardStyle.border || `1px solid rgba(${rgb}, 0.22)`;
   const fallbackBadge = accentColor;
   const textColor = isAccent ? isAccentLight ? "#111111" : "#ffffff" : isLight ? "#191919" : "rgb(249, 247, 255)";
   if (isLight) {
@@ -57363,17 +57401,17 @@ const AbsoluteCardsMode = ({
       ] });
     };
     const circleConfigs = [
-      { left: 314, top: 540, size: 280, floatPhase: 0 },
-      { left: 540, top: 940, size: 280, floatPhase: 2 },
-      { left: 88, top: 940, size: 280, floatPhase: 4 }
+      { left: 400, top: 842, size: 280, floatPhase: 0 },
+      { left: 630, top: 1240, size: 280, floatPhase: 2 },
+      { left: 170, top: 1240, size: 280, floatPhase: 4 }
     ];
-    const arrowProgress = (0,esm.interpolate)(frame, [25, 80], [300, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", width: "100%", height: "100%", overflow: "visible" }, children: [
+    const arrowProgress = (0,esm.interpolate)(frame, [25, 80], [450, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", width: "1080px", height: "1920px", overflow: "visible" }, children: [
       /* @__PURE__ */ (0,jsx_runtime.jsx)("svg", { style: { position: "absolute", width: 0, height: 0 }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("defs", { children: /* @__PURE__ */ (0,jsx_runtime.jsx)("marker", { id: "flywheel-arrow", viewBox: "0 0 10 10", refX: "2", refY: "5", markerWidth: "6", markerHeight: "6", orient: "auto-start-reverse", children: /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M 0 1.5 L 8 5 L 0 8.5 z", fill: accentColor }) }) }) }),
       titleText && /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
         position: "absolute",
-        left: "40px",
-        top: "80px",
+        left: "126px",
+        top: "380px",
         width: "828px",
         display: "flex",
         flexDirection: "column",
@@ -57410,17 +57448,17 @@ const AbsoluteCardsMode = ({
           }, children: voiceover })
         ] }) })
       ] }),
-      /* @__PURE__ */ (0,jsx_runtime.jsxs)("svg", { style: { position: "absolute", left: 0, top: 0, width: "100%", height: "100%", pointerEvents: "none", overflow: "visible" }, children: [
-        /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "454", cy: "947", r: "140", fill: "none", stroke: `rgba(${rgb}, 0.18)`, strokeWidth: "2.5", strokeDasharray: "6 6" }),
-        /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "454", cy: "947", r: "265", fill: "none", stroke: `rgba(${rgb}, 0.22)`, strokeWidth: "3", strokeDasharray: "10 10" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("svg", { viewBox: "0 0 1080 1920", style: { position: "absolute", left: 0, top: 0, width: "100%", height: "100%", pointerEvents: "none", overflow: "visible" }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "540", cy: "1247", r: "140", fill: "none", stroke: `rgba(${rgb}, 0.18)`, strokeWidth: "2.5", strokeDasharray: "6 6" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "540", cy: "1247", r: "265", fill: "none", stroke: `rgba(${rgb}, 0.22)`, strokeWidth: "3", strokeDasharray: "10 10" }),
         /* @__PURE__ */ (0,jsx_runtime.jsx)(
           "path",
           {
-            d: "M 586 718 A 265 265 0 0 1 715 993",
+            d: "M 672 1018 A 265 265 0 0 1 801 1293",
             fill: "none",
             stroke: accentColor,
             strokeWidth: "4.5",
-            strokeDasharray: 300,
+            strokeDasharray: 450,
             strokeDashoffset: arrowProgress,
             markerEnd: "url(#flywheel-arrow)",
             style: { filter: `drop-shadow(0 0 8px ${accentColor})` }
@@ -57429,11 +57467,11 @@ const AbsoluteCardsMode = ({
         /* @__PURE__ */ (0,jsx_runtime.jsx)(
           "path",
           {
-            d: "M 624 1150 A 265 265 0 0 1 284 1150",
+            d: "M 710 1450 A 265 265 0 0 1 370 1450",
             fill: "none",
             stroke: accentColor,
             strokeWidth: "4.5",
-            strokeDasharray: 300,
+            strokeDasharray: 450,
             strokeDashoffset: arrowProgress,
             markerEnd: "url(#flywheel-arrow)",
             style: { filter: `drop-shadow(0 0 8px ${accentColor})` }
@@ -57442,11 +57480,11 @@ const AbsoluteCardsMode = ({
         /* @__PURE__ */ (0,jsx_runtime.jsx)(
           "path",
           {
-            d: "M 193 993 A 265 265 0 0 1 363 698",
+            d: "M 279 1293 A 265 265 0 0 1 449 998",
             fill: "none",
             stroke: accentColor,
             strokeWidth: "4.5",
-            strokeDasharray: 300,
+            strokeDasharray: 450,
             strokeDashoffset: arrowProgress,
             markerEnd: "url(#flywheel-arrow)",
             style: { filter: `drop-shadow(0 0 8px ${accentColor})` }
@@ -57455,8 +57493,8 @@ const AbsoluteCardsMode = ({
       ] }),
       /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "fade", delaySeconds: 0.4, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
         position: "absolute",
-        left: "384px",
-        top: "877px",
+        left: "470px",
+        top: "1177px",
         width: "140px",
         height: "140px",
         borderRadius: "999px",
@@ -57579,9 +57617,9 @@ const AbsoluteCardsMode = ({
       }),
       bottomBarComps.length > 0 && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.8, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
         position: "absolute",
-        left: "40px",
-        right: "40px",
-        bottom: "100px",
+        left: "126px",
+        right: "126px",
+        bottom: "186px",
         height: "170px",
         borderRadius: "24px",
         background: isLight ? "linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 240, 240, 0.8) 100%)" : "linear-gradient(135deg, rgba(8, 17, 37, 0.6) 0%, rgba(3, 7, 18, 0.4) 100%)",
@@ -58025,17 +58063,18 @@ const SplitHorizontalMode = ({
     if (!comp) return null;
     const isLeft = side === "left";
     const isAccent = itemStyleSetting.useAccentBg;
-    const sideAccentColor = isLeft ? accentColor || "#EF4444" : "#EAB308";
+    const sideAccentColor = isLeft ? accentColor || "#EF4444" : "#F59E0B";
     const rotation = t.items.rotations && t.items.rotations[cardIdx % t.items.rotations.length] !== void 0 ? t.items.rotations[cardIdx % t.items.rotations.length] : isLeft ? -2.2 : 2.2;
     const pos = resolvedPositions[cardIdx % resolvedPositions.length];
+    const isAIDriven = theme === "ai_driven" || (theme == null ? void 0 : theme.includes("ai_driven"));
     const cardStyle = {
       minHeight: isVertical ? "340px" : "400px",
       borderRadius: itemStyleSetting.borderRadius || "34px",
       padding: resolvePadding(itemStyleSetting.padding || "34px", paddingScale),
       transform: `rotate(${rotation}deg)`,
-      background: isAccent ? `linear-gradient(135deg, ${sideAccentColor}, ${darkAccentColor})` : styles.cardStyle.background || styles.cardStyle.backgroundColor || "rgba(15, 23, 42, 0.75)",
-      border: isAccent ? "none" : `1.5px solid ${sideAccentColor}77`,
-      boxShadow: isAccent ? "none" : `0 16px 48px rgba(0, 0, 0, 0.4), 0 0 25px ${sideAccentColor}22`,
+      background: isAccent ? isAIDriven ? "linear-gradient(135deg, rgba(0, 15, 60, 0.85) 0%, rgba(0, 8, 36, 0.95) 100%)" : `linear-gradient(135deg, ${sideAccentColor}, ${darkAccentColor})` : styles.cardStyle.background || styles.cardStyle.backgroundColor || "rgba(15, 23, 42, 0.75)",
+      border: isAccent ? isAIDriven ? "1.5px solid rgba(0, 200, 255, 0.55)" : "none" : `1.5px solid ${sideAccentColor}77`,
+      boxShadow: isAccent ? isAIDriven ? "0 0 25px rgba(0, 200, 255, 0.35)" : "none" : `0 16px 48px rgba(0, 0, 0, 0.4), 0 0 25px ${sideAccentColor}22`,
       backdropFilter: "blur(16px) saturate(1.15)",
       display: "flex",
       flexDirection: "column",
@@ -58193,9 +58232,9 @@ const BeforeAfterPanelMode = ({
     const sideLabelIcon = isLeft ? "\u2715 " : isRight ? "\u2713 " : "";
     const defaultSideLabel = isLeft ? "TR\u01AF\u1EDAC \u0110\xC2Y" : isRight ? "SAU N\xC0Y" : null;
     const sideLabel = defaultSideLabel ? `${sideLabelIcon}${defaultSideLabel}` : null;
-    const sideLabelColor = isAccent ? "rgba(255, 255, 255, 0.85)" : isLeft ? "#E53E3E" : accentColor || "#22C55E";
+    const sideLabelColor = isAccent ? "rgba(255, 255, 255, 0.85)" : isLeft ? "#F87171" : accentColor || "#34D399";
     const bodyTextColor = isAccent ? "#FFFFFF" : inactiveCardTextColor || (isLight ? "#0F172A" : "#FFFFFF");
-    const sideHighlightColor = isAccent ? "#FFFFFF" : isLeft ? "#EAB308" : accentColor || "#EF4444";
+    const sideHighlightColor = isAccent ? "#FFFFFF" : isLeft ? "#FBBF24" : accentColor || "#F87171";
     const { body, highlight } = extractBodyAndHighlight(text, highlightWords);
     const defaultBg = styles.cardStyle.background || styles.cardStyle.backgroundColor || (isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(15, 23, 42, 0.82)");
     const defaultBorder = styles.cardStyle.border || (isLight ? "1px solid rgba(0, 0, 0, 0.08)" : "1.5px solid rgba(255, 255, 255, 0.18)");
@@ -58280,8 +58319,8 @@ const BeforeAfterPanelMode = ({
         width: "48px",
         height: "48px",
         borderRadius: "50%",
-        background: "linear-gradient(135deg, #B8191C 0%, #E62B32 100%)",
-        boxShadow: "0 4px 14px rgba(184, 25, 28, 0.4)",
+        background: "linear-gradient(135deg, #e11d48 0%, #9f1239 100%)",
+        boxShadow: "0 4px 12px rgba(225, 29, 72, 0.35)",
         color: "#FFFFFF",
         fontSize: "16px",
         fontWeight: 900,
@@ -58319,6 +58358,7 @@ const VerticalListMode = ({
   activeCardTextColor,
   activeCardBadgeColor,
   inactiveCardTextColor,
+  category,
   theme
 }) => {
   var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
@@ -58435,9 +58475,12 @@ const VerticalListMode = ({
     const visibleComps2 = otherComps.slice(0, 4);
     const containerStyle = {
       width: "100%",
-      maxWidth: ((_d = t.container) == null ? void 0 : _d.maxWidth) || "860px",
-      display: "grid",
-      gap: "0px",
+      maxWidth: ((_d = t.container) == null ? void 0 : _d.maxWidth) || "960px",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "48px",
       background: "transparent",
       boxSizing: "border-box",
       zIndex: 5,
@@ -58452,80 +58495,247 @@ const VerticalListMode = ({
       }).join(",");
       return `rgba(${blendedRgb}, 1.0)`;
     };
-    return /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: containerStyle, children: visibleComps2.map((comp, idx) => {
-      var _a2;
-      const animConfig = getAnimationConfig(comp, idx, "slide-up", 0.3 * idx, t);
-      const itemColor = getBlendedColor(idx, visibleComps2.length);
-      const text = ((_a2 = comp.data) == null ? void 0 : _a2.text) || "";
-      const parts = text.split(/[:\-]/);
-      let badgeLabel = "";
-      let cleanText = "";
-      if (parts.length >= 2) {
-        badgeLabel = parts[0].trim().toUpperCase();
-        cleanText = parts.slice(1).join(":").trim();
-      } else {
-        badgeLabel = `STEP 0${idx + 1}`;
-        cleanText = text.trim();
-      }
-      if (!cleanText) cleanText = text;
-      const itemStyle = {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: containerStyle, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("style", { dangerouslySetInnerHTML: { __html: `
+          @keyframes scanLine {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { top: 100%; opacity: 0; }
+          }
+          @keyframes cursorBlink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+          }
+        ` } }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { flex: 1.1, display: "flex", flexDirection: "column", width: "100%" }, children: visibleComps2.map((comp, idx) => {
+        var _a2;
+        const animConfig = getAnimationConfig(comp, idx, "slide-up", 0.3 * idx, t);
+        const itemColor = getBlendedColor(idx, visibleComps2.length);
+        const text = ((_a2 = comp.data) == null ? void 0 : _a2.text) || "";
+        const parts = text.split(/[:\-]/);
+        let badgeLabel = "";
+        let cleanText = "";
+        if (parts.length >= 2) {
+          badgeLabel = parts[0].trim().toUpperCase();
+          cleanText = parts.slice(1).join(":").trim();
+        } else {
+          badgeLabel = `STEP 0${idx + 1}`;
+          cleanText = text.trim();
+        }
+        if (!cleanText) cleanText = text;
+        const itemStyle = {
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          paddingLeft: "76px",
+          paddingBottom: idx === visibleComps2.length - 1 ? "0px" : "48px",
+          minHeight: "90px",
+          boxSizing: "border-box",
+          width: "100%"
+        };
+        const dotStyle = {
+          position: "absolute",
+          left: "11px",
+          top: "4px",
+          width: "26px",
+          height: "26px",
+          borderRadius: "50%",
+          background: itemColor,
+          boxShadow: `0 0 16px ${itemColor}`,
+          zIndex: 10
+        };
+        const lineStyle = {
+          position: "absolute",
+          left: "22px",
+          top: "14px",
+          bottom: "-14px",
+          width: "4px",
+          background: `linear-gradient(180deg, ${itemColor}, ${getBlendedColor(idx + 1, visibleComps2.length)})`,
+          zIndex: 5,
+          transformOrigin: "top center"
+        };
+        return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", width: "100%" }, children: [
+          idx < visibleComps2.length - 1 && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: lineStyle }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animConfig.animation, delaySeconds: animConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: itemStyle, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: dotStyle }),
+            /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", textAlign: "left" }, children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+                fontSize: "15px",
+                fontWeight: 900,
+                letterSpacing: "0.15em",
+                color: itemColor,
+                textTransform: "uppercase",
+                marginBottom: "6px",
+                fontFamily: styles.fontFamily
+              }, children: badgeLabel }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+                fontSize: getDynamicFontSize(cleanText, 32, fontScale),
+                lineHeight: 1.25,
+                fontWeight: 700,
+                color: isLight ? "#1f2937" : "#ffffff",
+                fontFamily: styles.fontFamily,
+                textTransform: "uppercase"
+              }, children: cleanText })
+            ] })
+          ] }) })
+        ] }, comp.id || idx);
+      }) }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        flex: 1.3,
+        height: "380px",
         position: "relative",
+        borderRadius: "24px",
+        background: isLight ? "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 240, 0.7) 100%)" : "linear-gradient(135deg, rgba(8, 17, 37, 0.72) 0%, rgba(3, 7, 18, 0.85) 100%)",
+        border: isLight ? `1.5px solid rgba(0, 0, 0, 0.08)` : `1.5px solid rgba(255, 255, 255, 0.08)`,
+        boxShadow: isLight ? "rgba(0, 0, 0, 0.08) 0px 24px 60px, rgba(0, 0, 0, 0.03) 0px 0px 1px inset" : `rgba(0, 0, 0, 0.5) 0px 24px 60px, rgba(${rgb}, 0.15) 0px 0px 30px, rgba(255, 255, 255, 0.04) 0px 0px 1px inset`,
+        backdropFilter: "blur(20px)",
         display: "flex",
         flexDirection: "column",
-        alignItems: "flex-start",
-        paddingLeft: "64px",
-        paddingBottom: idx === visibleComps2.length - 1 ? "0px" : "32px",
-        minHeight: "80px",
-        boxSizing: "border-box",
-        width: "100%"
-      };
-      const dotStyle = {
-        position: "absolute",
-        left: "14px",
-        top: "4px",
-        width: "20px",
-        height: "20px",
-        borderRadius: "50%",
-        background: itemColor,
-        boxShadow: `0 0 12px ${itemColor}`,
-        zIndex: 10
-      };
-      const lineStyle = {
-        position: "absolute",
-        left: "22.5px",
-        top: "14px",
-        bottom: "-14px",
-        width: "3px",
-        background: `linear-gradient(180deg, ${itemColor}, ${getBlendedColor(idx + 1, visibleComps2.length)})`,
-        zIndex: 5,
-        transformOrigin: "top center"
-      };
-      return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", width: "100%" }, children: [
-        idx < visibleComps2.length - 1 && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: lineStyle }),
-        /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animConfig.animation, delaySeconds: animConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: itemStyle, children: [
-          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: dotStyle }),
-          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", textAlign: "left" }, children: [
-            /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
-              fontSize: "13px",
-              fontWeight: 900,
-              letterSpacing: "0.15em",
-              color: itemColor,
-              textTransform: "uppercase",
-              marginBottom: "4px",
-              fontFamily: styles.fontFamily
-            }, children: badgeLabel }),
-            /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
-              fontSize: getDynamicFontSize(cleanText, 25, fontScale),
-              lineHeight: 1.2,
-              fontWeight: 700,
-              color: isLight ? "#1f2937" : "#ffffff",
-              fontFamily: styles.fontFamily,
-              textTransform: "uppercase"
-            }, children: cleanText })
+        overflow: "hidden",
+        boxSizing: "border-box"
+      }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          position: "absolute",
+          left: 0,
+          width: "100%",
+          height: "4px",
+          background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)`,
+          boxShadow: `0 0 12px ${accentColor}`,
+          animation: "scanLine 4s infinite linear",
+          pointerEvents: "none",
+          zIndex: 10
+        } }),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+          display: "flex",
+          alignItems: "center",
+          padding: "16px 20px",
+          borderBottom: isLight ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.06)",
+          background: isLight ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.01)"
+        }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", gap: "8px", marginRight: "20px" }, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "12px", height: "12px", borderRadius: "50%", background: "#ff5f56" } }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "12px", height: "12px", borderRadius: "50%", background: "#ffbd2e" } }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "12px", height: "12px", borderRadius: "50%", background: "#27c93f" } })
+          ] }),
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+            fontSize: "12px",
+            fontWeight: 600,
+            color: isLight ? "rgba(0, 0, 0, 0.4)" : "rgba(255, 255, 255, 0.4)",
+            fontFamily: "monospace",
+            letterSpacing: "0.05em",
+            textTransform: "uppercase"
+          }, children: [
+            (category || "Process").trim(),
+            " Console"
           ] })
-        ] }) })
-      ] }, comp.id || idx);
-    }) });
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+          padding: "24px 28px",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace",
+          fontSize: "14px",
+          lineHeight: 1.6,
+          textAlign: "left",
+          justifyContent: "center"
+        }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+            color: isLight ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.4)",
+            marginBottom: "12px",
+            fontSize: "11px",
+            fontWeight: 700,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase"
+          }, children: "Initializing Process Log..." }),
+          visibleComps2.map((comp, idx) => {
+            var _a2;
+            const text = ((_a2 = comp.data) == null ? void 0 : _a2.text) || "";
+            const parts = text.split(/[:\-]/);
+            let badgeLabel = "";
+            let cleanText = "";
+            if (parts.length >= 2) {
+              badgeLabel = parts[0].trim().toUpperCase();
+              cleanText = parts.slice(1).join(":").trim();
+            } else {
+              badgeLabel = `STEP 0${idx + 1}`;
+              cleanText = text.trim();
+            }
+            if (!cleanText) cleanText = text;
+            const startFrame = Math.round(9 * idx);
+            const nextStartFrame = Math.round(9 * (idx + 1));
+            let status = "PENDING";
+            let statusColor = isLight ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.3)";
+            let textColor = isLight ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.4)";
+            if (frame >= nextStartFrame) {
+              status = "SUCCESS";
+              statusColor = "#10b981";
+              textColor = isLight ? "#1f2937" : "#ffffff";
+            } else if (frame >= startFrame) {
+              status = "RUNNING";
+              statusColor = accentColor;
+              textColor = accentColor;
+            }
+            return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+              marginBottom: "8px",
+              color: textColor,
+              fontSize: "13px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              opacity: status === "PENDING" ? 0.35 : 1,
+              transition: "opacity 0.2s ease, color 0.2s ease"
+            }, children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: statusColor, fontWeight: 700 }, children: ">" }),
+              /* @__PURE__ */ (0,jsx_runtime.jsxs)("span", { style: { fontWeight: 800, color: statusColor }, children: [
+                "[",
+                badgeLabel,
+                "]"
+              ] }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+                textTransform: "uppercase",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                maxWidth: "200px"
+              }, children: cleanText }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { marginLeft: "auto", color: isLight ? "rgba(0,0,0,0.2)" : "rgba(255,255,255,0.2)" }, children: "..." }),
+              /* @__PURE__ */ (0,jsx_runtime.jsxs)("span", { style: {
+                fontWeight: 900,
+                color: statusColor,
+                display: "flex",
+                alignItems: "center"
+              }, children: [
+                status,
+                status === "RUNNING" && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+                  width: "6px",
+                  height: "12px",
+                  background: accentColor,
+                  display: "inline-block",
+                  marginLeft: "4px",
+                  animation: "cursorBlink 1s infinite"
+                } })
+              ] })
+            ] }, idx);
+          }),
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+            marginTop: "12px",
+            fontSize: "11px",
+            color: frame >= Math.round(9 * visibleComps2.length) ? "#10b981" : isLight ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.3)",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px"
+          }, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: "Status:" }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: frame >= Math.round(9 * visibleComps2.length) ? "ALL STEPS COMPLETED SUCCESSFULLY" : "PROCESSING..." })
+          ] })
+        ] })
+      ] })
+    ] });
   }
   const isDossierProof = t.id === "DossierProofBullet";
   if (isDossierProof) {
@@ -58568,7 +58778,8 @@ const VerticalListMode = ({
           styles,
           rgb,
           isLight,
-          isAccentLight: isAccentLight2
+          isAccentLight: isAccentLight2,
+          theme
         });
         const animConfig = getAnimationConfig(leftComp, 0, "scale-in", 0.15, t);
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animConfig.animation, delaySeconds: animConfig.delay, style: { height: "100%" }, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
@@ -58658,7 +58869,8 @@ const VerticalListMode = ({
           styles,
           rgb,
           isLight,
-          isAccentLight: isAccentLight2
+          isAccentLight: isAccentLight2,
+          theme
         });
         const text = ((_a2 = comp.data) == null ? void 0 : _a2.text) || "";
         const initials = getLocalInitials(text);
@@ -58767,7 +58979,8 @@ const VerticalListMode = ({
         styles,
         rgb,
         isLight,
-        isAccentLight: isAccentLight2
+        isAccentLight: isAccentLight2,
+        theme
       });
       return /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: comp.data.animation || "slide-up", delaySeconds: comp.data.delay || 0.2 * idx, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
         NumberedCard,
@@ -58817,7 +59030,8 @@ const VerticalListMode = ({
       styles,
       rgb,
       isLight,
-      isAccentLight
+      isAccentLight,
+      theme
     });
     const animConfig = getAnimationConfig(comp, idx, "slide-up", 0.3 * idx, t);
     const pos = resolvedPositions[idx % resolvedPositions.length];
@@ -58872,6 +59086,7 @@ const VerticalListMode = ({
 
 
 
+
 const GridMetricsMode = ({
   otherComps,
   t,
@@ -58879,59 +59094,153 @@ const GridMetricsMode = ({
   darkAccentColor,
   rgb,
   isLight,
+  isVertical,
   styles,
   fontScale,
   paddingScale,
   gap,
   activeCardTextColor,
-  inactiveCardTextColor
+  inactiveCardTextColor,
+  theme
 }) => {
+  const frame = (0,esm.useCurrentFrame)();
   const visibleComps = otherComps.slice(0, 4);
-  const gridContainerStyle = {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
+  const layoutId = t.id;
+  const isMetricCards = layoutId === "MetricCards";
+  const isHeroMetrics = layoutId === "HeroMetricCards";
+  const isGridMetrics = layoutId === "GridMetrics";
+  const containerStyle = {
+    display: isMetricCards ? "flex" : "grid",
+    flexDirection: isMetricCards ? isVertical ? "column" : "row" : void 0,
+    gridTemplateColumns: isHeroMetrics ? isVertical ? "repeat(2, 1fr)" : "3fr 2fr" : isMetricCards ? void 0 : "repeat(2, 1fr)",
     gap: gap !== void 0 ? `${gap}px` : t.container.gap || "20px",
     width: "100%",
     maxWidth: t.container.maxWidth || "860px",
     zIndex: 5
   };
+  const animStyles = `
+    @keyframes grid-metric-shine {
+      0% { left: -150%; }
+      40% { left: 150%; }
+      100% { left: 150%; }
+    }
+    @keyframes grid-metric-float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+    @keyframes grid-metric-glow {
+      0% { box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2), 0 0 10px rgba(${rgb}, 0.1); }
+      50% { box-shadow: 0 18px 44px rgba(0, 0, 0, 0.25), 0 0 30px rgba(${rgb}, 0.35); }
+      100% { box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2), 0 0 10px rgba(${rgb}, 0.1); }
+    }
+  `;
   const activeCardDescColor = isLight ? "rgba(0, 0, 0, 0.72)" : "rgba(255, 255, 255, 0.85)";
-  return /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: gridContainerStyle, children: visibleComps.map((comp, idx) => {
-    const itemStyleSetting = t.items.itemStyles[idx % t.items.itemStyles.length] || { fontSize: "28px", fontWeight: "700" };
-    const isAccentMetric = itemStyleSetting.useAccentBg;
-    const cardStyle = {
-      borderRadius: itemStyleSetting.borderRadius || "28px",
-      padding: resolvePadding(itemStyleSetting.padding || "28px", paddingScale),
-      background: isAccentMetric ? `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})` : isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.05)",
-      border: isAccentMetric ? "none" : `1px solid rgba(${rgb}, 0.26)`,
-      boxShadow: `0 18px 44px rgba(0, 0, 0, 0.2)`,
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      minHeight: "180px",
-      boxSizing: "border-box"
-    };
-    const valueStyle = {
-      fontSize: `${Math.round(48 * fontScale)}px`,
-      fontWeight: 900,
-      color: isAccentMetric ? activeCardTextColor : accentColor,
-      fontFamily: styles.fontFamily,
-      lineHeight: 1
-    };
-    const labelStyle = {
-      fontSize: getDynamicFontSize(comp.data.text, 22, fontScale),
-      fontWeight: itemStyleSetting.fontWeight || "800",
-      color: isAccentMetric ? activeCardDescColor : inactiveCardTextColor,
-      fontFamily: styles.fontFamily,
-      textTransform: "uppercase",
-      lineHeight: 1.1
-    };
-    const animConfig = getAnimationConfig(comp, idx, "scale-in", 0.2 * idx, t);
-    return /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animConfig.animation, delaySeconds: animConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: cardStyle, children: [
-      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: valueStyle, children: comp.data.value || `0${idx + 1}` }),
-      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: labelStyle, children: comp.data.text })
-    ] }) }, comp.id || idx);
-  }) });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: containerStyle, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("style", { children: animStyles }),
+    visibleComps.map((comp, idx) => {
+      const itemStyleSetting = t.items.itemStyles[idx % t.items.itemStyles.length] || { fontSize: "28px", fontWeight: "700" };
+      const isHeroCard = isHeroMetrics && idx === 0;
+      const isAccentMetric = isHeroCard || itemStyleSetting.useAccentBg;
+      const heroCardStyleOverride = isHeroMetrics ? isHeroCard ? {
+        gridColumn: isVertical ? "1 / span 2" : "1",
+        gridRow: isVertical ? void 0 : "1 / span 2",
+        minHeight: isVertical ? "220px" : "380px",
+        animation: "grid-metric-glow 4s ease-in-out infinite"
+      } : {
+        gridColumn: isVertical ? "span 1" : "2",
+        minHeight: isVertical ? "150px" : "180px"
+      } : {};
+      const isAIDriven = theme === "ai_driven" || (theme == null ? void 0 : theme.includes("ai_driven"));
+      const cardStyle = {
+        borderRadius: itemStyleSetting.borderRadius || "28px",
+        padding: resolvePadding(itemStyleSetting.padding || "28px", paddingScale),
+        background: isAccentMetric ? isAIDriven ? "linear-gradient(135deg, rgba(0, 15, 60, 0.85) 0%, rgba(0, 8, 36, 0.95) 100%)" : `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})` : isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.05)",
+        border: isAccentMetric ? isAIDriven ? "1.5px solid rgba(0, 200, 255, 0.55)" : "none" : `1px solid rgba(${rgb}, 0.26)`,
+        boxShadow: isAccentMetric && isAIDriven ? "0 0 25px rgba(0, 200, 255, 0.35)" : isMetricCards ? `0 24px 50px rgba(${rgb}, 0.15)` : `0 18px 44px rgba(0, 0, 0, 0.2)`,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minHeight: isMetricCards ? isVertical ? "160px" : "200px" : "180px",
+        flex: isMetricCards ? "1" : void 0,
+        boxSizing: "border-box",
+        position: "relative",
+        overflow: "hidden",
+        animation: isGridMetrics ? "grid-metric-float 5s ease-in-out infinite" : void 0,
+        animationDelay: isGridMetrics ? `${idx * 0.6}s` : void 0,
+        ...heroCardStyleOverride
+      };
+      const valueStyle = {
+        fontSize: isHeroCard ? `${Math.round(84 * fontScale)}px` : `${Math.round(48 * fontScale)}px`,
+        fontWeight: 900,
+        color: isAccentMetric ? activeCardTextColor : accentColor,
+        fontFamily: styles.fontFamily,
+        lineHeight: 1,
+        zIndex: 2
+      };
+      const labelStyle = {
+        fontSize: getDynamicFontSize(comp.data.text, isHeroCard ? 24 : 22, fontScale),
+        fontWeight: itemStyleSetting.fontWeight || "800",
+        color: isAccentMetric ? activeCardDescColor : inactiveCardTextColor,
+        fontFamily: styles.fontFamily,
+        textTransform: "uppercase",
+        lineHeight: 1.1,
+        zIndex: 2
+      };
+      const animConfig = getAnimationConfig(comp, idx, "scale-in", 0.2 * idx, t);
+      const sparklineProgress = Math.min(1, Math.max(0, (frame - animConfig.delay * 30) / 25));
+      const lineLength = 200;
+      const strokeDashoffset = lineLength * (1 - sparklineProgress);
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animConfig.animation, delaySeconds: animConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: cardStyle, children: [
+        isMetricCards && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          position: "absolute",
+          top: 0,
+          left: "-150%",
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%)",
+          transform: "skewX(-30deg)",
+          animation: "grid-metric-shine 4s ease-in-out infinite",
+          animationDelay: `${idx * 0.8}s`,
+          pointerEvents: "none",
+          zIndex: 3
+        } }),
+        isHeroCard ? (
+          // Hero card layout with side-by-side Value + SVG Sparkline
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", flexGrow: 1, marginBottom: "20px", zIndex: 2 }, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: valueStyle, children: comp.data.value || `0${idx + 1}` }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: isVertical ? "120px" : "200px", height: isVertical ? "55px" : "90px" }, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("svg", { width: "100%", height: "100%", viewBox: "0 0 100 50", style: { overflow: "visible" }, children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("defs", { children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("linearGradient", { id: `grad_hero_${idx}`, x1: "0%", y1: "0%", x2: "0%", y2: "100%", children: [
+                /* @__PURE__ */ (0,jsx_runtime.jsx)("stop", { offset: "0%", stopColor: "#ffffff", stopOpacity: "0.4" }),
+                /* @__PURE__ */ (0,jsx_runtime.jsx)("stop", { offset: "100%", stopColor: "#ffffff", stopOpacity: "0.0" })
+              ] }) }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "path",
+                {
+                  d: "M 0 45 C 20 40, 40 10, 60 25 C 80 40, 90 5, 100 15 L 100 50 L 0 50 Z",
+                  fill: `url(#grad_hero_${idx})`,
+                  opacity: sparklineProgress
+                }
+              ),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "path",
+                {
+                  d: "M 0 45 C 20 40, 40 10, 60 25 C 80 40, 90 5, 100 15",
+                  fill: "none",
+                  stroke: "#ffffff",
+                  strokeWidth: "4",
+                  strokeDasharray: lineLength.toString(),
+                  strokeDashoffset: strokeDashoffset.toString(),
+                  strokeLinecap: "round"
+                }
+              )
+            ] }) })
+          ] })
+        ) : /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: valueStyle, children: comp.data.value || `0${idx + 1}` }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: labelStyle, children: comp.data.text })
+      ] }) }, comp.id || idx);
+    })
+  ] });
 };
 
 ;// ./src/compositions/layouts/modes/BroadcastLowerThirdMode.tsx
@@ -59707,7 +60016,8 @@ const EvidenceBoardMode = ({
   paddingScale,
   activeCardTextColor,
   activeCardBadgeColor,
-  inactiveCardTextColor
+  inactiveCardTextColor,
+  theme
 }) => {
   var _a, _b;
   const visibleComps = otherComps.slice(0, 4);
@@ -59715,7 +60025,7 @@ const EvidenceBoardMode = ({
     const vals = rgb.split(",").map((n) => parseInt(n.trim()));
     return 0.299 * (vals[0] || 239) + 0.587 * (vals[1] || 68) + 0.114 * (vals[2] || 68) > 180;
   })();
-  const defaultRotations = [-0.4, 0.6, -0.8, 0.3];
+  const defaultRotations = [-2.2, 1.8, -1.5, 2.2];
   const alignments = ["flex-start", "center", "flex-end", "flex-start"];
   const listContainerStyle = {
     display: "grid",
@@ -59735,7 +60045,8 @@ const EvidenceBoardMode = ({
       styles,
       rgb,
       isLight,
-      isAccentLight
+      isAccentLight,
+      theme
     });
     const rotation = ((_f = (_e = t.items) == null ? void 0 : _e.rotations) == null ? void 0 : _f[idx]) !== void 0 ? t.items.rotations[idx] : defaultRotations[idx % defaultRotations.length];
     const badgeText = ((_h = (_g = pos == null ? void 0 : pos.nestedStructure) == null ? void 0 : _g.pills) == null ? void 0 : _h[0]) || `Proof ${idx + 1}`;
@@ -61157,6 +61468,14 @@ const ChapterStackMode = ({
 }) => {
   var _a, _b, _c, _d, _e, _f;
   const mainTitle = titleText || "Code Ra Video";
+  let baseCard0FontSize = 84;
+  if (mainTitle.length > 35) {
+    baseCard0FontSize = 52;
+  } else if (mainTitle.length > 25) {
+    baseCard0FontSize = 62;
+  } else if (mainTitle.length > 15) {
+    baseCard0FontSize = 72;
+  }
   const cardsData = [
     { text: mainTitle, icon: "none", defaultRot: -2, defaultWidth: 860, defaultHeight: 224 },
     { text: ((_b = (_a = otherComps[0]) == null ? void 0 : _a.data) == null ? void 0 : _b.text) || "AI vi\u1EBFt video", icon: "zap", defaultRot: -7, defaultWidth: 650, defaultHeight: 132 },
@@ -61167,7 +61486,7 @@ const ChapterStackMode = ({
     {
       // Card 0: Main card top center
       left: "0px",
-      top: "100px",
+      marginTop: "100px",
       width: "100%",
       maxWidth: "860px",
       zIndex: 10,
@@ -61178,7 +61497,7 @@ const ChapterStackMode = ({
     {
       // Card 1: Left tilted card
       left: "40px",
-      top: "390px",
+      marginTop: "90px",
       width: "630px",
       zIndex: 8,
       isAccent: true,
@@ -61189,7 +61508,7 @@ const ChapterStackMode = ({
     {
       // Card 2: Right tilted card
       left: "200px",
-      top: "560px",
+      marginTop: "38px",
       width: "600px",
       zIndex: 7,
       isAccent: false,
@@ -61199,7 +61518,7 @@ const ChapterStackMode = ({
     {
       // Card 3: Bottom left tilted card
       left: "60px",
-      top: "730px",
+      marginTop: "38px",
       width: "640px",
       zIndex: 6,
       isAccent: false,
@@ -61226,6 +61545,9 @@ const ChapterStackMode = ({
     position: "relative",
     width: "100%",
     maxWidth: "920px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
     minHeight: "960px",
     alignSelf: "center",
     zIndex: 5,
@@ -61235,7 +61557,7 @@ const ChapterStackMode = ({
     const card = cardsData[idx];
     const itemStyleSetting = ((_b2 = (_a2 = t.items) == null ? void 0 : _a2.itemStyles) == null ? void 0 : _b2[idx]) || {};
     const delay = 0.15 + idx * 0.15;
-    const animationType = idx === 0 ? "scale-in" : idx % 2 === 0 ? "slide-right" : "slide-left";
+    const animationType = idx === 0 ? "scale-in" : "slide-down";
     const isAccent = config.isAccent;
     const rotation = ((_d2 = (_c2 = t.items) == null ? void 0 : _c2.rotations) == null ? void 0 : _d2[idx]) !== void 0 ? (_f2 = (_e2 = t.items) == null ? void 0 : _e2.rotations) == null ? void 0 : _f2[idx] : card.defaultRot;
     let bgStyle = "";
@@ -61261,11 +61583,12 @@ const ChapterStackMode = ({
       "div",
       {
         style: {
-          position: "absolute",
+          position: "relative",
           left: config.left,
-          top: config.top,
+          marginTop: config.marginTop,
           width: config.width,
           maxWidth: config.maxWidth,
+          alignSelf: idx === 0 ? "center" : "flex-start",
           zIndex: config.zIndex,
           transform: `rotate(${rotation}deg)`,
           transformOrigin: idx % 2 === 0 ? "left center" : "right center"
@@ -61307,13 +61630,14 @@ const ChapterStackMode = ({
           ] }),
           /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
             position: "relative",
-            fontSize: idx === 0 ? `${Math.round(84 * fontScale)}px` : `${Math.round(40 * fontScale)}px`,
+            fontSize: idx === 0 ? `${Math.round(baseCard0FontSize * fontScale)}px` : `${Math.round(40 * fontScale)}px`,
             lineHeight: idx === 0 ? 1.05 : 0.98,
             fontWeight: 900,
             letterSpacing: "-0.045em",
             textTransform: "uppercase",
             color: textColor,
-            fontFamily: styles.fontFamily
+            fontFamily: styles.fontFamily,
+            wordBreak: "break-word"
           }, children: idx === 0 ? highlightHeadingText(card.text, accentColor, theme, highlightWords) : card.text })
         ] }) })
       },
@@ -61993,6 +62317,7 @@ const IntroEvidenceScanlineMode = ({
 
 
 
+
 const IntroEvidenceTimelineMode = ({
   otherComps,
   t,
@@ -62008,197 +62333,445 @@ const IntroEvidenceTimelineMode = ({
   theme,
   highlightWords
 }) => {
-  var _a, _b, _c, _d, _e;
-  const mainTitle = titleText || "Code Ra Video";
-  const bottomCategory = category || (((_b = (_a = t.categoryPill) == null ? void 0 : _a.text) == null ? void 0 : _b.trim().toLowerCase()) !== "ai vi\u1EBFt video" && ((_d = (_c = t.categoryPill) == null ? void 0 : _c.text) == null ? void 0 : _d.trim().toLowerCase()) !== "ai viet video" ? (_e = t.categoryPill) == null ? void 0 : _e.text : "");
-  const hasCategory = !!bottomCategory;
-  const stepConfigs = [
-    {
-      num: "01",
-      badgeText: "FIRST SIGNAL",
-      marginLeft: "0px",
-      maxWidth: "580px",
-      isHighlighted: false
-    },
-    {
-      num: "02",
-      badgeText: "THEN EVIDENCE",
-      marginLeft: "64px",
-      maxWidth: "520px",
-      isHighlighted: false
-    },
-    {
-      num: "03",
-      badgeText: "NOW IMPACT",
-      marginLeft: "0px",
-      maxWidth: "580px",
-      isHighlighted: true
-      // Highlight the final step
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+  const frame = (0,esm.useCurrentFrame)();
+  const { width: viewportWidth, fps, durationInFrames } = (0,esm.useVideoConfig)();
+  if (t.id === "TimelineBeamRail") {
+    const visibleComps = otherComps.slice(0, 4);
+    const N = visibleComps.length;
+    const halfDuration = Math.round(durationInFrames / 2);
+    const holdFrames = 30;
+    const numSegments = N - 1;
+    const totalTransitionFrames = Math.max(50, halfDuration - numSegments * holdFrames);
+    const panDuration = numSegments > 0 ? totalTransitionFrames / numSegments : 0;
+    const triggerFrames = visibleComps.map((_, idx) => {
+      if (idx === 0) return 0;
+      return Math.round(idx * holdFrames + idx * panDuration);
+    });
+    const lastTrigger = triggerFrames[N - 1];
+    let scrollX = 0;
+    let lineProgressX = viewportWidth / 2;
+    if (frame < triggerFrames[0]) {
+      scrollX = 0;
+      lineProgressX = 0;
     }
-  ];
-  const renderedConfigs = stepConfigs.slice(0, otherComps.length);
-  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
-    position: "relative",
-    width: "100%",
-    maxWidth: "920px",
-    minHeight: "1050px",
-    alignSelf: "center",
-    zIndex: 5,
-    boxSizing: "border-box",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between"
-  }, children: [
-    /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", width: "100%", height: "620px" }, children: [
+    for (let i = 1; i < N; i++) {
+      const prevTrigger = triggerFrames[i - 1];
+      const currTrigger = triggerFrames[i];
+      const panStart = prevTrigger + holdFrames;
+      const panEnd = currTrigger;
+      if (frame >= panStart && frame <= panEnd) {
+        scrollX = (0,esm.interpolate)(frame, [panStart, panEnd], [(i - 1) * viewportWidth, i * viewportWidth], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp"
+        });
+        lineProgressX = (0,esm.interpolate)(frame, [panStart, panEnd], [(i - 0.5) * viewportWidth, (i + 0.5) * viewportWidth], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp"
+        });
+      } else if (frame > panEnd) {
+        scrollX = i * viewportWidth;
+        lineProgressX = (i + 0.5) * viewportWidth;
+      }
+    }
+    const panningLineStartX = -viewportWidth / 2 - scrollX;
+    const panningLineEndX = lineProgressX - viewportWidth / 2 - scrollX;
+    const zoomedLineStartX = -290;
+    const zoomedLineEndX = 290;
+    const zoomOutStart = lastTrigger + 30;
+    const zoomOutEnd = zoomOutStart + 25;
+    const lineX1 = (0,esm.interpolate)(frame, [zoomOutStart, zoomOutEnd], [panningLineStartX, zoomedLineStartX], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+    const lineX2 = (0,esm.interpolate)(frame, [zoomOutStart, zoomOutEnd], [panningLineEndX, zoomedLineEndX], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+    const mainTitle = titleText || "Code Ra Video";
+    const bottomCategory = category || (((_b = (_a = t.categoryPill) == null ? void 0 : _a.text) == null ? void 0 : _b.trim().toLowerCase()) !== "ai vi\u1EBFt video" && ((_d = (_c = t.categoryPill) == null ? void 0 : _c.text) == null ? void 0 : _d.trim().toLowerCase()) !== "ai viet video" ? (_e = t.categoryPill) == null ? void 0 : _e.text : "");
+    const hasCategory = !!bottomCategory;
+    const cardWidth = (0,esm.interpolate)(frame, [zoomOutStart, zoomOutEnd], [420, 380], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+    const cardHeight = (0,esm.interpolate)(frame, [zoomOutStart, zoomOutEnd], [320, 280], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+    const cardPadding = (0,esm.interpolate)(frame, [zoomOutStart, zoomOutEnd], [24, 20], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+    const cardBaseFontSize = (0,esm.interpolate)(frame, [zoomOutStart, zoomOutEnd], [30, 22], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      position: "relative",
+      width: "100%",
+      height: "100%",
+      boxSizing: "border-box",
+      zIndex: 5
+    }, children: [
       /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
         position: "absolute",
-        left: "26px",
-        // Centered exactly at the middle of the 54px circles (26px + 27px circle radius = 53px)
-        top: "15px",
-        bottom: "15px",
-        width: "4px",
-        borderRadius: "999px",
-        background: `linear-gradient(180deg, rgb(253, 230, 138), ${accentColor}, ${darkAccentColor})`,
-        boxShadow: `rgba(${rgb}, 0.26) 0px 0px 24px`,
-        pointerEvents: "none",
-        zIndex: 2
-      } }),
-      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        gap: "28px",
-        zIndex: 3
-      }, children: renderedConfigs.map((config, idx) => {
-        var _a2, _b2, _c2, _d2, _e2;
-        const comp = otherComps[idx];
-        const textVal = ((_a2 = comp == null ? void 0 : comp.data) == null ? void 0 : _a2.text) || "";
-        const animConfig = comp ? getAnimationConfig(comp, idx, "slide-right", 0.15 + idx * 0.12, t) : { animation: "slide-right", delay: 0.15 + idx * 0.12 };
-        const isHighlighted = config.isHighlighted;
-        let nodeBg = "";
-        let nodeBorder = "";
-        let nodeShadow = "";
-        let cardBg = "";
-        let cardBorder = "";
-        let cardShadow = "";
-        let cardTextColor = "";
-        if (isHighlighted) {
-          nodeBg = `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})`;
-          nodeBorder = `2px solid ${accentColor}`;
-          nodeShadow = `rgba(${rgb}, 0.3) 0px 0px 22px`;
-          cardBg = isLight ? `linear-gradient(90deg, #ffffff, rgba(${rgb}, 0.08))` : ((_b2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _b2.background) || ((_c2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _c2.backgroundColor) || `linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(${rgb}, 0.15))`;
-          cardBorder = `2px solid ${accentColor}`;
-          cardShadow = isLight ? `rgba(0,0,0,0.1) 0px 20px 46px, rgba(${rgb},0.15) 0px 0px 22px` : `rgba(0, 0, 0, 0.4) 0px 24px 56px, rgba(${rgb}, 0.25) 0px 0px 32px, rgba(255, 255, 255, 0.08) 0px 0px 0px 1px inset`;
-          cardTextColor = isLight ? "#0f172a" : "rgb(249, 247, 255)";
-        } else {
-          nodeBg = isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(15, 23, 42, 0.9)";
-          nodeBorder = isLight ? `2px solid rgba(${rgb}, 0.4)` : `2px solid rgba(${rgb}, 0.6)`;
-          nodeShadow = "none";
-          cardBg = isLight ? "linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9))" : ((_d2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _d2.background) || ((_e2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _e2.backgroundColor) || "linear-gradient(90deg, rgba(2, 6, 23, 0.82), rgba(15, 23, 42, 0.54))";
-          cardBorder = isLight ? "1px solid rgba(0,0,0,0.08)" : `1px solid rgba(${rgb}, 0.36)`;
-          cardShadow = isLight ? "rgba(0, 0, 0, 0.04) 0px 18px 40px" : `rgba(0, 0, 0, 0.34) 0px 20px 46px, rgba(${rgb}, 0.1) 0px 0px 22px, rgba(255, 255, 255, 0.06) 0px 0px 0px 1px inset`;
-          cardTextColor = isLight ? "#1e293b" : "rgb(249, 247, 255)";
-        }
-        return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
-          "div",
-          {
-            style: {
-              display: "grid",
-              gridTemplateColumns: "54px minmax(0px, 1fr)",
-              alignItems: "center",
-              gap: "18px",
-              maxWidth: config.maxWidth,
-              marginLeft: config.marginLeft,
-              width: "100%",
-              boxSizing: "border-box"
-            },
-            children: [
-              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-                width: "54px",
-                height: "54px",
-                borderRadius: "999px",
-                background: nodeBg,
-                border: nodeBorder,
-                boxShadow: nodeShadow,
-                color: isHighlighted ? "#ffffff" : accentColor,
-                display: "grid",
-                placeItems: "center",
-                fontSize: "15px",
+        top: "80px",
+        left: "40px",
+        right: "40px",
+        zIndex: 10
+      }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-down", delaySeconds: 0.2, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "grid", gap: "14px", width: "100%" }, children: [
+        hasCategory && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          width: "fit-content",
+          borderRadius: "999px",
+          padding: "8px 14px",
+          background: isLight ? "rgba(0,0,0,0.05)" : "rgba(2, 6, 23, 0.78)",
+          color: isLight ? "#1f2937" : "rgb(255, 255, 255)",
+          border: `1px solid rgba(${rgb}, 0.4)`,
+          fontSize: "14px",
+          fontWeight: 900,
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          fontFamily: styles.fontFamily
+        }, children: bottomCategory }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          fontSize: `${Math.round(72 * fontScale)}px`,
+          lineHeight: 1.25,
+          fontWeight: 950,
+          color: isLight ? "#1f2937" : "rgb(248, 250, 252)",
+          textTransform: "uppercase",
+          fontFamily: styles.fontFamily,
+          textShadow: isLight ? "none" : `rgba(0, 0, 0, 0.6) 0px 15px 35px, rgba(${rgb}, 0.15) 0px 0px 25px`
+        }, children: highlightHeadingText(mainTitle, accentColor, theme, highlightWords) })
+      ] }) }) }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        top: "55%",
+        height: "400px",
+        transform: "translateY(-50%)",
+        overflow: "visible"
+      }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          position: "absolute",
+          left: `calc(50% + ${(lineX1 + lineX2) / 2}px)`,
+          width: `${lineX2 - lineX1}px`,
+          top: "50%",
+          transform: "translate(-50%, -50%)",
+          height: "6px",
+          borderRadius: "999px",
+          background: `linear-gradient(90deg, ${accentColor}, ${darkAccentColor})`,
+          boxShadow: `0 0 14px ${accentColor}`,
+          zIndex: 1
+        } }),
+        visibleComps.map((comp, idx) => {
+          var _a2, _b2;
+          const triggerFrame = triggerFrames[idx];
+          const nodeScale = (0,esm.interpolate)(frame, [triggerFrame - 8, triggerFrame], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
+          const cardYOffsetActive = (0,esm.interpolate)(frame, [triggerFrame, triggerFrame + 12], [50, 0], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
+          const cardOpacity = (0,esm.interpolate)(frame, [triggerFrame, triggerFrame + 12], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
+          const panningX = idx * viewportWidth - scrollX;
+          const panningY = 0;
+          let zoomedX = 0;
+          if (idx === 0) zoomedX = -250;
+          else if (idx === 1) zoomedX = 250;
+          else if (idx === 2) zoomedX = N === 3 ? 0 : -250;
+          else if (idx === 3) zoomedX = 250;
+          const zoomedY = 0;
+          const x = (0,esm.interpolate)(frame, [zoomOutStart, zoomOutEnd], [panningX, zoomedX], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
+          const y = (0,esm.interpolate)(frame, [zoomOutStart, zoomOutEnd], [panningY, zoomedY], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
+          const panningCardYOffset = -190;
+          const zoomedCardYOffset = idx === 0 || idx === 1 ? -170 : 170;
+          const cardYOffsetTranslate = (0,esm.interpolate)(frame, [zoomOutStart, zoomOutEnd], [panningCardYOffset, zoomedCardYOffset], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
+          const scale = (0,esm.interpolate)(frame, [zoomOutStart, zoomOutEnd], [1, 0.95], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          });
+          const totalCardY = cardYOffsetTranslate + cardYOffsetActive;
+          const sectionStyle = {
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`,
+            width: "0px",
+            height: "0px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxSizing: "border-box",
+            zIndex: 2
+          };
+          return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: sectionStyle, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+              position: "absolute",
+              left: "0px",
+              top: "0px",
+              transform: `translate(-50%, calc(-50% + ${totalCardY}px))`,
+              opacity: cardOpacity,
+              width: `${cardWidth}px`,
+              height: `${cardHeight}px`,
+              borderRadius: "24px",
+              padding: resolvePadding(`${cardPadding}px`, paddingScale),
+              background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.82)",
+              border: `1.5px solid ${accentColor}33`,
+              boxShadow: "0 20px 45px rgba(0,0,0,0.35)",
+              backdropFilter: "blur(16px)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              // Align contents to top
+              alignItems: "flex-start",
+              // Left align items horizontally
+              textAlign: "left",
+              // Left align text
+              gap: "12px",
+              zIndex: 3
+            }, children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+                fontSize: "12px",
                 fontWeight: 900,
-                letterSpacing: "0.08em",
+                color: accentColor,
                 fontFamily: styles.fontFamily,
-                zIndex: 4
-              }, children: config.num }),
-              /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animConfig.animation, delaySeconds: animConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
-                display: "grid",
-                gap: "8px",
-                borderRadius: "18px",
-                padding: "16px 18px",
-                background: cardBg,
-                border: cardBorder,
-                boxShadow: cardShadow,
-                backdropFilter: "blur(16px)",
-                boxSizing: "border-box"
+                letterSpacing: "0.15em",
+                textTransform: "uppercase"
               }, children: [
-                /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-                  color: isHighlighted ? accentColor : accentColor,
-                  fontSize: "11px",
-                  fontWeight: 900,
-                  letterSpacing: "0.17em",
-                  textTransform: "uppercase",
-                  fontFamily: styles.fontFamily
-                }, children: config.badgeText }),
-                /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-                  fontSize: `${Math.round(29 * fontScale)}px`,
-                  lineHeight: 1.4,
-                  fontWeight: 900,
-                  letterSpacing: "-0.04em",
-                  textTransform: "uppercase",
-                  color: cardTextColor,
-                  fontFamily: styles.fontFamily
-                }, children: textVal })
-              ] }) })
-            ]
-          },
-          idx
-        );
-      }) })
-    ] }),
-    /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.5, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
-      display: "grid",
-      gap: "18px",
+                "PHASE 0",
+                idx + 1
+              ] }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+                fontSize: getDynamicFontSize(((_a2 = comp.data) == null ? void 0 : _a2.text) || "", cardBaseFontSize, fontScale),
+                fontWeight: 800,
+                color: isLight ? "#1f2937" : "#ffffff",
+                fontFamily: styles.fontFamily,
+                lineHeight: 1.35
+              }, children: ((_b2 = comp.data) == null ? void 0 : _b2.text) || "" })
+            ] }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+              position: "absolute",
+              left: "0px",
+              top: "0px",
+              transform: `translate(-50%, -50%) scale(${nodeScale})`,
+              width: "22px",
+              height: "22px",
+              borderRadius: "50%",
+              background: "#ffffff",
+              border: `4px solid ${accentColor}`,
+              boxShadow: `0 0 15px ${accentColor}`,
+              zIndex: 2
+            } })
+          ] }, comp.id || idx);
+        })
+      ] })
+    ] });
+  } else {
+    const mainTitle = titleText || "Code Ra Video";
+    const bottomCategory = category || (((_g = (_f = t.categoryPill) == null ? void 0 : _f.text) == null ? void 0 : _g.trim().toLowerCase()) !== "ai vi\u1EBFt video" && ((_i = (_h = t.categoryPill) == null ? void 0 : _h.text) == null ? void 0 : _i.trim().toLowerCase()) !== "ai viet video" ? (_j = t.categoryPill) == null ? void 0 : _j.text : "");
+    const hasCategory = !!bottomCategory;
+    const stepConfigs = [
+      {
+        num: "01",
+        badgeText: "FIRST SIGNAL",
+        marginLeft: "0px",
+        maxWidth: "580px",
+        isHighlighted: false
+      },
+      {
+        num: "02",
+        badgeText: "THEN EVIDENCE",
+        marginLeft: "64px",
+        maxWidth: "520px",
+        isHighlighted: false
+      },
+      {
+        num: "03",
+        badgeText: "NOW IMPACT",
+        marginLeft: "0px",
+        maxWidth: "580px",
+        isHighlighted: true
+      }
+    ];
+    const renderedConfigs = stepConfigs.slice(0, otherComps.length);
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      position: "relative",
       width: "100%",
-      paddingBottom: "16px",
-      boxSizing: "border-box"
+      maxWidth: "920px",
+      minHeight: "1050px",
+      alignSelf: "center",
+      zIndex: 5,
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between"
     }, children: [
-      hasCategory && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-        width: "fit-content",
-        borderRadius: "999px",
-        padding: "10px 16px",
-        background: isLight ? "rgba(0,0,0,0.05)" : "rgba(2, 6, 23, 0.78)",
-        color: isLight ? "#1f2937" : "rgb(255, 255, 255)",
-        border: `1px solid rgba(${rgb}, 0.4)`,
-        fontSize: "18px",
-        lineHeight: 1,
-        fontWeight: 900,
-        letterSpacing: "0.24em",
-        textTransform: "uppercase",
-        boxShadow: isLight ? "none" : `rgba(0, 0, 0, 0.32) 0px 18px 40px, rgba(${rgb}, 0.12) 0px 0px 22px`,
-        fontFamily: styles.fontFamily
-      }, children: bottomCategory }),
-      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-        maxWidth: "820px",
-        fontSize: `${Math.round(106 * fontScale)}px`,
-        lineHeight: 1.32,
-        fontWeight: 900,
-        letterSpacing: "-0.075em",
-        color: isLight ? "#1f2937" : "rgb(248, 250, 252)",
-        textTransform: "uppercase",
-        fontFamily: styles.fontFamily,
-        textShadow: isLight ? "none" : `rgba(0, 0, 0, 0.62) 0px 22px 54px, rgba(${rgb}, 0.14) 0px 0px 34px`
-      }, children: highlightHeadingText(mainTitle, accentColor, theme, highlightWords) })
-    ] }) })
-  ] });
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", width: "100%", height: "620px" }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          position: "absolute",
+          left: "26px",
+          top: "15px",
+          bottom: "15px",
+          width: "4px",
+          borderRadius: "999px",
+          background: `linear-gradient(180deg, rgb(253, 230, 138), ${accentColor}, ${darkAccentColor})`,
+          boxShadow: `rgba(${rgb}, 0.26) 0px 0px 24px`,
+          pointerEvents: "none",
+          zIndex: 2
+        } }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          gap: "28px",
+          zIndex: 3
+        }, children: renderedConfigs.map((config, idx) => {
+          var _a2, _b2, _c2, _d2, _e2;
+          const comp = otherComps[idx];
+          const textVal = ((_a2 = comp == null ? void 0 : comp.data) == null ? void 0 : _a2.text) || "";
+          const animConfig = comp ? getAnimationConfig(comp, idx, "slide-right", 0.15 + idx * 0.12, t) : { animation: "slide-right", delay: 0.15 + idx * 0.12 };
+          const isHighlighted = config.isHighlighted;
+          let nodeBg = "";
+          let nodeBorder = "";
+          let nodeShadow = "";
+          let cardBg = "";
+          let cardBorder = "";
+          let cardShadow = "";
+          let cardTextColor = "";
+          if (isHighlighted) {
+            nodeBg = `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})`;
+            nodeBorder = `2px solid ${accentColor}`;
+            nodeShadow = `rgba(${rgb}, 0.3) 0px 0px 22px`;
+            cardBg = isLight ? `linear-gradient(90deg, #ffffff, rgba(${rgb}, 0.08))` : ((_b2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _b2.background) || ((_c2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _c2.backgroundColor) || `linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(${rgb}, 0.15))`;
+            cardBorder = `2px solid ${accentColor}`;
+            cardShadow = isLight ? `rgba(0,0,0,0.1) 0px 20px 46px, rgba(${rgb},0.15) 0px 0px 22px` : `rgba(0, 0, 0, 0.4) 0px 24px 56px, rgba(${rgb}, 0.25) 0px 0px 32px, rgba(255, 255, 255, 0.08) 0px 0px 0px 1px inset`;
+            cardTextColor = isLight ? "#0f172a" : "rgb(249, 247, 255)";
+          } else {
+            nodeBg = isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(15, 23, 42, 0.9)";
+            nodeBorder = isLight ? `2px solid rgba(${rgb}, 0.4)` : `2px solid rgba(${rgb}, 0.6)`;
+            nodeShadow = "none";
+            cardBg = isLight ? "linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9))" : ((_d2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _d2.background) || ((_e2 = styles == null ? void 0 : styles.cardStyle) == null ? void 0 : _e2.backgroundColor) || "linear-gradient(90deg, rgba(2, 6, 23, 0.82), rgba(15, 23, 42, 0.54))";
+            cardBorder = isLight ? "1px solid rgba(0,0,0,0.08)" : `1px solid rgba(${rgb}, 0.36)`;
+            cardShadow = isLight ? "rgba(0, 0, 0, 0.04) 0px 18px 40px" : `rgba(0, 0, 0, 0.34) 0px 20px 46px, rgba(${rgb}, 0.1) 0px 0px 22px, rgba(255, 255, 255, 0.06) 0px 0px 0px 1px inset`;
+            cardTextColor = isLight ? "#1e293b" : "rgb(249, 247, 255)";
+          }
+          return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+            "div",
+            {
+              style: {
+                display: "grid",
+                gridTemplateColumns: "54px minmax(0px, 1fr)",
+                alignItems: "center",
+                gap: "18px",
+                maxWidth: config.maxWidth,
+                marginLeft: config.marginLeft,
+                width: "100%",
+                boxSizing: "border-box"
+              },
+              children: [
+                /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+                  width: "54px",
+                  height: "54px",
+                  borderRadius: "999px",
+                  background: nodeBg,
+                  border: nodeBorder,
+                  boxShadow: nodeShadow,
+                  color: isHighlighted ? "#ffffff" : accentColor,
+                  display: "grid",
+                  placeItems: "center",
+                  fontSize: "15px",
+                  fontWeight: 900,
+                  letterSpacing: "0.08em",
+                  fontFamily: styles.fontFamily,
+                  zIndex: 4
+                }, children: config.num }),
+                /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animConfig.animation, delaySeconds: animConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+                  display: "grid",
+                  gap: "8px",
+                  borderRadius: "18px",
+                  padding: "16px 18px",
+                  background: cardBg,
+                  border: cardBorder,
+                  boxShadow: cardShadow,
+                  backdropFilter: "blur(16px)",
+                  boxSizing: "border-box"
+                }, children: [
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+                    color: isHighlighted ? accentColor : accentColor,
+                    fontSize: "11px",
+                    fontWeight: 900,
+                    letterSpacing: "0.17em",
+                    textTransform: "uppercase",
+                    fontFamily: styles.fontFamily
+                  }, children: config.badgeText }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+                    fontSize: `${Math.round(29 * fontScale)}px`,
+                    lineHeight: 1.4,
+                    fontWeight: 900,
+                    letterSpacing: "-0.04em",
+                    textTransform: "uppercase",
+                    color: cardTextColor,
+                    fontFamily: styles.fontFamily
+                  }, children: textVal })
+                ] }) })
+              ]
+            },
+            idx
+          );
+        }) })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.5, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        display: "grid",
+        gap: "18px",
+        width: "100%",
+        paddingBottom: "16px",
+        boxSizing: "border-box"
+      }, children: [
+        hasCategory && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          width: "fit-content",
+          borderRadius: "999px",
+          padding: "10px 16px",
+          background: isLight ? "rgba(0,0,0,0.05)" : "rgba(2, 6, 23, 0.78)",
+          color: isLight ? "#1f2937" : "rgb(255, 255, 255)",
+          border: `1px solid rgba(${rgb}, 0.4)`,
+          fontSize: "18px",
+          lineHeight: 1,
+          fontWeight: 900,
+          letterSpacing: "0.24em",
+          textTransform: "uppercase",
+          boxShadow: isLight ? "none" : `rgba(0, 0, 0, 0.32) 0px 18px 40px, rgba(${rgb}, 0.12) 0px 0px 22px`,
+          fontFamily: styles.fontFamily
+        }, children: bottomCategory }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          maxWidth: "820px",
+          fontSize: `${Math.round(106 * fontScale)}px`,
+          lineHeight: 1.32,
+          fontWeight: 900,
+          letterSpacing: "-0.075em",
+          color: isLight ? "#1f2937" : "rgb(248, 250, 252)",
+          textTransform: "uppercase",
+          fontFamily: styles.fontFamily,
+          textShadow: isLight ? "none" : `rgba(0, 0, 0, 0.62) 0px 22px 54px, rgba(${rgb}, 0.14) 0px 0px 34px`
+        }, children: highlightHeadingText(mainTitle, accentColor, theme, highlightWords) })
+      ] }) })
+    ] });
+  }
 };
 
 ;// ./src/compositions/layouts/modes/IntroFullImageMode.tsx
@@ -62923,240 +63496,1046 @@ const CenteredTextMode = ({
   ] });
 };
 
-;// ./src/compositions/layouts/modes/HustXRikkeiMode.tsx
+;// ./src/compositions/layouts/modes/PullquoteMode.tsx
 
 
 
-
-
-const HustXRikkeiMode = ({
+const LayersIcon = ({ color }) => /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+  "svg",
+  {
+    width: "28",
+    height: "28",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: color,
+    strokeWidth: "2.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    style: { flexShrink: 0 },
+    children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "m12 3-10 5 10 5 10-5-10-5Z" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "m2 17 10 5 10-5" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "m2 12 10 5 10-5" })
+    ]
+  }
+);
+const RocketIcon = ({ color }) => /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+  "svg",
+  {
+    width: "28",
+    height: "28",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: color,
+    strokeWidth: "2.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    style: { flexShrink: 0 },
+    children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M4.5 16.5c-1.5 1.26-2 3.43-2 3.43s2.17-.5 3.43-2" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M22 2s-5.5 2-8 7.5L9 14.5l-3-3-1.5 1.5 5 5 1.5-1.5L14.5 15l5.5-6C20 6.5 22 2 22 2Z" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M9 15 2 22l3-3 4-4Z" })
+    ]
+  }
+);
+const SparklesIcon = ({ color }) => /* @__PURE__ */ (0,jsx_runtime.jsx)(
+  "svg",
+  {
+    width: "28",
+    height: "28",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: color,
+    strokeWidth: "2.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    style: { flexShrink: 0 },
+    children: /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" })
+  }
+);
+const PullquoteMode = ({
   otherComps,
-  t,
   accentColor,
   rgb,
   isLight,
   styles,
   fontScale,
+  theme,
+  highlightWords
+}) => {
+  var _a, _b, _c;
+  const parseCardData = (comp) => {
+    var _a2, _b2;
+    if (!comp) return null;
+    let text = ((_a2 = comp.data) == null ? void 0 : _a2.text) || "";
+    let badge = "";
+    if (((_b2 = comp.data) == null ? void 0 : _b2.badges) && comp.data.badges.length > 0) {
+      badge = comp.data.badges[0];
+    } else {
+      const match = text.match(/[\(\[](.*?)[\)\]]/);
+      if (match) {
+        badge = match[1];
+        text = text.replace(/[\(\[](.*?)[\)\]]/, "").trim();
+      }
+    }
+    return { text, badge };
+  };
+  const isFooterText = (text) => {
+    if (!text) return false;
+    const clean = text.trim();
+    if (/^\d{4},/.test(clean)) return true;
+    if (clean.toLowerCase().includes("nh\u01B0ng th\u1EADt ra") || clean.toLowerCase().includes("th\u1EF1c ra")) return true;
+    return false;
+  };
+  const quoteText = ((_b = (_a = otherComps[0]) == null ? void 0 : _a.data) == null ? void 0 : _b.text) || "";
+  const remainingComps = [...otherComps.slice(1)];
+  let footerText = "";
+  if (remainingComps.length > 0) {
+    const lastComp = remainingComps[remainingComps.length - 1];
+    const lastText = ((_c = lastComp.data) == null ? void 0 : _c.text) || "";
+    if (isFooterText(lastText)) {
+      footerText = lastText;
+      remainingComps.pop();
+    }
+  }
+  const subCardsData = remainingComps.map((comp) => parseCardData(comp)).filter(Boolean);
+  const getCardIcon = (idx) => {
+    const iconIndex = idx % 3;
+    if (iconIndex === 0) {
+      return {
+        Icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(LayersIcon, { color: isLight ? "#4f46e5" : "#818cf8" }),
+        color: isLight ? "#4f46e5" : "#818cf8"
+      };
+    } else if (iconIndex === 1) {
+      return {
+        Icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(RocketIcon, { color: isLight ? "#0891b2" : "#22d3ee" }),
+        color: isLight ? "#0891b2" : "#22d3ee"
+      };
+    } else {
+      return {
+        Icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(SparklesIcon, { color: isLight ? "#10b981" : "#34d399" }),
+        color: isLight ? "#10b981" : "#34d399"
+      };
+    }
+  };
+  const getCardWidth = (totalCards) => {
+    if (totalCards <= 1) return "100%";
+    if (totalCards === 2) return "calc((100% - 16px) / 2)";
+    return "calc((100% - 32px) / 3)";
+  };
+  const renderHighlightedFooter = (text) => {
+    if (!text) return "";
+    const parts = text.trim().split(" ");
+    if (parts.length === 0) return "";
+    const firstWord = parts[0];
+    const rest = parts.slice(1).join(" ");
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      fontSize: `${28 * fontScale}px`,
+      fontWeight: "700",
+      color: isLight ? "#475569" : "#cbd5e1",
+      fontFamily: styles.fontFamily,
+      textAlign: "center",
+      marginTop: "32px",
+      letterSpacing: "-0.01em"
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("span", { style: { color: accentColor, fontWeight: "900" }, children: [
+        firstWord,
+        " "
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: rest })
+    ] });
+  };
+  const cardBg = isLight ? "rgba(255, 255, 255, 0.75)" : "rgba(10, 15, 30, 0.55)";
+  const cardBorder = isLight ? "1px solid rgba(0, 0, 0, 0.08)" : `1px solid rgba(${rgb}, 0.25)`;
+  const cardGlow = isLight ? `0 20px 40px rgba(0, 0, 0, 0.05), 0 0 20px rgba(${rgb}, 0.06)` : `0 24px 64px rgba(0, 0, 0, 0.45), 0 0 40px rgba(${rgb}, 0.18), rgba(255, 255, 255, 0.02) 0px 0px 0px 1px inset`;
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    maxWidth: "860px",
+    boxSizing: "border-box",
+    zIndex: 5
+  }, children: [
+    quoteText && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "scale-in", delaySeconds: 0.25, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      position: "relative",
+      width: "100%",
+      maxWidth: "860px",
+      minHeight: "380px",
+      background: cardBg,
+      border: cardBorder,
+      borderRadius: "28px",
+      padding: "72px 48px",
+      boxShadow: cardGlow,
+      backdropFilter: "blur(16px)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      boxSizing: "border-box",
+      overflow: "hidden"
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+        position: "absolute",
+        left: "32px",
+        top: "24px",
+        fontSize: "120px",
+        fontFamily: "Georgia, serif",
+        lineHeight: 1,
+        color: isLight ? "rgba(0, 0, 0, 0.05)" : `rgba(${rgb}, 0.15)`,
+        pointerEvents: "none",
+        userSelect: "none"
+      }, children: "\u201C" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+        position: "absolute",
+        right: "32px",
+        bottom: "-24px",
+        fontSize: "120px",
+        fontFamily: "Georgia, serif",
+        lineHeight: 1,
+        color: isLight ? "rgba(0, 0, 0, 0.05)" : `rgba(${rgb}, 0.15)`,
+        pointerEvents: "none",
+        userSelect: "none"
+      }, children: "\u201D" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        border: isLight ? "1px solid rgba(0, 0, 0, 0.12)" : `1px solid rgba(${rgb}, 0.4)`,
+        borderRadius: "999px",
+        padding: "6px 16px",
+        fontSize: "13px",
+        fontWeight: "900",
+        color: isLight ? "#1e293b" : "#38bdf8",
+        letterSpacing: "0.08em",
+        textTransform: "uppercase",
+        marginBottom: "20px",
+        background: isLight ? "rgba(0, 0, 0, 0.02)" : `rgba(${rgb}, 0.08)`,
+        zIndex: 2,
+        fontFamily: styles.fontFamily
+      }, children: "CONVERSATION QUOTE" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        fontSize: `${48 * fontScale}px`,
+        fontWeight: "800",
+        color: isLight ? "#0f172a" : "#f8fafc",
+        lineHeight: 1.35,
+        textAlign: "center",
+        maxWidth: "88%",
+        zIndex: 2,
+        fontFamily: styles.fontFamily,
+        letterSpacing: "-0.02em"
+      }, children: [
+        '"',
+        quoteText,
+        '"'
+      ] })
+    ] }) }),
+    subCardsData.length > 0 && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: "16px",
+      width: "100%",
+      maxWidth: "860px",
+      marginTop: "24px",
+      justifyContent: "flex-start",
+      boxSizing: "border-box"
+    }, children: subCardsData.map((card, idx) => {
+      const { Icon, color } = getCardIcon(idx);
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        AnimatedBlock,
+        {
+          animation: "slide-up",
+          delaySeconds: 0.5 + idx * 0.12,
+          style: { width: getCardWidth(subCardsData.length), flexShrink: 0 },
+          children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+            background: isLight ? "rgba(255, 255, 255, 0.8)" : "rgba(15, 23, 42, 0.35)",
+            border: isLight ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.06)",
+            borderRadius: "20px",
+            padding: "20px 24px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: "16px",
+            boxSizing: "border-box",
+            height: "100%",
+            boxShadow: isLight ? "0 8px 24px rgba(0,0,0,0.02)" : "0 8px 24px rgba(0,0,0,0.2)"
+          }, children: [
+            Icon,
+            /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: "2px", alignItems: "flex-start" }, children: [
+              card.badge && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+                fontSize: "11px",
+                fontWeight: "900",
+                color,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                fontFamily: styles.fontFamily
+              }, children: card.badge }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+                fontSize: `${20 * fontScale}px`,
+                fontWeight: "800",
+                color: isLight ? "#1e293b" : "#f1f5f9",
+                fontFamily: styles.fontFamily,
+                textAlign: "left"
+              }, children: card.text })
+            ] })
+          ] })
+        },
+        idx
+      );
+    }) }),
+    footerText && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.78 + subCardsData.length * 0.12, children: renderHighlightedFooter(footerText) })
+  ] });
+};
+
+;// ./src/compositions/layouts/modes/VignelliQuoteMode.tsx
+
+
+
+const VignelliQuoteMode = ({
+  otherComps,
+  accentColor,
+  rgb,
+  isLight,
+  styles,
+  fontScale,
+  theme,
   titleText,
   category,
-  imageUrl
+  highlightWords
 }) => {
-  var _a, _b;
-  const frame = (0,esm.useCurrentFrame)();
-  const { fps } = (0,esm.useVideoConfig)();
-  const searchBarText = ((_b = (_a = otherComps[0]) == null ? void 0 : _a.data) == null ? void 0 : _b.text) || "Tr\u01B0\u1EDDng \u0110i\u1EC7n - \u0110i\u1EC7n T\u1EED, \u0110\u1EA1i h\u1ECDc B\xE1ch Khoa x Rikkeisoft";
-  const rawPointsList = otherComps.slice(1);
-  const DEFAULT_POINTS = [
-    { data: { text: 'L\u1ED9 tr\xECnh t\u1EF7 l\u1EC7 v\xE0ng: **"40% l\xFD thuy\u1EBFt, 60% th\u1EF1c h\xE0nh"**' } },
-    { data: { text: "Cam k\u1EBFt **k\u1EBFt n\u1ED1i v\u1EDBi doanh nghi\u1EC7p l\u1EDBn** trong v\xE0 ngo\xE0i n\u01B0\u1EDBc" } },
-    { data: { text: "**Ch\u1EE9ng nh\u1EADn \u0111\u1ED9c quy\u1EC1n**: t\u1EEB Tr\u01B0\u1EDDng \u0110i\u1EC7n - \u0110i\u1EC7n t\u1EED (HUST)" } },
-    { data: { text: "Thi\u1EBFt k\u1EBF l\u1ED9 tr\xECnh **c\xE1 nh\xE2n ho\xE1** t\u1EEBng h\u1ECDc vi\xEAn" } }
-  ];
-  const pointsList = rawPointsList.length > 0 ? rawPointsList : DEFAULT_POINTS;
-  const startFrame = Math.round(0.45 * fps);
-  const typingSpeed = 1.5;
-  const charsToShow = Math.max(0, Math.floor((frame - startFrame) / typingSpeed));
-  const visibleText = searchBarText.slice(0, charsToShow);
-  const showCursor = charsToShow > 0 && charsToShow < searchBarText.length && Math.floor(frame / 6) % 2 === 0;
-  const typedSearchText = visibleText + (showCursor ? "|" : "");
-  const renderInlineBold = (text) => {
-    const parts = text.split(/(\*\*.*?\*\*)/g);
+  const renderHighlightedTitle = (text) => {
+    if (!text) return "";
+    const parts = text.split(/(\d+)/g);
     return parts.map((part, i) => {
-      if (part.startsWith("**") && part.endsWith("**")) {
-        return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontWeight: "900" }, children: part.slice(2, -2) }, i);
+      if (/^\d+$/.test(part)) {
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: "#ef4444", fontWeight: "950" }, children: part }, i);
       }
-      return part;
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: part }, i);
     });
   };
-  const displayCategory = category && category.trim() !== "" ? category : "Ch\u01B0\u01A1ng tr\xECnh \u0111\xE0o t\u1EA1o";
-  const displayTitle = titleText && titleText.trim() !== "" ? titleText : "L\u1EACP TR\xCCNH NH\xDANG \u0110\u1ED8C QUY\u1EC0N";
-  const formattedTitle = (() => {
-    const upperTitle = displayTitle.toUpperCase().trim();
-    if (upperTitle === "L\u1EACP TR\xCCNH NH\xDANG \u0110\u1ED8C QUY\u1EC0N") {
-      return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
-        "L\u1EACP TR\xCCNH NH\xDANG",
-        /* @__PURE__ */ (0,jsx_runtime.jsx)("br", {}),
-        "\u0110\u1ED8C QUY\u1EC0N"
-      ] });
-    }
-    if (upperTitle === "L\u1EACP TR\xCCNH NH\xDANG CHU\u1EA8N C\xD4NG NGHI\u1EC6P") {
-      return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
-        "L\u1EACP TR\xCCNH NH\xDANG CHU\u1EA8N",
-        /* @__PURE__ */ (0,jsx_runtime.jsx)("br", {}),
-        "C\xD4NG NGHI\u1EC6P"
-      ] });
-    }
-    return displayTitle;
-  })();
-  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { overflow: "hidden", backgroundColor: "#b91c1c", pointerEvents: "none" }, children: [
-    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+  const renderStickerText = (text) => {
+    if (!text) return "";
+    const upper = text.toUpperCase();
+    const formatted = upper.startsWith("/") ? upper : `/${upper}`;
+    const parts = formatted.split(/(\d+)/g);
+    return parts.map((part, i) => {
+      if (/^\d+$/.test(part)) {
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: "#f87171" }, children: part }, i);
+      }
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: part }, i);
+    });
+  };
+  const noteItems = otherComps.map((comp) => {
+    var _a;
+    return ((_a = comp.data) == null ? void 0 : _a.text) || "";
+  }).filter(Boolean);
+  const displayCategory = category || "RESEARCH PREVIEW";
+  const boardBg = "linear-gradient(135deg, #d99b52 0%, #b87b31 100%)";
+  const boardBorder = "4px solid #87541b";
+  const boardShadow = "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(184, 123, 49, 0.15)";
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    width: "100%",
+    maxWidth: "860px",
+    boxSizing: "border-box",
+    zIndex: 5
+  }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.4, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+    position: "relative",
+    width: "100%",
+    maxWidth: "780px",
+    minHeight: "620px",
+    background: boardBg,
+    border: boardBorder,
+    borderRadius: "28px",
+    boxShadow: boardShadow,
+    padding: "24px 24px 24px 24px",
+    boxSizing: "border-box",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
+  }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
       position: "absolute",
-      top: 0,
-      left: 0,
+      top: "-16px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "160px",
+      height: "36px",
+      background: "linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 100%)",
+      border: "2px solid #94a3b8",
+      borderRadius: "8px",
+      boxShadow: "0 6px 12px rgba(0,0,0,0.25), inset 0 2px 2px rgba(255,255,255,0.6)",
+      zIndex: 10,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "0 16px",
+      boxSizing: "border-box"
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        width: "10px",
+        height: "10px",
+        borderRadius: "50%",
+        background: "linear-gradient(135deg, #94a3b8, #475569)",
+        boxShadow: "inset 0 1px 1px rgba(0,0,0,0.4)"
+      } }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        width: "80px",
+        height: "4px",
+        background: "#94a3b8",
+        borderRadius: "2px"
+      } }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        width: "10px",
+        height: "10px",
+        borderRadius: "50%",
+        background: "linear-gradient(135deg, #94a3b8, #475569)",
+        boxShadow: "inset 0 1px 1px rgba(0,0,0,0.4)"
+      } })
+    ] }),
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      position: "relative",
       width: "100%",
       height: "100%",
-      zIndex: 0
-    }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
-      "img",
-      {
-        src: (0,esm.staticFile)("hust_x_rikkei_bg.jpg"),
-        style: { width: "100%", height: "100%", objectFit: "cover" },
-        alt: "HUST X RIKKEI Background"
-      }
-    ) }),
-    /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1 }, children: [
-      displayCategory && /* @__PURE__ */ (0,jsx_runtime.jsx)(
-        AnimatedBlock,
-        {
-          animation: "scale-in",
-          delaySeconds: 0.15,
-          style: {
-            position: "absolute",
-            top: "180px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "auto"
-          },
-          children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-            background: "linear-gradient(90deg, rgba(185, 28, 28, 0) 0%, rgba(185, 28, 28, 0.95) 20%, rgba(185, 28, 28, 0.95) 80%, rgba(185, 28, 28, 0) 100%)",
-            border: "none",
-            borderRadius: "0px",
-            padding: "10px 40px",
-            fontSize: "26px",
-            fontWeight: "900",
-            color: "#ffffff",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            boxShadow: "none",
-            textAlign: "center",
-            fontFamily: fontMontserrat
-          }, children: displayCategory })
-        }
-      ),
-      displayTitle && /* @__PURE__ */ (0,jsx_runtime.jsx)(
-        AnimatedBlock,
-        {
-          animation: "scale-in",
-          delaySeconds: 0.3,
-          style: {
-            position: "absolute",
-            top: "260px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "100%",
-            display: "flex",
-            justifyContent: "center"
-          },
-          children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
-            display: "flex",
-            alignItems: "center",
-            gap: "14px"
-          }, children: [
-            /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontSize: "86px", fontWeight: "300", color: "#ffffff", lineHeight: 1, marginTop: "-12px", fontFamily: fontChakraPetch }, children: "\u300C" }),
-            /* @__PURE__ */ (0,jsx_runtime.jsx)("h1", { style: {
-              fontSize: "88px",
-              fontWeight: "900",
-              color: "#ffffff",
-              margin: 0,
-              letterSpacing: "0.02em",
-              textTransform: "uppercase",
-              textAlign: "center",
-              lineHeight: 1.15,
-              maxWidth: "900px",
-              fontFamily: fontChakraPetch,
-              textShadow: "0 4px 12px rgba(0, 0, 0, 0.45)"
-            }, children: formattedTitle }),
-            /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontSize: "86px", fontWeight: "300", color: "#ffffff", lineHeight: 1, marginTop: "-12px", fontFamily: fontChakraPetch }, children: "\u300D" })
-          ] })
-        }
-      ),
-      searchBarText && /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0,jsx_runtime.jsx)(
-          esm.Sequence,
-          {
-            from: startFrame,
-            durationInFrames: Math.round(searchBarText.length * typingSpeed),
-            children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
-              esm.Audio,
-              {
-                src: (0,esm.staticFile)("typewriter.mp3"),
-                volume: 0.4
-              }
-            )
-          }
-        ),
-        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      background: "#fdfbf7",
+      borderRadius: "16px",
+      boxShadow: "0 10px 20px rgba(0,0,0,0.15)",
+      padding: "48px 36px 28px 36px",
+      boxSizing: "border-box",
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "stretch"
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        position: "absolute",
+        left: "54px",
+        top: 0,
+        bottom: 0,
+        width: "1.5px",
+        background: "rgba(239, 68, 68, 0.4)",
+        zIndex: 2
+      } }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        fontSize: "13px",
+        fontWeight: "900",
+        color: "#94a3b8",
+        fontFamily: "monospace",
+        letterSpacing: "0.15em",
+        textAlign: "center",
+        marginBottom: "24px",
+        zIndex: 3
+      }, children: "DYMO - LABELWRITER - #132" }),
+      titleText && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        alignSelf: "center",
+        background: "linear-gradient(90deg, #1e3a8a 0%, #1e1b4b 50%, #7f1d1d 100%)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "6px",
+        padding: "20px 36px",
+        boxShadow: "0 12px 24px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.1)",
+        color: "#ffffff",
+        fontSize: `${36 * fontScale}px`,
+        fontWeight: "900",
+        fontFamily: styles.fontFamily,
+        textAlign: "center",
+        letterSpacing: "0.02em",
+        marginBottom: "24px",
+        zIndex: 3,
+        maxWidth: "92%"
+      }, children: renderStickerText(titleText) }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "28px",
+        zIndex: 3
+      }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+          fontSize: "12px",
+          fontWeight: "900",
+          color: "#64748b",
+          letterSpacing: "0.08em",
+          marginRight: "8px",
+          textTransform: "uppercase",
+          fontFamily: styles.fontFamily
+        }, children: "CATEGORY:" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+          background: "#fef08a",
+          color: "#854d0e",
+          borderRadius: "4px",
+          padding: "4px 14px",
+          fontSize: "12px",
+          fontWeight: "900",
+          letterSpacing: "0.05em",
+          textTransform: "uppercase",
+          fontFamily: styles.fontFamily,
+          boxShadow: "0 2px 4px rgba(234,179,8,0.15)"
+        }, children: displayCategory })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        fontSize: "12px",
+        fontWeight: "900",
+        color: "#cbd5e1",
+        letterSpacing: "0.25em",
+        textAlign: "center",
+        textTransform: "uppercase",
+        marginBottom: "24px",
+        zIndex: 3,
+        fontFamily: styles.fontFamily
+      }, children: "- NOTES -" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        zIndex: 3,
+        flex: 1
+      }, children: noteItems.map((note, idx) => {
+        const isFirst = idx === 0;
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(
           AnimatedBlock,
           {
-            animation: "fade-in",
-            delaySeconds: 0.45,
-            style: {
-              position: "absolute",
-              top: "500px",
-              left: "175px",
-              width: "600px",
-              height: "80px",
+            animation: "slide-up",
+            delaySeconds: 0.6 + idx * 0.15,
+            children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+              background: isFirst ? "#fef9c3" : "rgba(248, 250, 252, 0.6)",
+              borderLeft: isFirst ? "4px solid #eab308" : "4px solid #cbd5e1",
+              border: isFirst ? void 0 : "1px solid rgba(0,0,0,0.05)",
+              borderRadius: "6px",
+              padding: "16px 20px 16px 28px",
+              boxShadow: isFirst ? "0 4px 10px rgba(234,179,8,0.08)" : "0 2px 4px rgba(0,0,0,0.02)",
               display: "flex",
-              alignItems: "center"
-            },
-            children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
-              fontSize: "25px",
-              fontWeight: "500",
-              color: "#b91c1c",
-              // Red matching the HUST brand color on white input
-              fontFamily: fontMontserrat,
+              flexDirection: "row",
+              alignItems: "center",
+              boxSizing: "border-box"
+            }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+              fontSize: `${24 * fontScale}px`,
+              fontWeight: "800",
+              color: isFirst ? "#854d0e" : "#334155",
               textAlign: "left",
-              whiteSpace: "nowrap",
-              width: "100%"
-            }, children: [
-              '"',
-              typedSearchText,
-              '"'
-            ] })
-          }
-        )
-      ] }),
-      pointsList.map((comp, idx) => {
-        var _a2;
-        const textVal = ((_a2 = comp.data) == null ? void 0 : _a2.text) || "";
-        const colonIndex = textVal.indexOf(":");
-        const hasColon = colonIndex !== -1;
-        const itemTitle = hasColon ? textVal.substring(0, colonIndex).trim() : textVal;
-        const itemDetail = hasColon ? textVal.substring(colonIndex + 1).trim() : "";
-        const isInlineOnly = !hasColon;
-        const tops = ["813px", "980px", "1148px", "1318px"];
-        const currentTop = tops[idx] || `${752 + idx * 111}px`;
-        return (
-          // Outer wrapper: absolute-positioned anchor at the checkmark's Y-center
-          /* @__PURE__ */ (0,jsx_runtime.jsx)(
-            "div",
-            {
-              style: {
-                position: "absolute",
-                top: currentTop,
-                left: "158px",
-                width: "500px"
-              },
-              children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { transform: "translateY(-50%)" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
-                AnimatedBlock,
-                {
-                  animation: "slide-right",
-                  delaySeconds: 0.7 + idx * 0.25,
-                  children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: "2px" }, children: isInlineOnly ? (
-                    // Whole line with inline bold/regular markers
-                    /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontSize: "28px", fontWeight: "400", color: "#ffffff", lineHeight: 1.3, fontFamily: fontMontserrat }, children: renderInlineBold(itemTitle) })
-                  ) : /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
-                    /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontSize: "28px", fontWeight: "400", color: "#ffffff", lineHeight: 1.25, fontFamily: fontMontserrat }, children: renderInlineBold(itemTitle) }),
-                    /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontSize: "28px", fontWeight: "400", color: "rgba(255, 255, 255, 0.9)", lineHeight: 1.3, fontFamily: fontMontserrat }, children: renderInlineBold(itemDetail) })
-                  ] }) })
-                }
-              ) })
-            },
-            idx
-          )
+              fontFamily: styles.fontFamily,
+              lineHeight: 1.3
+            }, children: note }) })
+          },
+          idx
         );
-      })
+      }) })
     ] })
+  ] }) }) });
+};
+
+;// ./src/compositions/layouts/modes/IntroMediaHeroMode.tsx
+
+
+
+const IntroMediaHeroMode = ({
+  otherComps,
+  accentColor,
+  rgb,
+  isLight,
+  styles,
+  fontScale,
+  imageUrl,
+  theme,
+  highlightWords
+}) => {
+  const subPoints = otherComps.slice(0, 3).map((comp) => {
+    var _a;
+    return ((_a = comp.data) == null ? void 0 : _a.text) || "";
+  }).filter(Boolean);
+  const isDefaultImage = (url) => {
+    if (!url) return true;
+    const lower = url.toLowerCase();
+    if (lower === "undefined" || lower === "null" || lower.endsWith("/undefined") || lower.endsWith("/null") || lower.includes("placeholder")) {
+      return true;
+    }
+    return lower.includes("bg") || lower.includes("background") || lower.includes("circuit") || lower.includes("bokeh");
+  };
+  const cardBg = isLight ? "rgba(255, 255, 255, 0.75)" : "rgba(10, 15, 30, 0.55)";
+  const cardBorder = isLight ? "1px solid rgba(0, 0, 0, 0.08)" : `1px solid rgba(${rgb}, 0.25)`;
+  const cardGlow = isLight ? "0 20px 40px rgba(0, 0, 0, 0.05)" : `0 24px 64px rgba(0, 0, 0, 0.45), 0 0 40px rgba(${rgb}, 0.18), rgba(255, 255, 255, 0.02) 0px 0px 0px 1px inset`;
+  const renderMockWebUI = () => {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      display: "flex",
+      flexDirection: "row",
+      width: "100%",
+      height: "100%",
+      background: isLight ? "#f8fafc" : "#070a13",
+      color: isLight ? "#1e293b" : "#f8fafc"
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        width: "56px",
+        background: isLight ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.02)",
+        borderRight: cardBorder,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "16px 0",
+        gap: "20px",
+        boxSizing: "border-box"
+      }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "24px", height: "24px", borderRadius: "6px", background: accentColor, opacity: 0.8 } }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "20px", height: "20px", borderRadius: "4px", background: isLight ? "#cbd5e1" : "#334155" } }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "20px", height: "20px", borderRadius: "4px", background: isLight ? "#cbd5e1" : "#334155" } }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "20px", height: "20px", borderRadius: "4px", background: isLight ? "#cbd5e1" : "#334155" } })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column" }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+          height: "44px",
+          borderBottom: cardBorder,
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 16px",
+          boxSizing: "border-box"
+        }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontSize: "12px", fontWeight: "800", opacity: 0.8, letterSpacing: "0.05em", fontFamily: styles.fontFamily }, children: "PROJECT_WORKSPACE / EDITING" }),
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "row", gap: "8px" }, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "64px", height: "20px", borderRadius: "4px", background: isLight ? "#e2e8f0" : "#1e293b" } }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "20px", height: "20px", borderRadius: "50%", background: isLight ? "#cbd5e1" : "#334155" } })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "row", padding: "16px", gap: "16px", boxSizing: "border-box" }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+            flex: 1.3,
+            background: isLight ? "rgba(0,0,0,0.03)" : "rgba(0,0,0,0.45)",
+            borderRadius: "12px",
+            border: cardBorder,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            overflow: "hidden"
+          }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+            width: "48px",
+            height: "48px",
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.15)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,255,255,0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 8px 16px rgba(0,0,0,0.15)"
+          }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "#ffffff", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ (0,jsx_runtime.jsx)("polygon", { points: "5 3 19 12 5 21 5 3" }) }) }) }),
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+            flex: 0.8,
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            justifyContent: "flex-start"
+          }, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+              background: isLight ? "#e2e8f0" : `rgba(${rgb}, 0.12)`,
+              border: cardBorder,
+              borderRadius: "8px",
+              padding: "10px 12px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px"
+            }, children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "40px", height: "6px", background: accentColor, borderRadius: "2px" } }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "90%", height: "10px", background: isLight ? "#cbd5e1" : "#334155", borderRadius: "3px" } })
+            ] }),
+            /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+              background: "rgba(255,255,255,0.02)",
+              border: cardBorder,
+              borderRadius: "8px",
+              padding: "10px 12px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px"
+            }, children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "50px", height: "6px", background: isLight ? "#cbd5e1" : "#334155", borderRadius: "2px" } }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "80%", height: "10px", background: isLight ? "#cbd5e1" : "#334155", borderRadius: "3px" } })
+            ] }),
+            /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+              background: "rgba(255,255,255,0.02)",
+              border: cardBorder,
+              borderRadius: "8px",
+              padding: "10px 12px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px"
+            }, children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "30px", height: "6px", background: isLight ? "#cbd5e1" : "#334155", borderRadius: "2px" } }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "60%", height: "10px", background: isLight ? "#cbd5e1" : "#334155", borderRadius: "3px" } })
+            ] })
+          ] })
+        ] })
+      ] })
+    ] });
+  };
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    width: "100%",
+    maxWidth: "860px",
+    boxSizing: "border-box",
+    zIndex: 5
+  }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "scale-in", delaySeconds: 0.25, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      width: "100%",
+      maxWidth: "760px",
+      height: "380px",
+      background: cardBg,
+      border: cardBorder,
+      borderRadius: "24px",
+      boxShadow: cardGlow,
+      backdropFilter: "blur(16px)",
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "column",
+      boxSizing: "border-box",
+      marginBottom: "40px",
+      transform: "perspective(1200px) rotateX(8deg) rotateY(-6deg) rotateZ(2deg) scale(0.94)",
+      transformStyle: "preserve-3d"
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        height: "40px",
+        background: isLight ? "rgba(0, 0, 0, 0.03)" : "rgba(255, 255, 255, 0.03)",
+        borderBottom: isLight ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.06)",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: "0 18px",
+        boxSizing: "border-box",
+        justifyContent: "space-between",
+        flexShrink: 0
+      }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { width: "12px", height: "12px", borderRadius: "50%", background: "#ef4444" } }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { width: "12px", height: "12px", borderRadius: "50%", background: "#eab308" } }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { width: "12px", height: "12px", borderRadius: "50%", background: "#22c55e" } })
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          width: "360px",
+          height: "24px",
+          background: isLight ? "rgba(255, 255, 255, 0.8)" : "rgba(15, 23, 42, 0.5)",
+          border: isLight ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.06)",
+          borderRadius: "6px",
+          fontSize: "11px",
+          color: isLight ? "#64748b" : "#94a3b8",
+          fontFamily: "monospace",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          letterSpacing: "0.02em"
+        }, children: "preview.yupvid.ai/media_hero" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "52px" } })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        flex: 1,
+        position: "relative",
+        background: isLight ? "#f8fafc" : "#020617",
+        overflow: "hidden",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      }, children: renderMockWebUI() })
+    ] }) }),
+    subPoints.length > 0 && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "18px",
+      width: "100%",
+      maxWidth: "760px",
+      boxSizing: "border-box",
+      marginTop: "12px",
+      perspective: "1000px"
+    }, children: subPoints.map((text, idx) => {
+      const isLeft = idx % 2 === 0;
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        AnimatedBlock,
+        {
+          animation: isLeft ? "slide-left" : "slide-right",
+          delaySeconds: 0.65 + idx * 0.15,
+          style: {
+            width: "82%",
+            alignSelf: isLeft ? "flex-start" : "flex-end",
+            flexShrink: 0
+          },
+          children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+            background: isLight ? "rgba(255, 255, 255, 0.9)" : "rgba(10, 15, 30, 0.5)",
+            border: isLight ? "1px solid rgba(0, 0, 0, 0.06)" : `1px solid rgba(${rgb}, 0.25)`,
+            borderRadius: "20px",
+            padding: "16px 24px",
+            boxShadow: isLight ? "0 10px 25px rgba(0,0,0,0.03)" : `0 12px 30px rgba(0, 0, 0, 0.35), rgba(${rgb}, 0.08) 0px 0px 15px`,
+            backdropFilter: "blur(12px)",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: "18px",
+            boxSizing: "border-box",
+            transform: `rotateY(${isLeft ? "5deg" : "-5deg"})`,
+            transformStyle: "preserve-3d"
+          }, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+              width: "42px",
+              height: "42px",
+              borderRadius: "12px",
+              background: isLight ? "rgba(0,0,0,0.04)" : `rgba(${rgb}, 0.15)`,
+              border: isLight ? "1px solid rgba(0,0,0,0.08)" : `1px solid ${accentColor}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: isLight ? "none" : `0 0 10px rgba(${rgb}, 0.25)`,
+              flexShrink: 0
+            }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+              fontSize: "16px",
+              fontWeight: "900",
+              color: accentColor,
+              fontFamily: styles.fontFamily
+            }, children: `0${idx + 1}` }) }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+              fontSize: `${20 * fontScale}px`,
+              fontWeight: "800",
+              color: isLight ? "#1e293b" : "#f1f5f9",
+              fontFamily: styles.fontFamily,
+              textAlign: "left",
+              lineHeight: 1.3
+            }, children: text })
+          ] })
+        },
+        idx
+      );
+    }) })
+  ] });
+};
+
+;// ./src/compositions/layouts/modes/MediaShowcaseCardMode.tsx
+
+
+
+const MediaShowcaseCardMode = ({
+  otherComps,
+  accentColor,
+  rgb,
+  isLight,
+  styles,
+  fontScale,
+  imageUrl,
+  theme,
+  highlightWords
+}) => {
+  const points = otherComps.slice(0, 3).map((comp) => {
+    var _a;
+    return ((_a = comp.data) == null ? void 0 : _a.text) || "";
+  }).filter(Boolean);
+  const phoneBg = isLight ? "rgba(255, 255, 255, 0.9)" : "rgba(10, 15, 30, 0.7)";
+  const phoneBorder = isLight ? "1px solid rgba(0, 0, 0, 0.08)" : `1px solid rgba(${rgb}, 0.25)`;
+  const phoneGlow = isLight ? "0 35px 70px rgba(0, 0, 0, 0.07)" : `0 40px 90px rgba(0, 0, 0, 0.55), 0 0 60px rgba(${rgb}, 0.2), rgba(255, 255, 255, 0.02) 0px 0px 0px 1px inset`;
+  const renderMockAppUI = () => {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      display: "flex",
+      flexDirection: "column",
+      width: "100%",
+      height: "100%",
+      background: isLight ? "#ffffff" : "#070a13",
+      color: isLight ? "#1e293b" : "#f8fafc",
+      padding: "28px 24px",
+      boxSizing: "border-box",
+      fontFamily: styles.fontFamily
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "36px",
+        marginTop: "4px"
+      }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: "12px" }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+            width: "32px",
+            height: "32px",
+            borderRadius: "50%",
+            background: `linear-gradient(135deg, ${accentColor}, #3b82f6)`,
+            boxShadow: `0 0 10px rgba(${rgb}, 0.35)`
+          } }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontSize: "14px", fontWeight: "900", letterSpacing: "0.05em", textTransform: "uppercase" }, children: "yup_app" })
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "24px", height: "24px", borderRadius: "7px", background: isLight ? "#cbd5e1" : "#1e293b" } })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        background: isLight ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.02)",
+        border: phoneBorder,
+        borderRadius: "24px",
+        padding: "36px 16px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginBottom: "36px",
+        boxSizing: "border-box"
+      }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          position: "relative",
+          width: "140px",
+          height: "140px",
+          borderRadius: "50%",
+          border: `10px solid ${isLight ? "#f1f5f9" : "#131927"}`,
+          borderTopColor: accentColor,
+          borderRightColor: accentColor,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "18px",
+          boxShadow: isLight ? "none" : `0 0 16px rgba(${rgb}, 0.12)`
+        }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontSize: "26px", fontWeight: "900", color: isLight ? "#0f172a" : "#ffffff" }, children: "85%" }) }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "100px", height: "8px", background: isLight ? "#cbd5e1" : "#1e293b", borderRadius: "4px" } })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: "14px" }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+          background: isLight ? "#f8fafc" : "rgba(255,255,255,0.03)",
+          border: phoneBorder,
+          borderRadius: "14px",
+          padding: "14px 18px",
+          display: "flex",
+          alignItems: "center",
+          gap: "14px"
+        }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "12px", height: "12px", borderRadius: "50%", background: accentColor } }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { flex: 1, height: "10px", background: isLight ? "#cbd5e1" : "#1e293b", borderRadius: "5px" } })
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+          background: isLight ? "#f8fafc" : "rgba(255,255,255,0.03)",
+          border: phoneBorder,
+          borderRadius: "14px",
+          padding: "14px 18px",
+          display: "flex",
+          alignItems: "center",
+          gap: "14px"
+        }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "12px", height: "12px", borderRadius: "50%", background: "#eab308" } }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { flex: 1, height: "10px", background: isLight ? "#cbd5e1" : "#1e293b", borderRadius: "5px" } })
+        ] })
+      ] })
+    ] });
+  };
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    maxWidth: "1000px",
+    boxSizing: "border-box",
+    gap: "36px",
+    zIndex: 5,
+    padding: "0 20px"
+  }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "50%", display: "flex", justifyContent: "center" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "scale-in", delaySeconds: 0.25, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      position: "relative",
+      width: "440px",
+      height: "660px",
+      background: phoneBg,
+      border: isLight ? "10px solid #1e293b" : "10px solid rgba(15, 23, 42, 0.95)",
+      borderRadius: "52px",
+      boxShadow: phoneGlow,
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "column",
+      boxSizing: "border-box"
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        width: "90px",
+        height: "18px",
+        background: isLight ? "#1e293b" : "#0f172a",
+        borderRadius: "0 0 12px 12px",
+        position: "absolute",
+        top: 0,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 10,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "36px", height: "3px", background: "#475569", borderRadius: "1.5px" } }) }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        height: "36px",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "0 28px",
+        boxSizing: "border-box",
+        fontSize: "11px",
+        fontWeight: "bold",
+        color: isLight ? "#64748b" : "#94a3b8",
+        background: isLight ? "#ffffff" : "#070a13",
+        zIndex: 5,
+        paddingTop: "6px"
+      }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: "09:41" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", gap: "8px" }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: "5G" }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: "100%" })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        flex: 1,
+        position: "relative",
+        background: isLight ? "#ffffff" : "#020617",
+        overflow: "hidden"
+      }, children: renderMockAppUI() })
+    ] }) }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+      width: "48%",
+      display: "flex",
+      flexDirection: "column",
+      gap: "24px",
+      boxSizing: "border-box"
+    }, children: points.map((text, idx) => /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      AnimatedBlock,
+      {
+        animation: "slide-right",
+        delaySeconds: 0.4 + idx * 0.15,
+        children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+          background: isLight ? "rgba(255, 255, 255, 0.9)" : "rgba(10, 15, 30, 0.5)",
+          border: isLight ? "1px solid rgba(0, 0, 0, 0.05)" : `1px solid rgba(${rgb}, 0.25)`,
+          borderLeft: `6px solid ${accentColor}`,
+          borderRadius: "24px",
+          padding: "20px 24px",
+          boxShadow: isLight ? "0 10px 30px rgba(0,0,0,0.02)" : "0 12px 35px rgba(0,0,0,0.35)",
+          backdropFilter: "blur(12px)",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: "18px",
+          boxSizing: "border-box",
+          width: "100%"
+        }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+            width: "38px",
+            height: "38px",
+            borderRadius: "10px",
+            background: isLight ? "rgba(0,0,0,0.03)" : `rgba(${rgb}, 0.12)`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0
+          }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+            fontSize: "14px",
+            fontWeight: "900",
+            color: accentColor,
+            fontFamily: styles.fontFamily
+          }, children: `0${idx + 1}` }) }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+            fontSize: `${22 * fontScale}px`,
+            fontWeight: "800",
+            color: isLight ? "#1e293b" : "#cbd5e1",
+            fontFamily: styles.fontFamily,
+            textAlign: "left",
+            lineHeight: 1.3
+          }, children: text })
+        ] })
+      },
+      idx
+    )) })
   ] });
 };
 
@@ -64764,6 +66143,7 @@ const OpsMonitorMode = ({
 
 
 
+
 const TimelineShiftMode_cleanCardText = (rawText) => {
   if (!rawText) return "";
   const trimmed = rawText.trim();
@@ -64806,163 +66186,318 @@ const TimelineShiftMode_extractBodyAndHighlight = (text, highlightWords) => {
   }
   return { body: trimmed, highlight: "" };
 };
-const TimelineShiftMode = ({
-  otherComps,
-  resolvedPositions,
-  t,
-  accentColor,
-  darkAccentColor,
-  rgb,
-  isLight,
-  isVertical,
-  styles,
-  fontScale,
-  paddingScale,
-  gap,
-  activeCardTextColor,
-  inactiveCardTextColor,
-  highlightWords
-}) => {
-  const safeComps = otherComps.length > 0 ? otherComps : [
-    { id: "fallback_1", type: "card", data: { text: "K\u1EF9 n\u0103ng hot nh\u1EA5t 2026" } },
-    { id: "fallback_2", type: "card", data: { text: "Ch\u1EC9 c\xF3 ba b\u01B0\u1EDBc 3 b\u01B0\u1EDBc" } }
-  ];
-  const compLeft = safeComps[0];
-  const compRight = safeComps[1] || safeComps[0];
-  const outerContainerStyle = {
-    position: "relative",
-    width: "100%",
-    maxWidth: "1000px",
-    borderRadius: "36px",
-    backgroundColor: isLight ? "rgba(255, 255, 255, 0.45)" : "rgba(10, 16, 30, 0.65)",
-    border: isLight ? "1.5px solid rgba(0, 0, 0, 0.08)" : "1.5px solid rgba(255, 255, 255, 0.12)",
-    boxShadow: isLight ? "0 25px 60px rgba(0, 0, 0, 0.08), inset 0 0 35px rgba(255, 255, 255, 0.8)" : "0 25px 60px rgba(0, 0, 0, 0.55), inset 0 0 35px rgba(255, 255, 255, 0.02)",
-    backdropFilter: "blur(20px)",
-    padding: isVertical ? "40px 24px" : "52px 36px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    boxSizing: "border-box",
-    perspective: "1200px",
-    zIndex: 5
-  };
-  const renderShiftCard = (comp, cardIdx) => {
-    var _a;
-    if (!comp) return null;
-    const isLeft = cardIdx === 0;
-    const rawText = ((_a = comp.data) == null ? void 0 : _a.text) || "";
-    const text = TimelineShiftMode_cleanCardText(rawText);
-    const { body, highlight } = TimelineShiftMode_extractBodyAndHighlight(text, highlightWords);
-    const sideColor = isLeft ? accentColor || "#EF4444" : "#EAB308";
-    const sidePillText = isLeft ? "PAST PHASE" : "UPGRADED FUTURE";
-    const sideLabelText = isLeft ? body || "K\u1EF8 N\u0102NG HOT NH\u1EA4T" : body || "CH\u1EC8 C\xD3 BA B\u01AF\u1EDAC";
-    const itemStyleSetting = t.items.itemStyles[cardIdx] || { fontSize: "26px", fontWeight: "800" };
-    const defaultThemeBg = styles.cardStyle.background || styles.cardStyle.backgroundColor || "rgba(255, 255, 255, 0.95)";
-    const cardStyle = {
-      width: isVertical ? "72%" : "68%",
-      alignSelf: isLeft ? "flex-start" : "flex-end",
-      borderRadius: itemStyleSetting.borderRadius || "24px",
-      padding: resolvePadding(itemStyleSetting.padding || "22px", paddingScale),
-      background: styles.cardStyle.background || styles.cardStyle.backgroundColor || (isLeft ? isLight ? "rgba(245, 245, 247, 0.82)" : "rgba(8, 25, 80, 0.65)" : isLight ? defaultThemeBg : "rgba(12, 35, 100, 0.75)"),
-      border: isLeft ? isLight ? "1px solid rgba(0, 0, 0, 0.08)" : styles.cardStyle.border || `1.5px solid ${sideColor}55` : styles.cardStyle.border || `2px solid ${sideColor}`,
-      boxShadow: isLeft ? isLight ? "0 10px 30px rgba(0, 0, 0, 0.04)" : `0 12px 36px rgba(0, 0, 0, 0.45), 0 0 20px ${sideColor}15` : isLight ? `0 20px 40px rgba(0, 0, 0, 0.06), 0 0 25px ${sideColor}18` : `0 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px ${sideColor}44`,
-      backdropFilter: "blur(16px)",
-      transform: isLeft ? "perspective(1000px) rotateY(10deg) rotateX(-6deg) scale(0.92)" : "perspective(1000px) rotateY(-10deg) rotateX(6deg) scale(1.08)",
-      opacity: isLeft ? 0.88 : 1,
-      display: "flex",
-      flexDirection: "column",
-      gap: "10px",
-      boxSizing: "border-box",
+const TimelineShiftMode = (props) => {
+  const {
+    otherComps,
+    accentColor,
+    darkAccentColor,
+    rgb,
+    isLight,
+    t,
+    styles,
+    fontScale,
+    paddingScale
+  } = props;
+  const frame = (0,esm.useCurrentFrame)();
+  if (t.id === "TimelineChapters") {
+    const visibleComps = otherComps.slice(0, 3);
+    const N = visibleComps.length;
+    const startPt = { x: 15, y: 10 };
+    const cardPts = [
+      { x: 32, y: 26 },
+      { x: 68, y: 42 },
+      { x: 32, y: 58 }
+    ];
+    const startScale = (0,esm.interpolate)(frame, [0, 10], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+    const startX = (0,esm.interpolate)(frame, [12, 25], [50, startPt.x], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+    const startY = (0,esm.interpolate)(frame, [12, 25], [50, startPt.y], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+    let ballX = startPt.x;
+    let ballY = startPt.y;
+    const isBallActive = frame >= 25 && frame < 25 + N * 25;
+    if (isBallActive) {
+      const segmentIdx = Math.min(N - 1, Math.floor((frame - 25) / 25));
+      const segmentFrame = (frame - 25) % 25;
+      const fromPt = segmentIdx === 0 ? startPt : cardPts[segmentIdx - 1];
+      const toPt = cardPts[segmentIdx];
+      ballX = (0,esm.interpolate)(segmentFrame, [0, 25], [fromPt.x, toPt.x], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+      ballY = (0,esm.interpolate)(segmentFrame, [0, 25], [fromPt.y, toPt.y], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+    } else if (frame >= 25 + N * 25) {
+      ballX = cardPts[N - 1].x;
+      ballY = cardPts[N - 1].y;
+    }
+    const renderLineSegment = (from, to, startF, endF, id) => {
+      if (frame < startF) return null;
+      const curX = (0,esm.interpolate)(frame, [startF, endF], [from.x, to.x], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+      const curY = (0,esm.interpolate)(frame, [startF, endF], [from.y, to.y], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "line",
+        {
+          x1: `${from.x}%`,
+          y1: `${from.y}%`,
+          x2: `${curX}%`,
+          y2: `${curY}%`,
+          stroke: accentColor,
+          strokeWidth: "4",
+          strokeLinecap: "round",
+          style: {
+            filter: `drop-shadow(0 0 8px ${accentColor})`
+          }
+        },
+        id
+      );
+    };
+    const animStyles = `
+      @keyframes timeline-card-float-left {
+        0% { transform: translate(-50%, -50%) scale(1.0) translateY(0px); }
+        50% { transform: translate(-50%, -50%) scale(1.0) translateY(-6px); }
+        100% { transform: translate(-50%, -50%) scale(1.0) translateY(0px); }
+      }
+      @keyframes timeline-card-float-right {
+        0% { transform: translate(-50%, -50%) scale(1.0) translateY(0px); }
+        50% { transform: translate(-50%, -50%) scale(1.0) translateY(6px); }
+        100% { transform: translate(-50%, -50%) scale(1.0) translateY(0px); }
+      }
+    `;
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
       position: "relative",
-      zIndex: isLeft ? 5 : 10
-    };
-    const topHeaderStyle = {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: "4px"
-    };
-    const labelStyle = {
-      fontSize: "12px",
-      fontWeight: 900,
-      letterSpacing: "0.15em",
-      textTransform: "uppercase",
-      color: sideColor,
-      fontFamily: styles.fontFamily
-    };
-    const pillStyle = {
-      fontSize: "10px",
-      fontWeight: 900,
-      letterSpacing: "0.1em",
-      textTransform: "uppercase",
-      padding: "4px 10px",
-      borderRadius: "12px",
-      color: sideColor,
-      backgroundColor: isLeft ? isLight ? "rgba(0, 0, 0, 0.05)" : "rgba(148, 163, 184, 0.12)" : "rgba(234, 179, 8, 0.15)",
-      border: isLeft ? isLight ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.15)" : `1.5px solid ${sideColor}`
-    };
-    const animConfig = getAnimationConfig(comp, cardIdx, "scale-in", 0.3, t);
-    return /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animConfig.animation, delaySeconds: animConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: cardStyle, children: [
-      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: topHeaderStyle, children: [
-        /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: labelStyle, children: sideLabelText }),
-        /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: pillStyle, children: sidePillText })
+      width: "100%",
+      height: "100%",
+      marginTop: "-200px",
+      // Pull the entire timeline up to sit directly below the title, leaving bottom clear
+      zIndex: 5
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("style", { children: animStyles }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("svg", { style: { position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 1 }, children: [
+        renderLineSegment(startPt, cardPts[0], 25, 50, 0),
+        N > 1 && renderLineSegment(cardPts[0], cardPts[1], 50, 75, 1),
+        N > 2 && renderLineSegment(cardPts[1], cardPts[2], 75, 100, 2)
       ] }),
       /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-        fontSize: getDynamicFontSize(body || text, 26, fontScale),
-        fontWeight: 700,
-        color: isLight ? "#191919" : "#ffffff",
-        fontFamily: styles.fontFamily,
-        lineHeight: 1.35
-      }, children: body || text }),
-      highlight && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-        fontSize: `${Math.round(40 * fontScale)}px`,
-        fontWeight: 950,
-        color: sideColor,
-        fontFamily: styles.fontFamily,
-        lineHeight: 1.1,
+        position: "absolute",
+        left: `${startX}%`,
+        top: `${startY}%`,
+        transform: `translate(-50%, -50%) scale(${startScale})`,
+        width: "24px",
+        height: "24px",
+        borderRadius: "50%",
+        background: "#ffffff",
+        border: `3px solid ${accentColor}`,
+        boxShadow: `0 0 15px ${accentColor}`,
+        zIndex: 3
+      } }),
+      frame >= 25 && frame < 25 + N * 25 && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        position: "absolute",
+        left: `${ballX}%`,
+        top: `${ballY}%`,
+        transform: "translate(-50%, -50%)",
+        width: "20px",
+        height: "20px",
+        borderRadius: "50%",
+        background: "#ffffff",
+        boxShadow: `0 0 20px #ffffff, 0 0 40px ${accentColor}`,
+        zIndex: 4
+      } }),
+      visibleComps.map((comp, idx) => {
+        var _a, _b;
+        const pt = cardPts[idx];
+        const triggerFrame = 50 + idx * 25;
+        const isLeft = idx % 2 === 0;
+        const scale = (0,esm.interpolate)(frame, [triggerFrame, triggerFrame + 6, triggerFrame + 12], [0, 1.1, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp"
+        });
+        if (frame < triggerFrame) return null;
+        const isFullyIn = frame >= triggerFrame + 12;
+        const cardStyle = {
+          position: "absolute",
+          left: `${pt.x}%`,
+          top: `${pt.y}%`,
+          transform: `translate(-50%, -50%) scale(${scale})`,
+          width: "360px",
+          borderRadius: "20px",
+          padding: resolvePadding("20px", paddingScale),
+          background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 30, 0.8)",
+          border: `1.5px solid ${accentColor}44`,
+          boxShadow: `0 15px 35px rgba(0, 0, 0, 0.3), 0 0 20px rgba(${rgb}, 0.1)`,
+          backdropFilter: "blur(12px)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+          boxSizing: "border-box",
+          zIndex: 2,
+          animation: isFullyIn ? isLeft ? "timeline-card-float-left 5s ease-in-out infinite" : "timeline-card-float-right 5s ease-in-out infinite" : void 0
+        };
+        return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: cardStyle, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+            fontSize: "12px",
+            fontWeight: 900,
+            color: accentColor,
+            fontFamily: styles.fontFamily,
+            letterSpacing: "0.1em"
+          }, children: [
+            "STEP 0",
+            idx + 1
+          ] }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+            fontSize: getDynamicFontSize(((_a = comp.data) == null ? void 0 : _a.text) || "", 24, fontScale),
+            fontWeight: 800,
+            color: isLight ? "#1f2937" : "#ffffff",
+            fontFamily: styles.fontFamily,
+            lineHeight: 1.3
+          }, children: ((_b = comp.data) == null ? void 0 : _b.text) || "" })
+        ] }, comp.id || idx);
+      })
+    ] });
+  } else {
+    const {
+      isVertical,
+      gap,
+      activeCardTextColor,
+      inactiveCardTextColor,
+      highlightWords,
+      resolvedPositions
+    } = props;
+    const safeComps = otherComps.length > 0 ? otherComps : [
+      { id: "fallback_1", type: "card", data: { text: "K\u1EF9 n\u0103ng hot nh\u1EA5t 2026" } },
+      { id: "fallback_2", type: "card", data: { text: "Ch\u1EC9 c\xF3 ba b\u01B0\u1EDBc 3 b\u01B0\u1EDBc" } }
+    ];
+    const compLeft = safeComps[0];
+    const compRight = safeComps[1] || safeComps[0];
+    const outerContainerStyle = {
+      position: "relative",
+      width: "100%",
+      maxWidth: "1000px",
+      borderRadius: "36px",
+      backgroundColor: isLight ? "rgba(255, 255, 255, 0.45)" : "rgba(10, 16, 30, 0.65)",
+      border: isLight ? "1.5px solid rgba(0, 0, 0, 0.08)" : "1.5px solid rgba(255, 255, 255, 0.12)",
+      boxShadow: isLight ? "0 25px 60px rgba(0, 0, 0, 0.08), inset 0 0 35px rgba(255, 255, 255, 0.8)" : "0 25px 60px rgba(0, 0, 0, 0.55), inset 0 0 35px rgba(255, 255, 255, 0.02)",
+      backdropFilter: "blur(20px)",
+      padding: isVertical ? "40px 24px" : "52px 36px",
+      display: "flex",
+      flexDirection: "column",
+      gap: "12px",
+      boxSizing: "border-box",
+      perspective: "1200px",
+      zIndex: 5
+    };
+    const renderShiftCard = (comp, cardIdx) => {
+      var _a;
+      if (!comp) return null;
+      const isLeft = cardIdx === 0;
+      const rawText = ((_a = comp.data) == null ? void 0 : _a.text) || "";
+      const text = TimelineShiftMode_cleanCardText(rawText);
+      const { body, highlight } = TimelineShiftMode_extractBodyAndHighlight(text, highlightWords);
+      const sideColor = isLeft ? accentColor || "#EF4444" : "#F59E0B";
+      const sidePillText = isLeft ? "PAST PHASE" : "UPGRADED FUTURE";
+      const sideLabelText = isLeft ? body || "K\u1EF8 N\u0102NG HOT NH\u1EA4T" : body || "CH\u1EC8 C\xD3 BA B\u01AF\u1EDAC";
+      const itemStyleSetting = t.items.itemStyles[cardIdx] || { fontSize: "26px", fontWeight: "800" };
+      const defaultThemeBg = styles.cardStyle.background || styles.cardStyle.backgroundColor || "rgba(255, 255, 255, 0.95)";
+      const cardStyle = {
+        width: isVertical ? "72%" : "68%",
+        alignSelf: isLeft ? "flex-start" : "flex-end",
+        borderRadius: itemStyleSetting.borderRadius || "24px",
+        padding: resolvePadding(itemStyleSetting.padding || "22px", paddingScale),
+        background: styles.cardStyle.background || styles.cardStyle.backgroundColor || (isLeft ? isLight ? "rgba(245, 245, 247, 0.82)" : "rgba(8, 25, 80, 0.65)" : isLight ? defaultThemeBg : "rgba(12, 35, 100, 0.75)"),
+        border: isLeft ? isLight ? "1px solid rgba(0, 0, 0, 0.08)" : styles.cardStyle.border || `1.5px solid ${sideColor}55` : styles.cardStyle.border || `2px solid ${sideColor}`,
+        boxShadow: isLeft ? isLight ? "0 10px 30px rgba(0, 0, 0, 0.04)" : `0 12px 36px rgba(0, 0, 0, 0.45), 0 0 20px ${sideColor}15` : isLight ? `0 20px 40px rgba(0, 0, 0, 0.06), 0 0 25px ${sideColor}18` : `0 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px ${sideColor}44`,
+        backdropFilter: "blur(16px)",
+        transform: isLeft ? "perspective(1000px) rotateY(10deg) rotateX(-6deg) scale(0.92)" : "perspective(1000px) rotateY(-10deg) rotateX(6deg) scale(1.08)",
+        opacity: isLeft ? 0.88 : 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+        boxSizing: "border-box",
+        position: "relative",
+        zIndex: isLeft ? 5 : 10
+      };
+      const topHeaderStyle = {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "4px"
+      };
+      const labelStyle = {
+        fontSize: "12px",
+        fontWeight: 900,
+        letterSpacing: "0.15em",
         textTransform: "uppercase",
-        letterSpacing: "-0.02em",
-        marginTop: "4px"
-      }, children: highlight })
-    ] }) });
-  };
-  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: outerContainerStyle, children: [
-    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-      position: "absolute",
-      left: "12px",
-      top: "60px",
-      width: "3px",
-      height: "60px",
-      backgroundColor: accentColor || "#EF4444",
-      borderRadius: "999px",
-      opacity: 0.6
-    } }),
-    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-      position: "absolute",
-      right: "12px",
-      bottom: "60px",
-      width: "3px",
-      height: "60px",
-      backgroundColor: "#EAB308",
-      borderRadius: "999px",
-      opacity: 0.6
-    } }),
-    /* @__PURE__ */ (0,jsx_runtime.jsx)("svg", { style: { position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 6 }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
-      "line",
-      {
-        x1: "38%",
-        y1: "40%",
-        x2: "62%",
-        y2: "60%",
-        stroke: "#EAB308",
-        strokeWidth: "2",
-        strokeDasharray: "6 6",
-        strokeOpacity: "0.75"
-      }
-    ) }),
-    renderShiftCard(compLeft, 0),
-    renderShiftCard(compRight, 1)
-  ] });
+        color: sideColor,
+        fontFamily: styles.fontFamily
+      };
+      const pillStyle = {
+        fontSize: "10px",
+        fontWeight: 900,
+        letterSpacing: "0.1em",
+        textTransform: "uppercase",
+        padding: "4px 10px",
+        borderRadius: "12px",
+        color: sideColor,
+        backgroundColor: isLeft ? isLight ? "rgba(0, 0, 0, 0.05)" : "rgba(148, 163, 184, 0.12)" : "rgba(234, 179, 8, 0.15)",
+        border: isLeft ? isLight ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.15)" : `1.5px solid ${sideColor}`
+      };
+      const animConfig = getAnimationConfig(comp, cardIdx, "scale-in", 0.3, t);
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animConfig.animation, delaySeconds: animConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: cardStyle, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: topHeaderStyle, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: labelStyle, children: sideLabelText }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: pillStyle, children: sidePillText })
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          fontSize: getDynamicFontSize(body || text, 26, fontScale),
+          fontWeight: 700,
+          color: isLight ? "#191919" : "#ffffff",
+          fontFamily: styles.fontFamily,
+          lineHeight: 1.35
+        }, children: body || text }),
+        highlight && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          fontSize: `${Math.round(40 * fontScale)}px`,
+          fontWeight: 950,
+          color: sideColor,
+          fontFamily: styles.fontFamily,
+          lineHeight: 1.1,
+          textTransform: "uppercase",
+          letterSpacing: "-0.02em",
+          marginTop: "4px"
+        }, children: highlight })
+      ] }) });
+    };
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: outerContainerStyle, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        position: "absolute",
+        left: "12px",
+        top: "60px",
+        width: "3px",
+        height: "60px",
+        backgroundColor: accentColor || "#EF4444",
+        borderRadius: "999px",
+        opacity: 0.6
+      } }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        position: "absolute",
+        right: "12px",
+        bottom: "60px",
+        width: "3px",
+        height: "60px",
+        backgroundColor: "#F59E0B",
+        borderRadius: "999px",
+        opacity: 0.6
+      } }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("svg", { style: { position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 6 }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "line",
+        {
+          x1: "38%",
+          y1: "40%",
+          x2: "62%",
+          y2: "60%",
+          stroke: "#F59E0B",
+          strokeWidth: "2",
+          strokeDasharray: "6 6",
+          strokeOpacity: "0.75"
+        }
+      ) }),
+      renderShiftCard(compLeft, 0),
+      renderShiftCard(compRight, 1)
+    ] });
+  }
 };
 
 ;// ./src/compositions/layouts/modes/CircularProgressMode.tsx
@@ -65162,6 +66697,9 @@ const CircularProgressMode = ({
 
 
 
+
+
+
 const hexToRgb = (hex) => {
   const c = hex.replace("#", "");
   if (c.length === 3) {
@@ -65228,14 +66766,15 @@ const TemplateLayout = ({
   const layoutMode = t.layoutMode || "absolute_cards";
   const isBottomAligned = layoutType.toLowerCase().includes("fullimage") || layoutType.toLowerCase().includes("imagebackground") || t.container && t.container.align === "bottom";
   const isCenteredLayout = layoutMode === "centered_text";
+  const isFlywheel = t.id === "AIHubGrid1" || t.id === "Flywheel";
   const containerStyle = {
     display: "flex",
     flexDirection: "column",
     alignItems: isCenteredLayout ? "center" : isBottomAligned ? "flex-start" : "center",
-    padding: isCenteredLayout ? "0 64px" : "86px",
+    padding: isFlywheel ? "0px" : isCenteredLayout ? "0 64px" : "86px",
     justifyContent: isCenteredLayout ? "center" : isBottomAligned ? "flex-end" : "flex-start",
-    paddingTop: isCenteredLayout ? "0px" : isBottomAligned ? "0px" : layoutMode === "fintech_edu" || layoutMode === "hust_x_rikkei" ? "0px" : ((_f = t.container) == null ? void 0 : _f.paddingTop) || "380px",
-    paddingBottom: isCenteredLayout ? "0px" : isBottomAligned ? "480px" : "86px",
+    paddingTop: isFlywheel ? "0px" : isCenteredLayout ? "0px" : isBottomAligned ? "0px" : layoutMode === "fintech_edu" || layoutMode === "hust_x_rikkei" ? "0px" : ((_f = t.container) == null ? void 0 : _f.paddingTop) || "380px",
+    paddingBottom: isFlywheel ? "0px" : isCenteredLayout ? "0px" : isBottomAligned ? "480px" : "86px",
     boxSizing: "border-box",
     position: "relative",
     width: "100%",
@@ -65331,10 +66870,16 @@ const TemplateLayout = ({
       case "circular_progress":
         console.log("[TemplateLayout] Rendering circular_progress with props:", modeProps);
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(CircularProgressMode, { ...modeProps });
+      case "pullquote":
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(PullquoteMode, { ...modeProps });
+      case "vignelliquote":
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(VignelliQuoteMode, { ...modeProps });
+      case "intro_media_hero":
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(IntroMediaHeroMode, { ...modeProps });
+      case "media_showcase_card":
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(MediaShowcaseCardMode, { ...modeProps });
       case "centered_text":
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(CenteredTextMode, { ...modeProps });
-      case "hust_x_rikkei":
-        return /* @__PURE__ */ (0,jsx_runtime.jsx)(HustXRikkeiMode, { ...modeProps });
       case "fintech_edu":
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(FintechEduMode, { ...modeProps });
       case "blank":
@@ -65378,7 +66923,7 @@ const TemplateLayout = ({
             fontSize: t.title.fontSize,
             fontWeight: t.title.fontWeight || "800",
             letterSpacing: t.title.letterSpacing,
-            textShadow: t.title.textShadow || (t.title.useAccentTextShadow ? `rgba(0,0,0,0.58) 0px 22px 54px` : void 0),
+            textShadow: t.title.textShadow || (t.title.useAccentTextShadow ? `rgba(0, 0, 0, 0.25) 0px 10px 30px` : void 0),
             colorRgba: styles.titleStyle.color || (isLight ? "#1F2937" : "#ffffff"),
             align: isBottomAligned ? "left" : "center",
             fontFamily: styles.fontFamily,
@@ -65453,6 +66998,12 @@ const BrowserMockup = ({ children }) => {
   ] });
 };
 
+// EXTERNAL MODULE: ./src/compositions/layouts/templates/Opening-Headline/intro_media_hero.json
+var intro_media_hero = __webpack_require__(9563);
+// EXTERNAL MODULE: ./src/compositions/layouts/templates/Opening-Headline/vignelli_quote.json
+var vignelli_quote = __webpack_require__(4860);
+// EXTERNAL MODULE: ./src/compositions/layouts/templates/Opening-Headline/media_showcase_card.json
+var media_showcase_card = __webpack_require__(9960);
 ;// ./src/compositions/layouts/index.ts
 
 
@@ -65464,9 +67015,7 @@ const LAYOUT_REGISTRY = {};
 const KEY_OVERRIDES = {
   spliteditorial: "SplitScreen",
   swissgrid: "FeatureGrid",
-  timelinechapters: "Timeline",
   versusarena: "VersusArena",
-  metriccards: "Dashboard",
   mediacard: "Gallery",
   walkthroughphoneexample: "LaptopMockup",
   scoreboardmeticcards: "StatsBanner",
@@ -65474,7 +67023,7 @@ const KEY_OVERRIDES = {
   introbubbleimage: "IntroBubbleImage",
   intrometricpillimage: "IntroMetricPillImage",
   mappinshook: "IntegrationCloud",
-  vignelliquote: "Quote",
+  vignelliquote: "VignelliQuote",
   quietlogomark: "Ending"
 };
 const formatPascalCase = (str) => {
@@ -65494,6 +67043,9 @@ if (!templates || Object.keys(templates).length === 0) {
   } catch (e) {
   }
 }
+
+
+
 Object.entries(templates).forEach(([path, module]) => {
   const json = module.default || module;
   if (!json || !json.id) return;
@@ -65508,11 +67060,38 @@ Object.entries(templates).forEach(([path, module]) => {
     description: json.description || `Khung x\u01B0\u01A1ng layout cho ph\xE2n c\u1EA3nh ${json.family || "opening"} phong c\xE1ch YupVid.`
   };
 });
+const staticTemplates = [
+  intro_media_hero,
+  vignelli_quote,
+  media_showcase_card
+];
+staticTemplates.forEach((json) => {
+  const normId = json.id.replace(/[-_\s]+/g, "").toLowerCase();
+  const key = KEY_OVERRIDES[normId] || formatPascalCase(json.id);
+  if (!LAYOUT_REGISTRY[key]) {
+    LAYOUT_REGISTRY[key] = {
+      id: key,
+      name: json.name || json.id,
+      family: json.family || "opening",
+      component: (props) => react.createElement(TemplateLayout, { ...props, templateJson: json }),
+      templateJson: json,
+      description: json.description || `Khung x\u01B0\u01A1ng layout cho ph\xE2n c\u1EA3nh ${json.family || "opening"} phong c\xE1ch YupVid.`
+    };
+  }
+});
 const getLayoutById = (id) => {
   const cleanId = id.trim().replace(/\s+/g, "");
-  const match = Object.keys(LAYOUT_REGISTRY).find(
-    (key) => key.toLowerCase() === cleanId.toLowerCase()
+  const normId = cleanId.toLowerCase();
+  const overrideKey = KEY_OVERRIDES[normId];
+  const matchKey = overrideKey || cleanId;
+  let match = Object.keys(LAYOUT_REGISTRY).find(
+    (key) => key.toLowerCase() === matchKey.toLowerCase()
   );
+  if (!match && cleanId.toLowerCase() === "quote") {
+    match = Object.keys(LAYOUT_REGISTRY).find(
+      (key) => key.toLowerCase() === "vignelliquote"
+    );
+  }
   return match ? LAYOUT_REGISTRY[match] : LAYOUT_REGISTRY[Object.keys(LAYOUT_REGISTRY)[0]];
 };
 
@@ -66073,10 +67652,22 @@ const DynamicSubtitle = ({
 }) => {
   const frame = (0,esm.useCurrentFrame)();
   const { fps } = (0,esm.useVideoConfig)();
+  const isTimestampsOutOfDate = (0,react.useMemo)(() => {
+    if (!subtitlesJson || !Array.isArray(subtitlesJson) || subtitlesJson.length === 0) return true;
+    const cleanWord = (w) => (w || "").toLowerCase().replace(/[^a-z0-9àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/gi, "").trim();
+    const voiceoverWords = (voiceover ?? "").split(/\s+/).map(cleanWord).filter(Boolean);
+    const subWords = subtitlesJson.map((w) => cleanWord(w.word || w.word)).filter(Boolean);
+    if (voiceoverWords.length !== subWords.length) return true;
+    if (voiceoverWords.length > 0) {
+      if (voiceoverWords[0] !== subWords[0]) return true;
+      if (voiceoverWords[voiceoverWords.length - 1] !== subWords[subWords.length - 1]) return true;
+    }
+    return false;
+  }, [voiceover, subtitlesJson]);
   const words = (0,react.useMemo)(() => {
-    if (!Array.isArray(subtitlesJson) || subtitlesJson.length === 0) return [];
+    if (isTimestampsOutOfDate || !Array.isArray(subtitlesJson)) return [];
     return normalizeWords(subtitlesJson);
-  }, [subtitlesJson]);
+  }, [subtitlesJson, isTimestampsOutOfDate]);
   const hasTimestamps = words.length > 0;
   const currentSeconds = frame / fps;
   const activeDurationSeconds = typeof voiceoverDuration === "number" && voiceoverDuration > 0 ? voiceoverDuration : durationSeconds;
@@ -66175,12 +67766,12 @@ const DynamicSubtitle = ({
   const textColor = isLightBg ? "#191919" : "#ffffff";
   const effectiveAccentColor = isRikkei ? "#A8232A" : styleName.includes("fintech") ? "#00e5ff" : accentColor;
   const accent = parseRGB(effectiveAccentColor);
-  const rawBottom = (customSubtitle == null ? void 0 : customSubtitle.bottom) || "120px";
+  const rawBottom = (customSubtitle == null ? void 0 : customSubtitle.bottom) || "300px";
   const bottomPx = parseInt(rawBottom);
-  const bottom = isNaN(bottomPx) || bottomPx < 100 ? "115px" : `${bottomPx}px`;
+  const bottom = isNaN(bottomPx) || bottomPx < 300 ? "300px" : `${bottomPx}px`;
   const fontSize = (customSubtitle == null ? void 0 : customSubtitle.fontSize) || "46px";
   const fontWeight = (customSubtitle == null ? void 0 : customSubtitle.fontWeight) ? parseInt(customSubtitle.fontWeight) : 800;
-  const textShadow = isLightBg ? "0px 1px 2px rgba(255, 255, 255, 0.9), 0px 0px 4px rgba(255, 255, 255, 0.5)" : "0px 2px 8px rgba(0, 0, 0, 0.95), 0px 4px 16px rgba(0, 0, 0, 0.8), 0px 0px 4px rgba(0, 0, 0, 0.9)";
+  const textShadow = isLightBg ? "0px 1px 2px rgba(255, 255, 255, 0.9), 0px 0px 4px rgba(255, 255, 255, 0.5)" : "0px 2px 10px rgba(0, 0, 0, 0.75), 0px 1px 3px rgba(0, 0, 0, 0.5)";
   let groupOpacity;
   if (hasTimestamps && words.length > 0) {
     const groupFirstWord = words[Math.min(safeGroupStartWordIdx, words.length - 1)];
@@ -66641,7 +68232,8 @@ const MainComposition = ({
           {
             src: getBgmAsset(config.backgroundMusic),
             volume: config.backgroundMusicVolume ?? 0.025,
-            loop: true
+            loop: true,
+            useWebAudioApi: false
           }
         )
       }
@@ -66756,7 +68348,8 @@ const MainComposition = ({
                 esm.Audio,
                 {
                   src: getFullUrl(audioUrl),
-                  volume: 1.8
+                  volume: 1.8,
+                  useWebAudioApi: false
                 },
                 `${scene.id || index}_${audioUrl}`
               );
@@ -66766,44 +68359,58 @@ const MainComposition = ({
         scene.id || index
       );
     }),
-    ((_d = config == null ? void 0 : config.watermark) == null ? void 0 : _d.enabled) !== false && (((_e = config == null ? void 0 : config.watermark) == null ? void 0 : _e.text) || "yupclip.com") && /* @__PURE__ */ (0,jsx_runtime.jsx)(
-      "div",
-      {
-        style: {
-          position: "absolute",
-          zIndex: 100,
-          padding: "10px 20px",
-          backgroundColor: "rgba(0, 0, 0, 0.4)",
-          backdropFilter: "blur(8px)",
-          color: "#ffffff",
-          border: "1px solid rgba(255, 255, 255, 0.2)",
-          fontFamily: "Be Vietnam Pro, sans-serif",
-          fontWeight: "700",
-          fontSize: "15px",
-          letterSpacing: "1px",
-          borderRadius: "20px",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
-          opacity: 0.85,
-          ...(() => {
-            var _a2;
-            switch (((_a2 = config == null ? void 0 : config.watermark) == null ? void 0 : _a2.position) || "top-right") {
-              case "top-left":
-                return { top: "35px", left: "35px" };
-              case "bottom-left":
-                return { bottom: "160px", left: "35px" };
-              case "bottom-right":
-                return { bottom: "160px", right: "35px" };
-              case "bottom-center":
-                return { bottom: "160px", left: "50%", transform: "translateX(-50%)" };
-              case "top-right":
-              default:
-                return { top: "35px", right: "35px" };
-            }
-          })()
-        },
-        children: ((_f = config == null ? void 0 : config.watermark) == null ? void 0 : _f.text) || "yupclip.com"
-      }
-    ),
+    ((_d = config == null ? void 0 : config.watermark) == null ? void 0 : _d.enabled) !== false && (((_e = config == null ? void 0 : config.watermark) == null ? void 0 : _e.text) || ((_f = config == null ? void 0 : config.watermark) == null ? void 0 : _f.logoUrl) || "yupclip.com") && (() => {
+      var _a2, _b2;
+      const hasLogo = !!((_a2 = config == null ? void 0 : config.watermark) == null ? void 0 : _a2.logoUrl);
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "div",
+        {
+          style: {
+            position: "absolute",
+            zIndex: 100,
+            padding: hasLogo ? "0px" : "10px 20px",
+            backgroundColor: hasLogo ? "transparent" : "rgba(0, 0, 0, 0.4)",
+            backdropFilter: hasLogo ? "none" : "blur(8px)",
+            color: "#ffffff",
+            border: hasLogo ? "none" : "1px solid rgba(255, 255, 255, 0.2)",
+            fontFamily: "Be Vietnam Pro, sans-serif",
+            fontWeight: "700",
+            fontSize: "15px",
+            letterSpacing: "1px",
+            borderRadius: hasLogo ? "0px" : "20px",
+            boxShadow: hasLogo ? "none" : "0 4px 12px rgba(0, 0, 0, 0.3)",
+            opacity: 1,
+            // Full opacity for crisp display
+            ...(() => {
+              var _a3;
+              switch (((_a3 = config == null ? void 0 : config.watermark) == null ? void 0 : _a3.position) || "top-right") {
+                case "top-left":
+                  return { top: "35px", left: "35px" };
+                case "bottom-left":
+                  return { bottom: "160px", left: "35px" };
+                case "bottom-right":
+                  return { bottom: "160px", right: "35px" };
+                case "bottom-center":
+                  return { bottom: "160px", left: "50%", transform: "translateX(-50%)" };
+                case "top-right":
+                default:
+                  return { top: "35px", right: "35px" };
+              }
+            })()
+          },
+          children: hasLogo ? /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: "8px" }, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)(
+              esm.Img,
+              {
+                src: config.watermark.logoUrl || "",
+                style: { height: "35px", objectFit: "contain" }
+              }
+            ),
+            config.watermark.text && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { textShadow: "0 2px 4px rgba(0,0,0,0.6)" }, children: config.watermark.text })
+          ] }) : ((_b2 = config == null ? void 0 : config.watermark) == null ? void 0 : _b2.text) || "yupclip.com"
+        }
+      );
+    })(),
     (config == null ? void 0 : config.visualStyle) === "ai_hub_grid" && /* @__PURE__ */ (0,jsx_runtime.jsx)(
       "div",
       {
@@ -84442,11 +86049,14 @@ if (true) {
 
 var map = {
 	"./Blank/blank.json": 9006,
+	"./Data-Metrics/grid_metrics.json": 2310,
+	"./Data-Metrics/hero_metric_cards.json": 2257,
+	"./Data-Metrics/metric_cards.json": 2748,
 	"./Ending/bottom_anchor_outro.json": 4878,
 	"./Ending/brand_outro.json": 9518,
 	"./Ending/center_line_outro.json": 3031,
 	"./Ending/contact_card_ending.json": 4176,
-	"./Ending/hust_x_rikkei.json": 5910,
+	"./Ending/ending.json": 4526,
 	"./Ending/launch.json": 2606,
 	"./Ending/minimal.json": 4300,
 	"./Ending/next_step_ending.json": 8103,
@@ -84476,13 +86086,19 @@ var map = {
 	"./Opening-Headline/intro_evidence_timeline_image.json": 6985,
 	"./Opening-Headline/intro_full_image.json": 6037,
 	"./Opening-Headline/intro_map_pins_image.json": 7207,
+	"./Opening-Headline/intro_media_hero.json": 9563,
 	"./Opening-Headline/intro_metric_pill_image.json": 9174,
 	"./Opening-Headline/intro_radar_signal_image.json": 2977,
 	"./Opening-Headline/intro_signal_steps_images.json": 4937,
+	"./Opening-Headline/media_showcase_card.json": 9960,
 	"./Opening-Headline/ops_monitor_hook.json": 960,
+	"./Opening-Headline/pullquote.json": 5542,
 	"./Opening-Headline/split_band_checklist.json": 1764,
 	"./Opening-Headline/split_proof_bullet.json": 2823,
-	"./Opening-Headline/versus_arena.json": 587
+	"./Opening-Headline/versus_arena.json": 587,
+	"./Opening-Headline/vignelli_quote.json": 4860,
+	"./Timeline/timeline_beam_rail.json": 6117,
+	"./Timeline/timeline_chapters.json": 4757
 };
 
 
@@ -98804,6 +100420,30 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"Blank","name":"Blank / Subtitle
 
 /***/ },
 
+/***/ 2310
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"GridMetrics","name":"Grid Metrics","family":"data","layoutMode":"grid_metrics","container":{"paddingTop":"320px","maxWidth":"920px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"84px","fontWeight":"950","letterSpacing":"-0.05em","marginBottom":"60px","useAccentTextShadow":true},"positions":[],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"26px","fontWeight":"800","borderRadius":"24px","padding":"24px","scale":1,"backdropBlur":"8px","useAccentBg":false,"useAccentBorder":true,"useAccentShadow":false,"useSubtleThemeBg":true,"useThemeBorder":true}]},"subtitle":{"bottom":"28px","fontSize":"46px","fontWeight":"950","useThemeTextShadow":true}}');
+
+/***/ },
+
+/***/ 2257
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"HeroMetricCards","name":"Hero Metric Cards","family":"data","layoutMode":"grid_metrics","container":{"paddingTop":"320px","maxWidth":"920px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"84px","fontWeight":"950","letterSpacing":"-0.05em","marginBottom":"60px","useAccentTextShadow":true},"positions":[],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"26px","fontWeight":"800","borderRadius":"24px","padding":"24px","scale":1,"backdropBlur":"8px","useAccentBg":true,"useAccentBorder":true,"useAccentShadow":true,"useSubtleThemeBg":false,"useThemeBorder":false},{"v2":true,"fontSize":"26px","fontWeight":"800","borderRadius":"24px","padding":"24px","scale":1,"backdropBlur":"8px","useAccentBg":false,"useAccentBorder":true,"useAccentShadow":false,"useSubtleThemeBg":true,"useThemeBorder":true}]},"subtitle":{"bottom":"28px","fontSize":"46px","fontWeight":"950","useThemeTextShadow":true}}');
+
+/***/ },
+
+/***/ 2748
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"MetricCards","name":"Metric Cards","family":"data","layoutMode":"grid_metrics","container":{"paddingTop":"320px","maxWidth":"920px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"84px","fontWeight":"950","letterSpacing":"-0.05em","marginBottom":"60px","useAccentTextShadow":true},"positions":[],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"26px","fontWeight":"800","borderRadius":"24px","padding":"24px","scale":1,"backdropBlur":"8px","useAccentBg":false,"useAccentBorder":true,"useAccentShadow":true,"useSubtleThemeBg":true,"useThemeBorder":false}]},"subtitle":{"bottom":"28px","fontSize":"46px","fontWeight":"950","useThemeTextShadow":true}}');
+
+/***/ },
+
 /***/ 4878
 (module) {
 
@@ -98836,11 +100476,11 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"ContactCardEnding","name":"Cont
 
 /***/ },
 
-/***/ 5910
+/***/ 4526
 (module) {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"id":"HustXRikkei","name":"HUST X RIKKEI","family":"ending","layoutMode":"hust_x_rikkei","container":{"paddingTop":"200px","maxWidth":"1000px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"80px","fontWeight":"900","letterSpacing":"0.02em","marginBottom":"60px","useAccentTextShadow":false},"positions":[],"items":{"rotations":[],"itemStyles":[]},"subtitle":{"enabled":false,"bottom":"300px","fontSize":"30px","fontWeight":"800","useThemeTextShadow":false}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"Ending","name":"Ending / CTA Screen","family":"ending","layoutMode":"centered_text","container":{"paddingTop":"340px","maxWidth":"1000px","gap":"30px"},"categoryPill":null,"accentDivider":{"width":"180px","height":"4px"},"title":{"fontSize":"94px","fontWeight":"950","letterSpacing":"-0.06em","marginBottom":"80px","useAccentTextShadow":true},"positions":[],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"26px","fontWeight":"900","borderRadius":"999px","padding":"14px 28px","scale":1,"backdropBlur":"12px","useAccentBg":true,"useAccentBorder":true,"useAccentShadow":true,"useSubtleThemeBg":false,"useThemeBorder":false}]},"subtitle":{"bottom":"300px","fontSize":"46px","fontWeight":"950","useThemeTextShadow":true}}');
 
 /***/ },
 
@@ -99076,6 +100716,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"IntroMapPinsImage","name":"Intr
 
 /***/ },
 
+/***/ 9563
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"IntroMediaHero","name":"Intro Media Hero","family":"media","layoutMode":"intro_media_hero","container":{"paddingTop":"220px","maxWidth":"960px","gap":"32px"},"title":{"fontSize":"80px","fontWeight":"900","letterSpacing":"-0.04em","marginBottom":"24px"}}');
+
+/***/ },
+
 /***/ 9174
 (module) {
 
@@ -99100,11 +100748,27 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"IntroSignalStepsImages","name":
 
 /***/ },
 
+/***/ 9960
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"Gallery","name":"Media Showcase Card","family":"media","layoutMode":"media_showcase_card","container":{"paddingTop":"380px","maxWidth":"960px","gap":"32px"},"title":{"fontSize":"80px","fontWeight":"900","letterSpacing":"-0.04em","marginBottom":"24px"}}');
+
+/***/ },
+
 /***/ 960
 (module) {
 
 "use strict";
 module.exports = /*#__PURE__*/JSON.parse('{"id":"OpsMonitorHook","name":"OPS Monitor Hook","family":"opening","layoutMode":"ops_monitor","container":{"paddingTop":"300px","maxWidth":"1000px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"96px","fontWeight":"950","letterSpacing":"-0.07em","marginBottom":"100px","useAccentTextShadow":true},"positions":[{"left":"0px","top":"0px","width":"100%","height":"680px","zIndex":"1","nestedStructure":{"type":"vertical_item_list","badgeText":"sys-8","titleText":"","pills":[]}}],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"28px","fontWeight":"800","borderRadius":"34px","padding":"24px","scale":1,"backdropBlur":"12px","useAccentBg":false,"useAccentBorder":false,"useAccentShadow":false,"useSubtleThemeBg":true,"useThemeBorder":true}]},"subtitle":{"bottom":"28px","fontSize":"46px","fontWeight":"950","useThemeTextShadow":true}}');
+
+/***/ },
+
+/***/ 5542
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"Pullquote","name":"Pullquote Highlight","family":"quote","layoutMode":"pullquote","container":{"paddingTop":"320px","maxWidth":"960px","gap":"32px"},"categoryPill":{"bgRgba":"rgba(249, 115, 22, 0.1)","borderRgba":"rgba(249, 115, 22, 0.2)","textRgba":"#f97316"},"accentDivider":{"width":"180px","height":"4px"},"title":{"fontSize":"90px","fontWeight":"900","letterSpacing":"-0.04em","marginBottom":"48px","useAccentTextShadow":true},"positions":[],"items":{"rotations":[],"itemStyles":[{"fontSize":"32px","padding":"12px 28px","borderRadius":"999px","useSubtleThemeBg":true,"useThemeBorder":true}]},"subtitle":{"bottom":"300px","fontSize":"46px","fontWeight":"950","useThemeTextShadow":true}}');
 
 /***/ },
 
@@ -99129,6 +100793,30 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"SplitProofBullet","name":"Split
 
 "use strict";
 module.exports = /*#__PURE__*/JSON.parse('{"id":"VersusArena","name":"Versus Arena","family":"comparison","layoutMode":"split_horizontal","container":{"paddingTop":"340px","maxWidth":"1000px","gap":"16px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"80px","fontWeight":"800","letterSpacing":"-0.04em","marginBottom":"60px","useAccentTextShadow":true},"positions":[{"left":"0px","top":"0px","width":"100%","height":"340px","zIndex":"1"},{"left":"0px","top":"0px","width":"100%","height":"340px","zIndex":"1"}],"items":{"rotations":[-2.2,2.2],"itemStyles":[{"v2":true,"fontSize":"28px","fontWeight":"800","borderRadius":"32px","padding":"28px 24px","scale":1,"backdropBlur":"8px","useAccentBg":false,"useAccentBorder":true,"useAccentShadow":true,"useSubtleThemeBg":true,"useThemeBorder":false},{"v2":true,"fontSize":"28px","fontWeight":"800","borderRadius":"32px","padding":"28px 24px","scale":1,"backdropBlur":"8px","useAccentBg":false,"useAccentBorder":true,"useAccentShadow":true,"useSubtleThemeBg":true,"useThemeBorder":false}]},"subtitle":{"bottom":"300px","fontSize":"46px","fontWeight":"950","useThemeTextShadow":true}}');
+
+/***/ },
+
+/***/ 4860
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"VignelliQuote","name":"Vignelli Quote","family":"quote","layoutMode":"vignelliquote","container":{"paddingTop":"220px","maxWidth":"860px","gap":"32px"},"title":{"fontSize":"80px","fontWeight":"900","letterSpacing":"-0.04em","marginBottom":"20px"}}');
+
+/***/ },
+
+/***/ 6117
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"TimelineBeamRail","name":"Timeline Beam Rail","family":"timeline","layoutMode":"evidence_timeline","container":{"paddingTop":"220px","maxWidth":"920px","gap":"28px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"86px","fontWeight":"950","letterSpacing":"-0.05em","marginBottom":"60px","useAccentTextShadow":true},"positions":[],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"24px","fontWeight":"800","borderRadius":"24px","padding":"24px","scale":1,"backdropBlur":"12px","useAccentBg":false,"useAccentBorder":false,"useAccentShadow":false,"useSubtleThemeBg":true,"useThemeBorder":true}]},"subtitle":{"bottom":"28px","fontSize":"46px","fontWeight":"950","useThemeTextShadow":true}}');
+
+/***/ },
+
+/***/ 4757
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"TimelineChapters","name":"Timeline Chapters","family":"timeline","layoutMode":"timeline_shift","container":{"paddingTop":"260px","maxWidth":"960px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"86px","fontWeight":"950","letterSpacing":"-0.05em","marginBottom":"60px","useAccentTextShadow":true},"positions":[],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"26px","fontWeight":"800","borderRadius":"24px","padding":"24px","scale":1,"backdropBlur":"8px","useAccentBg":false,"useAccentBorder":true,"useAccentShadow":false,"useSubtleThemeBg":true,"useThemeBorder":true}]},"subtitle":{"bottom":"28px","fontSize":"46px","fontWeight":"950","useThemeTextShadow":true}}');
 
 /***/ }
 
@@ -99430,7 +101118,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"VersusArena","name":"Versus Are
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
 /******/ 	__webpack_require__(6507);
-/******/ 	__webpack_require__(2203);
+/******/ 	__webpack_require__(932);
 /******/ 	__webpack_require__(3610);
 /******/ 	var __webpack_exports__ = __webpack_require__(3482);
 /******/ 	

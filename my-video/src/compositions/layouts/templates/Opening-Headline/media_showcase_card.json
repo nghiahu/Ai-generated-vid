@@ -1,0 +1,17 @@
+{
+  "id": "Gallery",
+  "name": "Media Showcase Card",
+  "family": "media",
+  "layoutMode": "media_showcase_card",
+  "container": {
+    "paddingTop": "380px",
+    "maxWidth": "960px",
+    "gap": "32px"
+  },
+  "title": {
+    "fontSize": "80px",
+    "fontWeight": "900",
+    "letterSpacing": "-0.04em",
+    "marginBottom": "24px"
+  }
+}

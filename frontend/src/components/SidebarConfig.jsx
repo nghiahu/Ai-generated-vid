@@ -1,7 +1,31 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import axios from "axios";
 
 export const SidebarConfig = ({ config = {}, onChange }) => {
+  const fileInputRef = useRef(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleLogoUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      setIsUploading(true);
+      try {
+        const res = await axios.post("http://localhost:5000/api/upload", { file: reader.result, isLogo: true });
+        if (res.data && res.data.url) {
+          handleWatermarkChange("logoUrl", res.data.url.trim());
+        }
+      } catch (err) {
+        console.error("Watermark logo upload failed:", err);
+        alert("Không thể tải logo lên: " + (err.response?.data?.error || err.message));
+      } finally {
+        setIsUploading(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleConfigChange = (field, value) => {
     onChange({
       ...config,
@@ -207,10 +231,53 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
           {(config.watermark?.enabled ?? true) && (
             <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
               {/* Logo Upload Box */}
-              <div className="border-strict" style={{ borderStyle: "dashed", padding: "18px", textAlign: "center", cursor: "pointer", backgroundColor: "#fafafa" }}>
-                <span style={{ fontSize: "20px", display: "block" }}>📁</span>
-                <span style={{ fontSize: "13px", fontWeight: "bold", fontFamily: "Space Grotesk", display: "block", marginTop: "4px" }}>Upload Logo</span>
-                <span style={{ fontSize: "11px", color: "#666666" }}>PNG, SVG (Max 2MB)</span>
+              <div 
+                className="border-strict" 
+                onClick={() => fileInputRef.current?.click()}
+                style={{ borderStyle: "dashed", padding: "18px", textAlign: "center", cursor: "pointer", backgroundColor: "#fafafa" }}
+              >
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleLogoUpload} 
+                  accept="image/png, image/svg+xml, image/jpeg" 
+                  style={{ display: "none" }} 
+                />
+                {isUploading ? (
+                  <>
+                    <span style={{ fontSize: "20px", display: "block" }}>⏳</span>
+                    <span style={{ fontSize: "13px", fontWeight: "bold", fontFamily: "Space Grotesk", display: "block", marginTop: "4px" }}>Uploading...</span>
+                  </>
+                ) : config.watermark?.logoUrl ? (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+                    <img src={config.watermark.logoUrl} style={{ maxHeight: "40px", maxWidth: "100%", objectFit: "contain" }} alt="watermark logo" />
+                    <button 
+                      type="button" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleWatermarkChange("logoUrl", null);
+                      }}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#ff3b30",
+                        fontSize: "11px",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        textDecoration: "underline",
+                        padding: 0
+                      }}
+                    >
+                      Xóa logo
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <span style={{ fontSize: "20px", display: "block" }}>📁</span>
+                    <span style={{ fontSize: "13px", fontWeight: "bold", fontFamily: "Space Grotesk", display: "block", marginTop: "4px" }}>Upload Logo</span>
+                    <span style={{ fontSize: "11px", color: "#666666" }}>PNG, SVG (Max 2MB)</span>
+                  </>
+                )}
               </div>
 
               {/* Text Watermark Input */}

@@ -1,13 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { api } from "./services/api";
-import { Dashboard } from "./components/Dashboard";
-import { SidebarConfig } from "./components/SidebarConfig";
-import { StoryboardEditor } from "./components/StoryboardEditor";
-import { MasterPlayer } from "./components/MasterPlayer";
-import { StudioAIGen } from "./components/StudioAIGen";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useProjects,
+  useProjectDetail,
+  useCreateProject,
+  useDeleteProject,
+  useUpdateProjectConfig,
+  useUpdateScene,
+  useRegenerateTts,
+  useRegenerateSceneTts,
+  useGenerateStoryboard
+} from "./hooks/useProjectQueries";
+import { SkeletonLoader } from "./components/SkeletonLoader";
 import "./App.css";
 
+const Dashboard = React.lazy(() => import("./components/Dashboard").then(m => ({ default: m.Dashboard })));
+const SidebarConfig = React.lazy(() => import("./components/SidebarConfig").then(m => ({ default: m.SidebarConfig })));
+const StoryboardEditor = React.lazy(() => import("./components/StoryboardEditor").then(m => ({ default: m.StoryboardEditor })));
+const MasterPlayer = React.lazy(() => import("./components/MasterPlayer").then(m => ({ default: m.MasterPlayer })));
+const BatchStudioPage = React.lazy(() => import("./components/BatchStudioPage").then(m => ({ default: m.BatchStudioPage })));
+
 function App() {
+  const queryClient = useQueryClient();
+
   const getInitialView = () => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -34,9 +50,7 @@ function App() {
     return null;
   };
 
-  const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(getInitialProjectId);
-  const [currentProject, setCurrentProject] = useState(null);
   const [selectedSceneId, setSelectedSceneId] = useState(null);
   const [view, setView] = useState(getInitialView); // "PROJECTS", "STUDIO", "STUDIO_AI_GEN", "BATCH", "WORKSPACE_EDITOR", "WORKSPACE_SETUP"
   const [draftConfig, setDraftConfig] = useState({
@@ -69,6 +83,17 @@ function App() {
   const [showVoiceModal, setShowVoiceModal] = useState(false);
   const [modalVoice, setModalVoice] = useState("rachel");
   const [modalCustomVoiceId, setModalCustomVoiceId] = useState("");
+
+  const { data: projects = [] } = useProjects();
+  const { data: currentProject } = useProjectDetail(selectedProjectId);
+
+  const createProjectMutation = useCreateProject();
+  const deleteProjectMutation = useDeleteProject();
+  const updateProjectConfigMutation = useUpdateProjectConfig();
+  const updateSceneMutation = useUpdateScene();
+  const regenerateTtsMutation = useRegenerateTts();
+  const regenerateSceneTtsMutation = useRegenerateSceneTts();
+  const generateStoryboardMutation = useGenerateStoryboard();
 
   // Sync modal voice when project updates
   useEffect(() => {
@@ -103,69 +128,41 @@ function App() {
     }
   }, [view, selectedProjectId]);
 
-  // Load projects list on mount
+  // Auto-navigate and set selected scene when currentProject detail resolves
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    if (currentProject) {
+      // Smart AI Gen detection: check type OR config.scenes visualPattern
+      const isAIGen = currentProject.type === "AIGEN" || (
+        currentProject.config &&
+        Array.isArray(currentProject.config.scenes) &&
+        currentProject.config.scenes.length > 0 &&
+        Boolean(currentProject.config.scenes[0].visualPattern)
+      );
 
-  const fetchProjects = async () => {
-    try {
-      const list = await api.getProjects();
-      setProjects(list);
-    } catch (error) {
-      console.error("Failed to fetch projects:", error);
-    }
-  };
+      // Initialize selected scene if editor is workspace and none selected
+      if (!isAIGen && currentProject.scenes && currentProject.scenes.length > 0 && !selectedSceneId) {
+        setSelectedSceneId(currentProject.scenes[0].id);
+      }
 
-  // Fetch full project details when one is selected
-  useEffect(() => {
-    if (selectedProjectId) {
-      fetchProjectDetail(selectedProjectId);
+      // Only automatically redirect view if we are on dashboard / default PROJECTS view
+      if (view === "PROJECTS" || view === "DASHBOARD" || view === "STUDIO") {
+        if (isAIGen) {
+          setView("STUDIO_AI_GEN");
+        } else if (currentProject.scenes && currentProject.scenes.length > 0) {
+          setView("WORKSPACE_EDITOR");
+        } else {
+          setView("WORKSPACE_SETUP");
+        }
+      }
     } else {
-      setCurrentProject(null);
       setSelectedSceneId(null);
       setVideoUrl(null);
     }
-  }, [selectedProjectId]);
-
-  const fetchProjectDetail = async (id) => {
-    try {
-      const project = await api.getProjectById(id);
-      if (!project) return;
-
-      // Smart AI Gen detection: check type OR config.scenes visualPattern
-      const isAIGen = project.type === "AIGEN" || (
-        project.config &&
-        Array.isArray(project.config.scenes) &&
-        project.config.scenes.length > 0 &&
-        Boolean(project.config.scenes[0].visualPattern)
-      );
-
-      if (!isAIGen) {
-        const defaultStyle = project.config?.theme || project.config?.videoTheme || "rikkei";
-        project.config = { visualStyle: defaultStyle, ...(project.config || {}) };
-        if (!project.config.visualStyle) project.config.visualStyle = defaultStyle;
-      }
-
-      setCurrentProject(project);
-
-      if (isAIGen) {
-        setView("STUDIO_AI_GEN");
-      } else if (project.scenes && project.scenes.length > 0) {
-        setSelectedSceneId(project.scenes[0].id);
-        setView("WORKSPACE_EDITOR");
-      } else {
-        setView("WORKSPACE_SETUP");
-      }
-    } catch (error) {
-      console.error("Failed to fetch project detail:", error);
-    }
-  };
+  }, [currentProject]);
 
   const handleCreateProject = async (title) => {
     try {
-      const newProj = await api.createProject(title);
-      await fetchProjects();
+      const newProj = await createProjectMutation.mutateAsync(title);
       setSelectedProjectId(newProj.id);
       setView("WORKSPACE_SETUP");
     } catch (error) {
@@ -176,8 +173,7 @@ function App() {
 
   const handleDeleteProject = async (projectId) => {
     try {
-      await api.deleteProject(projectId);
-      await fetchProjects();
+      await deleteProjectMutation.mutateAsync(projectId);
       alert("Đã xóa dự án thành công!");
     } catch (error) {
       console.error("Failed to delete project:", error);
@@ -185,27 +181,30 @@ function App() {
     }
   };
 
-
   const handleUpdateConfig = async (newConfig) => {
     if (!currentProject) return;
+    const previousProject = queryClient.getQueryData(["projects", currentProject.id]);
+
     // Optimistic update
-    setCurrentProject(prev => ({
-      ...prev,
-      config: newConfig
-    }));
+    queryClient.setQueryData(["projects", currentProject.id], (prev) => {
+      if (!prev) return prev;
+      return { ...prev, config: newConfig };
+    });
 
     try {
-      const savedConfig = await api.updateProjectConfig(currentProject.id, newConfig);
-      // Update with exact backend details (including compiled vdeTokens)
-      setCurrentProject(prev => ({
-        ...prev,
-        config: savedConfig
-      }));
+      const savedConfig = await updateProjectConfigMutation.mutateAsync({
+        id: currentProject.id,
+        config: newConfig
+      });
+      queryClient.setQueryData(["projects", currentProject.id], (prev) => {
+        if (!prev) return prev;
+        return { ...prev, config: savedConfig };
+      });
     } catch (error) {
       console.error("Failed to save project configuration:", error);
       alert(`Không thể lưu cấu hình dự án: ${error.response?.data?.error || error.message}`);
-      // Revert optimistic update
-      fetchProjects();
+      // Rollback
+      queryClient.setQueryData(["projects", currentProject.id], previousProject);
     }
   };
 
@@ -220,23 +219,24 @@ function App() {
     setLoading(true);
     setLoadingMessage("Đang làm mới toàn bộ giọng thoại...");
     try {
-      // 1. Save config first to set the chosen voice in backend
+      // 1. Save config first
       const updatedConfig = {
         ...currentProject.config,
         voice: modalVoice,
         customVoiceId: modalCustomVoiceId
       };
-      const savedConfig = await api.updateProjectConfig(currentProject.id, updatedConfig);
+      const savedConfig = await updateProjectConfigMutation.mutateAsync({
+        id: currentProject.id,
+        config: updatedConfig
+      });
 
-      // Update local state config
-      setCurrentProject(prev => ({
-        ...prev,
-        config: savedConfig
-      }));
+      queryClient.setQueryData(["projects", currentProject.id], (prev) => {
+        if (!prev) return prev;
+        return { ...prev, config: savedConfig };
+      });
 
       // 2. Trigger regeneration
-      await api.regenerateTts(currentProject.id);
-      await fetchProjectDetail(currentProject.id);
+      await regenerateTtsMutation.mutateAsync(currentProject.id);
       showToast("Đã làm mới tất cả giọng đọc thành công!", "success");
     } catch (error) {
       console.error("Failed to regenerate TTS:", error);
@@ -250,23 +250,37 @@ function App() {
   const handleUpdateScene = async (sceneId, sceneData) => {
     if (!currentProject) return;
 
-    // Optimistic client-side state update for instant live preview updates
-    setCurrentProject(prev => {
+    // Optimistic cache update for instant live preview updates
+    const previousProject = queryClient.getQueryData(["projects", currentProject.id]);
+    
+    queryClient.setQueryData(["projects", currentProject.id], (prev) => {
+      if (!prev) return prev;
       const newScenes = prev.scenes.map(s => s.id === sceneId ? { ...s, ...sceneData } : s);
       return { ...prev, scenes: newScenes };
     });
 
     try {
-      const updatedScene = await api.updateScene(currentProject.id, sceneId, sceneData);
+      const updatedScene = await updateSceneMutation.mutateAsync({
+        projectId: currentProject.id,
+        sceneId,
+        sceneData
+      });
 
-      // Update with exact backend details (including voiceoverAudioUrl path)
-      setCurrentProject(prev => {
-        const newScenes = prev.scenes.map(s => s.id === sceneId ? { ...s, ...updatedScene } : s);
+      // Update cache with the exact backend response
+      queryClient.setQueryData(["projects", currentProject.id], (prev) => {
+        if (!prev) return prev;
+        const newScenes = prev.scenes.map(s => s.id === sceneId ? { 
+          ...s, 
+          ...updatedScene,
+          compiledJS: sceneData.hasOwnProperty("compiledJS") ? sceneData.compiledJS : s.compiledJS
+        } : s);
         return { ...prev, scenes: newScenes };
       });
     } catch (error) {
       console.error("Failed to update scene:", error);
       showToast(`Không thể cập nhật phân cảnh: ${error.response?.data?.error || error.message}`, "error");
+      // Rollback
+      queryClient.setQueryData(["projects", currentProject.id], previousProject);
     }
   };
 
@@ -274,10 +288,14 @@ function App() {
     if (!currentProject) return;
     setRegeneratingSceneId(sceneId);
     try {
-      const updatedScene = await api.regenerateSceneTts(currentProject.id, sceneId);
+      const updatedScene = await regenerateSceneTtsMutation.mutateAsync({
+        projectId: currentProject.id,
+        sceneId
+      });
 
-      // Update local state with the exact updated scene
-      setCurrentProject(prev => {
+      // Update cache
+      queryClient.setQueryData(["projects", currentProject.id], (prev) => {
+        if (!prev) return prev;
         const newScenes = prev.scenes.map(s => s.id === sceneId ? { ...s, ...updatedScene } : s);
         return { ...prev, scenes: newScenes };
       });
@@ -292,7 +310,6 @@ function App() {
   };
 
   const handleGenerateStoryboard = async (scriptText, visualStyle, selectedMedia = []) => {
-    // If not saved yet, we'll create the project first
     let projectId = selectedProjectId;
     let traits = [];
 
@@ -301,7 +318,6 @@ function App() {
       let title = "";
       const trimmedScript = (scriptText || "").trim();
       if (trimmedScript) {
-        // Take the first line or first 40 chars
         const firstLine = trimmedScript.split("\n")[0];
         title = firstLine.length > 40 ? firstLine.substring(0, 37) + "..." : firstLine;
       }
@@ -314,16 +330,16 @@ function App() {
       setLoadingMessage("Đang tạo dự án mới...");
 
       try {
-        const newProj = await api.createProject(title);
+        const newProj = await createProjectMutation.mutateAsync(title);
         projectId = newProj.id;
         setSelectedProjectId(newProj.id);
 
-        // Save the settings from the draft config
-        await api.updateProjectConfig(newProj.id, draftConfig);
-        traits = draftConfig.traits || [];
-
-        // Refresh project list in background
-        fetchProjects();
+        // Save settings
+        const savedConfig = await updateProjectConfigMutation.mutateAsync({
+          id: newProj.id,
+          config: draftConfig
+        });
+        traits = savedConfig.traits || [];
       } catch (error) {
         console.error("Failed to auto-create project:", error);
         alert(`Không thể tạo dự án mới: ${error.response?.data?.error || error.message}`);
@@ -338,15 +354,16 @@ function App() {
     setLoadingMessage("AI đang phân tích kịch bản và sinh phân cảnh...");
 
     try {
-      const result = await api.generateStoryboard(projectId, scriptText, visualStyle, traits, selectedMedia);
+      await generateStoryboardMutation.mutateAsync({
+        projectId,
+        scriptText,
+        visualStyle,
+        traits,
+        selectedMedia
+      });
 
-      // Update the current project details
-      const detailedProj = await api.getProjectById(projectId);
-      setCurrentProject(detailedProj);
-
-      if (detailedProj.scenes && detailedProj.scenes.length > 0) {
-        setSelectedSceneId(detailedProj.scenes[0].id);
-      }
+      // Refetch details
+      queryClient.invalidateQueries({ queryKey: ["projects", projectId] });
       setView("WORKSPACE_EDITOR");
     } catch (error) {
       console.error("Failed to generate storyboard:", error);
@@ -356,7 +373,6 @@ function App() {
     }
   };
 
-  // Trigger video render and poll status
   const handleRenderVideo = async () => {
     if (!currentProject) return;
     setRendering(true);
@@ -369,7 +385,6 @@ function App() {
       const renderResponse = await api.triggerRender(currentProject.id);
       const renderId = renderResponse.renderId;
 
-      // Start Polling
       const pollInterval = setInterval(async () => {
         try {
           const statusRes = await api.getRenderStatus(currentProject.id, renderId);
@@ -497,33 +512,6 @@ function App() {
             </li>
             <li>
               <button
-                onClick={() => { setSelectedProjectId(null); setView("STUDIO_AI_GEN"); }}
-                style={{
-                  width: "100%",
-                  textAlign: "left",
-                  background: view === "STUDIO_AI_GEN" ? "rgba(37, 99, 235, 0.08)" : "none",
-                  border: "none",
-                  boxShadow: "none",
-                  color: view === "STUDIO_AI_GEN" ? "var(--color-primary)" : "var(--text-secondary)",
-                  padding: "10px 16px",
-                  fontSize: "14px",
-                  fontWeight: view === "STUDIO_AI_GEN" ? "700" : "600",
-                  textTransform: "none",
-                  letterSpacing: "0",
-                  borderRadius: "8px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  cursor: "pointer"
-                }}
-                onMouseEnter={(e) => { if (view !== "STUDIO_AI_GEN") e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.04)"; }}
-                onMouseLeave={(e) => { if (view !== "STUDIO_AI_GEN") e.currentTarget.style.backgroundColor = "transparent"; }}
-              >
-                ✨ Studio AI Gen
-              </button>
-            </li>
-            <li>
-              <button
                 onClick={() => { setSelectedProjectId(null); setView("BATCH"); }}
                 style={{
                   width: "100%",
@@ -581,49 +569,49 @@ function App() {
 
         {/* Content Area */}
         <div style={{ flex: 1, overflowY: "auto", position: "relative" }}>
-          {view === "STUDIO_AI_GEN" ? (
-            <StudioAIGen
-              projectId={selectedProjectId}
-              onBack={() => { setSelectedProjectId(null); setView("PROJECTS"); }}
-              onUpdateProjectsList={fetchProjects}
-            />
-          ) : view === "STUDIO" ? (
-            <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
-              <div style={{ flex: "0 0 58.33%", borderRight: "1px solid rgba(15, 23, 42, 0.08)", overflowY: "auto", display: "flex" }}>
-                <StoryboardEditor
-                  mode="setup"
-                  scenes={[]}
-                  config={{}}
-                  projectId={null}
-                  onGenerateStoryboard={handleGenerateStoryboard}
-                  onUpdateScene={() => { }}
-                  loading={loading}
-                  loadingMessage={loadingMessage}
-                  selectedSceneId={null}
-                  onSelectScene={() => { }}
-                />
+          <Suspense fallback={<SkeletonLoader type={view === "BATCH" ? "workspace" : "dashboard"} />}>
+            {view === "STUDIO" ? (
+              <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+                <div style={{ flex: "0 0 58.33%", borderRight: "1px solid rgba(15, 23, 42, 0.08)", overflowY: "auto", display: "flex" }}>
+                  <StoryboardEditor
+                    mode="setup"
+                    scenes={[]}
+                    config={{}}
+                    projectId={null}
+                    onGenerateStoryboard={handleGenerateStoryboard}
+                    onUpdateScene={() => { }}
+                    loading={loading}
+                    loadingMessage={loadingMessage}
+                    selectedSceneId={null}
+                    onSelectScene={() => { }}
+                  />
+                </div>
+                <div style={{ flex: "0 0 41.67%", overflowY: "auto" }}>
+                  <SidebarConfig
+                    config={draftConfig}
+                    onChange={setDraftConfig}
+                    onBack={() => setView("PROJECTS")}
+                  />
+                </div>
               </div>
-              <div style={{ flex: "0 0 41.67%", overflowY: "auto" }}>
-                <SidebarConfig
-                  config={draftConfig}
-                  onChange={setDraftConfig}
-                  onBack={() => setView("PROJECTS")}
-                />
-              </div>
-            </div>
-          ) : view === "BATCH" ? (
-            <div style={{ padding: "50px 40px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }}>
-              <h2 style={{ fontSize: "28px", marginBottom: "16px" }}>Sản xuất video Hàng loạt</h2>
-              <p style={{ color: "var(--text-secondary)", fontSize: "16px" }}>Chức năng sản xuất hàng loạt video cùng lúc đang được phát triển.</p>
-            </div>
-          ) : (
-            <Dashboard
-              projects={projects}
-              onCreateProject={handleCreateProject}
-              onSelectProject={setSelectedProjectId}
-              onDeleteProject={handleDeleteProject}
-            />
-          )}
+            ) : view === "BATCH" ? (
+              <BatchStudioPage
+                sharedConfig={draftConfig}
+                onConfigChange={setDraftConfig}
+                onBatchComplete={async () => {
+                  queryClient.invalidateQueries({ queryKey: ["projects"] });
+                  setView("PROJECTS");
+                }}
+              />
+            ) : (
+              <Dashboard
+                projects={projects}
+                onCreateProject={handleCreateProject}
+                onSelectProject={setSelectedProjectId}
+                onDeleteProject={handleDeleteProject}
+              />
+            )}
+          </Suspense>
         </div>
       </div>
     );
@@ -691,71 +679,73 @@ function App() {
 
       {/* Main Workspace content */}
       <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-        {view === "WORKSPACE_SETUP" ? (
-          <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-            {/* Left Column: Script input & Generation */}
-            <div style={{ flex: "0 0 58.33%", borderRight: "1px solid rgba(15, 23, 42, 0.08)", overflowY: "auto", display: "flex" }}>
-              <StoryboardEditor
-                mode="setup"
-                scenes={currentProject?.scenes || []}
-                config={currentProject?.config || {}}
-                projectId={currentProject?.id}
-                onGenerateStoryboard={handleGenerateStoryboard}
-                onUpdateScene={handleUpdateScene}
-                loading={loading}
-                loadingMessage={loadingMessage}
-                selectedSceneId={selectedSceneId}
-                onSelectScene={setSelectedSceneId}
-              />
+        <Suspense fallback={<SkeletonLoader type="workspace" />}>
+          {view === "WORKSPACE_SETUP" ? (
+            <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+              {/* Left Column: Script input & Generation */}
+              <div style={{ flex: "0 0 58.33%", borderRight: "1px solid rgba(15, 23, 42, 0.08)", overflowY: "auto", display: "flex" }}>
+                <StoryboardEditor
+                  mode="setup"
+                  scenes={currentProject?.scenes || []}
+                  config={currentProject?.config || {}}
+                  projectId={currentProject?.id}
+                  onGenerateStoryboard={handleGenerateStoryboard}
+                  onUpdateScene={handleUpdateScene}
+                  loading={loading}
+                  loadingMessage={loadingMessage}
+                  selectedSceneId={selectedSceneId}
+                  onSelectScene={setSelectedSceneId}
+                />
+              </div>
+              {/* Right Column: Video Config */}
+              <div style={{ flex: "0 0 41.67%", overflowY: "auto" }}>
+                <SidebarConfig
+                  config={currentProject?.config || {}}
+                  onChange={handleUpdateConfig}
+                  onBack={() => { setSelectedProjectId(null); setView("DASHBOARD"); }}
+                />
+              </div>
             </div>
-            {/* Right Column: Video Config */}
-            <div style={{ flex: "0 0 41.67%", overflowY: "auto" }}>
-              <SidebarConfig
-                config={currentProject?.config || {}}
-                onChange={handleUpdateConfig}
-                onBack={() => { setSelectedProjectId(null); setView("DASHBOARD"); }}
-              />
-            </div>
-          </div>
-        ) : (
-          <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+          ) : (
+            <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
 
-            {/* Middle Column: Storyboard cards list */}
-            <div style={{ flex: 1, overflowY: "auto", borderRight: "1px solid rgba(15, 23, 42, 0.08)" }}>
-              <StoryboardEditor
-                mode="editor"
-                scenes={currentProject?.scenes || []}
-                config={currentProject?.config || {}}
-                projectId={currentProject?.id}
-                onGenerateStoryboard={handleGenerateStoryboard}
-                onUpdateScene={handleUpdateScene}
-                onRegenerateSceneTts={handleRegenerateSceneTts}
-                regeneratingSceneId={regeneratingSceneId}
-                loading={loading}
-                loadingMessage={loadingMessage}
-                selectedSceneId={selectedSceneId}
-                onSelectScene={setSelectedSceneId}
-              />
-            </div>
+              {/* Middle Column: Storyboard cards list */}
+              <div style={{ flex: 1, overflowY: "auto", borderRight: "1px solid rgba(15, 23, 42, 0.08)" }}>
+                <StoryboardEditor
+                  mode="editor"
+                  scenes={currentProject?.scenes || []}
+                  config={currentProject?.config || {}}
+                  projectId={currentProject?.id}
+                  onGenerateStoryboard={handleGenerateStoryboard}
+                  onUpdateScene={handleUpdateScene}
+                  onRegenerateSceneTts={handleRegenerateSceneTts}
+                  regeneratingSceneId={regeneratingSceneId}
+                  loading={loading}
+                  loadingMessage={loadingMessage}
+                  selectedSceneId={selectedSceneId}
+                  onSelectScene={setSelectedSceneId}
+                />
+              </div>
 
-            {/* Right Column: Master Preview Player */}
-            <div style={{ width: "400px", flexShrink: 0, overflowY: "auto" }}>
-              <MasterPlayer
-                scenes={currentProject?.scenes || []}
-                config={currentProject?.config || {}}
-                projectTitle={currentProject?.title}
-                onRender={handleRenderVideo}
-                rendering={rendering}
-                renderProgress={renderProgress}
-                renderedFrames={renderedFrames}
-                renderTotalFrames={renderTotalFrames}
-                videoUrl={videoUrl}
-                onRegenerateTts={handleRegenerateTts}
-                regeneratingTts={regeneratingTts}
-              />
+              {/* Right Column: Master Preview Player */}
+              <div style={{ width: "400px", flexShrink: 0, overflowY: "auto" }}>
+                <MasterPlayer
+                  scenes={currentProject?.scenes || []}
+                  config={currentProject?.config || {}}
+                  projectTitle={currentProject?.title}
+                  onRender={handleRenderVideo}
+                  rendering={rendering}
+                  renderProgress={renderProgress}
+                  renderedFrames={renderedFrames}
+                  renderTotalFrames={renderTotalFrames}
+                  videoUrl={videoUrl}
+                  onRegenerateTts={handleRegenerateTts}
+                  regeneratingTts={regeneratingTts}
+                />
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </Suspense>
       </div>
 
       {showVoiceModal && (

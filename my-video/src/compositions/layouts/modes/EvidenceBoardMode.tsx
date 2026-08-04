@@ -16,7 +16,8 @@ export const EvidenceBoardMode: React.FC<ModeRendererProps> = ({
   paddingScale,
   activeCardTextColor,
   activeCardBadgeColor,
-  inactiveCardTextColor
+  inactiveCardTextColor,
+  theme
 }) => {
   const visibleComps = otherComps.slice(0, 4);
 
@@ -27,7 +28,7 @@ export const EvidenceBoardMode: React.FC<ModeRendererProps> = ({
   })();
 
   // Small rotations, alternating like the HTML original (-0.4, 0.6, -0.8, ...)
-  const defaultRotations = [-0.4, 0.6, -0.8, 0.3];
+  const defaultRotations = [-2.2, 1.8, -1.5, 2.2];
   // Alternating alignment: start | center | end to give a staggered board feel
   const alignments: React.CSSProperties["justifySelf"][] = ["flex-start", "center", "flex-end", "flex-start"];
 
@@ -52,7 +53,8 @@ export const EvidenceBoardMode: React.FC<ModeRendererProps> = ({
           styles,
           rgb,
           isLight,
-          isAccentLight
+          isAccentLight,
+          theme
         });
 
         // Per-card rotation from JSON or fallback defaults

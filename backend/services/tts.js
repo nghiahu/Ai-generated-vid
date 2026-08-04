@@ -238,11 +238,11 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "omnivoice_duyth
       const statusUrl = `https://vbee.vn/api/v1/tts/${requestId}`;
       let audioLink = "";
       let pollAttempts = 0;
-      const maxPollAttempts = 30;
+      const maxPollAttempts = 60; // Tăng lên 60 lần × 2s = 120s timeout
 
       while (pollAttempts < maxPollAttempts) {
         pollAttempts++;
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise(resolve => setTimeout(resolve, 2000)); // 2s mỗi lần thay vì 1.5s
         
         try {
           const checkRes = await fetch(statusUrl, {
@@ -253,20 +253,27 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "omnivoice_duyth
             }
           });
 
-          if (!checkRes.ok) continue;
+          if (!checkRes.ok) {
+            console.warn(`[TTS Engine] Poll attempt ${pollAttempts}/${maxPollAttempts}: HTTP ${checkRes.status}, retrying...`);
+            continue;
+          }
 
           const checkBody = await checkRes.json();
+          const currentStatus = checkBody?.result?.status;
+          console.log(`[TTS Engine] Poll attempt ${pollAttempts}/${maxPollAttempts}: status=${currentStatus}`);
+
           if (checkBody.status === 1 && checkBody.result) {
-            const currentStatus = checkBody.result.status;
             if (currentStatus === "SUCCESS") {
               audioLink = checkBody.result.audio_link;
               break;
             } else if (currentStatus === "FAILED") {
               throw new Error("Tiến trình render giọng Vbee bị lỗi (FAILED).");
             }
+            // currentStatus === "PROCESSING" hoặc "PENDING" → tiếp tục poll
           }
         } catch (pollErr) {
-          console.warn(`[TTS Engine] Lỗi polling Vbee: ${pollErr.message}`);
+          if (pollErr.message.includes("FAILED")) throw pollErr; // Re-throw lỗi thật
+          console.warn(`[TTS Engine] Lỗi polling Vbee attempt ${pollAttempts}: ${pollErr.message}`);
         }
       }
 
@@ -292,8 +299,15 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "omnivoice_duyth
 
       return { url: `/tts/${fileName}`, duration };
     } catch (error) {
-      console.error(`Vbee TTS failed for scene ${sceneId}: ${error.message}`);
-      throw new Error(`Lỗi Vbee TTS: ${error.message}`);
+      // error_code 1051 = quota exceeded; any Vbee error falls back to OmniVoice
+      const isQuotaError = error.message && error.message.includes('1051');
+      if (isQuotaError) {
+        console.warn(`[TTS Engine] Vbee quota exceeded for scene ${sceneId}. Falling back to OmniVoice...`);
+      } else {
+        console.warn(`[TTS Engine] Vbee TTS failed for scene ${sceneId}: ${error.message}. Falling back to OmniVoice...`);
+      }
+      // Fall through to OmniVoice below — do NOT re-throw here
+      effectiveVoice = 'omnivoice_duythanh';
     }
   }
 

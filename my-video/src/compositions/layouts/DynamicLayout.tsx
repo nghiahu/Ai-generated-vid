@@ -103,6 +103,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
       );
     }
 
+
     // Default generated background when NO user image is uploaded
     if (isFintechEdu) {
       return (

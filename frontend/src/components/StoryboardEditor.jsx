@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react"; // trigger rebuild for pullquote highlight template addition
 import axios from "axios";
 import { Player } from "@remotion/player";
-import { MainComposition, safeParseFloat, getThemeBgStyle } from "../../../my-video/src/compositions/MainComposition";
+import { MainComposition, safeParseFloat, getThemeBgStyle, getSceneDurationFrames } from "../../../my-video/src/compositions/MainComposition";
 
 const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => {
   const localPlayerRef = useRef(null);
-  const sceneDurationFrames = Math.round(safeParseFloat(scene.duration) * 30);
+  const sceneDurationFrames = getSceneDurationFrames(scene, 30);
   const lastFrame = Math.max(0, sceneDurationFrames - 1);
 
   // Forward the local ref to the parent-provided callback/ref object
@@ -249,7 +249,6 @@ const LAYOUTS_BY_FAMILY = {
     { value: "BottomAnchorOutro", label: "Bottom Anchor Outro" },
     { value: "BrandOutro", label: "Brand Outro" },
     { value: "CenterLineOutro", label: "Center Line Outro" },
-    { value: "HustXRikkei", label: "HUST X RIKKEI" },
     { value: "ContactCardEnding", label: "Contact Card Ending" },
     { value: "Ending", label: "Ending / CTA Screen" },
     { value: "Launch", label: "Launch" },
@@ -344,6 +343,22 @@ const VDE_PRESET_STYLES = [
       radius: "16px",
       shadow: "0 8px 32px rgba(2, 89, 233, 0.15)",
       fontFamily: "Be Vietnam Pro, sans-serif"
+    }
+  },
+  {
+    id: "ai_driven",
+    name: "AI-Driven — Electric Blue",
+    description: "Tone Navy-to-Midnight cực deep, viền Electric Cyan phát sáng, thẻ kính mờ đậm chất Sci-Fi. Font Chakra Petch cực công nghệ.",
+    tokens: {
+      background: "linear-gradient(180deg, #000A3A 0%, #001060 40%, #0026A8 80%)",
+      cardBg: "linear-gradient(135deg, rgba(0, 30, 100, 0.55) 0%, rgba(0, 10, 58, 0.75) 100%)",
+      border: "1.5px solid rgba(0, 200, 255, 0.55)",
+      text: "#FFFFFF",
+      textSecondary: "rgba(200, 230, 255, 0.85)",
+      accent: "#00C8FF",
+      radius: "12px",
+      shadow: "0 0 40px rgba(0, 200, 255, 0.4)",
+      fontFamily: "Chakra Petch, sans-serif"
     }
   }
 ];
@@ -643,10 +658,15 @@ export const StoryboardEditor = ({
   const handleFieldChange = (sceneId, field, value) => {
     const scene = scenes.find(s => s.id === sceneId);
     if (!scene) return;
-    onUpdateScene(sceneId, {
+    const updatedScene = {
       ...scene,
       [field]: value
-    });
+    };
+    if (field === "visualLayout") {
+      // Clear compiledJS to let the video renderer fall back to the newly selected preset layout component
+      updatedScene.compiledJS = null;
+    }
+    onUpdateScene(sceneId, updatedScene);
   };
 
 
@@ -1619,6 +1639,7 @@ export const StoryboardEditor = ({
                   transition: "all 0.15s ease-in-out",
                   position: "relative",
                   display: "flex",
+                  flexWrap: "wrap",
                   gap: "24px"
                 }}
               >
@@ -1844,8 +1865,8 @@ export const StoryboardEditor = ({
                 </div>
 
                 {/* Right Side: Editing Inputs */}
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px" }} onClick={(e) => e.stopPropagation()}>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+                <div style={{ flex: 1, minWidth: "280px", display: "flex", flexDirection: "column", gap: "16px" }} onClick={(e) => e.stopPropagation()}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "12px" }}>
                     <div>
                       <label className="form-label-mono" style={{ fontSize: "11px" }}>Layout Family</label>
                       <select

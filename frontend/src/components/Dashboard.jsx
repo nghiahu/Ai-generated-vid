@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Player } from "@remotion/player";
-import { MainComposition, safeParseFloat, getThemeBgStyle } from "../../../my-video/src/compositions/MainComposition";
+import { MainComposition, safeParseFloat, getThemeBgStyle, getSceneDurationFrames } from "../../../my-video/src/compositions/MainComposition";
+import { useProjectDetail } from "../hooks/useProjectQueries";
 
 const DashboardProjectPlayer = ({ scenes, config, totalDurationFrames }) => {
   const playerRef = useRef(null);
@@ -60,18 +61,33 @@ const DashboardProjectPlayer = ({ scenes, config, totalDurationFrames }) => {
   );
 };
 
+const DashboardProjectPlayerWrapper = ({ projectId }) => {
+  const { data: project, isLoading } = useProjectDetail(projectId);
+  if (isLoading || !project) {
+    return (
+      <div style={{ color: "#fff", display: "grid", placeItems: "center", height: "100%", fontFamily: "var(--font-body)", fontWeight: 600 }}>
+        Đang tải video xem trước...
+      </div>
+    );
+  }
+  const scenes = project.scenes || [];
+  const config = project.config || {};
+  const totalDurationFrames = Math.max(30, scenes.reduce((sum, s) => sum + getSceneDurationFrames(s, 30), 0));
+
+  return (
+    <DashboardProjectPlayer 
+      scenes={scenes} 
+      config={config} 
+      totalDurationFrames={totalDurationFrames} 
+    />
+  );
+};
+
 export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) => {
   const [playingProjectId, setPlayingProjectId] = useState(null);
-  const [activeTab, setActiveTab] = useState("STORYBOARD");
 
-  // Filter projects by type: STORYBOARD vs AIGEN
-  const filteredProjects = projects.filter(p => {
-    if (activeTab === "AIGEN") {
-      return p.type === "AIGEN";
-    } else {
-      return p.type !== "AIGEN";
-    }
-  });
+  // Filter projects to exclude legacy AIGEN type projects
+  const filteredProjects = projects.filter(p => p.type !== "AIGEN");
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative" }}>
@@ -88,52 +104,6 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
           <span style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: 600 }}>{filteredProjects.length} Video</span>
         </div>
 
-        {/* Tag Selector at the Top */}
-        <div style={{
-          display: "flex",
-          background: "rgba(15, 23, 42, 0.04)",
-          padding: "5px",
-          borderRadius: "12px",
-          width: "max-content",
-          marginBottom: "32px",
-          border: "1px solid rgba(15, 23, 42, 0.07)"
-        }}>
-          <button
-            onClick={() => { setActiveTab("STORYBOARD"); setPlayingProjectId(null); }}
-            style={{
-              padding: "10px 24px",
-              borderRadius: "8px",
-              border: "none",
-              background: activeTab === "STORYBOARD" ? "#ffffff" : "transparent",
-              color: activeTab === "STORYBOARD" ? "#0f172a" : "#64748b",
-              fontWeight: 700,
-              fontSize: "14px",
-              cursor: "pointer",
-              boxShadow: activeTab === "STORYBOARD" ? "0 2px 10px rgba(0,0,0,0.06)" : "none",
-              transition: "all 0.15s ease"
-            }}
-          >
-            🎬 Biên tập Storyboard
-          </button>
-          <button
-            onClick={() => { setActiveTab("AIGEN"); setPlayingProjectId(null); }}
-            style={{
-              padding: "10px 24px",
-              borderRadius: "8px",
-              border: "none",
-              background: activeTab === "AIGEN" ? "#ffffff" : "transparent",
-              color: activeTab === "AIGEN" ? "#0f172a" : "#64748b",
-              fontWeight: 700,
-              fontSize: "14px",
-              cursor: "pointer",
-              boxShadow: activeTab === "AIGEN" ? "0 2px 10px rgba(0,0,0,0.06)" : "none",
-              transition: "all 0.15s ease"
-            }}
-          >
-            ⚡ Video AI Gen
-          </button>
-        </div>
-
         {/* Project list rendering */}
         {filteredProjects.length === 0 ? (
           <div
@@ -144,13 +114,12 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
               borderRadius: "var(--radius-lg)",
               backgroundColor: "rgba(255, 255, 255, 0.6)",
               backdropFilter: "blur(12px)",
-              boxShadow: "var(--shadow)"
+              boxShadow: "var(--shadow)",
+              marginBottom: "32px"
             }}
           >
             <p style={{ color: "var(--text-secondary)", fontSize: "16px", fontWeight: "600" }}>
-              {activeTab === "AIGEN" 
-                ? "Chưa có video AI Gen nào được tạo. Hãy sang mục Studio AI Gen để trải nghiệm sức mạnh trí tuệ nhân tạo!" 
-                : "Chưa có dự án Storyboard nào được tạo. Hãy nhấn vào nút sản xuất để bắt đầu!"}
+              Chưa có dự án Storyboard nào được tạo. Hãy nhấn vào nút sản xuất để bắt đầu!
             </p>
           </div>
         ) : (
@@ -210,10 +179,8 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                   <div style={{ width: "300px", height: "533px", flexShrink: 0 }}>
                     {playingProjectId === project.id ? (
                       <div style={{ width: "100%", height: "100%", backgroundColor: "#000", borderRadius: "12px", overflow: "hidden", position: "relative" }}>
-                        <DashboardProjectPlayer
-                          scenes={project.scenes || []}
-                          config={project.config || {}}
-                          totalDurationFrames={Math.max(30, Math.round((project.scenes || []).reduce((sum, s) => sum + safeParseFloat(s.duration || 6.0), 0) * 30))}
+                        <DashboardProjectPlayerWrapper
+                          projectId={project.id}
                         />
                       </div>
                     ) : (
@@ -232,24 +199,21 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                           boxShadow: "inset 0 0 40px rgba(0,0,0,0.5)"
                         }}
                       >
-                        {firstScene ? (
-                          <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
-                            <Player
-                              component={MainComposition}
-                              inputProps={{
-                                scenes: [firstScene],
-                                config: project.config || {}
-                              }}
-                              durationInFrames={Math.round(safeParseFloat(firstScene.duration || 6.0) * 30)}
-                              initialFrame={Math.min(60, Math.round(safeParseFloat(firstScene.duration || 6.0) * 15))}
-                              fps={30}
-                              compositionWidth={1080}
-                              compositionHeight={1920}
-                              style={{ width: "100%", height: "100%" }}
-                              controls={false}
-                              loop={false}
+                        {thumbnailUrl ? (
+                          thumbnailUrl.endsWith(".mp4") || thumbnailUrl.endsWith(".webm") ? (
+                            <video 
+                              src={thumbnailUrl.startsWith("http") ? thumbnailUrl : `http://localhost:5000${thumbnailUrl}`}
+                              muted 
+                              playsInline 
+                              style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "12px" }} 
                             />
-                          </div>
+                          ) : (
+                            <img 
+                              src={thumbnailUrl.startsWith("http") ? thumbnailUrl : `http://localhost:5000${thumbnailUrl}`}
+                              alt={project.title} 
+                              style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "12px" }} 
+                            />
+                          )
                         ) : (
                           <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", fontFamily: "var(--font-heading)", fontWeight: "700" }}>NO PREVIEW</div>
                         )}

@@ -124,11 +124,30 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
+  // Check if subtitles match current voiceover script
+  const isTimestampsOutOfDate = useMemo(() => {
+    if (!subtitlesJson || !Array.isArray(subtitlesJson) || subtitlesJson.length === 0) return true;
+    
+    // Normalize and compare word arrays (ignoring case, punctuation and spacing)
+    const cleanWord = (w: string) => (w || "").toLowerCase().replace(/[^a-z0-9àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/gi, "").trim();
+    const voiceoverWords = (voiceover ?? "").split(/\s+/).map(cleanWord).filter(Boolean);
+    const subWords = subtitlesJson.map(w => cleanWord(w.word || (w as any).word)).filter(Boolean);
+    
+    if (voiceoverWords.length !== subWords.length) return true;
+    
+    // Check first and last elements as simple heuristics
+    if (voiceoverWords.length > 0) {
+      if (voiceoverWords[0] !== subWords[0]) return true;
+      if (voiceoverWords[voiceoverWords.length - 1] !== subWords[subWords.length - 1]) return true;
+    }
+    return false;
+  }, [voiceover, subtitlesJson]);
+
   // Normalize subtitle words once (pure memo, no side effects)
   const words = useMemo(() => {
-    if (!Array.isArray(subtitlesJson) || subtitlesJson.length === 0) return [];
+    if (isTimestampsOutOfDate || !Array.isArray(subtitlesJson)) return [];
     return normalizeWords(subtitlesJson);
-  }, [subtitlesJson]);
+  }, [subtitlesJson, isTimestampsOutOfDate]);
 
   const hasTimestamps = words.length > 0;
   const currentSeconds = frame / fps;
@@ -267,7 +286,7 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
   const fontWeight = customSubtitle?.fontWeight ? parseInt(customSubtitle.fontWeight) : 800;
   const textShadow = isLightBg 
     ? "0px 1px 2px rgba(255, 255, 255, 0.9), 0px 0px 4px rgba(255, 255, 255, 0.5)" 
-    : "0px 2px 8px rgba(0, 0, 0, 0.95), 0px 4px 16px rgba(0, 0, 0, 0.8), 0px 0px 4px rgba(0, 0, 0, 0.9)";
+    : "0px 2px 10px rgba(0, 0, 0, 0.75), 0px 1px 3px rgba(0, 0, 0, 0.5)";
 
   // ── Group fade-in (Remotion-native interpolate) ──────────────────────────────
   let groupOpacity: number;

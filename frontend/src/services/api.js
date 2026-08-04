@@ -46,21 +46,5 @@ export const api = {
   regenerateSceneTts: async (projectId, sceneId) => {
     const response = await axios.post(`${API_BASE}/projects/${projectId}/scenes/${sceneId}/regenerate-tts`);
     return response.data;
-  },
-  generateStudioAiGen: async (script, targetLength = "Short (~60s)", theme = "ai_hub_grid", voiceKey = "duythanh", bgImage = "", refImages = [], projectId = null) => {
-    const response = await axios.post(`${API_BASE}/studio-ai-gen/generate`, { script, targetLength, theme, voiceKey, bgImage, refImages, projectId });
-    return response.data;
-  },
-  planStudioAiGen: async (script, targetLength = "Short (~60s)", theme = "ai_hub_grid", voiceKey = "duythanh", bgImage = "", refImages = [], projectId = null) => {
-    const response = await axios.post(`${API_BASE}/studio-ai-gen/plan`, { script, targetLength, theme, voiceKey, bgImage, refImages, projectId });
-    return response.data;
-  },
-  generateStudioAiGenScene: async (projectId, scene, voiceKey = "duythanh", theme = "ai_hub_grid", bgImage = "", refImages = [], script = "", bypassCache = true, userNote = "") => {
-    const response = await axios.post(`${API_BASE}/studio-ai-gen/generate-scene`, { projectId, scene, voiceKey, theme, bgImage, refImages, script, bypassCache, userNote });
-    return response.data;
-  },
-  saveStudioAiGenConfig: async (projectId, title, config) => {
-    const response = await axios.post(`${API_BASE}/studio-ai-gen/save-config`, { projectId, title, config });
-    return response.data;
   }
 };

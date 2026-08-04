@@ -55,13 +55,21 @@ export const resolveItemColors = ({
   styles,
   rgb,
   isLight,
-  isAccentLight
-}: ColorResolutionParams) => {
+  isAccentLight,
+  theme
+}: ColorResolutionParams & { theme?: string }) => {
   const isAccent = item?.useAccentBg;
+  const isAIDriven = theme === "ai_driven" || theme?.includes("ai_driven");
   const fallbackBg = isAccent
-    ? `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})`
+    ? (isAIDriven
+        ? "linear-gradient(135deg, rgba(0, 15, 60, 0.85) 0%, rgba(0, 8, 36, 0.95) 100%)"
+        : `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})`)
     : (styles.cardStyle.backgroundColor || styles.cardStyle.background || `rgba(2, 6, 23, 0.48)`);
-  const fallbackBorder = isAccent ? "none" : (styles.cardStyle.border || `1px solid rgba(${rgb}, 0.22)`);
+  const fallbackBorder = isAccent 
+    ? (isAIDriven 
+        ? "1.5px solid rgba(0, 200, 255, 0.55)" 
+        : "none") 
+    : (styles.cardStyle.border || `1px solid rgba(${rgb}, 0.22)`);
   const fallbackBadge = accentColor;
   const textColor = isAccent
     ? (isAccentLight ? "#111111" : "#ffffff")

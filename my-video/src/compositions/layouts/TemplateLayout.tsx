@@ -32,7 +32,10 @@ import { IntroEvidenceTimelineMode } from "./modes/IntroEvidenceTimelineMode";
 import { IntroFullImageMode } from "./modes/IntroFullImageMode";
 import { IntroSplitHeadlineMode } from "./modes/IntroSplitHeadlineMode";
 import { CenteredTextMode } from "./modes/CenteredTextMode";
-import { HustXRikkeiMode } from "./modes/HustXRikkeiMode";
+import { PullquoteMode } from "./modes/PullquoteMode";
+import { VignelliQuoteMode } from "./modes/VignelliQuoteMode";
+import { IntroMediaHeroMode } from "./modes/IntroMediaHeroMode";
+import { MediaShowcaseCardMode } from "./modes/MediaShowcaseCardMode";
 import { FintechEduMode } from "./modes/FintechEduMode";
 import { IntroRadarSignalMode } from "./modes/IntroRadarSignalMode";
 import { IntroSignalStepsMode } from "./modes/IntroSignalStepsMode";
@@ -125,18 +128,21 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
 
   // Outer container padding/alignment
   const isCenteredLayout = layoutMode === "centered_text";
+  const isFlywheel = t.id === "AIHubGrid1" || t.id === "Flywheel";
   const containerStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
     alignItems: isCenteredLayout ? "center" : (isBottomAligned ? "flex-start" : "center"),
-    padding: isCenteredLayout ? "0 64px" : "86px",
+    padding: isFlywheel ? "0px" : (isCenteredLayout ? "0 64px" : "86px"),
     justifyContent: isCenteredLayout ? "center" : (isBottomAligned ? "flex-end" : "flex-start"),
-    paddingTop: isCenteredLayout
+    paddingTop: isFlywheel 
       ? "0px"
-      : (isBottomAligned
+      : (isCenteredLayout
         ? "0px"
-        : (layoutMode === "fintech_edu" || layoutMode === "hust_x_rikkei" ? "0px" : (t.container?.paddingTop || "380px"))),
-    paddingBottom: isCenteredLayout ? "0px" : (isBottomAligned ? "480px" : "86px"),
+        : (isBottomAligned
+          ? "0px"
+          : (layoutMode === "fintech_edu" || layoutMode === "hust_x_rikkei" ? "0px" : (t.container?.paddingTop || "380px")))),
+    paddingBottom: isFlywheel ? "0px" : (isCenteredLayout ? "0px" : (isBottomAligned ? "480px" : "86px")),
     boxSizing: "border-box",
     position: "relative",
     width: "100%",
@@ -234,10 +240,16 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
       case "circular_progress":
         console.log("[TemplateLayout] Rendering circular_progress with props:", modeProps);
         return <CircularProgressMode {...modeProps} />;
+      case "pullquote":
+        return <PullquoteMode {...modeProps} />;
+      case "vignelliquote":
+        return <VignelliQuoteMode {...modeProps} />;
+      case "intro_media_hero":
+        return <IntroMediaHeroMode {...modeProps} />;
+      case "media_showcase_card":
+        return <MediaShowcaseCardMode {...modeProps} />;
       case "centered_text":
         return <CenteredTextMode {...modeProps} />;
-      case "hust_x_rikkei":
-        return <HustXRikkeiMode {...modeProps} />;
       case "fintech_edu":
         return <FintechEduMode {...modeProps} />;
       case "blank":
@@ -291,7 +303,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
               fontSize={t.title.fontSize}
               fontWeight={t.title.fontWeight || "800"}
               letterSpacing={t.title.letterSpacing}
-              textShadow={t.title.textShadow || (t.title.useAccentTextShadow ? `rgba(0,0,0,0.58) 0px 22px 54px` : undefined)}
+              textShadow={t.title.textShadow || (t.title.useAccentTextShadow ? `rgba(0, 0, 0, 0.25) 0px 10px 30px` : undefined)}
               colorRgba={styles.titleStyle.color || (isLight ? "#1F2937" : "#ffffff")}
               align={isBottomAligned ? "left" : "center"}
               fontFamily={styles.fontFamily}

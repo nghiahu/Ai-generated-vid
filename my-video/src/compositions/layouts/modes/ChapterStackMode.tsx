@@ -20,6 +20,16 @@ export const ChapterStackMode: React.FC<ModeRendererProps> = ({
   // In the HTML template, Card 0 (main card) contains the headline/title text
   const mainTitle = titleText || "Code Ra Video";
 
+  // Dynamic base font size for the main card (Card 0) based on title length
+  let baseCard0FontSize = 84;
+  if (mainTitle.length > 35) {
+    baseCard0FontSize = 52;
+  } else if (mainTitle.length > 25) {
+    baseCard0FontSize = 62;
+  } else if (mainTitle.length > 15) {
+    baseCard0FontSize = 72;
+  }
+
   // Other cards contain point text
   const cardsData = [
     { text: mainTitle, icon: "none", defaultRot: -2, defaultWidth: 860, defaultHeight: 224 },
@@ -28,12 +38,12 @@ export const ChapterStackMode: React.FC<ModeRendererProps> = ({
     { text: otherComps[2]?.data?.text || "Ra video", icon: "star", defaultRot: -3, defaultWidth: 670, defaultHeight: 132 }
   ];
 
-  // Specific layout configurations for 9:16 vertical screen
+  // Specific layout configurations using relative positioning and margin-top for dynamic stack behavior
   const layoutConfigs = [
     {
       // Card 0: Main card top center
       left: "0px",
-      top: "100px",
+      marginTop: "100px",
       width: "100%",
       maxWidth: "860px",
       zIndex: 10,
@@ -44,7 +54,7 @@ export const ChapterStackMode: React.FC<ModeRendererProps> = ({
     {
       // Card 1: Left tilted card
       left: "40px",
-      top: "390px",
+      marginTop: "90px",
       width: "630px",
       zIndex: 8,
       isAccent: true, // Use accent gradient fill
@@ -54,7 +64,7 @@ export const ChapterStackMode: React.FC<ModeRendererProps> = ({
     {
       // Card 2: Right tilted card
       left: "200px",
-      top: "560px",
+      marginTop: "38px",
       width: "600px",
       zIndex: 7,
       isAccent: false,
@@ -64,7 +74,7 @@ export const ChapterStackMode: React.FC<ModeRendererProps> = ({
     {
       // Card 3: Bottom left tilted card
       left: "60px",
-      top: "730px",
+      marginTop: "38px",
       width: "640px",
       zIndex: 6,
       isAccent: false,
@@ -107,6 +117,9 @@ export const ChapterStackMode: React.FC<ModeRendererProps> = ({
       position: "relative",
       width: "100%",
       maxWidth: "920px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-start",
       minHeight: "960px",
       alignSelf: "center",
       zIndex: 5,
@@ -119,7 +132,7 @@ export const ChapterStackMode: React.FC<ModeRendererProps> = ({
         // Define animation configs
         // Card 0 animate first, then sequentially
         const delay = 0.15 + idx * 0.15;
-        const animationType = idx === 0 ? "scale-in" : (idx % 2 === 0 ? "slide-right" : "slide-left");
+        const animationType = idx === 0 ? "scale-in" : "slide-down";
 
         const isAccent = config.isAccent;
         const rotation = t.items?.rotations?.[idx] !== undefined ? t.items?.rotations?.[idx] : card.defaultRot;
@@ -159,11 +172,12 @@ export const ChapterStackMode: React.FC<ModeRendererProps> = ({
           <div
             key={idx}
             style={{
-              position: "absolute",
+              position: "relative",
               left: config.left,
-              top: config.top,
+              marginTop: config.marginTop,
               width: config.width,
               maxWidth: config.maxWidth,
+              alignSelf: idx === 0 ? "center" : "flex-start",
               zIndex: config.zIndex,
               transform: `rotate(${rotation}deg)`,
               transformOrigin: idx % 2 === 0 ? "left center" : "right center"
@@ -217,14 +231,15 @@ export const ChapterStackMode: React.FC<ModeRendererProps> = ({
                 <div style={{
                   position: "relative",
                   fontSize: idx === 0
-                    ? `${Math.round(84 * fontScale)}px`
+                    ? `${Math.round(baseCard0FontSize * fontScale)}px`
                     : `${Math.round(40 * fontScale)}px`,
                   lineHeight: idx === 0 ? 1.05 : 0.98,
                   fontWeight: 900,
                   letterSpacing: "-0.045em",
                   textTransform: "uppercase",
                   color: textColor,
-                  fontFamily: styles.fontFamily
+                  fontFamily: styles.fontFamily,
+                  wordBreak: "break-word"
                 }}>
                   {idx === 0 ? highlightHeadingText(card.text, accentColor, theme, highlightWords) : card.text}
                 </div>

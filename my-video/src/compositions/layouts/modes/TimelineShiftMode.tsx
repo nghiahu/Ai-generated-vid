@@ -302,7 +302,7 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = (props) => {
       const text = cleanCardText(rawText);
       const { body, highlight } = extractBodyAndHighlight(text, highlightWords);
 
-      const sideColor = isLeft ? (accentColor || "#EF4444") : "#EAB308";
+      const sideColor = isLeft ? (accentColor || "#EF4444") : "#F59E0B";
       const sidePillText = isLeft ? "PAST PHASE" : "UPGRADED FUTURE";
       const sideLabelText = isLeft ? (body || "KỸ NĂNG HOT NHẤT") : (body || "CHỈ CÓ BA BƯỚC");
 
@@ -427,7 +427,7 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = (props) => {
           bottom: "60px",
           width: "3px",
           height: "60px",
-          backgroundColor: "#EAB308",
+          backgroundColor: "#F59E0B",
           borderRadius: "999px",
           opacity: 0.6
         }} />
@@ -439,7 +439,7 @@ export const TimelineShiftMode: React.FC<ModeRendererProps> = (props) => {
             y1="40%"
             x2="62%"
             y2="60%"
-            stroke="#EAB308"
+            stroke="#F59E0B"
             strokeWidth="2"
             strokeDasharray="6 6"
             strokeOpacity="0.75"

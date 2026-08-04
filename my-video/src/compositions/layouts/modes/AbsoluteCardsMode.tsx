@@ -502,17 +502,17 @@ export const AbsoluteCardsMode: React.FC<ModeRendererProps> = ({
       );
     };
 
-    // Circle coordinate definitions centered at (454, 947) with radius 265px
+    // Circle coordinate definitions centered at (540, 1247) with radius 265px (using absolute screen coordinates)
     const circleConfigs = [
-      { left: 314, top: 540, size: 280, floatPhase: 0 },
-      { left: 540, top: 940, size: 280, floatPhase: 2 },
-      { left: 88, top: 940, size: 280, floatPhase: 4 }
+      { left: 400, top: 842, size: 280, floatPhase: 0 },
+      { left: 630, top: 1240, size: 280, floatPhase: 2 },
+      { left: 170, top: 1240, size: 280, floatPhase: 4 }
     ];
 
-    const arrowProgress = interpolate(frame, [25, 80], [300, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+    const arrowProgress = interpolate(frame, [25, 80], [450, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
     return (
-      <div style={{ position: "relative", width: "100%", height: "100%", overflow: "visible" }}>
+      <div style={{ position: "relative", width: "1080px", height: "1920px", overflow: "visible" }}>
         {/* Defs for arrow marker */}
         <svg style={{ position: "absolute", width: 0, height: 0 }}>
           <defs>
@@ -526,8 +526,8 @@ export const AbsoluteCardsMode: React.FC<ModeRendererProps> = ({
         {titleText && (
           <div style={{
             position: "absolute",
-            left: "40px",
-            top: "80px",
+            left: "126px",
+            top: "380px",
             width: "828px",
             display: "flex",
             flexDirection: "column",
@@ -579,20 +579,20 @@ export const AbsoluteCardsMode: React.FC<ModeRendererProps> = ({
         )}
 
         {/* 2. Central Flywheel Loop SVGs */}
-        <svg style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "100%", pointerEvents: "none", overflow: "visible" }}>
+        <svg viewBox="0 0 1080 1920" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "100%", pointerEvents: "none", overflow: "visible" }}>
           {/* Inner dotted orbit */}
-          <circle cx="454" cy="947" r="140" fill="none" stroke={`rgba(${rgb}, 0.18)`} strokeWidth="2.5" strokeDasharray="6 6" />
+          <circle cx="540" cy="1247" r="140" fill="none" stroke={`rgba(${rgb}, 0.18)`} strokeWidth="2.5" strokeDasharray="6 6" />
 
           {/* Dotted outer connection path */}
-          <circle cx="454" cy="947" r="265" fill="none" stroke={`rgba(${rgb}, 0.22)`} strokeWidth="3" strokeDasharray="10 10" />
+          <circle cx="540" cy="1247" r="265" fill="none" stroke={`rgba(${rgb}, 0.22)`} strokeWidth="3" strokeDasharray="10 10" />
 
           {/* Arrow 1: Top to Right */}
           <path
-            d="M 586 718 A 265 265 0 0 1 715 993"
+            d="M 672 1018 A 265 265 0 0 1 801 1293"
             fill="none"
             stroke={accentColor}
             strokeWidth="4.5"
-            strokeDasharray={300}
+            strokeDasharray={450}
             strokeDashoffset={arrowProgress}
             markerEnd="url(#flywheel-arrow)"
             style={{ filter: `drop-shadow(0 0 8px ${accentColor})` }}
@@ -600,11 +600,11 @@ export const AbsoluteCardsMode: React.FC<ModeRendererProps> = ({
 
           {/* Arrow 2: Right to Left */}
           <path
-            d="M 624 1150 A 265 265 0 0 1 284 1150"
+            d="M 710 1450 A 265 265 0 0 1 370 1450"
             fill="none"
             stroke={accentColor}
             strokeWidth="4.5"
-            strokeDasharray={300}
+            strokeDasharray={450}
             strokeDashoffset={arrowProgress}
             markerEnd="url(#flywheel-arrow)"
             style={{ filter: `drop-shadow(0 0 8px ${accentColor})` }}
@@ -612,11 +612,11 @@ export const AbsoluteCardsMode: React.FC<ModeRendererProps> = ({
 
           {/* Arrow 3: Left to Top */}
           <path
-            d="M 193 993 A 265 265 0 0 1 363 698"
+            d="M 279 1293 A 265 265 0 0 1 449 998"
             fill="none"
             stroke={accentColor}
             strokeWidth="4.5"
-            strokeDasharray={300}
+            strokeDasharray={450}
             strokeDashoffset={arrowProgress}
             markerEnd="url(#flywheel-arrow)"
             style={{ filter: `drop-shadow(0 0 8px ${accentColor})` }}
@@ -627,8 +627,8 @@ export const AbsoluteCardsMode: React.FC<ModeRendererProps> = ({
         <AnimatedBlock animation="fade" delaySeconds={0.4}>
           <div style={{
             position: "absolute",
-            left: "384px",
-            top: "877px",
+            left: "470px",
+            top: "1177px",
             width: "140px",
             height: "140px",
             borderRadius: "999px",
@@ -800,9 +800,9 @@ export const AbsoluteCardsMode: React.FC<ModeRendererProps> = ({
           <AnimatedBlock animation="slide-up" delaySeconds={0.8}>
             <div style={{
               position: "absolute",
-              left: "40px",
-              right: "40px",
-              bottom: "100px",
+              left: "126px",
+              right: "126px",
+              bottom: "186px",
               height: "170px",
               borderRadius: "24px",
               background: isLight 

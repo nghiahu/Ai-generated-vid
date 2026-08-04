@@ -48,10 +48,6 @@ app.use('/downloads', express.static(path.join(__dirname, 'public/downloads'), {
 
 // Serve other static assets (voiceover audio, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
-const studioAiGenRoute = require('./routes/studioAiGenRoute');
-
-// Mount Studio AI Gen Route
-app.use('/api/studio-ai-gen', studioAiGenRoute);
 
 // Temporary in-memory renders store
 const activeRenders = {};
@@ -65,22 +61,15 @@ db.initDb()
 app.get('/api/projects', async (req, res) => {
   try {
     const thinProjects = await db.getProjects();
-    const fullProjects = await Promise.all(
-      thinProjects.map(async p => {
-        const project = await db.getProjectById(p.id);
-        if (project && project.config) {
-          const visualStyle = project.config.visualStyle || 'minimal';
-          const traits = project.config.traits || [];
-          const activeTraits = [...traits];
-          if (project.config.ratio === '9:16' && !activeTraits.includes('vertical_video')) {
-            activeTraits.push('vertical_video');
-          }
-          project.config.vdeTokens = vde.getStyle(visualStyle, activeTraits);
-        }
-        return project;
-      })
-    );
-    res.json(fullProjects);
+    const projectsWithFirstScene = thinProjects.map(p => {
+      const firstScene = p.first_scene;
+      delete p.first_scene;
+      return {
+        ...p,
+        scenes: firstScene ? [firstScene] : []
+      };
+    });
+    res.json(projectsWithFirstScene);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -280,7 +269,7 @@ app.get('/api/media/search', async (req, res) => {
 // 5b. POST /api/upload: Upload base64 image to Cloudinary
 app.post('/api/upload', async (req, res) => {
   try {
-    const { file } = req.body;
+    const { file, isLogo } = req.body;
     if (!file) {
       return res.status(400).json({ error: 'Data URL image string is required' });
     }
@@ -291,8 +280,11 @@ app.post('/api/upload', async (req, res) => {
     });
 
     const secureUrl = result.secure_url;
-    // Persist uploaded image in database so it appears in Your Media tab
-    await db.saveUploadedMedia(secureUrl);
+    
+    // Only persist uploaded image in database as general media if it is NOT a watermark logo
+    if (!isLogo) {
+      await db.saveUploadedMedia(secureUrl);
+    }
 
     res.json({ url: secureUrl });
   } catch (error) {
@@ -301,73 +293,14 @@ app.post('/api/upload', async (req, res) => {
   }
 });
 
-// 5c. GET /api/media/previous: Retrieve all previously used images from scenes
+// 5c. GET /api/media/previous: Retrieve all user-uploaded media
 app.get('/api/media/previous', async (req, res) => {
   try {
-    const thinProjects = await db.getProjects();
-    const fullProjects = await Promise.all(
-      thinProjects.map(p => db.getProjectById(p.id))
-    );
-
-    const allUrls = new Set();
-
-    // 1. Fetch explicitly recorded uploaded media from database
-    try {
-      const uploadedMedia = await db.getUploadedMedia();
-      for (const url of uploadedMedia) {
-        if (url && typeof url === 'string') {
-          allUrls.add(url.trim());
-        }
-      }
-    } catch (dbErr) {
-      console.error('Failed to get uploaded media from db:', dbErr.message);
-    }
-
-    // 2. Fetch media from all existing project scenes and config values
-    for (const project of fullProjects) {
-      if (!project) continue;
-
-      if (project.scenes) {
-        for (const scene of project.scenes) {
-          if (Array.isArray(scene.mediaList)) {
-            for (const url of scene.mediaList) {
-              if (url && typeof url === 'string') {
-                const trimmed = url.trim();
-                // Filter out generic Unsplash stock auto-searched images
-                const isUnsplash = trimmed.includes('images.unsplash.com') || trimmed.includes('unsplash.com');
-                if (!isUnsplash && trimmed.length > 0) {
-                  allUrls.add(trimmed);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // Check config for background image and references (multimodal Studio AI Gen)
-      if (project.config) {
-        if (project.config.bgImage && typeof project.config.bgImage === 'string') {
-          const trimmed = project.config.bgImage.trim();
-          const isUnsplash = trimmed.includes('images.unsplash.com') || trimmed.includes('unsplash.com');
-          if (!isUnsplash && trimmed.length > 0) {
-            allUrls.add(trimmed);
-          }
-        }
-        if (Array.isArray(project.config.refImages)) {
-          for (const url of project.config.refImages) {
-            if (url && typeof url === 'string') {
-              const trimmed = url.trim();
-              const isUnsplash = trimmed.includes('images.unsplash.com') || trimmed.includes('unsplash.com');
-              if (!isUnsplash && trimmed.length > 0) {
-                allUrls.add(trimmed);
-              }
-            }
-          }
-        }
-      }
-    }
-
-    res.json(Array.from(allUrls));
+    const uploadedMedia = await db.getUploadedMedia();
+    const urls = uploadedMedia
+      .filter(url => url && typeof url === 'string')
+      .map(url => url.trim());
+    res.json(Array.from(new Set(urls)));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

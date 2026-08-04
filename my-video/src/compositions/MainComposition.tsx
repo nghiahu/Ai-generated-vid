@@ -142,6 +142,7 @@ export interface WatermarkConfig {
   text: string;
   position: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "bottom-center";
   color: string;
+  logoUrl?: string;
 }
 
 export interface ProjectConfig {
@@ -358,6 +359,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
             src={getBgmAsset(config.backgroundMusic)}
             volume={config.backgroundMusicVolume ?? 0.025}
             loop
+            useWebAudioApi={false}
           />
         </Sequence>
       )}
@@ -483,6 +485,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                   key={`${scene.id || index}_${audioUrl}`}
                   src={getFullUrl(audioUrl)} 
                   volume={1.8} 
+                  useWebAudioApi={false}
                 />
               );
             })()}
@@ -491,43 +494,58 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
       })}
 
       {/* Watermark Overlay layer (Tĩnh xuyên suốt video) */}
-      {(config?.watermark?.enabled !== false) && (config?.watermark?.text || "yupclip.com") && (
-        <div
-          style={{
-            position: "absolute",
-            zIndex: 100,
-            padding: "10px 20px",
-            backgroundColor: "rgba(0, 0, 0, 0.4)",
-            backdropFilter: "blur(8px)",
-            color: "#ffffff",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            fontFamily: "Be Vietnam Pro, sans-serif",
-            fontWeight: "700",
-            fontSize: "15px",
-            letterSpacing: "1px",
-            borderRadius: "20px",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
-            opacity: 0.85,
-            ...(() => {
-              switch (config?.watermark?.position || "top-right") {
-                case "top-left":
-                  return { top: "35px", left: "35px" };
-                case "bottom-left":
-                  return { bottom: "160px", left: "35px" };
-                case "bottom-right":
-                  return { bottom: "160px", right: "35px" };
-                case "bottom-center":
-                  return { bottom: "160px", left: "50%", transform: "translateX(-50%)" };
-                case "top-right":
-                default:
-                  return { top: "35px", right: "35px" };
-              }
-            })(),
-          }}
-        >
-          {config?.watermark?.text || "yupclip.com"}
-        </div>
-      )}
+      {(config?.watermark?.enabled !== false) && (config?.watermark?.text || config?.watermark?.logoUrl || "yupclip.com") && (() => {
+        const hasLogo = !!config?.watermark?.logoUrl;
+        return (
+          <div
+            style={{
+              position: "absolute",
+              zIndex: 100,
+              padding: hasLogo ? "0px" : "10px 20px",
+              backgroundColor: hasLogo ? "transparent" : "rgba(0, 0, 0, 0.4)",
+              backdropFilter: hasLogo ? "none" : "blur(8px)",
+              color: "#ffffff",
+              border: hasLogo ? "none" : "1px solid rgba(255, 255, 255, 0.2)",
+              fontFamily: "Be Vietnam Pro, sans-serif",
+              fontWeight: "700",
+              fontSize: "15px",
+              letterSpacing: "1px",
+              borderRadius: hasLogo ? "0px" : "20px",
+              boxShadow: hasLogo ? "none" : "0 4px 12px rgba(0, 0, 0, 0.3)",
+              opacity: 1, // Full opacity for crisp display
+              ...(() => {
+                switch (config?.watermark?.position || "top-right") {
+                  case "top-left":
+                    return { top: "35px", left: "35px" };
+                  case "bottom-left":
+                    return { bottom: "160px", left: "35px" };
+                  case "bottom-right":
+                    return { bottom: "160px", right: "35px" };
+                  case "bottom-center":
+                    return { bottom: "160px", left: "50%", transform: "translateX(-50%)" };
+                  case "top-right":
+                  default:
+                    return { top: "35px", right: "35px" };
+                }
+              })(),
+            }}
+          >
+            {hasLogo ? (
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Remotion.Img 
+                  src={config.watermark.logoUrl || ""} 
+                  style={{ height: "35px", objectFit: "contain" }} 
+                />
+                {config.watermark.text && (
+                  <span style={{ textShadow: "0 2px 4px rgba(0,0,0,0.6)" }}>{config.watermark.text}</span>
+                )}
+              </div>
+            ) : (
+              config?.watermark?.text || "yupclip.com"
+            )}
+          </div>
+        );
+      })()}
 
       {/* Bottom Scrubber Progress Bar for AI Hub Grid theme */}
       {config?.visualStyle === "ai_hub_grid" && (
