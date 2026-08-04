@@ -16,6 +16,25 @@ export const MediaShowcaseCardMode: React.FC<ModeRendererProps> = ({
   // Parse dynamic points (up to 3)
   const points = otherComps.slice(0, 3).map(comp => comp.data?.text || "").filter(Boolean);
 
+  // Helper to check if imageUrl is a default background asset or invalid
+  const isDefaultImage = (url: string) => {
+    if (!url) return true;
+    const lower = url.toLowerCase();
+    
+    // Check for invalid/empty/undefined placeholder values
+    if (
+      lower === "undefined" || 
+      lower === "null" || 
+      lower.endsWith("/undefined") || 
+      lower.endsWith("/null") ||
+      lower.includes("placeholder")
+    ) {
+      return true;
+    }
+    
+    return lower.includes("bg") || lower.includes("background") || lower.includes("circuit") || lower.includes("bokeh");
+  };
+
   // Phone Mockup / Showcase Card styles
   const phoneBg = isLight ? "rgba(255, 255, 255, 0.9)" : "rgba(10, 15, 30, 0.7)";
   const phoneBorder = isLight ? "1px solid rgba(0, 0, 0, 0.08)" : `1px solid rgba(${rgb}, 0.25)`;
@@ -195,9 +214,24 @@ export const MediaShowcaseCardMode: React.FC<ModeRendererProps> = ({
               flex: 1,
               position: "relative",
               background: isLight ? "#ffffff" : "#020617",
-              overflow: "hidden"
+              overflow: "hidden",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
             }}>
-              {renderMockAppUI()}
+              {imageUrl && !isDefaultImage(imageUrl) ? (
+                <img 
+                  src={imageUrl} 
+                  style={{ 
+                    width: "100%", 
+                    height: "100%", 
+                    objectFit: "cover" 
+                  }} 
+                  alt="Phone content" 
+                />
+              ) : (
+                renderMockAppUI()
+              )}
             </div>
           </div>
         </AnimatedBlock>

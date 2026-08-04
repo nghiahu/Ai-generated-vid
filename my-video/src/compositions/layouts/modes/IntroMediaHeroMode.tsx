@@ -259,7 +259,19 @@ export const IntroMediaHeroMode: React.FC<ModeRendererProps> = ({
             alignItems: "center",
             justifyContent: "center"
           }}>
-            {renderMockWebUI()}
+            {imageUrl && !isDefaultImage(imageUrl) ? (
+              <img 
+                src={imageUrl} 
+                style={{ 
+                  width: "100%", 
+                  height: "100%", 
+                  objectFit: "cover" 
+                }} 
+                alt="Scene content" 
+              />
+            ) : (
+              renderMockWebUI()
+            )}
           </div>
         </div>
       </AnimatedBlock>

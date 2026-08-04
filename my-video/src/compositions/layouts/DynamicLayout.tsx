@@ -54,6 +54,7 @@ export interface DynamicLayoutProps {
   themeMetadata?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   category?: string;
   highlightWords?: string[];
+  config?: any;
 }
 
 export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
@@ -68,7 +69,8 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
   layoutData,
   themeMetadata,
   category,
-  highlightWords
+  highlightWords,
+  config
 }) => {
   const theme = visualStyle || defaultTheme;
   const frame = useCurrentFrame();
@@ -84,12 +86,15 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
     const isAiHubGrid = theme === "ai_hub_grid";
     const isFintechEdu = theme === "fintech_edu" || (theme && theme.includes("fintech"));
 
-    // If user uploaded/selected a background image, keep it 100% original, crisp and untouched!
-    if (imageUrl) {
+    // Resolve global video background image from project config
+    const globalBgImage = config?.bgImage;
+
+    // If global background image is set, render it!
+    if (globalBgImage) {
       return (
         <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
           <img 
-            src={imageUrl} 
+            src={globalBgImage} 
             style={{ 
               position: "absolute",
               inset: 0,
@@ -98,6 +103,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
               objectFit: "cover", 
               opacity: 1.0
             }} 
+            alt="Video Background"
           />
         </AbsoluteFill>
       );

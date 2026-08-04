@@ -216,6 +216,73 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
         </div>
 
 
+        {/* Video Background Image */}
+        <div>
+          <label className="form-label-mono">Video Background Image</label>
+          {config.bgImage ? (
+            <div className="border-strict" style={{ padding: "12px", display: "flex", alignItems: "center", gap: "12px", backgroundColor: "#fafafa" }}>
+              <img 
+                src={config.bgImage} 
+                style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "8px", border: "1.5px solid #000000" }} 
+                alt="video background" 
+              />
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+                <span style={{ fontSize: "11px", color: "#666666", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "160px" }}>
+                  {config.bgImage.substring(config.bgImage.lastIndexOf('/') + 1)}
+                </span>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button
+                    type="button"
+                    onClick={() => window.dispatchEvent(new CustomEvent("open-bg-image-modal"))}
+                    style={{ background: "none", border: "none", color: "#000000", fontSize: "11px", fontWeight: "bold", cursor: "pointer", textDecoration: "underline", padding: 0 }}
+                  >
+                    Thay đổi
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleConfigChange("bgImage", null)}
+                    style={{ background: "none", border: "none", color: "#ff3b30", fontSize: "11px", fontWeight: "bold", cursor: "pointer", textDecoration: "underline", padding: 0 }}
+                  >
+                    Xóa nền
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("open-bg-image-modal"))}
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                padding: "12px",
+                borderRadius: "6px",
+                border: "2px dashed rgba(15, 23, 42, 0.15)",
+                background: "#ffffff",
+                fontSize: "13px",
+                fontWeight: "600",
+                color: "#475569",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "#000000";
+                e.currentTarget.style.backgroundColor = "#fafafa";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.15)";
+                e.currentTarget.style.backgroundColor = "#ffffff";
+              }}
+            >
+              <span>🖼️</span> Chọn ảnh nền video
+            </button>
+          )}
+        </div>
+
+
         {/* Watermark Section */}
         <div className="border-strict" style={{ padding: "20px", backgroundColor: "#ffffff" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>

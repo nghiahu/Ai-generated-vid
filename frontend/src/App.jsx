@@ -576,7 +576,8 @@ function App() {
                   <StoryboardEditor
                     mode="setup"
                     scenes={[]}
-                    config={{}}
+                    config={draftConfig}
+                    onUpdateConfig={setDraftConfig}
                     projectId={null}
                     onGenerateStoryboard={handleGenerateStoryboard}
                     onUpdateScene={() => { }}
@@ -688,6 +689,7 @@ function App() {
                   mode="setup"
                   scenes={currentProject?.scenes || []}
                   config={currentProject?.config || {}}
+                  onUpdateConfig={handleUpdateConfig}
                   projectId={currentProject?.id}
                   onGenerateStoryboard={handleGenerateStoryboard}
                   onUpdateScene={handleUpdateScene}
@@ -715,6 +717,7 @@ function App() {
                   mode="editor"
                   scenes={currentProject?.scenes || []}
                   config={currentProject?.config || {}}
+                  onUpdateConfig={handleUpdateConfig}
                   projectId={currentProject?.id}
                   onGenerateStoryboard={handleGenerateStoryboard}
                   onUpdateScene={handleUpdateScene}

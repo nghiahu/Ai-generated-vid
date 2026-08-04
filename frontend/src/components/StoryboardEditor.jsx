@@ -495,6 +495,7 @@ export const StoryboardEditor = ({
   loadingMessage,
   selectedSceneId,
   onSelectScene,
+  onUpdateConfig,
   mode = "editor"
 }) => {
   const [topicText, setTopicText] = useState("");
@@ -516,6 +517,17 @@ export const StoryboardEditor = ({
   const [uploading, setUploading] = useState(false);
   const [mediaModalContext, setMediaModalContext] = useState(null); // 'scene-editor' or null
   const [activeUploadSceneId, setActiveUploadSceneId] = useState(null);
+
+  useEffect(() => {
+    const handleOpenBg = () => {
+      setMediaModalContext("project-background");
+      setActiveUploadSceneId(null);
+      setSelectedMedia(config.bgImage ? [config.bgImage] : []);
+      setShowMediaModal(true);
+    };
+    window.addEventListener("open-bg-image-modal", handleOpenBg);
+    return () => window.removeEventListener("open-bg-image-modal", handleOpenBg);
+  }, [config.bgImage]);
 
   useEffect(() => {
     if (showMediaModal) {
@@ -590,6 +602,14 @@ export const StoryboardEditor = ({
           ...updateData
         });
       });
+    } else if (mediaModalContext === 'project-background') {
+      const selectedBgImage = selectedMedia[selectedMedia.length - 1] || "";
+      if (onUpdateConfig) {
+        onUpdateConfig({
+          ...config,
+          bgImage: selectedBgImage
+        });
+      }
     }
 
     // Reset state and close modal

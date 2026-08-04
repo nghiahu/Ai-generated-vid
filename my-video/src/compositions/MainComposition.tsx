@@ -459,6 +459,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                       layoutData={(scene as any).layout}
                       themeMetadata={(scene as any).themeMetadata}
                       highlightWords={scene.sceneIntent?.highlightWords}
+                      config={config}
                     />
                     
                     {/* Synchronized Subtitles */}
