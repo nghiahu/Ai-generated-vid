@@ -1902,177 +1902,187 @@ export const StoryboardEditor = ({
                     </button>
                   </div>
 
-                  {/* 1. Content Media Search & Suggestion Panel */}
-                  <div style={{ borderTop: "1px solid #000000", paddingTop: "12px", paddingBottom: "8px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                      <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Content Media (Ảnh mockup)</label>
-                      <button
-                        type="button"
-                        onClick={() => handleOpenContentMediaModal(scene.id)}
-                        disabled={uploadingScenes[scene.id]}
-                        style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
-                      >
-                        {uploadingScenes[scene.id] ? "⏳ Uploading..." : "📁 Upload"}
-                      </button>
-                    </div>
-
-                    <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-                      <input
-                        className="form-input-mono"
-                        type="text"
-                        placeholder="Tìm ảnh Unsplash (e.g. logo, app)..."
-                        value={searchQueries[scene.id] || ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setSearchQueries(prev => ({ ...prev, [scene.id]: val }));
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleSearchImages(scene.id);
-                        }}
-                        style={{ padding: "6px 8px", fontSize: "11px", height: "30px" }}
-                      />
-                      <button
-                        className="btn-mono btn-mono-secondary"
-                        style={{ padding: "0 10px", whiteSpace: "nowrap", height: "30px", fontSize: "11px" }}
-                        disabled={searchingImages[scene.id]}
-                        onClick={() => handleSearchImages(scene.id)}
-                      >
-                        {searchingImages[scene.id] ? "..." : "Tìm"}
-                      </button>
-                    </div>
-
-                    {/* Content Image Suggestions Grid */}
-                    <div className="custom-scrollbar" style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "5px" }}>
-                      <div
-                        onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", -1)}
-                        style={{
-                          width: "44px",
-                          height: "44px",
-                          flexShrink: 0,
-                          borderRadius: "4px",
-                          border: scene.selectedMediaIndex === -1 ? "3px solid #000000" : "1px solid #cccccc",
-                          background: "#e2e8f0",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "8px",
-                          fontWeight: "bold",
-                          color: "#475569",
-                          textAlign: "center",
-                          padding: "2px",
-                          fontFamily: "Space Grotesk, sans-serif",
-                          lineHeight: "1.1",
-                          boxSizing: "border-box"
-                        }}
-                      >
-                        Mặc định Mock UI
+                  {/* Split Panel: Content Media on Left, Background Media on Right */}
+                  <div style={{
+                    borderTop: "1px solid #000000",
+                    paddingTop: "12px",
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "16px",
+                    boxSizing: "border-box"
+                  }}>
+                    {/* 1. Content Media Search & Suggestion Panel */}
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                        <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Content Media (mockup)</label>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenContentMediaModal(scene.id)}
+                          disabled={uploadingScenes[scene.id]}
+                          style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
+                        >
+                          {uploadingScenes[scene.id] ? "⏳..." : "📁 Up"}
+                        </button>
                       </div>
 
-                      {((scene.mediaList && scene.mediaList.length > 0) ? scene.mediaList : selectedMedia).map((imgUrl, imgIdx) => (
-                        <div
-                          key={imgIdx}
-                          onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", imgIdx)}
-                          style={{
-                            width: "44px",
-                            height: "44px",
-                            flexShrink: 0,
-                            borderRadius: "4px",
-                            border: scene.selectedMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
-                            overflow: "hidden",
-                            cursor: "pointer"
+                      <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
+                        <input
+                          className="form-input-mono"
+                          type="text"
+                          placeholder="Tìm ảnh Unsplash..."
+                          value={searchQueries[scene.id] || ""}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setSearchQueries(prev => ({ ...prev, [scene.id]: val }));
                           }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSearchImages(scene.id);
+                          }}
+                          style={{ padding: "4px 6px", fontSize: "11px", height: "26px", flex: 1 }}
+                        />
+                        <button
+                          className="btn-mono btn-mono-secondary"
+                          style={{ padding: "0 8px", whiteSpace: "nowrap", height: "26px", fontSize: "11px" }}
+                          disabled={searchingImages[scene.id]}
+                          onClick={() => handleSearchImages(scene.id)}
                         >
-                          <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 2. Background Media Search & Suggestion Panel */}
-                  <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: "12px", paddingBottom: "5px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                      <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Background Media (Nền cảnh)</label>
-                      <button
-                        type="button"
-                        onClick={() => handleOpenBgMediaModal(scene.id)}
-                        disabled={uploadingScenes[scene.id]}
-                        style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
-                      >
-                        📁 Upload
-                      </button>
-                    </div>
-
-                    <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-                      <input
-                        className="form-input-mono"
-                        type="text"
-                        placeholder="Tìm ảnh nền Unsplash (e.g. bg, dark)..."
-                        value={bgSearchQueries[scene.id] || ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setBgSearchQueries(prev => ({ ...prev, [scene.id]: val }));
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleSearchBgImages(scene.id);
-                        }}
-                        style={{ padding: "6px 8px", fontSize: "11px", height: "30px" }}
-                      />
-                      <button
-                        className="btn-mono btn-mono-secondary"
-                        style={{ padding: "0 10px", whiteSpace: "nowrap", height: "30px", fontSize: "11px" }}
-                        disabled={searchingBgImages[scene.id]}
-                        onClick={() => handleSearchBgImages(scene.id)}
-                      >
-                        {searchingBgImages[scene.id] ? "..." : "Tìm"}
-                      </button>
-                    </div>
-
-                    {/* Background Image Suggestions Grid */}
-                    <div className="custom-scrollbar" style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "5px" }}>
-                      <div
-                        onClick={() => handleFieldChange(scene.id, "selectedBgMediaIndex", -1)}
-                        style={{
-                          width: "44px",
-                          height: "44px",
-                          flexShrink: 0,
-                          borderRadius: "4px",
-                          border: (scene.selectedBgMediaIndex ?? -1) === -1 ? "3px solid #000000" : "1px solid #cccccc",
-                          background: `linear-gradient(135deg, ${scene.accentColor || "#FFB7C5"}aa 0%, #060813 100%)`,
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "8px",
-                          fontWeight: "bold",
-                          color: "#ffffff",
-                          textAlign: "center",
-                          padding: "2px",
-                          fontFamily: "Space Grotesk, sans-serif",
-                          lineHeight: "1.1",
-                          boxSizing: "border-box"
-                        }}
-                      >
-                        Mặc định Nền dự án
+                          {searchingImages[scene.id] ? "..." : "Tìm"}
+                        </button>
                       </div>
 
-                      {((scene.bgMediaList && scene.bgMediaList.length > 0) ? scene.bgMediaList : selectedBgMedia).map((imgUrl, imgIdx) => (
+                      {/* Content Image Suggestions Grid */}
+                      <div className="custom-scrollbar" style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "5px" }}>
                         <div
-                          key={imgIdx}
-                          onClick={() => handleFieldChange(scene.id, "selectedBgMediaIndex", imgIdx)}
+                          onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", -1)}
                           style={{
-                            width: "44px",
-                            height: "44px",
+                            width: "40px",
+                            height: "40px",
                             flexShrink: 0,
                             borderRadius: "4px",
-                            border: scene.selectedBgMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
-                            overflow: "hidden",
-                            cursor: "pointer"
+                            border: scene.selectedMediaIndex === -1 ? "3px solid #000000" : "1px solid #cccccc",
+                            background: "#e2e8f0",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "8px",
+                            fontWeight: "bold",
+                            color: "#475569",
+                            textAlign: "center",
+                            padding: "2px",
+                            fontFamily: "Space Grotesk, sans-serif",
+                            lineHeight: "1.1",
+                            boxSizing: "border-box"
                           }}
                         >
-                          <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="bg option" />
+                          Mặc định
                         </div>
-                      ))}
+
+                        {((scene.mediaList && scene.mediaList.length > 0) ? scene.mediaList : selectedMedia).map((imgUrl, imgIdx) => (
+                          <div
+                            key={imgIdx}
+                            onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", imgIdx)}
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              flexShrink: 0,
+                              borderRadius: "4px",
+                              border: scene.selectedMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
+                              overflow: "hidden",
+                              cursor: "pointer"
+                            }}
+                          >
+                            <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 2. Background Media Search & Suggestion Panel */}
+                    <div style={{ display: "flex", flexDirection: "column", borderLeft: "1px solid #e2e8f0", paddingLeft: "12px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                        <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Background (Nền cảnh)</label>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenBgMediaModal(scene.id)}
+                          disabled={uploadingScenes[scene.id]}
+                          style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
+                        >
+                          📁 Up
+                        </button>
+                      </div>
+
+                      <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
+                        <input
+                          className="form-input-mono"
+                          type="text"
+                          placeholder="Tìm ảnh nền..."
+                          value={bgSearchQueries[scene.id] || ""}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setBgSearchQueries(prev => ({ ...prev, [scene.id]: val }));
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSearchBgImages(scene.id);
+                          }}
+                          style={{ padding: "4px 6px", fontSize: "11px", height: "26px", flex: 1 }}
+                        />
+                        <button
+                          className="btn-mono btn-mono-secondary"
+                          style={{ padding: "0 8px", whiteSpace: "nowrap", height: "26px", fontSize: "11px" }}
+                          disabled={searchingBgImages[scene.id]}
+                          onClick={() => handleSearchBgImages(scene.id)}
+                        >
+                          {searchingBgImages[scene.id] ? "..." : "Tìm"}
+                        </button>
+                      </div>
+
+                      {/* Background Image Suggestions Grid */}
+                      <div className="custom-scrollbar" style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "5px" }}>
+                        <div
+                          onClick={() => handleFieldChange(scene.id, "selectedBgMediaIndex", -1)}
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            flexShrink: 0,
+                            borderRadius: "4px",
+                            border: (scene.selectedBgMediaIndex ?? -1) === -1 ? "3px solid #000000" : "1px solid #cccccc",
+                            background: `linear-gradient(135deg, ${scene.accentColor || "#FFB7C5"}aa 0%, #060813 100%)`,
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "8px",
+                            fontWeight: "bold",
+                            color: "#ffffff",
+                            textAlign: "center",
+                            padding: "2px",
+                            fontFamily: "Space Grotesk, sans-serif",
+                            lineHeight: "1.1",
+                            boxSizing: "border-box"
+                          }}
+                        >
+                          Mặc định
+                        </div>
+
+                        {((scene.bgMediaList && scene.bgMediaList.length > 0) ? scene.bgMediaList : selectedBgMedia).map((imgUrl, imgIdx) => (
+                          <div
+                            key={imgIdx}
+                            onClick={() => handleFieldChange(scene.id, "selectedBgMediaIndex", imgIdx)}
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              flexShrink: 0,
+                              borderRadius: "4px",
+                              border: scene.selectedBgMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
+                              overflow: "hidden",
+                              cursor: "pointer"
+                            }}
+                          >
+                            <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="bg option" />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
