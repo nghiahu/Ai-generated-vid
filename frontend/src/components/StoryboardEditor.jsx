@@ -2461,7 +2461,6 @@ export const StoryboardEditor = ({
                     </div>
                   </div>
                 </div>
-                </div>
               </article>
             );
           })}
