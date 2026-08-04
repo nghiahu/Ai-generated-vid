@@ -811,6 +811,51 @@ export const StoryboardEditor = ({
     }
   };
 
+  const getCombinedMediaPool = (scene) => {
+    const list = [
+      ...(scene.mediaList || []),
+      ...(scene.bgMediaList || []),
+      ...(selectedMedia || []),
+      ...(selectedBgMedia || []),
+      ...(config.bgMediaList || [])
+    ].filter(Boolean);
+    return Array.from(new Set(list));
+  };
+
+  const handleSelectContentImage = (sceneId, url) => {
+    const scene = scenes.find(s => s.id === sceneId);
+    if (!scene) return;
+    const currentMediaList = scene.mediaList || [];
+    let newIdx = currentMediaList.indexOf(url);
+    if (newIdx === -1) {
+      const updatedList = [...currentMediaList, url];
+      onUpdateScene(sceneId, {
+        ...scene,
+        mediaList: updatedList,
+        selectedMediaIndex: updatedList.length - 1
+      });
+    } else {
+      handleFieldChange(sceneId, "selectedMediaIndex", newIdx);
+    }
+  };
+
+  const handleSelectBgImage = (sceneId, url) => {
+    const scene = scenes.find(s => s.id === sceneId);
+    if (!scene) return;
+    const currentBgMediaList = scene.bgMediaList || [];
+    let newIdx = currentBgMediaList.indexOf(url);
+    if (newIdx === -1) {
+      const updatedList = [...currentBgMediaList, url];
+      onUpdateScene(sceneId, {
+        ...scene,
+        bgMediaList: updatedList,
+        selectedBgMediaIndex: updatedList.length - 1
+      });
+    } else {
+      handleFieldChange(sceneId, "selectedBgMediaIndex", newIdx);
+    }
+  };
+
   const handleAddScene = async () => {
     try {
       await axios.post(`http://localhost:5000/api/projects/${projectId}/scenes`, {
@@ -2353,23 +2398,29 @@ export const StoryboardEditor = ({
                           Mặc định
                         </div>
 
-                        {((scene.mediaList && scene.mediaList.length > 0) ? scene.mediaList : selectedMedia).map((imgUrl, imgIdx) => (
-                          <div
-                            key={imgIdx}
-                            onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", imgIdx)}
-                            style={{
-                              width: "44px",
-                              height: "44px",
-                              flexShrink: 0,
-                              borderRadius: "4px",
-                              border: scene.selectedMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
-                              overflow: "hidden",
-                              cursor: "pointer"
-                            }}
-                          >
-                            <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
-                          </div>
-                        ))}
+                        {getCombinedMediaPool(scene).map((imgUrl, imgIdx) => {
+                          const activeContentUrl = (scene.selectedMediaIndex !== -1 && scene.mediaList && scene.mediaList.length > 0) 
+                            ? scene.mediaList[scene.selectedMediaIndex] 
+                            : null;
+                          const isSelected = activeContentUrl === imgUrl;
+                          return (
+                            <div
+                              key={imgIdx}
+                              onClick={() => handleSelectContentImage(scene.id, imgUrl)}
+                              style={{
+                                width: "44px",
+                                height: "44px",
+                                flexShrink: 0,
+                                borderRadius: "4px",
+                                border: isSelected ? "3px solid #000000" : "1px solid #cccccc",
+                                overflow: "hidden",
+                                cursor: "pointer"
+                              }}
+                            >
+                              <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -2440,23 +2491,29 @@ export const StoryboardEditor = ({
                           Mặc định
                         </div>
 
-                        {((scene.bgMediaList && scene.bgMediaList.length > 0) ? scene.bgMediaList : selectedBgMedia).map((imgUrl, imgIdx) => (
-                          <div
-                            key={imgIdx}
-                            onClick={() => handleFieldChange(scene.id, "selectedBgMediaIndex", imgIdx)}
-                            style={{
-                              width: "44px",
-                              height: "44px",
-                              flexShrink: 0,
-                              borderRadius: "4px",
-                              border: scene.selectedBgMediaIndex === imgIdx ? "3px solid #000000" : "1px solid #cccccc",
-                              overflow: "hidden",
-                              cursor: "pointer"
-                            }}
-                          >
-                            <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="bg option" />
-                          </div>
-                        ))}
+                        {getCombinedMediaPool(scene).map((imgUrl, imgIdx) => {
+                          const activeBgUrl = (scene.selectedBgMediaIndex !== -1 && scene.bgMediaList && scene.bgMediaList.length > 0) 
+                            ? scene.bgMediaList[scene.selectedBgMediaIndex] 
+                            : null;
+                          const isSelected = activeBgUrl === imgUrl;
+                          return (
+                            <div
+                              key={imgIdx}
+                              onClick={() => handleSelectBgImage(scene.id, imgUrl)}
+                              style={{
+                                width: "44px",
+                                height: "44px",
+                                flexShrink: 0,
+                                borderRadius: "4px",
+                                border: isSelected ? "3px solid #000000" : "1px solid #cccccc",
+                                overflow: "hidden",
+                                cursor: "pointer"
+                              }}
+                            >
+                              <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="bg option" />
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
