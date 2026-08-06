@@ -1,5 +1,5 @@
 import React from "react";
-import { useCurrentFrame, useVideoConfig, interpolate, Easing } from "remotion";
+import { useCurrentFrame, useVideoConfig, interpolate, Easing, Sequence, Audio, staticFile } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
 
@@ -136,6 +136,38 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
     easing: Easing.bezier(0.16, 1, 0.3, 1)
   })) : null;
 
+  // Metallic shimmer sweep configuration
+  const shimmerFrame = frame - 15; // Starts sweep slightly after heading mounts
+  const shimmerPos = interpolate(shimmerFrame, [0, 45], [-100, 200], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.bezier(0.25, 1, 0.5, 1)
+  });
+
+  const shimmerGradient = isLight
+    ? `linear-gradient(120deg, 
+        #1e293b 0%, 
+        #1e293b 35%, 
+        #475569 40%, 
+        #64748b 45%, 
+        #1e293b 50%, 
+        #1e293b 55%, 
+        #64748b 60%, 
+        #475569 65%, 
+        #1e293b 70%, 
+        #1e293b 100%)`
+    : `linear-gradient(120deg, 
+        #ffffff 0%, 
+        #ffffff 35%, 
+        #e2e8f0 40%, 
+        #cbd5e1 45%, 
+        #ffffff 50%, 
+        #ffffff 55%, 
+        #cbd5e1 60%, 
+        #e2e8f0 65%, 
+        #ffffff 70%, 
+        #ffffff 100%)`;
+
   // Visual Theme Colors matching reference: White, Orange, Teal Green
   const metricColor = "#f97316"; // Bright Orange
   const metricRgb = "249, 115, 22";
@@ -155,7 +187,17 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
 
   return (
     <div style={containerStyle}>
-      {/* 1. Title / Heading (Left aligned, capitalized white) */}
+      {/* Sound effect playing during count-up range counter ticking */}
+      {metricValue && (
+        <Sequence from={countStart} durationInFrames={30}>
+          <Audio 
+            src={staticFile("typewriter.mp3")} 
+            volume={0.6}
+          />
+        </Sequence>
+      )}
+
+      {/* 1. Title / Heading (Left aligned, capitalized white with chrome metallic shimmer) */}
       {titleText && (
         <AnimatedBlock animation="slide-up" delaySeconds={0.15}>
           <div style={{
@@ -165,9 +207,13 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
             letterSpacing: "-0.07em",
             textAlign: "left",
             textTransform: "uppercase",
-            color: isLight ? "#1e293b" : "#ffffff",
             fontFamily: styles.fontFamily,
-            textShadow: isLight ? "none" : `0 4px 24px rgba(255, 255, 255, 0.18)`,
+            backgroundImage: shimmerGradient,
+            backgroundSize: "200% auto",
+            backgroundPosition: `${shimmerPos}% center`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            filter: isLight ? "none" : `drop-shadow(0 4px 16px rgba(255, 255, 255, 0.12))`,
             marginBottom: "10px",
             width: "100%",
             wordBreak: "break-word"
