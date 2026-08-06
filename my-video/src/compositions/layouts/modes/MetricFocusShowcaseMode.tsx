@@ -94,14 +94,28 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
   const cleanCategory = category || (t.categoryPill?.text?.trim().toLowerCase() !== "ai viết video" && t.categoryPill?.text?.trim().toLowerCase() !== "ai viet video" ? t.categoryPill?.text : "") || (metricValue ? `${metricValue} ${metricSubtext}`.toUpperCase() : "");
 
   // 3. Filter Badge Rows (Pills in the middle)
-  const badgeComps = otherComps.filter(c => c.type === "badge_row" || (c.data?.badges && c.data.badges.length > 0));
+  let badgeComps = otherComps.filter(c => c.type === "badge_row" || (c.data?.badges && c.data.badges.length > 0));
+  if (badgeComps.length === 0) {
+    badgeComps = [
+      { id: "mock-badges-1", type: "badge_row", data: { badges: ["Python", "Java", "Go"] } },
+      { id: "mock-badges-2", type: "badge_row", data: { badges: ["COBOL", "JCL", "ABAP"] } },
+      { id: "mock-badges-3", type: "badge_row", data: { badges: ["Terraform", "Solidity"] } },
+      { id: "mock-badges-4", type: "badge_row", data: { badges: ["77 CWE được map"] } }
+    ] as any[];
+  }
 
   // 4. Progress Card Components (Bottom cards)
-  const cardComps = otherComps.filter(c => 
+  let cardComps = otherComps.filter(c => 
     c.id !== usedMetricCompId && 
     c.type === "card" &&
     c.data?.text
   );
+  if (cardComps.length === 0) {
+    cardComps = [
+      { id: "mock-card-1", type: "card", data: { text: "Remediate S10", value: "$10", subtext: "60%" } },
+      { id: "mock-card-2", type: "card", data: { text: "Detect S1-S9", value: "$25", subtext: "100%" } }
+    ] as any[];
+  }
 
   // Animations configuration
   const countStart = Math.round(0.8 * fps);
@@ -167,7 +181,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
           }}>
             {/* Left huge orange count-up number */}
             <div style={{
-              fontSize: `${Math.round(156 * fontScale)}px`,
+              fontSize: `${Math.round(210 * fontScale)}px`,
               lineHeight: 0.95,
               fontWeight: 950,
               letterSpacing: "-0.06em",
@@ -186,7 +200,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
                   </span>
                   {suffix && (
                     <span style={{
-                      fontSize: `${Math.round(86 * fontScale)}px`,
+                      fontSize: `${Math.round(110 * fontScale)}px`,
                       fontWeight: 900,
                       color: "#f97316",
                       marginLeft: "8px",
@@ -205,14 +219,14 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
             {metricSubtext && (
               <AnimatedBlock animation="slide-left" delaySeconds={0.5}>
                 <div style={{
-                  fontSize: `${Math.round(38 * fontScale)}px`,
+                  fontSize: `${Math.round(52 * fontScale)}px`,
                   fontWeight: 900,
                   color: isLight ? "#1e293b" : "#f8fafc",
                   fontFamily: styles.fontFamily,
                   textAlign: "left",
                   lineHeight: 1.1,
                   letterSpacing: "-0.02em",
-                  maxWidth: "400px",
+                  maxWidth: "500px",
                   wordBreak: "break-word"
                 }}>
                   {metricSubtext}
