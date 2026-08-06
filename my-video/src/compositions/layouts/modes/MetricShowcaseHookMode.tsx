@@ -6,8 +6,8 @@ import { ModeRendererProps } from "./LayoutModeTypes";
 function parseNumbers(valueStr: string): { n1: number; n2: number | null; suffix: string } {
   if (!valueStr) return { n1: 0, n2: null, suffix: "" };
   
-  // Look for range "X - Y" or "X-Y" (with decimals/dots)
-  const rangeRegex = /(\d+(?:[.,]\d+)?)\s*-\s*(\d+(?:[.,]\d+)?)/;
+  // Look for range "X - Y", "X đến Y", "X to Y" (with decimals/dots)
+  const rangeRegex = /(\d+(?:[.,]\d+)?)\s*(?:-|đến|to)\s*(\d+(?:[.,]\d+)?)/i;
   const match = valueStr.match(rangeRegex);
   
   if (match) {
@@ -74,8 +74,8 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
     const metricCandidate = otherComps.find(c => c.data?.text && /\d+/.test(c.data.text));
     if (metricCandidate) {
       const text = metricCandidate.data.text;
-      // Regex to match ranges like "15 - 20 triệu", "4.600 sao", "20 triệu", "18 tools"
-      const metricRegex = /(\d+(?:\s*-\s*\d+)?\s*(?:triệu|tr|sao|k|%|usd|đ|vnd|triệu\/tháng|fork|tools|skills)?)/i;
+      // Regex to match ranges like "15 - 20 triệu", "15 đến 20 triệu", "4.600 sao", "20 triệu", "18 tools"
+      const metricRegex = /(\d+(?:\s*(?:-|đến|to)\s*\d+)?\s*(?:triệu|tr|sao|k|%|usd|đ|vnd|triệu\/tháng|fork|tools|skills)?)/i;
       const match = text.match(metricRegex);
       if (match) {
         metricValue = match[0].trim();
