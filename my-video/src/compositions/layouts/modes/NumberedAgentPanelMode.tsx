@@ -56,13 +56,13 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
   // Word to highlight in bold inside insight bar
   const hw = highlightWords?.[0] || "";
 
-  // Sizes — scaled to match reference image proportions
-  const titleFontSize = Math.round((isVertical ? 72 : 86) * fontScale);
-  const cardFontSize = isVertical ? 28 : 34;
-  const subtextFontSize = isVertical ? 16 : 20;
-  const badgeSize = isVertical ? 52 : 64;
-  const badgeFontSize = isVertical ? 22 : 28;
-  const cardGap = isVertical ? 16 : 20;
+  // Sizes — x2 scale, centered vertically
+  const titleFontSize = Math.round((isVertical ? 80 : 96) * fontScale);
+  const cardFontSize = isVertical ? 52 : 62;
+  const subtextFontSize = isVertical ? 30 : 36;
+  const badgeSize = isVertical ? 96 : 116;
+  const badgeFontSize = isVertical ? 42 : 50;
+  const cardGap = isVertical ? 28 : 36;
   const STAGGER = 8; // frames between card animations
 
   // Intro opacity fade
@@ -111,8 +111,8 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
-        padding: isVertical ? "56px 52px" : "80px 80px",
-        paddingTop: isVertical ? "72px" : "120px",
+        padding: isVertical ? "56px 64px" : "80px 100px",
+        paddingTop: isVertical ? "320px" : "400px",
         width: "100%",
         height: "100%",
         boxSizing: "border-box",
@@ -182,11 +182,11 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: isVertical ? 18 : 22,
+                gap: isVertical ? 28 : 36,
                 background: getCardBg(idx),
                 border: getCardBorder(idx),
-                borderRadius: isVertical ? 18 : 22,
-                padding: isVertical ? "20px 24px" : "24px 28px",
+                borderRadius: isVertical ? 24 : 28,
+                padding: isVertical ? "28px 32px" : "36px 40px",
                 opacity: cardProgress,
                 transform: `translateY(${cardY}px)`,
                 backdropFilter: "blur(12px)",
