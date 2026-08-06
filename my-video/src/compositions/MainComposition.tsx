@@ -148,6 +148,83 @@ const SceneContainer: React.FC<{
 
 
 
+// CrossFadeBackgroundLayer: renders ALL scene backgrounds as a global persistent layer
+// Each background cross-fades into the next — no dark flash between scenes.
+interface SceneBgInfo {
+  bgImageUrl: string;
+  imageUrl: string;
+  startFrame: number;
+  durationInFrames: number;
+  isLight: boolean;
+  isFintechEdu: boolean;
+}
+
+const CrossFadeBackgroundLayer: React.FC<{
+  scenes: SceneBgInfo[];
+  crossFadeFrames?: number;
+}> = ({ scenes, crossFadeFrames = 15 }) => {
+  const frame = useCurrentFrame();
+
+  return (
+    <AbsoluteFill style={{ zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
+      {scenes.map((s, idx) => {
+        const sceneStart = s.startFrame;
+        const sceneEnd = s.startFrame + s.durationInFrames;
+
+        // opacity: fade in from prev scene end, stay full, fade out to next
+        const fadeStart = Math.max(0, sceneStart - crossFadeFrames);
+        const fadeEnd = sceneEnd;
+
+        let opacity = 0;
+        if (frame <= fadeStart) {
+          opacity = idx === 0 ? 1 : 0;
+        } else if (frame < sceneStart) {
+          // Cross-fade in: overlapping with previous scene
+          opacity = interpolate(frame, [fadeStart, sceneStart], [0, 1], {
+            extrapolateLeft: "clamp", extrapolateRight: "clamp",
+          });
+        } else if (frame <= fadeEnd - crossFadeFrames) {
+          opacity = 1;
+        } else if (frame < fadeEnd) {
+          // Fade out: pass to next scene
+          opacity = interpolate(frame, [fadeEnd - crossFadeFrames, fadeEnd], [1, 0], {
+            extrapolateLeft: "clamp", extrapolateRight: "clamp",
+          });
+        } else {
+          opacity = 0;
+        }
+
+        if (opacity <= 0) return null;
+
+        const finalBgImage = s.bgImageUrl || s.imageUrl;
+
+        if (finalBgImage) {
+          return (
+            <AbsoluteFill key={idx} style={{ opacity }}>
+              <img
+                src={finalBgImage}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                alt=""
+              />
+            </AbsoluteFill>
+          );
+        }
+
+        // Gradient fallback per theme
+        const bg = s.isLight
+          ? "linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%)"
+          : s.isFintechEdu
+            ? "linear-gradient(135deg, #0a0a1a 0%, #0d1533 100%)"
+            : "radial-gradient(circle at 50% 35%, #0f172a 0%, #090d1a 65%, #030712 100%)";
+
+        return (
+          <AbsoluteFill key={idx} style={{ opacity, background: bg }} />
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
 export interface WatermarkConfig {
   enabled: boolean;
   text: string;
@@ -335,8 +412,39 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
     background: vdeTokens.colors.background || (isLightTheme ? "linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)" : "#030712")
   };
 
+  // Pre-compute background info for all scenes (for CrossFadeBackgroundLayer)
+  const sceneBgInfos: SceneBgInfo[] = (() => {
+    let frameOffset = 0;
+    return scenes.map((scene) => {
+      const dur = getSceneDurationFrames(scene, fps);
+      const start = frameOffset;
+      frameOffset += dur;
+      const sceneIsLight = isLightTheme || (scene.theme && (scene.theme.includes("light") || scene.theme.includes("claude") || scene.theme.includes("rikkei")));
+      const sceneIsFintechEdu = isFintechEdu || (scene.theme && scene.theme.includes("fintech"));
+      const imageUrl = scene.mediaList && scene.mediaList.length > 0 && scene.selectedMediaIndex !== -1
+        ? getFullUrl(scene.mediaList[scene.selectedMediaIndex || 0])
+        : "";
+      const bgImageUrl = scene.bgMediaList && scene.bgMediaList.length > 0 && scene.selectedBgMediaIndex !== -1
+        ? getFullUrl(scene.bgMediaList[scene.selectedBgMediaIndex || 0])
+        : (resolvedConfig?.bgImage || "");
+      return {
+        bgImageUrl,
+        imageUrl,
+        startFrame: start,
+        durationInFrames: dur,
+        isLight: !!sceneIsLight,
+        isFintechEdu: !!sceneIsFintechEdu,
+      };
+    });
+  })();
+
   return (
     <AbsoluteFill style={{ ...bgStyle, overflow: "hidden" }}>
+      {/* Cross-fade background layer — persistent across all scenes, no flash */}
+      {scenes.length > 1 && (
+        <CrossFadeBackgroundLayer scenes={sceneBgInfos} crossFadeFrames={15} />
+      )}
+
       {/* Permanent Continuous Ambient Background Layer for Dark Themes (Zero Flash) */}
       {!isLightTheme && !isFintechEdu && (
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
@@ -486,6 +594,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                       highlightWords={scene.sceneIntent?.highlightWords}
                       config={resolvedConfig}
                       bgImageUrl={bgImageUrl}
+                      disableBackground={scenes.length > 1}
                     />
                     
                     {/* Synchronized Subtitles */}
