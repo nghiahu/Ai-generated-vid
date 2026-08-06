@@ -3,6 +3,47 @@ import axios from "axios";
 import { Player } from "@remotion/player";
 import { MainComposition, safeParseFloat, getThemeBgStyle, getSceneDurationFrames } from "../../../my-video/src/compositions/MainComposition";
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          padding: "24px",
+          color: "#ef4444",
+          backgroundColor: "#fef2f2",
+          border: "2px solid #fee2e2",
+          borderRadius: "16px",
+          fontFamily: "monospace",
+          fontSize: "13px",
+          height: "100%",
+          width: "100%",
+          boxSizing: "border-box",
+          overflowY: "auto"
+        }}>
+          <h3 style={{ margin: "0 0 12px 0", fontSize: "16px", fontWeight: "bold" }}>Player Render Crash</h3>
+          <p style={{ margin: "0 0 16px 0", fontWeight: "bold" }}>{this.state.error?.toString()}</p>
+          <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: "11px", opacity: 0.85 }}>{this.state.error?.stack}</pre>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => {
   const localPlayerRef = useRef(null);
   const sceneDurationFrames = getSceneDurationFrames(scene, 30);
@@ -105,23 +146,25 @@ const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => 
   }, [isPlaying, onEnded]);
 
   return (
-    <Player
-      ref={localPlayerRef}
-      component={MainComposition}
-      inputProps={{ scenes: [scene], config }}
-      durationInFrames={sceneDurationFrames}
-      fps={30}
-      compositionWidth={1080}
-      compositionHeight={1920}
-      initialFrame={peakFrame}
-      style={{
-        width: "100%",
-        height: "100%",
-      }}
-      controls={false}
-      autoPlay={false}
-      acknowledgeRemotionLicense
-    />
+    <ErrorBoundary>
+      <Player
+        ref={localPlayerRef}
+        component={MainComposition}
+        inputProps={{ scenes: [scene], config }}
+        durationInFrames={sceneDurationFrames}
+        fps={30}
+        compositionWidth={1080}
+        compositionHeight={1920}
+        initialFrame={peakFrame}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+        controls={false}
+        autoPlay={false}
+        acknowledgeRemotionLicense
+      />
+    </ErrorBoundary>
   );
 };
 
