@@ -150,7 +150,8 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
             text={cleanCategory}
             bgRgba={t.categoryPill?.bgRgba || "rgba(2,6,23,0.72)"}
             borderRgba={t.categoryPill?.borderRgba || `rgba(${rgb},0.4)`}
-            textRgba={t.categoryPill?.textRgba || accentColor}
+            textRgba={t.categoryPill?.textRgba || "rgba(255,255,255,0.92)"}
+            dotRgba={accentColor}
             fontFamily={styles.fontFamily}
           />
         </div>
@@ -249,7 +250,7 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
                   style={{
                     fontSize: cardFontSize,
                     fontWeight: 800,
-                    color: "#ffffff",
+                    color: styles.titleColor || (isLight ? "#111111" : "#ffffff"),
                     lineHeight: 1.2,
                     letterSpacing: "-0.02em",
                   }}
@@ -261,7 +262,9 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
                     style={{
                       fontSize: subtextFontSize,
                       fontWeight: 400,
-                      color: "rgba(255,255,255,0.65)",
+                      color: isLight
+                        ? "rgba(0,0,0,0.52)"
+                        : "rgba(255,255,255,0.52)",
                       lineHeight: 1.4,
                     }}
                   >
