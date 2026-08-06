@@ -102,7 +102,7 @@ function evalAIComponent(compiledJS: string, themeTokens?: any) {
   }
 }
 
-// SceneContainer handles dynamic Continuous Dark Ambient Fade transitions for each scene
+// SceneContainer: subtle scale spring on enter/exit, NO opacity fade (avoids dark flash)
 const SceneContainer: React.FC<{
   children: React.ReactNode;
   durationInFrames: number;
@@ -110,24 +110,19 @@ const SceneContainer: React.FC<{
 }> = ({ children, durationInFrames, disableTransitions = false }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const transitionFrames = Math.round(fps * 0.18); // Very short 0.18s to minimize flash
+  const transitionFrames = Math.round(fps * 0.2); // 0.2s spring window
 
-  // Default steady state
-  let opacity = 1;
   let scale = 1;
 
   if (!disableTransitions) {
     if (frame < transitionFrames) {
       const t = Math.min(1, Math.max(0, frame / transitionFrames));
-      const progress = 1 - Math.pow(1 - t, 2);
-      opacity = 0.7 + 0.3 * progress; // Start at 0.7 opacity (not 0) to reduce dark flash
-      scale = 0.985 + 0.015 * progress;
+      const progress = 1 - Math.pow(1 - t, 3);
+      scale = 0.98 + 0.02 * progress; // Subtle scale spring in
     } else if (frame > durationInFrames - transitionFrames) {
       const exitFrame = frame - (durationInFrames - transitionFrames);
       const t = Math.min(1, Math.max(0, exitFrame / transitionFrames));
-      const progress = Math.pow(t, 2);
-      opacity = 1 - progress * 0.6; // Exit to 0.4 opacity (not 0) to reduce dark flash
-      scale = 1.0 + 0.01 * progress;
+      scale = 1.0 + 0.01 * Math.pow(t, 2); // Tiny scale out
     }
   }
 
@@ -135,9 +130,9 @@ const SceneContainer: React.FC<{
     <div style={{
       width: "100%",
       height: "100%",
-      opacity,
+      opacity: 1, // ALWAYS 1 — no fade to prevent dark flash
       transform: `scale(${scale.toFixed(4)})`,
-      willChange: "transform, opacity",
+      willChange: "transform",
       backfaceVisibility: "hidden",
       transformStyle: "preserve-3d"
     }}>
