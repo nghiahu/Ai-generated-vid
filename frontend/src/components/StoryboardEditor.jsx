@@ -270,7 +270,6 @@ const LAYOUTS_BY_FAMILY = {
     { value: "EvidenceBoardConcept", label: "Evidence Board Concept" },
     { value: "FearGreedHook", label: "Fear Greed Hook" },
     { value: "MetricShowcaseHook", label: "Metric Showcase Hook" },
-    { value: "MetricFocusShowcase", label: "Metric Focus Showcase" },
     { value: "FeedScrollHook", label: "Feed Scroll Hook" },
     { value: "IntroChapterStack", label: "Intro Chapter Stack Image" },
     { value: "IntroEvidenceReadlineImage", label: "Intro Evidence Readline Image" },
@@ -285,6 +284,7 @@ const LAYOUTS_BY_FAMILY = {
   "Data / Metrics": [
     { value: "OpsMonitorHook", label: "OPS Monitor Hook (Bảng giám sát)" },
     { value: "CircularProgress", label: "Circular Progress (Vòng tròn phần trăm)" },
+    { value: "MetricFocusShowcase", label: "Metric Focus Showcase" },
     { value: "HeroMetricCards", label: "Hero Metric Cards" },
     { value: "MetricCards", label: "Metric Cards" },
     { value: "GridMetrics", label: "Grid Metrics" },
