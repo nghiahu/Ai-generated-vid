@@ -530,11 +530,11 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
               const tickFrames: number[] = [];
               let currentTick = countStart;
               let gapValue = 8;
-              while (currentTick < countStart + 30 && currentTick < sceneDurationFrames) {
-                tickFrames.push(currentTick);
-                currentTick += Math.max(1, Math.round(gapValue));
-                gapValue *= 0.72;
-              }
+               while (currentTick < countStart + 30 && currentTick < sceneDurationFrames) {
+                 tickFrames.push(currentTick);
+                 currentTick += Math.max(6, Math.round(gapValue));
+                 gapValue *= 0.72;
+               }
               return tickFrames.map((tickFrame, idx) => {
                 const duration = Math.max(1, sceneDurationFrames - tickFrame);
                 return (
