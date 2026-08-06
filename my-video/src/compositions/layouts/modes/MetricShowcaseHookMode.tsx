@@ -52,18 +52,62 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Find components based on their parsed role
-  const badgeComp = otherComps.find(c => c.data?.type === "badge_row" || c.type === "badge_row");
-  const highlightComp = otherComps.find(c => c.data?.type === "subheader" || c.type === "subheader");
-  const metricComp = otherComps.find(c => c.data?.type === "metric" || c.type === "metric");
-  const cardComp = otherComps.find(c => c.data?.type === "card" || c.type === "card");
-  const terminalComp = otherComps.find(c => c.data?.type === "terminal" || c.type === "terminal");
+  // Find components based on their parsed role or content
+  const terminalComp = otherComps.find(c => c.type === "terminal" || (c.data?.text && c.data.text.startsWith("$")));
+  
+  const badgeComp = otherComps.find(c => c.type === "badge_row" || c.data?.badges?.length > 0);
+  
+  const highlightComp = otherComps.find(c => c.type === "subheader");
+
+  // Robust Metric Component parsing
+  let metricValue = "";
+  let metricSubtext = "";
+  let usedMetricCompId = "";
+
+  // 1. Check if there is an explicit hero_metric component
+  const explicitMetric = otherComps.find(c => c.type === "hero_metric");
+  if (explicitMetric) {
+    metricValue = explicitMetric.data?.value || "";
+    metricSubtext = explicitMetric.data?.subtext || "";
+    usedMetricCompId = explicitMetric.id;
+  } else {
+    // 2. Fallback: Search for first text point containing a digit (e.g. "Lương khởi điểm 20 triệu")
+    const metricCandidate = otherComps.find(c => c.data?.text && /\d+/.test(c.data.text));
+    if (metricCandidate) {
+      const text = metricCandidate.data.text;
+      // Regex to match ranges like "15 - 20 triệu", "4.600 sao", "20 triệu", "18 tools"
+      const metricRegex = /(\d+(?:\s*-\s*\d+)?\s*(?:triệu|tr|sao|k|%|usd|đ|vnd|triệu\/tháng|fork|tools|skills)?)/i;
+      const match = text.match(metricRegex);
+      if (match) {
+        metricValue = match[0].trim();
+        // The remaining text becomes the subtext (e.g. "Lương khởi điểm 20 triệu" -> "Lương khởi điểm")
+        metricSubtext = text.replace(match[0], "").replace(/^[-\s:.,=]+/g, "").replace(/[-\s:.,=]+$/g, "").trim();
+        usedMetricCompId = metricCandidate.id;
+      }
+    }
+  }
+
+  // 3. Fallback to highlightWords if metric is still not resolved
+  if (!metricValue && highlightWords && highlightWords.length > 0 && /\d+/.test(highlightWords[0])) {
+    metricValue = highlightWords[0];
+    metricSubtext = "Thông số nổi bật";
+  }
+
+  // Secondary Card: Use the first text component that was NOT used as a metric, terminal, or badge
+  const cardComp = otherComps.find(c => 
+    c.id !== usedMetricCompId && 
+    c.type !== "terminal" && 
+    c.type !== "badge_row" && 
+    c.type !== "hero_metric" && 
+    c.type !== "subheader" &&
+    c.data?.text &&
+    !c.data.text.startsWith("$")
+  );
 
   // Animations start config
   const countStart = Math.round(0.8 * fps);
   
-  const rawValue = metricComp?.data?.value || "";
-  const { n1, n2, suffix } = parseNumbers(rawValue);
+  const { n1, n2, suffix } = parseNumbers(metricValue);
 
   // Number counting interpolation
   const animN1 = Math.round(interpolate(frame - countStart, [0, 30], [0, n1], {
@@ -157,7 +201,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
         )}
 
         {/* Metric Area */}
-        {metricComp && (
+        {metricValue && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "10px 0" }}>
             <div style={{
               fontSize: `${Math.round(108 * fontScale)}px`,
@@ -186,7 +230,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
                 </span>
               )}
             </div>
-            {metricComp.data?.subtext && (
+            {metricSubtext && (
               <div style={{
                 fontSize: "20px",
                 fontWeight: 800,
@@ -196,14 +240,14 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
                 marginTop: "12px",
                 fontFamily: styles.fontFamily
               }}>
-                {metricComp.data.subtext}
+                {metricSubtext}
               </div>
             )}
           </div>
         )}
 
         {/* Card Component */}
-        {cardComp && (
+        {cardComp && cardComp.data?.text && (
           <div style={{
             borderRadius: "24px",
             padding: "24px",
@@ -221,7 +265,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
         )}
 
         {/* Terminal Command Prompt */}
-        {terminalComp && (
+        {terminalComp && terminalComp.data?.text && (
           <div style={{
             borderRadius: "14px",
             padding: "16px 20px",

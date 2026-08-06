@@ -281,7 +281,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
 
       {/* Content layer — carries containerStyle (flex/padding) and sits above overlay via zIndex: 1 */}
       <div style={{ ...containerStyle, position: "relative", zIndex: 1, fontFamily: styles.fontFamily }}>
-        {titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "fintech_edu" && layoutMode !== "blank" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && (
+        {titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "fintech_edu" && layoutMode !== "blank" && layoutMode !== "metric_showcase_hook" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && (
           <div style={{
             marginBottom: `${parseInt(String(t.title.marginBottom || 100)) + 50}px`,
             zIndex: 10,
