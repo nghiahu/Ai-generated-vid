@@ -70,6 +70,7 @@ if (!templates || Object.keys(templates).length === 0) {
 import introMediaHeroJson from "./templates/Opening-Headline/intro_media_hero.json";
 import vignelliQuoteJson from "./templates/Opening-Headline/vignelli_quote.json";
 import mediaShowcaseCardJson from "./templates/Opening-Headline/media_showcase_card.json";
+import metricShowcaseHookJson from "./templates/Opening-Headline/metric_showcase_hook.json";
 
 Object.entries(templates).forEach(([path, module]: [string, any]) => {
   const json = module.default || module;
@@ -92,7 +93,8 @@ Object.entries(templates).forEach(([path, module]: [string, any]) => {
 const staticTemplates = [
   introMediaHeroJson,
   vignelliQuoteJson,
-  mediaShowcaseCardJson
+  mediaShowcaseCardJson,
+  metricShowcaseHookJson
 ];
 
 staticTemplates.forEach((json: any) => {

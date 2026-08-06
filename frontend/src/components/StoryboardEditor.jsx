@@ -203,6 +203,7 @@ const LAYOUTS_BY_FAMILY = {
     { value: "DossierNotes", label: "Dossier Notes" },
     { value: "EvidenceBoardConcept", label: "Evidence Board Concept" },
     { value: "FearGreedHook", label: "Fear Greed Hook" },
+    { value: "MetricShowcaseHook", label: "Metric Showcase Hook" },
     { value: "FeedScrollHook", label: "Feed Scroll Hook" },
     { value: "IntroChapterStack", label: "Intro Chapter Stack Image" },
     { value: "IntroEvidenceReadlineImage", label: "Intro Evidence Readline Image" },
@@ -510,6 +511,7 @@ export const StoryboardEditor = ({
   // Media Modal & Upload states
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [selectedBgMedia, setSelectedBgMedia] = useState(config.bgMediaList || []);
+  const [modalSelectedMedia, setModalSelectedMedia] = useState([]);
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [mediaTab, setMediaTab] = useState("YOUR_MEDIA"); // YOUR_MEDIA, UPLOAD, STOCK, AI
   const [previousMedia, setPreviousMedia] = useState([]);
@@ -518,23 +520,17 @@ export const StoryboardEditor = ({
   const [uploading, setUploading] = useState(false);
   const [mediaModalContext, setMediaModalContext] = useState(null); // 'scene-editor' or null
   const [activeUploadSceneId, setActiveUploadSceneId] = useState(null);
+  const [aiImagePrompt, setAiImagePrompt] = useState("");
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiGeneratedImages, setAiGeneratedImages] = useState([]);
+  const [aiImageError, setAiImageError] = useState("");
+
 
   useEffect(() => {
     if (config.bgMediaList) {
       setSelectedBgMedia(config.bgMediaList);
     }
   }, [config.bgMediaList]);
-
-  useEffect(() => {
-    const handleOpenBg = () => {
-      setMediaModalContext("project-background");
-      setActiveUploadSceneId(null);
-      setSelectedMedia(config.bgImage ? [config.bgImage] : []);
-      setShowMediaModal(true);
-    };
-    window.addEventListener("open-bg-image-modal", handleOpenBg);
-    return () => window.removeEventListener("open-bg-image-modal", handleOpenBg);
-  }, [config.bgImage]);
 
   useEffect(() => {
     if (showMediaModal) {
@@ -564,7 +560,7 @@ export const StoryboardEditor = ({
 
   const handleOpenContentMediaModal = (sceneId) => {
     const scene = scenes.find(s => s.id === sceneId);
-    setSelectedMedia(scene?.mediaList || []);
+    setModalSelectedMedia(scene?.mediaList || []);
     setActiveUploadSceneId(sceneId);
     setMediaModalContext('scene-content');
     setShowMediaModal(true);
@@ -572,7 +568,7 @@ export const StoryboardEditor = ({
 
   const handleOpenBgMediaModal = (sceneId) => {
     const scene = scenes.find(s => s.id === sceneId);
-    setSelectedMedia(scene?.bgMediaList || []);
+    setModalSelectedMedia(scene?.bgMediaList || []);
     setActiveUploadSceneId(sceneId);
     setMediaModalContext('scene-background');
     setShowMediaModal(true);
@@ -582,16 +578,17 @@ export const StoryboardEditor = ({
     setShowMediaModal(false);
     setMediaModalContext(null);
     setActiveUploadSceneId(null);
+    setModalSelectedMedia([]);
   };
 
   const handleMediaModalConfirm = () => {
     if (mediaModalContext === 'scene-content' && activeUploadSceneId) {
-      // Update ALL scenes' mediaList with the selectedMedia
+      // Update ALL scenes' mediaList with the modalSelectedMedia
       scenes.forEach(scene => {
         const currentMediaList = scene.mediaList || [];
         // Union of current media list and selected media, preserving order and uniqueness
         const unionList = [...currentMediaList];
-        selectedMedia.forEach(url => {
+        modalSelectedMedia.forEach(url => {
           if (!unionList.includes(url)) {
             unionList.push(url);
           }
@@ -600,8 +597,8 @@ export const StoryboardEditor = ({
         const updateData = { mediaList: unionList };
 
         // For the active scene that initiated the upload, set selectedMediaIndex to the last selected/added image
-        if (scene.id === activeUploadSceneId && selectedMedia.length > 0) {
-          const lastSelectedUrl = selectedMedia[selectedMedia.length - 1];
+        if (scene.id === activeUploadSceneId && modalSelectedMedia.length > 0) {
+          const lastSelectedUrl = modalSelectedMedia[modalSelectedMedia.length - 1];
           const newIdx = unionList.indexOf(lastSelectedUrl);
           if (newIdx !== -1) {
             updateData.selectedMediaIndex = newIdx;
@@ -614,12 +611,12 @@ export const StoryboardEditor = ({
         });
       });
     } else if (mediaModalContext === 'scene-background' && activeUploadSceneId) {
-      // Update ALL scenes' bgMediaList with the selectedMedia
+      // Update ALL scenes' bgMediaList with the modalSelectedMedia
       scenes.forEach(scene => {
         const currentBgMediaList = scene.bgMediaList || [];
         // Union of current bg media list and selected media, preserving order and uniqueness
         const unionList = [...currentBgMediaList];
-        selectedMedia.forEach(url => {
+        modalSelectedMedia.forEach(url => {
           if (!unionList.includes(url)) {
             unionList.push(url);
           }
@@ -628,8 +625,8 @@ export const StoryboardEditor = ({
         const updateData = { bgMediaList: unionList };
 
         // For the active scene that initiated the upload, set selectedBgMediaIndex to the last selected/added image
-        if (scene.id === activeUploadSceneId && selectedMedia.length > 0) {
-          const lastSelectedUrl = selectedMedia[selectedMedia.length - 1];
+        if (scene.id === activeUploadSceneId && modalSelectedMedia.length > 0) {
+          const lastSelectedUrl = modalSelectedMedia[modalSelectedMedia.length - 1];
           const newIdx = unionList.indexOf(lastSelectedUrl);
           if (newIdx !== -1) {
             updateData.selectedBgMediaIndex = newIdx;
@@ -641,34 +638,28 @@ export const StoryboardEditor = ({
           ...updateData
         });
       });
-    } else if (mediaModalContext === 'project-background') {
-      const selectedBgImage = selectedMedia[selectedMedia.length - 1] || "";
-      if (onUpdateConfig) {
-        onUpdateConfig({
-          ...config,
-          bgImage: selectedBgImage
-        });
-      }
+
     } else if (mediaModalContext === 'project-background-list') {
-      setSelectedBgMedia(selectedMedia);
+      setSelectedBgMedia(modalSelectedMedia);
       if (onUpdateConfig) {
         onUpdateConfig({
           ...config,
-          bgMediaList: selectedMedia
+          bgMediaList: modalSelectedMedia
         });
       }
     } else if (mediaModalContext === 'project-content-list') {
-      setSelectedMedia(selectedMedia);
+      setSelectedMedia(modalSelectedMedia);
     }
 
     // Reset state and close modal
     setShowMediaModal(false);
     setMediaModalContext(null);
     setActiveUploadSceneId(null);
+    setModalSelectedMedia([]);
   };
 
   const handleToggleSelectMedia = (url) => {
-    setSelectedMedia(prev => {
+    setModalSelectedMedia(prev => {
       if (prev.includes(url)) {
         return prev.filter(u => u !== url);
       } else {
@@ -697,7 +688,7 @@ export const StoryboardEditor = ({
         const res = await axios.post("http://localhost:5000/api/upload", { file: reader.result });
         if (res.data && res.data.url) {
           const uploadedUrl = res.data.url.trim();
-          setSelectedMedia(prev => Array.from(new Set([...prev, uploadedUrl])));
+          setModalSelectedMedia(prev => Array.from(new Set([...prev, uploadedUrl])));
           setPreviousMedia(prev => Array.from(new Set([uploadedUrl, ...prev])));
           setMediaTab("YOUR_MEDIA");
         }
@@ -820,6 +811,25 @@ export const StoryboardEditor = ({
       ...(config.bgMediaList || [])
     ].filter(Boolean);
     return Array.from(new Set(list));
+  };
+
+  const handleAiGenerateImages = async () => {
+    if (!aiImagePrompt.trim() || aiGenerating) return;
+    setAiGenerating(true);
+    setAiImageError("");
+    try {
+      const res = await axios.post("http://localhost:5000/api/media/generate-ai-image", {
+        prompt: aiImagePrompt.trim()
+      });
+      const urls = res.data?.urls || [];
+      if (urls.length === 0) throw new Error("No images returned from AI");
+      setAiGeneratedImages(prev => [...urls, ...prev]);
+    } catch (err) {
+      const msg = err.response?.data?.error || err.message || "Lỗi không xác định";
+      setAiImageError(msg);
+    } finally {
+      setAiGenerating(false);
+    }
   };
 
   const handleSelectContentImage = (sceneId, url) => {
@@ -969,24 +979,7 @@ export const StoryboardEditor = ({
               >
                 Upload
               </button>
-              <button
-                type="button"
-                onClick={() => setMediaTab("STOCK")}
-                style={{
-                  border: "none",
-                  background: mediaTab === "STOCK" ? "#ffffff" : "none",
-                  color: mediaTab === "STOCK" ? "#0f172a" : "#64748b",
-                  padding: "8px 16px",
-                  borderRadius: "20px",
-                  fontSize: "13px",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  boxShadow: mediaTab === "STOCK" ? "0 2px 4px rgba(0,0,0,0.05)" : "none"
-                }}
-              >
-                Stock Images
-              </button>
+
               <button
                 type="button"
                 onClick={() => setMediaTab("AI")}
@@ -1047,7 +1040,7 @@ export const StoryboardEditor = ({
                 ) : (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: "16px" }}>
                     {previousMedia.map((url, idx) => {
-                      const isSelected = selectedMedia.includes(url);
+                      const isSelected = modalSelectedMedia.includes(url);
                       return (
                         <div
                           key={idx}
@@ -1153,114 +1146,261 @@ export const StoryboardEditor = ({
               </div>
             )}
 
-            {mediaTab === "STOCK" && (
-              <div>
-                {/* Search bar */}
-                <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-                  <input
-                    type="text"
-                    placeholder="Search high-quality stock photos from Unsplash..."
-                    value={stockQuery}
-                    onChange={(e) => setStockQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleStockSearch()}
-                    style={{
-                      flex: 1,
-                      padding: "12px 16px",
-                      borderRadius: "30px",
-                      border: "1px solid #cbd5e1",
-                      fontSize: "14px",
-                      outline: "none"
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleStockSearch}
-                    style={{
-                      backgroundColor: "#0f172a",
-                      color: "#ffffff",
-                      border: "none",
-                      padding: "0 24px",
-                      borderRadius: "30px",
-                      fontSize: "14px",
-                      fontWeight: "600",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Tìm kiếm
-                  </button>
-                </div>
 
-                {stockResults.length === 0 ? (
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 20px" }}>
-                    <span style={{ fontSize: "32px", marginBottom: "12px" }}>🔍</span>
-                    <p style={{ margin: 0, fontSize: "14px", color: "#64748b", fontWeight: "600" }}>Nhập từ khóa tìm kiếm để duyệt ảnh Unsplash</p>
-                  </div>
-                ) : (
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: "16px" }}>
-                    {stockResults.map((url, idx) => {
-                      const isSelected = selectedMedia.includes(url);
-                      return (
-                        <div
-                          key={idx}
-                          onClick={() => handleToggleSelectMedia(url)}
-                          style={{
-                            position: "relative",
-                            width: "100%",
-                            paddingTop: "100%",
-                            borderRadius: "12px",
-                            overflow: "hidden",
-                            cursor: "pointer",
-                            border: isSelected ? "3px solid #3b82f6" : "1px solid rgba(15,23,42,0.08)",
-                            boxShadow: isSelected ? "0 4px 12px rgba(59,130,246,0.15)" : "none",
-                            transition: "all 0.2s ease"
-                          }}
-                        >
-                          <img
-                            src={url}
-                            alt="Unsplash Stock"
-                            style={{
-                              position: "absolute",
-                              top: 0,
-                              left: 0,
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover"
-                            }}
-                          />
-                          {isSelected && (
-                            <div style={{
-                              position: "absolute",
-                              top: "8px",
-                              right: "8px",
-                              backgroundColor: "#3b82f6",
-                              color: "#ffffff",
-                              borderRadius: "50%",
-                              width: "20px",
-                              height: "20px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "11px",
-                              fontWeight: "bold"
-                            }}>
-                              ✓
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
 
             {mediaTab === "AI" && (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", minHeight: "300px" }}>
-                <span style={{ fontSize: "48px", marginBottom: "16px" }}>✨</span>
-                <h4 style={{ margin: "0 0 8px 0", fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>AI Image Generation</h4>
-                <p style={{ margin: 0, fontSize: "14px", color: "#64748b", textAlign: "center", maxWidth: "340px" }}>Tính năng tạo ảnh minh họa tự động bằng AI đang được phát triển và sẽ sớm ra mắt.</p>
+              <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: "20px 24px", gap: "16px", overflowY: "auto" }}>
+                {/* Prompt input area */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{ fontSize: "16px" }}>✨</span>
+                    <span style={{ fontSize: "13px", fontWeight: "700", color: "#0f172a" }}>Tạo ảnh bằng AI</span>
+                    <span style={{ fontSize: "11px", color: "#7c3aed", fontWeight: "600", background: "rgba(124,58,237,0.08)", padding: "2px 8px", borderRadius: "10px" }}>Gemini Imagen 3</span>
+                  </div>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <input
+                      type="text"
+                      value={aiImagePrompt}
+                      onChange={e => setAiImagePrompt(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && handleAiGenerateImages()}
+                      placeholder="Mô tả ảnh bạn muốn tạo... (English gives best results)"
+                      style={{
+                        flex: 1,
+                        padding: "10px 14px",
+                        borderRadius: "8px",
+                        border: "1.5px solid rgba(15,23,42,0.15)",
+                        fontSize: "13px",
+                        color: "#0f172a",
+                        outline: "none",
+                        background: "#fff",
+                        transition: "border-color 0.2s"
+                      }}
+                      onFocus={e => e.target.style.borderColor = "#7c3aed"}
+                      onBlur={e => e.target.style.borderColor = "rgba(15,23,42,0.15)"}
+                      disabled={aiGenerating}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAiGenerateImages}
+                      disabled={!aiImagePrompt.trim() || aiGenerating}
+                      style={{
+                        padding: "10px 18px",
+                        borderRadius: "8px",
+                        border: "none",
+                        background: aiGenerating || !aiImagePrompt.trim()
+                          ? "rgba(124,58,237,0.3)"
+                          : "linear-gradient(135deg, #7c3aed, #a855f7)",
+                        color: "#fff",
+                        fontSize: "13px",
+                        fontWeight: "700",
+                        cursor: aiGenerating || !aiImagePrompt.trim() ? "not-allowed" : "pointer",
+                        whiteSpace: "nowrap",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        transition: "all 0.2s ease",
+                        boxShadow: aiGenerating || !aiImagePrompt.trim() ? "none" : "0 2px 8px rgba(124,58,237,0.3)"
+                      }}
+                    >
+                      {aiGenerating ? (
+                        <>
+                          <span style={{ display: "inline-block", width: "12px", height: "12px", border: "2px solid rgba(255,255,255,0.4)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                          Đang tạo...
+                        </>
+                      ) : (
+                        <><span>✨</span> Generate</>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Quick prompt suggestions */}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                    {[
+                      "A futuristic tech office with glowing screens",
+                      "Abstract geometric background, dark blue gradient",
+                      "Vietnamese cityscape at night, neon lights",
+                      "Clean minimal workspace with laptop",
+                      "Data visualization hologram floating in space"
+                    ].map(suggestion => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => setAiImagePrompt(suggestion)}
+                        style={{
+                          padding: "4px 10px",
+                          borderRadius: "20px",
+                          border: "1px solid rgba(124,58,237,0.3)",
+                          background: aiImagePrompt === suggestion ? "rgba(124,58,237,0.1)" : "transparent",
+                          color: "#7c3aed",
+                          fontSize: "11px",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          transition: "all 0.15s ease"
+                        }}
+                      >
+                        {suggestion.length > 30 ? suggestion.substring(0, 30) + "..." : suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Error message */}
+                {aiImageError && (
+                  <div style={{
+                    padding: "10px 14px",
+                    borderRadius: "8px",
+                    background: "rgba(239,68,68,0.08)",
+                    border: "1px solid rgba(239,68,68,0.2)",
+                    color: "#dc2626",
+                    fontSize: "12px",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "8px"
+                  }}>
+                    <span>⚠️</span>
+                    <span>{aiImageError}</span>
+                  </div>
+                )}
+
+                {/* Loading skeleton */}
+                {aiGenerating && (
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" }}>
+                    {[1,2,3,4].map(i => (
+                      <div
+                        key={i}
+                        style={{
+                          aspectRatio: "9/16",
+                          borderRadius: "10px",
+                          background: "linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%)",
+                          backgroundSize: "200% 100%",
+                          animation: "shimmer 1.5s infinite"
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Generated images grid */}
+                {!aiGenerating && aiGeneratedImages.length > 0 && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "12px", color: "#64748b", fontWeight: "600" }}>
+                        {aiGeneratedImages.length} ảnh đã tạo
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setAiGeneratedImages([])}
+                        style={{ border: "none", background: "none", color: "#ef4444", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}
+                      >
+                        Xóa tất cả
+                      </button>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" }}>
+                      {aiGeneratedImages.map((url, idx) => {
+                        const isSelected = modalSelectedMedia.includes(url);
+                        return (
+                          <div
+                            key={idx}
+                            onClick={() => {
+                              if (isSelected) {
+                                setModalSelectedMedia(prev => prev.filter(u => u !== url));
+                              } else {
+                                setModalSelectedMedia(prev => [...prev, url]);
+                              }
+                            }}
+                            style={{
+                              position: "relative",
+                              aspectRatio: "9/16",
+                              borderRadius: "10px",
+                              overflow: "hidden",
+                              cursor: "pointer",
+                              border: isSelected ? "2.5px solid #7c3aed" : "2px solid transparent",
+                              boxShadow: isSelected ? "0 0 0 3px rgba(124,58,237,0.2)" : "0 1px 4px rgba(0,0,0,0.1)",
+                              transition: "all 0.15s ease"
+                            }}
+                          >
+                            <img
+                              src={url}
+                              alt={`AI generated ${idx + 1}`}
+                              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                            />
+                            {/* AI badge */}
+                            <div style={{
+                              position: "absolute",
+                              top: "6px",
+                              left: "6px",
+                              background: "linear-gradient(135deg, #7c3aed, #a855f7)",
+                              color: "#fff",
+                              fontSize: "9px",
+                              fontWeight: "700",
+                              padding: "2px 6px",
+                              borderRadius: "6px",
+                              letterSpacing: "0.5px"
+                            }}>
+                              AI
+                            </div>
+                            {/* Selection checkmark */}
+                            {isSelected && (
+                              <div style={{
+                                position: "absolute",
+                                top: "6px",
+                                right: "6px",
+                                background: "#7c3aed",
+                                color: "#fff",
+                                borderRadius: "50%",
+                                width: "22px",
+                                height: "22px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "13px",
+                                fontWeight: "bold"
+                              }}>
+                                ✓
+                              </div>
+                            )}
+                            {/* Hover overlay */}
+                            <div style={{
+                              position: "absolute",
+                              inset: 0,
+                              background: isSelected ? "rgba(124,58,237,0.1)" : "transparent",
+                              transition: "background 0.15s ease"
+                            }} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Empty state */}
+                {!aiGenerating && aiGeneratedImages.length === 0 && !aiImageError && (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, minHeight: "200px", gap: "10px" }}>
+                    <div style={{
+                      width: "64px",
+                      height: "64px",
+                      borderRadius: "16px",
+                      background: "linear-gradient(135deg, rgba(124,58,237,0.1), rgba(168,85,247,0.1))",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "28px"
+                    }}>
+                      🎨
+                    </div>
+                    <p style={{ margin: 0, fontSize: "13px", color: "#64748b", textAlign: "center" }}>
+                      Nhập mô tả và nhấn <strong>Generate</strong> để tạo ảnh
+                    </p>
+                  </div>
+                )}
+
+                <style>{`
+                  @keyframes spin { to { transform: rotate(360deg); } }
+                  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+                `}</style>
               </div>
             )}
+
           </div>
 
           {/* Selected Media Preview Bar / Footer */}
@@ -1274,12 +1414,12 @@ export const StoryboardEditor = ({
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: "13px", fontWeight: "700", color: "#475569" }}>
-                Selected Media ({selectedMedia.length} asset{selectedMedia.length !== 1 ? "s" : ""})
+                Selected Media ({modalSelectedMedia.length} asset{modalSelectedMedia.length !== 1 ? "s" : ""})
               </span>
-              {selectedMedia.length > 0 && (
+              {modalSelectedMedia.length > 0 && (
                 <button
                   type="button"
-                  onClick={() => setSelectedMedia([])}
+                  onClick={() => setModalSelectedMedia([])}
                   style={{ border: "none", background: "none", color: "#ef4444", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
                 >
                   Xóa tất cả
@@ -1296,12 +1436,12 @@ export const StoryboardEditor = ({
                 paddingBottom: "4px",
                 minHeight: "56px"
               }}>
-                {selectedMedia.length === 0 ? (
+                {modalSelectedMedia.length === 0 ? (
                   <span style={{ fontSize: "13px", color: "#94a3b8", fontStyle: "italic", alignSelf: "center" }}>
                     No project media selected yet.
                   </span>
                 ) : (
-                  selectedMedia.map((url, idx) => (
+                  modalSelectedMedia.map((url, idx) => (
                     <div
                       key={idx}
                       style={{
@@ -1405,7 +1545,7 @@ export const StoryboardEditor = ({
                   onClick={() => {
                     setMediaModalContext('project-content-list');
                     setActiveUploadSceneId(null);
-                    setSelectedMedia(selectedMedia || []);
+                    setModalSelectedMedia(selectedMedia || []);
                     setShowMediaModal(true);
                   }}
                   style={{
@@ -1441,7 +1581,7 @@ export const StoryboardEditor = ({
                   onClick={() => {
                     setMediaModalContext('project-background-list');
                     setActiveUploadSceneId(null);
-                    setSelectedMedia(selectedBgMedia || []);
+                    setModalSelectedMedia(selectedBgMedia || []);
                     setShowMediaModal(true);
                   }}
                   style={{
@@ -2327,12 +2467,12 @@ export const StoryboardEditor = ({
                     paddingTop: "16px",
                     marginTop: "8px",
                     display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
+                    gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
                     gap: "24px",
                     boxSizing: "border-box"
                   }}>
                     {/* 1. Content Media Search & Suggestion Panel */}
-                    <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
                         <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Content Media (mockup)</label>
                         <button
@@ -2345,30 +2485,7 @@ export const StoryboardEditor = ({
                         </button>
                       </div>
 
-                      <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-                        <input
-                          className="form-input-mono"
-                          type="text"
-                          placeholder="Tìm ảnh Unsplash..."
-                          value={searchQueries[scene.id] || ""}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setSearchQueries(prev => ({ ...prev, [scene.id]: val }));
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") handleSearchImages(scene.id);
-                          }}
-                          style={{ padding: "6px 8px", fontSize: "12px", height: "30px", flex: 1 }}
-                        />
-                        <button
-                          className="btn-mono btn-mono-secondary"
-                          style={{ padding: "0 12px", whiteSpace: "nowrap", height: "30px", fontSize: "12px" }}
-                          disabled={searchingImages[scene.id]}
-                          onClick={() => handleSearchImages(scene.id)}
-                        >
-                          {searchingImages[scene.id] ? "..." : "Tìm"}
-                        </button>
-                      </div>
+
 
                       {/* Content Image Suggestions Grid */}
                       <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
@@ -2425,7 +2542,7 @@ export const StoryboardEditor = ({
                     </div>
 
                     {/* 2. Background Media Search & Suggestion Panel */}
-                    <div style={{ display: "flex", flexDirection: "column", borderLeft: "1.5px solid #000000", paddingLeft: "24px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", borderLeft: "1.5px solid #000000", paddingLeft: "24px", minWidth: 0 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
                         <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Background (Nền cảnh)</label>
                         <button
@@ -2438,30 +2555,7 @@ export const StoryboardEditor = ({
                         </button>
                       </div>
 
-                      <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-                        <input
-                          className="form-input-mono"
-                          type="text"
-                          placeholder="Tìm ảnh nền..."
-                          value={bgSearchQueries[scene.id] || ""}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setBgSearchQueries(prev => ({ ...prev, [scene.id]: val }));
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") handleSearchBgImages(scene.id);
-                          }}
-                          style={{ padding: "6px 8px", fontSize: "12px", height: "30px", flex: 1 }}
-                        />
-                        <button
-                          className="btn-mono btn-mono-secondary"
-                          style={{ padding: "0 12px", whiteSpace: "nowrap", height: "30px", fontSize: "12px" }}
-                          disabled={searchingBgImages[scene.id]}
-                          onClick={() => handleSearchBgImages(scene.id)}
-                        >
-                          {searchingBgImages[scene.id] ? "..." : "Tìm"}
-                        </button>
-                      </div>
+
 
                       {/* Background Image Suggestions Grid */}
                       <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>

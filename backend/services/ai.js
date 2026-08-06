@@ -50,7 +50,7 @@ const PLANNER_SCHEMA = {
       },
       layoutId: {
         type: SchemaType.STRING,
-        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'CircularProgress', 'Ending'."
+        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'CircularProgress', 'MetricShowcaseHook', 'Ending'."
       },
       heading: {
         type: SchemaType.STRING,
@@ -211,7 +211,7 @@ async function generateScenePlan(genAI, modelName, scriptText, targetLength, pro
       responseMimeType: "application/json",
       responseSchema: PLANNER_SCHEMA,
       maxOutputTokens: 4096,
-      temperature: 0.2,
+      temperature: 0.7,
       thinkingConfig: { thinkingBudget: 0 }
     }
   };
@@ -243,13 +243,21 @@ Structure the sequence of scenes logically to build a story:
 - Scene 2..N-1: Problem -> Explanation -> Example -> Takeaway (Core value)
 - Scene N: Ending (Call to action / Outro)
 
-# LAYOUT SELECTION RULES (CRITICAL)
-Choose layoutId strictly according to scene content semantics:
-- **Comparison / Versus / Distinguish** (heading/voiceover contains "không phải là", "so sánh", "khác biệt", "vs", "versus", "so với"): MUST select BeforeAfterPanel or SplitProofBullet or VersusArena or SplitBandChecklist.
-- **Metrics / Statistics / Numbers** (heading/voiceover contains "%", "tỷ đô", "con số", "tăng", "giảm", "doanh thu"): MUST select HeroMetricCards, MetricCards, GridMetrics, CircularProgress, or OpsMonitorHook.
+# LAYOUT DIVERSITY & SELECTION RULES (CRITICAL)
+1. MANDATORY VARIETY: You MUST NEVER use the exact same layoutId for consecutive scenes. Vary visual layouts across scenes to keep the video dynamic.
+2. Choose layoutId strictly according to scene content semantics:
+- **Comparison / Versus / Distinguish** (heading/voiceover contains "không phải là", "so sánh", "khác biệt", "vs", "versus", "so với"): MUST select BeforeAfterPanel, SplitProofBullet, VersusArena, or SplitBandChecklist.
+- **Metrics / Statistics / Numbers** (heading/voiceover contains "%", "tỷ đô", "con số", "tăng", "giảm", "doanh thu", "triệu"): MUST select HeroMetricCards, MetricCards, GridMetrics, CircularProgress, MetricShowcaseHook, or OpsMonitorHook.
 - **Timeline / Milestones / Steps** (heading/voiceover contains "bước 1", "quy trình", "thời gian", "lộ trình"): MUST select TimelineBeamRail, IntroSignalStepsImages, or FlowchartTitle.
+- **Lists / Bullet Points / Items**: MUST select RankedImpactBullet, AIHubGrid1, SelectorWheelRadio, or SignalRailBullet.
 - **Radar / Monitoring / Scanning**: MUST select IntroRadarSignalImage or IntroMapPinsImage.
-- **Intro Hooks / Headlines**: Select IntroBriefingCard, IntroBubbleImage, IntroCutoutHeadlineImage, or IntroFullImage.
+- **Intro Hooks / Headlines (Scene 1)**: You MUST dynamically select and distribute your layout choices across different generations. Do not default to 'IntroBriefingCard' for every project. Choose based on the script's specific hook content:
+  - 'MetricShowcaseHook': Use when the hook begins with key metrics, statistics, salary ranges (e.g. "lương 15 đến 20 triệu"), repository stars, or numbers, and showcases them in a dashboard metric counter.
+  - 'IntroBriefingCard': Use for general introductory statements or textual context briefings.
+  - 'IntroBubbleImage': Use when the hook refers to a key focal object, icon, or person.
+  - 'IntroCutoutHeadlineImage': Use for a punchy, headline-driven opening with an offset cutout image.
+  - 'AppCardConcept': Use when introducing software, tech tools, mobile/desktop mockups, or platforms.
+  - 'IntroFullImage': Use for high-impact visual hooks requiring a full-screen background image.
 - **Ending / CTA**: Select Ending, NextStepEnding, BrandOutro, or ContactCardEnding.
   `;
 
@@ -418,6 +426,7 @@ async function generateStoryboard(projectId, scriptText, visualStyle = "rikkei",
     });
 
     // --- Step 5: Backend Auto-Fix & Enricher ---
+    let lastUsedLayoutId = null;
     const finalScenes = scenePlan.map((scene, index) => {
       const uiData = uiLookup[index] || { points: [], keywords: ["technology"] };
       const points = Array.isArray(uiData.points) ? uiData.points : [];
@@ -450,7 +459,21 @@ async function generateStoryboard(projectId, scriptText, visualStyle = "rikkei",
       const cleanKeywords = keywordArr.filter(k => typeof k === "string" && k.trim().length > 0);
 
       // 4. Contract resolution & Validation
-      const targetLayoutId = scene.layoutId || "IntroBriefingCard";
+      let targetLayoutId = scene.layoutId || "IntroBriefingCard";
+      
+      // Prevent consecutive identical layout repetition across adjacent scenes
+      if (index > 0 && targetLayoutId === lastUsedLayoutId) {
+        const layoutRotation = [
+          "RankedImpactBullet", "IntroBubbleImage", "BeforeAfterPanel", 
+          "AIHubGrid1", "HeroMetricCards", "TimelineBeamRail", "IntroCutoutHeadlineImage",
+          "IntroChapterStack", "SplitProofBullet", "AppCardConcept"
+        ];
+        const altLayout = layoutRotation.find(lay => lay !== lastUsedLayoutId && lay !== targetLayoutId) || "RankedImpactBullet";
+        console.log(`[Layout Diversity] Rotating duplicate layout for Scene ${index + 1}: ${targetLayoutId} -> ${altLayout}`);
+        targetLayoutId = altLayout;
+      }
+      lastUsedLayoutId = targetLayoutId;
+
       const contract = contractLoader.getContractForLayout(targetLayoutId, scene.sceneIntent?.type);
 
       // Validate & Auto-extract highlightWords (must exist in heading)

@@ -43,6 +43,7 @@ import { IntroMapPinsMode } from "./modes/IntroMapPinsMode";
 import { OpsMonitorMode } from "./modes/OpsMonitorMode";
 import { TimelineShiftMode } from "./modes/TimelineShiftMode";
 import { CircularProgressMode } from "./modes/CircularProgressMode";
+import { MetricShowcaseHookMode } from "./modes/MetricShowcaseHookMode";
 
 
 export interface TemplateLayoutProps extends LayoutProps {
@@ -248,6 +249,8 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
         return <IntroMediaHeroMode {...modeProps} />;
       case "media_showcase_card":
         return <MediaShowcaseCardMode {...modeProps} />;
+      case "metric_showcase_hook":
+        return <MetricShowcaseHookMode {...modeProps} />;
       case "centered_text":
         return <CenteredTextMode {...modeProps} />;
       case "fintech_edu":

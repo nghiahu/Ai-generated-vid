@@ -99,6 +99,15 @@ const LAYOUT_CONTRACTS = {
     allowedPointTypes: ['metric', 'card'],
     aiHint: 'Chỉ số tâm lý thị trường Sợ hãi / Tham lam.'
   },
+  MetricShowcaseHook: {
+    layoutId: 'MetricShowcaseHook',
+    family: 'Opening / Headline',
+    headingMaxChars: 45,
+    pointsCount: { min: 1, max: 5, default: 3 },
+    pointMaxChars: 50,
+    allowedPointTypes: ['badge_row', 'subheader', 'metric', 'card', 'terminal'],
+    aiHint: 'Layout báo cáo chỉ số danh tiếng, repo hoặc lương dạng dashboard có hiệu ứng chạy số đôi hoặc số đơn.'
+  },
   FeedScrollHook: {
     layoutId: 'FeedScrollHook',
     family: 'Opening / Headline',
