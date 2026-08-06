@@ -89,9 +89,9 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
   }
 
   // 3. Fallback to highlightWords if metric is still not resolved
-  if (!metricValue && highlightWords && highlightWords.length > 0 && /\d+/.test(highlightWords[0])) {
+  if (!metricValue && highlightWords && highlightWords.length > 0) {
     metricValue = highlightWords[0];
-    metricSubtext = "Thông số nổi bật";
+    metricSubtext = /\d+/.test(highlightWords[0]) ? "Thông số nổi bật" : "Từ khóa nổi bật";
   }
 
   // Extract extra badges/pills from voiceover if they are missing
