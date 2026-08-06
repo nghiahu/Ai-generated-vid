@@ -50,7 +50,7 @@ const PLANNER_SCHEMA = {
       },
       layoutId: {
         type: SchemaType.STRING,
-        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'CircularProgress', 'MetricShowcaseHook', 'MetricFocusShowcase', 'Ending'."
+        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'CircularProgress', 'MetricShowcaseHook', 'MetricFocusShowcase', 'WebMockupHero', 'Ending'."
       },
       heading: {
         type: SchemaType.STRING,
@@ -254,6 +254,7 @@ Structure the sequence of scenes logically to build a story:
 - **Intro Hooks / Headlines (Scene 1)**: You MUST dynamically select and distribute your layout choices across different generations. Do not default to 'IntroBriefingCard' for every project. Choose based on the script's specific hook content:
   - 'MetricShowcaseHook': Use when the hook begins with key metrics, statistics, salary ranges (e.g. "lương 15 đến 20 triệu"), repository stars, or numbers, and showcases them in a dashboard metric counter.
   - 'MetricFocusShowcase': Use when showcasing a specific technical/security metric (like "42 lăng kính ngôn ngữ", CVE mappings, code metrics) with side-by-side details, list of tools, and progress cards.
+  - 'WebMockupHero': Use when presenting a website, github repository, SaaS platform, online tool, or visual software preview in a macOS browser mockup.
   - 'IntroBriefingCard': Use for general introductory statements or textual context briefings.
   - 'IntroBubbleImage': Use when the hook refers to a key focal object, icon, or person.
   - 'IntroCutoutHeadlineImage': Use for a punchy, headline-driven opening with an offset cutout image.

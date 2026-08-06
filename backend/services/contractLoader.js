@@ -117,6 +117,15 @@ const LAYOUT_CONTRACTS = {
     allowedPointTypes: ['badge_row', 'metric', 'card'],
     aiHint: 'Layout chỉ số bảo mật/kỹ thuật cao, có số lớn màu cam kèm nhãn bên phải, hàng loạt pill chi tiết ở giữa và thẻ bảng tiến trình/chi phí ở dưới cùng.'
   },
+  WebMockupHero: {
+    layoutId: 'WebMockupHero',
+    family: 'Opening / Headline',
+    headingMaxChars: 45,
+    pointsCount: { min: 1, max: 4, default: 2 },
+    pointMaxChars: 50,
+    allowedPointTypes: ['badge_row', 'card'],
+    aiHint: 'Layout trình diễn trình duyệt web xoay nghiêng 3D bồng bềnh, có các viên thuốc nhỏ chi tiết phía trên và phụ đề căn giữa ở dưới cùng.'
+  },
   FeedScrollHook: {
     layoutId: 'FeedScrollHook',
     family: 'Opening / Headline',
