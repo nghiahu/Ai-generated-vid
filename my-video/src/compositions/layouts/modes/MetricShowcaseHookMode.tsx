@@ -3,17 +3,18 @@ import { useCurrentFrame, useVideoConfig, interpolate, Easing } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
 
-function parseNumbers(valueStr: string): { n1: number; n2: number | null; suffix: string } {
-  if (!valueStr) return { n1: 0, n2: null, suffix: "" };
+function parseNumbers(valueStr: any): { n1: number; n2: number | null; suffix: string } {
+  const str = String(valueStr || "").trim();
+  if (!str) return { n1: 0, n2: null, suffix: "" };
   
   // Look for range "X - Y", "X đến Y", "X to Y" (with decimals/dots)
   const rangeRegex = /(\d+(?:[.,]\d+)?)\s*(?:-|đến|to)\s*(\d+(?:[.,]\d+)?)/i;
-  const match = valueStr.match(rangeRegex);
+  const match = str.match(rangeRegex);
   
   if (match) {
     const rawN1 = parseFloat(match[1].replace(/\./g, "").replace(/,/g, "."));
     const rawN2 = parseFloat(match[2].replace(/\./g, "").replace(/,/g, "."));
-    const suffix = valueStr.replace(match[0], "").trim();
+    const suffix = str.replace(match[0], "").trim();
     return {
       n1: isNaN(rawN1) ? 0 : rawN1,
       n2: isNaN(rawN2) ? 0 : rawN2,
@@ -23,10 +24,10 @@ function parseNumbers(valueStr: string): { n1: number; n2: number | null; suffix
   
   // Single number case
   const singleRegex = /(\d+(?:[.,]\d+)?)/;
-  const singleMatch = valueStr.match(singleRegex);
+  const singleMatch = str.match(singleRegex);
   if (singleMatch) {
     const rawN = parseFloat(singleMatch[1].replace(/\./g, "").replace(/,/g, "."));
-    const suffix = valueStr.replace(singleMatch[0], "").trim();
+    const suffix = str.replace(singleMatch[0], "").trim();
     return {
       n1: isNaN(rawN) ? 0 : rawN,
       n2: null,
@@ -34,7 +35,7 @@ function parseNumbers(valueStr: string): { n1: number; n2: number | null; suffix
     };
   }
   
-  return { n1: 0, n2: null, suffix: valueStr };
+  return { n1: 0, n2: null, suffix: str };
 }
 
 export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
@@ -292,7 +293,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
               textShadow: `0 8px 30px rgba(${metricRgb}, 0.25)`
             }}>
               <span>
-                {n2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN")}
+                {n2 !== null && animN2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN")}
               </span>
               {suffix && (
                 <span style={{

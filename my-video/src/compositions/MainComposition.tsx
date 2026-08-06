@@ -1,7 +1,6 @@
 import React from "react"; // trigger rebuild for CircularProgress
 import { AbsoluteFill, Audio, Sequence, useVideoConfig, useCurrentFrame, staticFile } from "remotion";
 import * as Remotion from "remotion";
-import * as LucideIcons from "lucide-react";
 import { DynamicLayout } from "./layouts/DynamicLayout";
 import { getLayoutById, LAYOUT_REGISTRY } from "./layouts";
 import { selectBestLayout } from "../utils/layoutScorer";
@@ -15,8 +14,22 @@ import { LightLeaksOverlay } from "../components/overlays/LightLeaksOverlay";
 import { fontOutfit } from "../styles/fonts";
 import { getVDETokens, registerCompiledTokens } from "../styles/vdeTokens";
 
-// Safe Proxy for Lucide Icons
-const SafeLucideIcons = new Proxy(LucideIcons as any, {
+// Self-contained mockup components for common Lucide icons
+const LucideIconsMock: any = {
+  Sparkles: (props: any) => (
+    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z" />
+    </svg>
+  ),
+  Zap: (props: any) => (
+    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  )
+};
+
+// Safe Proxy for Lucide Icons using the mock target
+const SafeLucideIcons = new Proxy(LucideIconsMock, {
   get: (target, prop) => {
     if (typeof prop === "symbol" || prop === "then" || prop === "__esModule" || prop === "default") {
       return target[prop];
@@ -153,6 +166,8 @@ export interface ProjectConfig {
   videoTheme?: string;
   visualStyle?: string;
   theme?: string;
+  bgImage?: string;
+  bgMediaList?: string[];
 }
 
 export interface SceneData {
@@ -169,6 +184,8 @@ export interface SceneData {
   voiceoverDuration?: number;
   mediaList: string[];
   selectedMediaIndex: number;
+  bgMediaList?: string[];
+  selectedBgMediaIndex?: number;
   placement: string;
   theme?: string;
   accentColor?: string;
