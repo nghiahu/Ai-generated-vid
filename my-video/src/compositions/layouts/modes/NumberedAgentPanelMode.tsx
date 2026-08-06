@@ -26,7 +26,7 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
   const cleanCategory =
     category ||
     (t.categoryPill?.text?.trim().toLowerCase() !== "ai viết video" &&
-    t.categoryPill?.text?.trim().toLowerCase() !== "ai viet video"
+      t.categoryPill?.text?.trim().toLowerCase() !== "ai viet video"
       ? t.categoryPill?.text
       : "") ||
     "BƯỚC";
@@ -42,10 +42,10 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
     cardItems.length > 0
       ? cardItems.slice(0, 4)
       : [
-          { id: "fb1", data: { text: "Security Architect", subtext: "soi lại thiết kế bản vá" } },
-          { id: "fb2", data: { text: "Penetration Tester", subtext: "thử phá chính bản vá đó" } },
-          { id: "fb3", data: { text: "Cross-Repo Analyzer", subtext: "bắt khi fix trái ≥ 2 repo" } },
-        ];
+        { id: "fb1", data: { text: "Security Architect", subtext: "soi lại thiết kế bản vá" } },
+        { id: "fb2", data: { text: "Penetration Tester", subtext: "thử phá chính bản vá đó" } },
+        { id: "fb3", data: { text: "Cross-Repo Analyzer", subtext: "bắt khi fix trái ≥ 2 repo" } },
+      ];
 
   // 3. Bottom insight bar — prefer short voiceover, else last card subtext
   const insightText =
@@ -249,7 +249,7 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
                   style={{
                     fontSize: cardFontSize,
                     fontWeight: 800,
-                    color: styles.titleColor || (isLight ? "#111111" : "#ffffff"),
+                    color: "#ffffff",
                     lineHeight: 1.2,
                     letterSpacing: "-0.02em",
                   }}
@@ -261,9 +261,7 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
                     style={{
                       fontSize: subtextFontSize,
                       fontWeight: 400,
-                      color: isLight
-                        ? "rgba(0,0,0,0.52)"
-                        : "rgba(255,255,255,0.52)",
+                      color: "rgba(255,255,255,0.65)",
                       lineHeight: 1.4,
                     }}
                   >
