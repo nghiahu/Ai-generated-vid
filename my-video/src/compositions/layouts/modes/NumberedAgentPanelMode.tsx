@@ -65,12 +65,7 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
   const cardGap = isVertical ? 24 : 30;            // 1.5x (was 16/20)
   const STAGGER = 8; // frames between card animations
 
-  // Intro opacity fade
-  const introOpacity = interpolate(frame, [0, 20], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.16, 1, 0.3, 1),
-  });
+  // Individual element animations (no full-container fade to avoid blank screen)
 
   // Card style helpers — contrast-aware
   const itemStyles: any[] = t.items?.itemStyles || []; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -142,12 +137,15 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
         boxSizing: "border-box",
         position: "relative",
         fontFamily: styles.fontFamily,
-        opacity: introOpacity,
       }}
     >
       {/* Category Pill */}
       {cleanCategory && (
-        <div style={{ marginBottom: isVertical ? 16 : 22 }}>
+        <div style={{
+          marginBottom: isVertical ? 16 : 22,
+          opacity: interpolate(frame, [0, 12], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+          transform: `translateY(${interpolate(frame, [0, 12], [10, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}px)`,
+        }}>
           <CategoryPill
             text={cleanCategory}
             bgRgba={t.categoryPill?.bgRgba || "rgba(2,6,23,0.72)"}
@@ -172,6 +170,8 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
             textShadow: t.title?.useAccentTextShadow
               ? `0 0 60px rgba(${rgb},0.45)`
               : undefined,
+            opacity: interpolate(frame, [2, 18], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.bezier(0.16, 1, 0.3, 1) }),
+            transform: `translateY(${interpolate(frame, [2, 18], [16, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}px)`,
           }}
         >
           {titleText}
