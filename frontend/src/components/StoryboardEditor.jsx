@@ -270,6 +270,7 @@ const LAYOUTS_BY_FAMILY = {
     { value: "EvidenceBoardConcept", label: "Evidence Board Concept" },
     { value: "FearGreedHook", label: "Fear Greed Hook" },
     { value: "MetricShowcaseHook", label: "Metric Showcase Hook" },
+    { value: "MetricFocusShowcase", label: "Metric Focus Showcase" },
     { value: "FeedScrollHook", label: "Feed Scroll Hook" },
     { value: "IntroChapterStack", label: "Intro Chapter Stack Image" },
     { value: "IntroEvidenceReadlineImage", label: "Intro Evidence Readline Image" },
