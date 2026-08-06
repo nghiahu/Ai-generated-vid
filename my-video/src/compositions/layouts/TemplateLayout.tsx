@@ -133,7 +133,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   const containerStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
-    alignItems: isCenteredLayout ? "center" : (isBottomAligned ? "flex-start" : "center"),
+    alignItems: isCenteredLayout ? "center" : (isBottomAligned || layoutMode === "metric_showcase_hook" ? "flex-start" : "center"),
     padding: isFlywheel ? "0px" : (isCenteredLayout ? "0 64px" : "86px"),
     justifyContent: isCenteredLayout ? "center" : (isBottomAligned ? "flex-end" : "flex-start"),
     paddingTop: isFlywheel 

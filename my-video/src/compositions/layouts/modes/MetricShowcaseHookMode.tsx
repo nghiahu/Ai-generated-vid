@@ -92,8 +92,8 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
     metricSubtext = "Thông số nổi bật";
   }
 
-  // Secondary Card: Use the first text component that was NOT used as a metric, terminal, or badge
-  const cardComp = otherComps.find(c => 
+  // Secondary Cards: Use all text components that were NOT used as a metric, terminal, badge, or highlight
+  const cardComps = otherComps.filter(c => 
     c.id !== usedMetricCompId && 
     c.type !== "terminal" && 
     c.type !== "badge_row" && 
@@ -121,40 +121,26 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
     easing: Easing.bezier(0.16, 1, 0.3, 1)
   })) : null;
 
-  const cardText = cardComp?.data?.text || "";
-  let cardPrefix = cardText;
-  let cardSuffix = "";
-  if (cardText.includes("+")) {
-    const parts = cardText.split("+");
-    cardPrefix = parts[0].trim();
-    cardSuffix = "+ " + parts.slice(1).join("+").trim();
-  } else if (cardText.includes("-")) {
-    const parts = cardText.split("-");
-    cardPrefix = parts[0].trim();
-    cardSuffix = "- " + parts.slice(1).join("-").trim();
-  } else {
-    // If no split, check if there's a number prefix
-    const numPrefixMatch = cardText.match(/^(\d+\s*\w+)\s+(.*)$/);
-    if (numPrefixMatch) {
-      cardPrefix = numPrefixMatch[1];
-      cardSuffix = numPrefixMatch[2];
-    }
-  }
+  // Visual Theme Colors matching reference: White, Orange, Teal Green
+  const metricColor = "#f97316"; // Bright Orange
+  const metricRgb = "249, 115, 22";
+  const cardTealColor = isLight ? "#0d9488" : "#2dd4bf"; // Teal / Mint Green
 
   const containerStyle: React.CSSProperties = {
     width: "100%",
     maxWidth: t.container?.maxWidth || "940px",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    gap: "32px",
+    alignItems: "flex-start", // Left align
+    gap: "28px",
     boxSizing: "border-box",
-    zIndex: 5
+    zIndex: 5,
+    paddingLeft: "20px"
   };
 
   return (
     <div style={containerStyle}>
-      {/* 1. Title / Heading */}
+      {/* 1. Title / Heading (Left aligned, capitalized white) */}
       {titleText && (
         <AnimatedBlock animation="slide-up" delaySeconds={0.15}>
           <div style={{
@@ -162,7 +148,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
             lineHeight: 0.95,
             fontWeight: 950,
             letterSpacing: "-0.07em",
-            textAlign: "center",
+            textAlign: "left",
             textTransform: "uppercase",
             color: isLight ? "#1e293b" : "#ffffff",
             fontFamily: styles.fontFamily,
@@ -176,10 +162,10 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
         </AnimatedBlock>
       )}
 
-      {/* 2. Badges / Pills */}
+      {/* 2. Badges / Pills (Left aligned) */}
       {badgeComp && badgeComp.data?.badges && (
         <AnimatedBlock animation="slide-up" delaySeconds={0.3}>
-          <div style={{ display: "flex", justifyContent: "center", gap: "14px", flexWrap: "wrap", marginBottom: "10px" }}>
+          <div style={{ display: "flex", justifyContent: "flex-start", gap: "14px", flexWrap: "wrap", marginBottom: "10px", width: "100%" }}>
             {badgeComp.data.badges.map((badge: string, idx: number) => {
               const hasStar = badge.toLowerCase().includes("sao") || badge.toLowerCase().includes("star");
               return (
@@ -205,11 +191,10 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
         </AnimatedBlock>
       )}
 
-      {/* 3. Subheader / Highlight Alert Bar */}
+      {/* 3. Subheader / Highlight Alert Bar (Left aligned) */}
       {highlightComp && (
         <AnimatedBlock animation="slide-up" delaySeconds={0.45}>
           <div style={{
-            alignSelf: "center",
             borderRadius: "16px",
             border: `1.5px solid ${accentColor}`,
             boxShadow: `0 0 20px rgba(${rgb}, 0.25)`,
@@ -218,10 +203,10 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
             color: accentColor,
             fontSize: "22px",
             fontWeight: 800,
-            textAlign: "center",
+            textAlign: "left",
             fontFamily: styles.fontFamily,
             letterSpacing: "0.02em",
-            width: "90%",
+            maxWidth: "760px",
             boxSizing: "border-box"
           }}>
             🔥 {highlightComp.data.text}
@@ -229,29 +214,29 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
         </AnimatedBlock>
       )}
 
-      {/* 4. Metric Area (Big counter) */}
+      {/* 4. Metric Area (Left aligned, Bright Orange counter) */}
       {metricValue && (
         <AnimatedBlock animation="scale-in" delaySeconds={0.6}>
           <div style={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
+            alignItems: "flex-start",
             marginTop: "15px",
             marginBottom: "15px",
             width: "100%"
           }}>
             <div style={{
-              fontSize: `${Math.round(128 * fontScale)}px`,
+              fontSize: `${Math.round(124 * fontScale)}px`,
               lineHeight: 1,
               fontWeight: 950,
               letterSpacing: "-0.06em",
-              color: accentColor,
+              color: metricColor,
               fontFamily: styles.fontFamily,
               display: "flex",
               alignItems: "baseline",
-              justifyContent: "center",
+              justifyContent: "flex-start",
               width: "100%",
-              textShadow: `0 8px 30px rgba(${rgb}, 0.25)`
+              textShadow: `0 8px 30px rgba(${metricRgb}, 0.25)`
             }}>
               <span>
                 {n2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN")}
@@ -260,7 +245,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
                 <span style={{
                   fontSize: `${Math.round(72 * fontScale)}px`,
                   fontWeight: 900,
-                  color: accentColor,
+                  color: metricColor,
                   letterSpacing: "-0.02em",
                   marginLeft: "12px",
                   textTransform: "lowercase"
@@ -272,12 +257,12 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
             {metricSubtext && (
               <div style={{
                 fontSize: "22px",
-                fontWeight: 700,
+                fontWeight: 800,
                 color: isLight ? "#475569" : "#94a3b8",
                 letterSpacing: "0.05em",
-                marginTop: "16px",
+                marginTop: "14px",
                 fontFamily: styles.fontFamily,
-                textAlign: "center"
+                textAlign: "left"
               }}>
                 {metricSubtext}
               </div>
@@ -286,53 +271,73 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
         </AnimatedBlock>
       )}
 
-      {/* 5. Secondary Info Card */}
-      {cardComp && cardText && (
-        <AnimatedBlock animation="slide-up" delaySeconds={0.75}>
-          <div style={{
-            borderRadius: "24px",
-            padding: "26px 36px",
-            background: isLight ? "rgba(13, 148, 136, 0.05)" : "rgba(20, 184, 166, 0.08)",
-            border: `1px solid ${isLight ? "rgba(13, 148, 136, 0.2)" : "rgba(20, 184, 166, 0.2)"}`,
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: cardSuffix ? "space-between" : "center",
-            gap: "16px",
-            width: "90%",
-            maxWidth: "680px",
-            boxSizing: "border-box",
-            backdropFilter: "blur(8px)"
-          }}>
+      {/* 5. Secondary Info Cards (Stack of multiple cards, Teal/Mint Green colored) */}
+      {cardComps.map((cardComp, idx) => {
+        const cardText = cardComp.data?.text || "";
+        let cardPrefix = cardText;
+        let cardSuffix = "";
+        if (cardText.includes("+")) {
+          const parts = cardText.split("+");
+          cardPrefix = parts[0].trim();
+          cardSuffix = "+ " + parts.slice(1).join("+").trim();
+        } else if (cardText.includes("-")) {
+          const parts = cardText.split("-");
+          cardPrefix = parts[0].trim();
+          cardSuffix = "- " + parts.slice(1).join("-").trim();
+        } else {
+          const numPrefixMatch = cardText.match(/^(\d+\s*\w+)\s+(.*)$/);
+          if (numPrefixMatch) {
+            cardPrefix = numPrefixMatch[1];
+            cardSuffix = numPrefixMatch[2];
+          }
+        }
+        return (
+          <AnimatedBlock key={cardComp.id} animation="slide-up" delaySeconds={0.7 + idx * 0.15}>
             <div style={{
-              fontSize: "32px",
-              fontWeight: 900,
-              color: isLight ? "#0d9488" : "#2dd4bf",
-              fontFamily: styles.fontFamily,
-              whiteSpace: "nowrap"
+              borderRadius: "24px",
+              padding: "20px 30px",
+              background: isLight ? "rgba(13, 148, 136, 0.05)" : "rgba(20, 184, 166, 0.08)",
+              border: `1px solid ${isLight ? "rgba(13, 148, 136, 0.2)" : "rgba(20, 184, 166, 0.2)"}`,
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: cardSuffix ? "space-between" : "flex-start",
+              gap: "16px",
+              width: "100%",
+              maxWidth: "760px",
+              boxSizing: "border-box",
+              backdropFilter: "blur(8px)"
             }}>
-              {cardPrefix}
-            </div>
-            {cardSuffix && (
               <div style={{
-                fontSize: "18px",
-                fontWeight: 700,
-                color: isLight ? "#475569" : "#94a3b8",
+                fontSize: "28px",
+                fontWeight: 900,
+                color: cardTealColor,
                 fontFamily: styles.fontFamily,
-                lineHeight: 1.25,
-                textAlign: "left"
+                whiteSpace: "nowrap"
               }}>
-                {cardSuffix}
+                {cardPrefix}
               </div>
-            )}
-          </div>
-        </AnimatedBlock>
-      )}
+              {cardSuffix && (
+                <div style={{
+                  fontSize: "18px",
+                  fontWeight: 700,
+                  color: isLight ? "#475569" : "#94a3b8",
+                  fontFamily: styles.fontFamily,
+                  lineHeight: 1.25,
+                  textAlign: "left"
+                }}>
+                  {cardSuffix}
+                </div>
+              )}
+            </div>
+          </AnimatedBlock>
+        );
+      })}
 
-      {/* 6. Terminal Prompt */}
+      {/* 6. Terminal Prompt (Left aligned) */}
       {terminalComp && terminalComp.data?.text && (
-        <AnimatedBlock animation="slide-up" delaySeconds={0.9}>
+        <AnimatedBlock animation="slide-up" delaySeconds={0.9 + cardComps.length * 0.15}>
           <div style={{
             borderRadius: "14px",
             padding: "18px 24px",
@@ -346,7 +351,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
             display: "flex",
             alignItems: "center",
             gap: "12px",
-            width: "90%",
+            width: "100%",
             maxWidth: "600px",
             boxSizing: "border-box",
             marginTop: "10px"
