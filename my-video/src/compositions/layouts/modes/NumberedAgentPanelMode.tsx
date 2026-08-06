@@ -56,13 +56,13 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
   // Word to highlight in bold inside insight bar
   const hw = highlightWords?.[0] || "";
 
-  // Sizes — x2 scale, centered vertically
+  // Sizes — card container x1.5, text stays original size
   const titleFontSize = Math.round((isVertical ? 80 : 96) * fontScale);
-  const cardFontSize = isVertical ? 52 : 62;
-  const subtextFontSize = isVertical ? 30 : 36;
-  const badgeSize = isVertical ? 96 : 116;
-  const badgeFontSize = isVertical ? 42 : 50;
-  const cardGap = isVertical ? 28 : 36;
+  const cardFontSize = isVertical ? 28 : 34;       // original text size
+  const subtextFontSize = isVertical ? 16 : 20;    // original text size
+  const badgeSize = isVertical ? 78 : 96;          // 1.5x (was 52/64)
+  const badgeFontSize = isVertical ? 22 : 28;      // original badge font
+  const cardGap = isVertical ? 24 : 30;            // 1.5x (was 16/20)
   const STAGGER = 8; // frames between card animations
 
   // Intro opacity fade
@@ -182,11 +182,11 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: isVertical ? 28 : 36,
+                gap: isVertical ? 24 : 30,
                 background: getCardBg(idx),
                 border: getCardBorder(idx),
-                borderRadius: isVertical ? 24 : 28,
-                padding: isVertical ? "28px 32px" : "36px 40px",
+                borderRadius: isVertical ? 24 : 30,
+                padding: isVertical ? "30px 32px" : "36px 40px",
                 opacity: cardProgress,
                 transform: `translateY(${cardY}px)`,
                 backdropFilter: "blur(12px)",
