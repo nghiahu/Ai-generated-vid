@@ -46,6 +46,7 @@ import { CircularProgressMode } from "./modes/CircularProgressMode";
 import { MetricShowcaseHookMode } from "./modes/MetricShowcaseHookMode";
 import { MetricFocusShowcaseMode } from "./modes/MetricFocusShowcaseMode";
 import { WebMockupHeroMode } from "./modes/WebMockupHeroMode";
+import { NumberedAgentPanelMode } from "./modes/NumberedAgentPanelMode";
 
 
 export interface TemplateLayoutProps extends LayoutProps {
@@ -257,6 +258,8 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
         return <MetricFocusShowcaseMode {...modeProps} />;
       case "web_mockup_hero":
         return <WebMockupHeroMode {...modeProps} />;
+      case "numbered_agent_panel":
+        return <NumberedAgentPanelMode {...modeProps} />;
       case "centered_text":
         return <CenteredTextMode {...modeProps} />;
       case "fintech_edu":
@@ -287,7 +290,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
 
       {/* Content layer — carries containerStyle (flex/padding) and sits above overlay via zIndex: 1 */}
       <div style={{ ...containerStyle, position: "relative", zIndex: 1, fontFamily: styles.fontFamily }}>
-        {titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "fintech_edu" && layoutMode !== "blank" && layoutMode !== "metric_showcase_hook" && layoutMode !== "metric_focus_showcase" && layoutMode !== "web_mockup_hero" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && (
+        {titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "fintech_edu" && layoutMode !== "blank" && layoutMode !== "metric_showcase_hook" && layoutMode !== "metric_focus_showcase" && layoutMode !== "web_mockup_hero" && layoutMode !== "numbered_agent_panel" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && (
           <div style={{
             marginBottom: `${parseInt(String(t.title.marginBottom || 100)) + 50}px`,
             zIndex: 10,
