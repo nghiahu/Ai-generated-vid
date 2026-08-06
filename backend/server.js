@@ -17,15 +17,22 @@ const vde = require('./services/vde');
 const phoneme = require('./services/phoneme');
 const aligner = require('./services/aligner');
 const cloudinary = require('cloudinary').v2;
+const configService = require('./services/config');
+
+// Load local config (overrides .env values - used by Electron app)
+configService.loadConfigOnStartup();
 
 // Initialize VDE directory structure and templates
 vde.initializeVDESubdirs();
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
+function reconfigureCloudinary() {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+}
+reconfigureCloudinary();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -255,15 +262,9 @@ app.put('/api/projects/:id/config', async (req, res) => {
   }
 });
 
-// 5. GET /api/media/search: Search Unsplash images
+// 5. GET /api/media/search: Disabled searching Unsplash images
 app.get('/api/media/search', async (req, res) => {
-  try {
-    const { query } = req.query;
-    const images = await media.searchImages(query);
-    res.json(images);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  res.json([]);
 });
 
 // 5b. POST /api/upload: Upload base64 image to Cloudinary
@@ -274,11 +275,30 @@ app.post('/api/upload', async (req, res) => {
       return res.status(400).json({ error: 'Data URL image string is required' });
     }
 
-    const result = await cloudinary.uploader.upload(file, {
-      folder: 'ai-video-storyboards',
-      resource_type: 'auto'
-    });
+    // Retry helper with exponential backoff for transient network errors (ECONNRESET, etc.)
+    const uploadWithRetry = async (maxAttempts = 3) => {
+      let lastError;
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          const result = await cloudinary.uploader.upload(file, {
+            folder: 'ai-video-storyboards',
+            resource_type: 'auto',
+            timeout: 120000 // 2 min timeout
+          });
+          return result;
+        } catch (err) {
+          lastError = err;
+          const isRetryable = err.code === 'ECONNRESET' || err.code === 'ETIMEDOUT' || err.code === 'ECONNREFUSED' || err.message?.includes('socket hang up');
+          if (!isRetryable || attempt === maxAttempts) throw err;
+          const delay = attempt * 1500; // 1.5s, 3s
+          console.warn(`[Cloudinary] Attempt ${attempt} failed (${err.code}), retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+      throw lastError;
+    };
 
+    const result = await uploadWithRetry(3);
     const secureUrl = result.secure_url;
     
     // Only persist uploaded image in database as general media if it is NOT a watermark logo
@@ -305,6 +325,78 @@ app.get('/api/media/previous', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// 5d. POST /api/media/generate-ai-image: Generate images using Gemini gemini-2.5-flash-image
+app.post('/api/media/generate-ai-image', async (req, res) => {
+  try {
+    const { prompt, count } = req.body;
+    if (!prompt || !prompt.trim()) {
+      return res.status(400).json({ error: 'Prompt is required' });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured' });
+    }
+
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    const genAI = new GoogleGenerativeAI(apiKey);
+
+    const imageCount = Math.min(parseInt(count) || 2, 4); // default 2, max 4
+    console.log(`[AI Image] Generating ${imageCount} image(s) with prompt: "${prompt}"`);
+
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash-image',
+      generationConfig: {
+        responseModalities: ['IMAGE', 'TEXT'],
+      }
+    });
+
+    const generateOne = async () => {
+      const result = await model.generateContent(prompt.trim());
+      const parts = result.response?.candidates?.[0]?.content?.parts || [];
+      const imagePart = parts.find(p => p.inlineData);
+      if (!imagePart) throw new Error('No image data in response');
+      return imagePart.inlineData;
+    };
+
+    // Generate sequentially to avoid quota burst
+    const uploadedUrls = [];
+    for (let i = 0; i < imageCount; i++) {
+      try {
+        const inlineData = await generateOne();
+        const { data: b64, mimeType } = inlineData;
+        const dataUrl = `data:${mimeType || 'image/png'};base64,${b64}`;
+        const uploadResult = await cloudinary.uploader.upload(dataUrl, {
+          folder: 'ai-generated-images',
+          resource_type: 'image'
+        });
+        await db.saveUploadedMedia(uploadResult.secure_url);
+        uploadedUrls.push(uploadResult.secure_url);
+        console.log(`[AI Image] Generated image ${i + 1}/${imageCount}`);
+      } catch (err) {
+        console.warn(`[AI Image] Image ${i + 1} failed:`, err.message);
+        // Stop if quota exceeded
+        if (err.message?.includes('429') || err.message?.includes('quota')) {
+          console.warn('[AI Image] Quota limit hit, stopping early');
+          break;
+        }
+      }
+    }
+
+    if (uploadedUrls.length === 0) {
+      throw new Error('Không thể tạo ảnh. Có thể hết quota API hoặc prompt bị từ chối. Thử lại sau ít phút.');
+    }
+
+    console.log(`[AI Image] Done: ${uploadedUrls.length}/${imageCount} images generated`);
+    res.json({ urls: uploadedUrls });
+
+  } catch (error) {
+    console.error('[AI Image] Error:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 // 6. PUT /api/projects/:id/scenes/:sceneId: Update scene details
 app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
@@ -377,7 +469,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    const { scriptText, visualStyle, traits, selectedMedia } = req.body;
+    const { scriptText, visualStyle, traits, selectedMedia, selectedBgMedia } = req.body;
     if (!scriptText) {
       return res.status(400).json({ error: 'Script text is required' });
     }
@@ -425,36 +517,20 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       const scene = rawScenes[i];
       const sceneId = `scene_${projectId}_${i}_${Math.random().toString(36).substr(2, 4)}`;
       
-      // Get images: use user selected media sequentially if available, otherwise search Unsplash
+      // Get images: use user selected media sequentially if available, otherwise leave empty
       let mediaList = [];
       if (Array.isArray(selectedMedia) && selectedMedia.length > 0) {
         const userImg = selectedMedia[i % selectedMedia.length];
         mediaList = [userImg];
-      } else {
-        if (Array.isArray(scene.keywords)) {
-          for (const kw of scene.keywords) {
-            try {
-              const searchQuery = visualStyle ? `${kw} ${visualStyle}` : kw;
-              mediaList = await media.searchImages(searchQuery);
-              if (mediaList && mediaList.length > 0) {
-                break;
-              }
-            } catch (err) {
-              console.warn(`[Unsplash] Search failed for keyword "${kw}":`, err.message);
-            }
-          }
-          if (mediaList.length === 0) {
-            try {
-              mediaList = await media.searchImages(visualStyle || "technology");
-            } catch (err) {
-              console.error("[Unsplash] Safe fallback search failed:", err.message);
-            }
-          }
-        } else {
-          const kw = scene.keywords || "technology";
-          const searchQuery = visualStyle ? `${kw} ${visualStyle}` : kw;
-          mediaList = await media.searchImages(searchQuery);
-        }
+      }
+
+      // Get background images: use user selected bg media sequentially if available
+      let bgMediaList = [];
+      let selectedBgMediaIndex = -1;
+      if (Array.isArray(selectedBgMedia) && selectedBgMedia.length > 0) {
+        const userBgImg = selectedBgMedia[i % selectedBgMedia.length];
+        bgMediaList = [userBgImg];
+        selectedBgMediaIndex = 0;
       }
 
       // Generate TTS Voiceover audio
@@ -485,6 +561,8 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
         placement: scene.placement,
         mediaList,
         selectedMediaIndex: 0,
+        bgMediaList,
+        selectedBgMediaIndex,
         theme: scene.theme || "default",
         accentColor: scene.accentColor || "#FFB7C5"
       });
@@ -689,9 +767,92 @@ app.get('/api/projects/:id/render/status/:renderId', (req, res) => {
   }
 });
 
+// Config API — read/write API keys (used by Electron Settings)
+app.get('/api/config', (req, res) => {
+  try {
+    const config = configService.readConfig();
+    // Mask secret values for security
+    const masked = {};
+    for (const [k, v] of Object.entries(config)) {
+      masked[k] = v ? '••••••••' : '';
+    }
+    res.json({ configured: configService.isConfigured(), keys: masked });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post('/api/config', (req, res) => {
+  try {
+    const existing = configService.readConfig();
+    const updates = req.body || {};
+    // Merge: only update non-empty values sent from client
+    const merged = { ...existing };
+    for (const [k, v] of Object.entries(updates)) {
+      if (v && v !== '••••••••') {
+        merged[k] = v;
+      }
+    }
+    configService.writeConfig(merged);
+    configService.applyConfigToEnv(merged);
+    reconfigureCloudinary();
+    res.json({ success: true, message: 'Config saved and applied.' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/config/status', (req, res) => {
+  const fs = require('fs');
+  res.json({
+    configured: configService.isConfigured(),
+    hasGemini: !!process.env.GEMINI_API_KEY,
+    hasVbee: !!(process.env.VBEE_API_KEY && process.env.VBEE_APP_ID),
+    hasCloudinary: !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY),
+    hasOmnivoice: !!(process.env.OMNIVOICE_INFER_PATH && fs.existsSync(process.env.OMNIVOICE_INFER_PATH))
+  });
+});
+
 // Boot server
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, async () => {
   console.log(`Express Backend Server is running on port ${PORT}`);
+  try {
+    await db.initDb();
+  } catch (err) {
+    console.error('Failed to initialize SQLite database at startup:', err);
+  }
 });
 server.timeout = 600000; // 10 phút timeout để hỗ trợ các tác vụ AI và render video nặng
-// Reload themes sync
+
+// Graceful shutdown handling to prevent database locking issues
+function gracefulShutdown(signal) {
+  console.log(`Received ${signal}. Shutting down gracefully...`);
+  try {
+    db.closeDb();
+  } catch (err) {
+    console.error('Error closing database:', err.message);
+  }
+  
+  server.close(() => {
+    console.log('HTTP server closed.');
+    process.exit(0);
+  });
+
+  // Force exit after 2 seconds if server.close hangs
+  setTimeout(() => {
+    console.warn('Forcefully shutting down after timeout');
+    process.exit(1);
+  }, 2000);
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGUSR2', () => {
+  console.log('Received SIGUSR2 (nodemon restart).');
+  try {
+    db.closeDb();
+  } catch (err) {
+    console.error('Error closing database on nodemon restart:', err.message);
+  }
+  process.kill(process.pid, 'SIGUSR2');
+});
