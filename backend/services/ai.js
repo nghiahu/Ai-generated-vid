@@ -50,7 +50,7 @@ const PLANNER_SCHEMA = {
       },
       layoutId: {
         type: SchemaType.STRING,
-        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'CircularProgress', 'MetricShowcaseHook', 'Ending'."
+        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'CircularProgress', 'MetricShowcaseHook', 'MetricFocusShowcase', 'Ending'."
       },
       heading: {
         type: SchemaType.STRING,
@@ -247,12 +247,13 @@ Structure the sequence of scenes logically to build a story:
 1. MANDATORY VARIETY: You MUST NEVER use the exact same layoutId for consecutive scenes. Vary visual layouts across scenes to keep the video dynamic.
 2. Choose layoutId strictly according to scene content semantics:
 - **Comparison / Versus / Distinguish** (heading/voiceover contains "không phải là", "so sánh", "khác biệt", "vs", "versus", "so với"): MUST select BeforeAfterPanel, SplitProofBullet, VersusArena, or SplitBandChecklist.
-- **Metrics / Statistics / Numbers** (heading/voiceover contains "%", "tỷ đô", "con số", "tăng", "giảm", "doanh thu", "triệu"): MUST select HeroMetricCards, MetricCards, GridMetrics, CircularProgress, MetricShowcaseHook, or OpsMonitorHook.
+- **Metrics / Statistics / Numbers** (heading/voiceover contains "%", "tỷ đô", "con số", "tăng", "giảm", "doanh thu", "triệu"): MUST select HeroMetricCards, MetricCards, GridMetrics, CircularProgress, MetricShowcaseHook, MetricFocusShowcase, or OpsMonitorHook.
 - **Timeline / Milestones / Steps** (heading/voiceover contains "bước 1", "quy trình", "thời gian", "lộ trình"): MUST select TimelineBeamRail, IntroSignalStepsImages, or FlowchartTitle.
 - **Lists / Bullet Points / Items**: MUST select RankedImpactBullet, AIHubGrid1, SelectorWheelRadio, or SignalRailBullet.
 - **Radar / Monitoring / Scanning**: MUST select IntroRadarSignalImage or IntroMapPinsImage.
 - **Intro Hooks / Headlines (Scene 1)**: You MUST dynamically select and distribute your layout choices across different generations. Do not default to 'IntroBriefingCard' for every project. Choose based on the script's specific hook content:
   - 'MetricShowcaseHook': Use when the hook begins with key metrics, statistics, salary ranges (e.g. "lương 15 đến 20 triệu"), repository stars, or numbers, and showcases them in a dashboard metric counter.
+  - 'MetricFocusShowcase': Use when showcasing a specific technical/security metric (like "42 lăng kính ngôn ngữ", CVE mappings, code metrics) with side-by-side details, list of tools, and progress cards.
   - 'IntroBriefingCard': Use for general introductory statements or textual context briefings.
   - 'IntroBubbleImage': Use when the hook refers to a key focal object, icon, or person.
   - 'IntroCutoutHeadlineImage': Use for a punchy, headline-driven opening with an offset cutout image.

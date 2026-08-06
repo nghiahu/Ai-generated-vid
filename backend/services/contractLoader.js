@@ -108,6 +108,15 @@ const LAYOUT_CONTRACTS = {
     allowedPointTypes: ['badge_row', 'subheader', 'metric', 'card', 'terminal'],
     aiHint: 'Layout báo cáo chỉ số danh tiếng, repo hoặc lương dạng dashboard có hiệu ứng chạy số đôi hoặc số đơn.'
   },
+  MetricFocusShowcase: {
+    layoutId: 'MetricFocusShowcase',
+    family: 'Opening / Headline',
+    headingMaxChars: 45,
+    pointsCount: { min: 1, max: 6, default: 4 },
+    pointMaxChars: 50,
+    allowedPointTypes: ['badge_row', 'metric', 'card'],
+    aiHint: 'Layout chỉ số bảo mật/kỹ thuật cao, có số lớn màu cam kèm nhãn bên phải, hàng loạt pill chi tiết ở giữa và thẻ bảng tiến trình/chi phí ở dưới cùng.'
+  },
   FeedScrollHook: {
     layoutId: 'FeedScrollHook',
     family: 'Opening / Headline',
