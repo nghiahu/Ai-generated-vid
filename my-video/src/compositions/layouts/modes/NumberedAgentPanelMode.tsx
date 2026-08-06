@@ -72,21 +72,45 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
     easing: Easing.bezier(0.16, 1, 0.3, 1),
   });
 
-  // Card style helpers
+  // Card style helpers — contrast-aware
   const itemStyles: any[] = t.items?.itemStyles || []; // eslint-disable-line @typescript-eslint/no-explicit-any
   const getCardBg = (idx: number) => {
     const s = itemStyles[idx] || itemStyles[itemStyles.length - 1] || {};
-    if (s.useAccentBg) return `rgba(${rgb}, 0.18)`;
-    if (s.useSubtleThemeBg)
-      return styles.cardStyle?.background || "rgba(255,255,255,0.05)";
-    return "rgba(255,255,255,0.05)";
+    if (s.useAccentBg) {
+      // First card: solid accent tint
+      return isLight ? `rgba(${rgb}, 0.22)` : `rgba(${rgb}, 0.28)`;
+    }
+    if (s.useSubtleThemeBg) {
+      // Non-first cards: visible glass effect
+      return isLight
+        ? "rgba(255, 255, 255, 0.38)"
+        : "rgba(0, 0, 0, 0.35)";
+    }
+    return isLight ? "rgba(255,255,255,0.30)" : "rgba(0,0,0,0.25)";
   };
   const getCardBorder = (idx: number) => {
     const s = itemStyles[idx] || itemStyles[itemStyles.length - 1] || {};
-    if (s.useAccentBorder) return `1.5px solid rgba(${rgb}, 0.55)`;
-    if (s.useThemeBorder)
-      return styles.cardStyle?.border || "1px solid rgba(255,255,255,0.12)";
-    return "1px solid rgba(255,255,255,0.08)";
+    if (s.useAccentBorder) {
+      return `2px solid rgba(${rgb}, 0.7)`;
+    }
+    if (s.useThemeBorder) {
+      return isLight
+        ? "1.5px solid rgba(255, 255, 255, 0.65)"
+        : "1.5px solid rgba(255, 255, 255, 0.18)";
+    }
+    return isLight
+      ? "1px solid rgba(255,255,255,0.50)"
+      : "1px solid rgba(255,255,255,0.12)";
+  };
+  // Badge bg for non-first cards — visible on any background
+  const getBadgeBg = (idx: number) => {
+    if (idx === 0) return accentColor;
+    return isLight ? "rgba(255,255,255,0.55)" : `rgba(${rgb}, 0.22)`;
+  };
+  // Badge text color
+  const getBadgeColor = (idx: number) => {
+    if (idx === 0) return isLight ? "#000000" : "#ffffff";
+    return isLight ? accentColor : accentColor;
   };
 
   // Render highlight text — splits on hw and wraps in <strong>
@@ -204,20 +228,14 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
                   height: badgeSize,
                   minWidth: badgeSize,
                   borderRadius: "50%",
-                  background:
-                    idx === 0 ? accentColor : `rgba(${rgb}, 0.18)`,
-                  border: `2px solid rgba(${rgb}, 0.55)`,
+                  background: getBadgeBg(idx),
+                  border: idx === 0 ? `2px solid rgba(${rgb}, 0.7)` : `2px solid rgba(${rgb}, 0.45)`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontSize: badgeFontSize,
                   fontWeight: 900,
-                  color:
-                    idx === 0
-                      ? isLight
-                        ? "#000000"
-                        : "#ffffff"
-                      : accentColor,
+                  color: getBadgeColor(idx),
                   flexShrink: 0,
                   fontFamily: styles.fontFamily,
                 }}
