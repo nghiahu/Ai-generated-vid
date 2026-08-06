@@ -136,15 +136,6 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
     easing: Easing.bezier(0.16, 1, 0.3, 1)
   })) : null;
 
-  // Generate tick frames that speed up geometrically to match the count-up easing curve
-  const tickFrames: number[] = [];
-  let currentTick = countStart;
-  let gapValue = 8;
-  while (currentTick < countStart + 30) {
-    tickFrames.push(currentTick);
-    currentTick += Math.max(1, Math.round(gapValue));
-    gapValue *= 0.72;
-  }
 
   // Metallic shimmer sweep configuration
   const shimmerFrame = frame - 15; // Starts sweep slightly after heading mounts

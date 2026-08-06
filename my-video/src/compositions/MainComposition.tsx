@@ -384,6 +384,21 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
             ? getFullUrl(scene.bgMediaList[scene.selectedBgMediaIndex || 0])
             : "";
 
+        const layoutId = (() => {
+          if (scene.visualLayout) return scene.visualLayout;
+          if (scene.sceneIntent) {
+            const descriptors = {
+              pointCount: scene.points?.length || 0,
+              headingLength: scene.heading?.length || 0,
+              hasImage: !!imageUrl,
+              hasMetrics: scene.points?.some(p => p && p.type === "metric") || false,
+              hasTerminal: scene.points?.some(p => p && p.type === "terminal") || false,
+            };
+            return selectBestLayout(scene.sceneIntent, descriptors, LAYOUT_REGISTRY, scene.heading || scene.id || index.toString());
+          }
+          return "IntroMediaHero";
+        })();
+
         return (
           <Sequence
             key={scene.id || index}
@@ -407,21 +422,6 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
 
               {/* Render component-based dynamic layout resolving constraints */}
               {(() => {
-                const layoutId = (() => {
-                  if (scene.visualLayout) return scene.visualLayout;
-                  if (scene.sceneIntent) {
-                    const descriptors = {
-                      pointCount: scene.points?.length || 0,
-                      headingLength: scene.heading?.length || 0,
-                      hasImage: !!imageUrl,
-                      hasMetrics: scene.points?.some(p => p && p.type === "metric") || false,
-                      hasTerminal: scene.points?.some(p => p && p.type === "terminal") || false,
-                    };
-                    return selectBestLayout(scene.sceneIntent, descriptors, LAYOUT_REGISTRY, scene.heading || scene.id || index.toString());
-                  }
-                  return "IntroMediaHero";
-                })();
-
                 const flatThemeTokens = {
                   bg: vdeTokens.colors.background,
                   cardBg: vdeTokens.colors.cardBg,
@@ -502,12 +502,18 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
               );
             })()}
             {/* Play Ticking SFX for MetricShowcaseHook layout */}
-            {scene.visualLayout === "MetricShowcaseHook" && (() => {
+            {layoutId === "MetricShowcaseHook" && (() => {
+               const hasMetric = scene.points?.some((p) => {
+                const item = p as { type?: string; data?: { text?: string } };
+                return item && (item.type === "metric" || (item.data?.text && /\d+/.test(item.data.text)));
+              });
+              if (!hasMetric) return null;
+
               const countStart = Math.round(0.8 * fps);
               const tickFrames: number[] = [];
               let currentTick = countStart;
               let gapValue = 8;
-              while (currentTick < countStart + 30) {
+              while (currentTick < countStart + 30 && currentTick + 3 <= sceneDurationFrames) {
                 tickFrames.push(currentTick);
                 currentTick += Math.max(1, Math.round(gapValue));
                 gapValue *= 0.72;
