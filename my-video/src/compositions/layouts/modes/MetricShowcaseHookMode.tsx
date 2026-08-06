@@ -136,6 +136,16 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
     easing: Easing.bezier(0.16, 1, 0.3, 1)
   })) : null;
 
+  // Generate tick frames that speed up geometrically to match the count-up easing curve
+  const tickFrames: number[] = [];
+  let currentTick = countStart;
+  let gapValue = 8;
+  while (currentTick < countStart + 30) {
+    tickFrames.push(currentTick);
+    currentTick += Math.max(1, Math.round(gapValue));
+    gapValue *= 0.72;
+  }
+
   // Metallic shimmer sweep configuration
   const shimmerFrame = frame - 15; // Starts sweep slightly after heading mounts
   const shimmerPos = interpolate(shimmerFrame, [0, 45], [-100, 200], {
@@ -187,15 +197,16 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
 
   return (
     <div style={containerStyle}>
-      {/* Sound effect playing during count-up range counter ticking */}
-      {metricValue && (
-        <Sequence from={countStart} durationInFrames={30}>
+      {/* Sound effect playing during count-up range counter ticking (rapid clicks) */}
+      {metricValue && tickFrames.map((tickFrame, idx) => (
+        <Sequence key={idx} from={tickFrame} durationInFrames={3}>
           <Audio 
             src={staticFile("typewriter.mp3")} 
-            volume={0.6}
+            volume={0.35}
+            startFrom={10}
           />
         </Sequence>
-      )}
+      ))}
 
       {/* 1. Title / Heading (Left aligned, capitalized white with chrome metallic shimmer) */}
       {titleText && (
