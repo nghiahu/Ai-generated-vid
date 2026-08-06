@@ -2,7 +2,6 @@ import React from "react";
 import { useCurrentFrame, useVideoConfig, interpolate, Easing } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
-import { resolvePadding } from "./LayoutNestedRenderers";
 
 function parseNumbers(valueStr: string): { n1: number; n2: number | null; suffix: string } {
   if (!valueStr) return { n1: 0, n2: null, suffix: "" };
@@ -46,8 +45,8 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
   isLight,
   styles,
   fontScale,
-  paddingScale,
-  titleText
+  titleText,
+  highlightWords
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -122,109 +121,149 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
     easing: Easing.bezier(0.16, 1, 0.3, 1)
   })) : null;
 
-  const cardStyle: React.CSSProperties = {
-    borderRadius: "38px",
-    background: isLight
-      ? "rgba(255, 255, 255, 0.9)"
-      : "linear-gradient(rgba(24, 18, 8, 0.45), rgba(2, 6, 23, 0.28))",
-    border: isLight ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255,255,255,0.22)",
-    boxShadow: isLight
-      ? "0 28px 70px rgba(0,0,0,0.08)"
-      : `rgba(0,0,0,0.24) 0px 28px 70px, rgba(255,255,255,0.06) 0px 0px 0px 1px inset, rgba(${rgb},0.094) 0px 0px 34px`,
-    backdropFilter: "blur(8px) saturate(1.08)",
-    padding: resolvePadding("42px 46px 36px", paddingScale),
+  const cardText = cardComp?.data?.text || "";
+  let cardPrefix = cardText;
+  let cardSuffix = "";
+  if (cardText.includes("+")) {
+    const parts = cardText.split("+");
+    cardPrefix = parts[0].trim();
+    cardSuffix = "+ " + parts.slice(1).join("+").trim();
+  } else if (cardText.includes("-")) {
+    const parts = cardText.split("-");
+    cardPrefix = parts[0].trim();
+    cardSuffix = "- " + parts.slice(1).join("-").trim();
+  } else {
+    // If no split, check if there's a number prefix
+    const numPrefixMatch = cardText.match(/^(\d+\s*\w+)\s+(.*)$/);
+    if (numPrefixMatch) {
+      cardPrefix = numPrefixMatch[1];
+      cardSuffix = numPrefixMatch[2];
+    }
+  }
+
+  const containerStyle: React.CSSProperties = {
     width: "100%",
     maxWidth: t.container?.maxWidth || "940px",
     display: "flex",
     flexDirection: "column",
-    gap: "28px",
+    alignItems: "center",
+    gap: "32px",
     boxSizing: "border-box",
     zIndex: 5
   };
 
   return (
-    <AnimatedBlock animation="scale-in" delaySeconds={0.1}>
-      <div style={cardStyle}>
-        {/* Title / Heading */}
-        {titleText && (
+    <div style={containerStyle}>
+      {/* 1. Title / Heading */}
+      {titleText && (
+        <AnimatedBlock animation="slide-up" delaySeconds={0.15}>
           <div style={{
-            fontSize: `${Math.round(84 * fontScale)}px`,
-            lineHeight: 1.1,
+            fontSize: `${Math.round(108 * fontScale)}px`,
+            lineHeight: 0.95,
             fontWeight: 950,
-            letterSpacing: "-0.05em",
+            letterSpacing: "-0.07em",
             textAlign: "center",
-            color: isLight ? "#1e293b" : "rgb(248,250,252)",
+            textTransform: "uppercase",
+            color: isLight ? "#1e293b" : "#ffffff",
             fontFamily: styles.fontFamily,
-            textShadow: isLight ? "none" : `0 4px 16px rgba(${rgb}, 0.2)`
+            textShadow: isLight ? "none" : `0 4px 24px rgba(255, 255, 255, 0.18)`,
+            marginBottom: "10px",
+            width: "100%",
+            wordBreak: "break-word"
           }}>
             {titleText}
           </div>
-        )}
+        </AnimatedBlock>
+      )}
 
-        {/* Badges */}
-        {badgeComp && badgeComp.data?.badges && (
-          <div style={{ display: "flex", justifyContent: "center", gap: "10px", flexWrap: "wrap" }}>
-            {badgeComp.data.badges.map((badge: string, idx: number) => (
-              <span key={idx} style={{
-                borderRadius: "20px",
-                padding: "8px 16px",
-                background: isLight ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.08)",
-                border: `1px solid ${isLight ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.2)"}`,
-                color: accentColor,
-                fontWeight: 700,
-                fontSize: "18px",
-                fontFamily: styles.fontFamily
-              }}>
-                {badge}
-              </span>
-            ))}
+      {/* 2. Badges / Pills */}
+      {badgeComp && badgeComp.data?.badges && (
+        <AnimatedBlock animation="slide-up" delaySeconds={0.3}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "14px", flexWrap: "wrap", marginBottom: "10px" }}>
+            {badgeComp.data.badges.map((badge: string, idx: number) => {
+              const hasStar = badge.toLowerCase().includes("sao") || badge.toLowerCase().includes("star");
+              return (
+                <span key={idx} style={{
+                  borderRadius: "24px",
+                  padding: "10px 20px",
+                  background: isLight ? "rgba(0,0,0,0.04)" : "rgba(255,255,255,0.06)",
+                  border: `1px solid ${isLight ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.14)"}`,
+                  color: isLight ? "#334155" : "#e2e8f0",
+                  fontWeight: 800,
+                  fontSize: "20px",
+                  fontFamily: styles.fontFamily,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px"
+                }}>
+                  {hasStar && <span style={{ color: "#fbbf24" }}>★</span>}
+                  <span>{badge}</span>
+                </span>
+              );
+            })}
           </div>
-        )}
+        </AnimatedBlock>
+      )}
 
-        {/* Subheader / Highlight Alert Bar */}
-        {highlightComp && (
+      {/* 3. Subheader / Highlight Alert Bar */}
+      {highlightComp && (
+        <AnimatedBlock animation="slide-up" delaySeconds={0.45}>
           <div style={{
             alignSelf: "center",
             borderRadius: "16px",
-            border: `1px solid ${accentColor}`,
-            boxShadow: `0 0 15px rgba(${rgb}, 0.25)`,
-            padding: "12px 24px",
-            background: `rgba(${rgb}, 0.04)`,
-            color: isLight ? "#1e293b" : "rgb(248,250,252)",
-            fontSize: "20px",
-            fontWeight: 700,
+            border: `1.5px solid ${accentColor}`,
+            boxShadow: `0 0 20px rgba(${rgb}, 0.25)`,
+            padding: "14px 28px",
+            background: isLight ? `rgba(${rgb}, 0.05)` : "rgba(0,0,0,0.4)",
+            color: accentColor,
+            fontSize: "22px",
+            fontWeight: 800,
             textAlign: "center",
-            fontFamily: styles.fontFamily
+            fontFamily: styles.fontFamily,
+            letterSpacing: "0.02em",
+            width: "90%",
+            boxSizing: "border-box"
           }}>
             🔥 {highlightComp.data.text}
           </div>
-        )}
+        </AnimatedBlock>
+      )}
 
-        {/* Metric Area */}
-        {metricValue && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "10px 0" }}>
+      {/* 4. Metric Area (Big counter) */}
+      {metricValue && (
+        <AnimatedBlock animation="scale-in" delaySeconds={0.6}>
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: "15px",
+            marginBottom: "15px",
+            width: "100%"
+          }}>
             <div style={{
-              fontSize: `${Math.round(108 * fontScale)}px`,
+              fontSize: `${Math.round(128 * fontScale)}px`,
               lineHeight: 1,
               fontWeight: 950,
-              letterSpacing: "-0.07em",
+              letterSpacing: "-0.06em",
               color: accentColor,
               fontFamily: styles.fontFamily,
               display: "flex",
               alignItems: "baseline",
-              gap: "10px"
+              justifyContent: "center",
+              width: "100%",
+              textShadow: `0 8px 30px rgba(${rgb}, 0.25)`
             }}>
-              {/* Values */}
               <span>
                 {n2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN")}
               </span>
               {suffix && (
                 <span style={{
-                  fontSize: `${Math.round(48 * fontScale)}px`,
-                  fontWeight: 800,
-                  color: isLight ? "#475569" : "#94a3b8",
-                  letterSpacing: "normal",
-                  marginLeft: "8px"
+                  fontSize: `${Math.round(72 * fontScale)}px`,
+                  fontWeight: 900,
+                  color: accentColor,
+                  letterSpacing: "-0.02em",
+                  marginLeft: "12px",
+                  textTransform: "lowercase"
                 }}>
                   {suffix}
                 </span>
@@ -232,59 +271,91 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
             </div>
             {metricSubtext && (
               <div style={{
-                fontSize: "20px",
-                fontWeight: 800,
-                color: isLight ? "#64748b" : "#94a3b8",
-                textTransform: "uppercase",
-                letterSpacing: "0.15em",
-                marginTop: "12px",
-                fontFamily: styles.fontFamily
+                fontSize: "22px",
+                fontWeight: 700,
+                color: isLight ? "#475569" : "#94a3b8",
+                letterSpacing: "0.05em",
+                marginTop: "16px",
+                fontFamily: styles.fontFamily,
+                textAlign: "center"
               }}>
                 {metricSubtext}
               </div>
             )}
           </div>
-        )}
+        </AnimatedBlock>
+      )}
 
-        {/* Card Component */}
-        {cardComp && cardComp.data?.text && (
+      {/* 5. Secondary Info Card */}
+      {cardComp && cardText && (
+        <AnimatedBlock animation="slide-up" delaySeconds={0.75}>
           <div style={{
             borderRadius: "24px",
-            padding: "24px",
-            background: isLight ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.04)",
-            border: isLight ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255,255,255,0.12)",
-            boxShadow: "rgba(0,0,0,0.12) 0px 10px 24px",
-            color: isLight ? "#334155" : "#e2e8f0",
-            fontSize: "22px",
-            fontWeight: 700,
-            fontFamily: styles.fontFamily,
-            lineHeight: 1.3
+            padding: "26px 36px",
+            background: isLight ? "rgba(13, 148, 136, 0.05)" : "rgba(20, 184, 166, 0.08)",
+            border: `1px solid ${isLight ? "rgba(13, 148, 136, 0.2)" : "rgba(20, 184, 166, 0.2)"}`,
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: cardSuffix ? "space-between" : "center",
+            gap: "16px",
+            width: "90%",
+            maxWidth: "680px",
+            boxSizing: "border-box",
+            backdropFilter: "blur(8px)"
           }}>
-            💡 {cardComp.data.text}
+            <div style={{
+              fontSize: "32px",
+              fontWeight: 900,
+              color: isLight ? "#0d9488" : "#2dd4bf",
+              fontFamily: styles.fontFamily,
+              whiteSpace: "nowrap"
+            }}>
+              {cardPrefix}
+            </div>
+            {cardSuffix && (
+              <div style={{
+                fontSize: "18px",
+                fontWeight: 700,
+                color: isLight ? "#475569" : "#94a3b8",
+                fontFamily: styles.fontFamily,
+                lineHeight: 1.25,
+                textAlign: "left"
+              }}>
+                {cardSuffix}
+              </div>
+            )}
           </div>
-        )}
+        </AnimatedBlock>
+      )}
 
-        {/* Terminal Command Prompt */}
-        {terminalComp && terminalComp.data?.text && (
+      {/* 6. Terminal Prompt */}
+      {terminalComp && terminalComp.data?.text && (
+        <AnimatedBlock animation="slide-up" delaySeconds={0.9}>
           <div style={{
             borderRadius: "14px",
-            padding: "16px 20px",
-            background: "#090d16",
-            border: "1px solid #1e293b",
+            padding: "18px 24px",
+            background: "#080c14",
+            border: `1px solid ${accentColor}`,
+            boxShadow: `0 0 10px rgba(${rgb}, 0.15)`,
             fontFamily: "monospace",
-            fontSize: "18px",
-            color: "#38bdf8",
+            fontSize: "20px",
+            fontWeight: 700,
+            color: accentColor,
             display: "flex",
             alignItems: "center",
-            gap: "10px",
-            width: "100%",
-            boxSizing: "border-box"
+            gap: "12px",
+            width: "90%",
+            maxWidth: "600px",
+            boxSizing: "border-box",
+            marginTop: "10px"
           }}>
             <span style={{ color: "#f43f5e" }}>$</span>
             <span>{terminalComp.data.text}</span>
           </div>
-        )}
-      </div>
-    </AnimatedBlock>
+        </AnimatedBlock>
+      )}
+    </div>
   );
 };
