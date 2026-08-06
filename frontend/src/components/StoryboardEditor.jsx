@@ -802,11 +802,17 @@ export const StoryboardEditor = ({
     }
   };
 
-  const getCombinedMediaPool = (scene) => {
+  const getCombinedContentMediaPool = (scene) => {
     const list = [
       ...(scene.mediaList || []),
+      ...(selectedMedia || [])
+    ].filter(Boolean);
+    return Array.from(new Set(list));
+  };
+
+  const getCombinedBgMediaPool = (scene) => {
+    const list = [
       ...(scene.bgMediaList || []),
-      ...(selectedMedia || []),
       ...(selectedBgMedia || []),
       ...(config.bgMediaList || [])
     ].filter(Boolean);
@@ -2519,7 +2525,7 @@ export const StoryboardEditor = ({
                           Mặc định
                         </div>
 
-                        {getCombinedMediaPool(scene).map((imgUrl, imgIdx) => {
+                        {getCombinedContentMediaPool(scene).map((imgUrl, imgIdx) => {
                           const activeContentUrl = (scene.selectedMediaIndex !== -1 && scene.mediaList && scene.mediaList.length > 0) 
                             ? scene.mediaList[scene.selectedMediaIndex] 
                             : null;
@@ -2596,7 +2602,7 @@ export const StoryboardEditor = ({
                           Mặc định
                         </div>
 
-                        {getCombinedMediaPool(scene).map((imgUrl, imgIdx) => {
+                        {getCombinedBgMediaPool(scene).map((imgUrl, imgIdx) => {
                           const activeBgUrl = (scene.selectedBgMediaIndex !== -1 && scene.bgMediaList && scene.bgMediaList.length > 0) 
                             ? scene.bgMediaList[scene.selectedBgMediaIndex] 
                             : null;
