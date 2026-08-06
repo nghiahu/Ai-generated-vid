@@ -51,6 +51,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
   accentColor,
   rgb,
   isLight,
+  isVertical,
   styles,
   fontScale,
   highlightWords,
@@ -138,14 +139,26 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
 
   const containerStyle: React.CSSProperties = {
     width: "100%",
-    maxWidth: t.container?.maxWidth || "940px",
+    maxWidth: isVertical ? "100%" : (t.container?.maxWidth || "940px"),
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
-    gap: "28px",
+    gap: isVertical ? "52px" : "28px",
     boxSizing: "border-box",
     zIndex: 5,
-    paddingLeft: "20px"
+    paddingLeft: isVertical ? "32px" : "20px",
+    paddingRight: isVertical ? "32px" : "20px"
+  };
+
+  const resolvedCardStyle: React.CSSProperties = {
+    ...styles.cardStyle,
+    display: "flex",
+    flexDirection: "column",
+    gap: isVertical ? "28px" : "18px",
+    width: "100%",
+    maxWidth: "100%",
+    boxSizing: "border-box",
+    padding: isVertical ? "32px 40px" : "24px 30px"
   };
 
   return (
@@ -161,6 +174,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
             textRgba={accentColor}
             hasDot={true}
             dotRgba={accentColor}
+            fontSize={isVertical ? "20px" : "17px"}
             fontFamily={styles.fontFamily}
           />
         </AnimatedBlock>
@@ -174,20 +188,20 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "flex-start",
-            gap: "24px",
+            gap: isVertical ? "32px" : "24px",
             marginTop: "10px",
             marginBottom: "10px",
             width: "100%"
           }}>
-            {/* Left huge orange count-up number */}
+            {/* Left huge count-up number (accentColor from theme) */}
             <div style={{
-              fontSize: `${Math.round(210 * fontScale)}px`,
+              fontSize: isVertical ? `${Math.round(250 * fontScale)}px` : `${Math.round(210 * fontScale)}px`,
               lineHeight: 0.95,
               fontWeight: 950,
               letterSpacing: "-0.06em",
-              color: "#f97316", // Orange accent
+              color: accentColor,
               fontFamily: styles.fontFamily,
-              textShadow: "0 8px 32px rgba(249, 115, 22, 0.3)",
+              textShadow: isLight ? "none" : `0 8px 32px rgba(${rgb}, 0.35)`,
               display: "flex",
               alignItems: "baseline",
               flexShrink: 0
@@ -200,9 +214,9 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
                   </span>
                   {suffix && (
                     <span style={{
-                      fontSize: `${Math.round(110 * fontScale)}px`,
+                      fontSize: isVertical ? `${Math.round(130 * fontScale)}px` : `${Math.round(110 * fontScale)}px`,
                       fontWeight: 900,
-                      color: "#f97316",
+                      color: accentColor,
                       marginLeft: "8px",
                       textTransform: "lowercase"
                     }}>
@@ -211,7 +225,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
                   )}
                 </>
               ) : (
-                <span style={{ color: "#f97316" }}>{metricValue}</span>
+                <span style={{ color: accentColor }}>{metricValue}</span>
               )}
             </div>
 
@@ -219,14 +233,14 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
             {metricSubtext && (
               <AnimatedBlock animation="slide-left" delaySeconds={0.5}>
                 <div style={{
-                  fontSize: `${Math.round(52 * fontScale)}px`,
+                  fontSize: isVertical ? `${Math.round(64 * fontScale)}px` : `${Math.round(48 * fontScale)}px`,
                   fontWeight: 900,
-                  color: isLight ? "#1e293b" : "#f8fafc",
+                  color: isLight ? "#111111" : "#ffffff",
                   fontFamily: styles.fontFamily,
                   textAlign: "left",
                   lineHeight: 1.1,
                   letterSpacing: "-0.02em",
-                  maxWidth: "500px",
+                  maxWidth: isVertical ? "550px" : "450px",
                   wordBreak: "break-word"
                 }}>
                   {metricSubtext}
@@ -237,7 +251,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
         </AnimatedBlock>
       )}
 
-      {/* 3. Stacked Badges (Pills) */}
+      {/* 3. Stacked Badges (Pills using theme tokens) */}
       {badgeComps.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
           {badgeComps.map((badgeComp, bIdx) => {
@@ -247,15 +261,25 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
                 <div style={{ display: "flex", justifyContent: "flex-start", gap: "14px", flexWrap: "wrap", width: "100%" }}>
                   {badges.map((badge: string, idx: number) => {
                     const isOrangeRow = bIdx % 2 === 0;
+                    
+                    // Deriving colors to make pills highly readable and aligned with theme
+                    const pillColor = isOrangeRow ? accentColor : (isLight ? "#334155" : "#e2e8f0");
+                    const pillBg = isOrangeRow 
+                      ? (isLight ? "rgba(0, 0, 0, 0.04)" : `rgba(${rgb}, 0.08)`) 
+                      : (isLight ? "rgba(0, 0, 0, 0.02)" : "rgba(255, 255, 255, 0.04)");
+                    const pillBorder = isOrangeRow 
+                      ? `rgba(${rgb}, 0.25)` 
+                      : (isLight ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.14)");
+
                     return (
                       <span key={idx} style={{
                         borderRadius: "24px",
-                        padding: "10px 20px",
-                        background: isOrangeRow ? "rgba(249, 115, 22, 0.08)" : "rgba(20, 184, 166, 0.08)",
-                        border: `1px solid ${isOrangeRow ? "rgba(249, 115, 22, 0.25)" : "rgba(20, 184, 166, 0.25)"}`,
-                        color: isOrangeRow ? "#f97316" : "#2dd4bf",
+                        padding: isVertical ? "12px 24px" : "8px 18px",
+                        background: pillBg,
+                        border: `1.5px solid ${pillBorder}`,
+                        color: pillColor,
                         fontWeight: 800,
-                        fontSize: "22px",
+                        fontSize: isVertical ? "26px" : "20px",
                         fontFamily: styles.fontFamily,
                         display: "inline-flex",
                         alignItems: "center"
@@ -274,20 +298,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
       {/* 4. Bottom Progress Card Container */}
       {cardComps.length > 0 && (
         <AnimatedBlock animation="slide-up" delaySeconds={0.7}>
-          <div style={{
-            background: isLight ? "rgba(0, 0, 0, 0.025)" : "rgba(10, 20, 35, 0.5)",
-            border: isLight ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: "24px",
-            padding: "24px 30px",
-            boxShadow: "rgba(0, 0, 0, 0.16) 0px 10px 30px",
-            backdropFilter: "blur(12px)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "18px",
-            width: "100%",
-            maxWidth: "760px",
-            boxSizing: "border-box"
-          }}>
+          <div style={resolvedCardStyle}>
             {cardComps.map((cardComp, idx) => {
               const cardText = cardComp.data?.text || "";
               const cardValue = cardComp.data?.value || "";
@@ -318,10 +329,13 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
                 { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.bezier(0.16, 1, 0.3, 1) }
               );
 
-              // Staggered premium visual colors
-              const progressColors = ["#f97316", "#ef4444", "#2dd4bf", "#fbbf24"];
-              const progressBarColor = progressColors[idx % progressColors.length];
-              const progressRgb = idx % 4 === 0 ? "249, 115, 22" : (idx % 4 === 1 ? "239, 68, 68" : (idx % 4 === 2 ? "45, 212, 191" : "251, 191, 36"));
+              // Colors based on theme accent (first bar uses accentColor, second is standard soft red/coral alert)
+              const progressBarColor = idx === 0 
+                ? accentColor 
+                : (isLight ? "#c2410c" : "#f87171"); // Accent or Soft red/coral for alert
+              const progressRgb = idx === 0 
+                ? rgb 
+                : "239, 68, 68";
 
               return (
                 <div key={cardComp.id} style={{ display: "grid", gap: "8px", width: "100%" }}>
@@ -332,15 +346,15 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
                     width: "100%"
                   }}>
                     <span style={{
-                      fontSize: "22px",
+                      fontSize: isVertical ? "26px" : "22px",
                       fontWeight: 800,
-                      color: isLight ? "#1e293b" : "#f8fafc",
+                      color: isLight ? "#111111" : "#ffffff",
                       fontFamily: styles.fontFamily
                     }}>
                       {cardText}
                     </span>
                     <span style={{
-                      fontSize: "20px",
+                      fontSize: isVertical ? "24px" : "20px",
                       fontWeight: 900,
                       color: progressBarColor,
                       fontFamily: styles.fontFamily
@@ -351,9 +365,9 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
                   
                   {/* Progress Track */}
                   <div style={{
-                    height: "10px",
+                    height: isVertical ? "14px" : "10px",
                     borderRadius: "6px",
-                    background: isLight ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.07)",
+                    background: isLight ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.08)",
                     overflow: "hidden",
                     position: "relative",
                     width: "100%"
@@ -367,7 +381,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
                       width: `${barFill}%`,
                       borderRadius: "6px",
                       background: progressBarColor,
-                      boxShadow: `0 0 8px rgba(${progressRgb}, 0.4)`
+                      boxShadow: isLight ? "none" : `0 0 8px rgba(${progressRgb}, 0.4)`
                     }} />
                   </div>
                 </div>
