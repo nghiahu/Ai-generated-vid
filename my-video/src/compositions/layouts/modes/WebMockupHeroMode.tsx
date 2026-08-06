@@ -96,7 +96,7 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
     zIndex: 5,
     paddingLeft: isVertical ? "32px" : "20px",
     paddingRight: isVertical ? "32px" : "20px",
-    marginTop: isVertical ? "240px" : "80px"
+    marginTop: isVertical ? "320px" : "120px"
   };
 
   const isDefaultImage = (url: string) => {
@@ -175,7 +175,7 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: isVertical ? "80px" : "36px"
+        marginTop: isVertical ? "120px" : "48px"
       }}>
         <div style={{
           width: "100%",
