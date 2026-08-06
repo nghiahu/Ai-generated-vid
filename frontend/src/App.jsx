@@ -13,6 +13,7 @@ import {
   useGenerateStoryboard
 } from "./hooks/useProjectQueries";
 import { SkeletonLoader } from "./components/SkeletonLoader";
+import { SettingsPage } from "./components/SettingsPage";
 import "./App.css";
 
 const Dashboard = React.lazy(() => import("./components/Dashboard").then(m => ({ default: m.Dashboard })));
@@ -309,7 +310,7 @@ function App() {
     }
   };
 
-  const handleGenerateStoryboard = async (scriptText, visualStyle, selectedMedia = []) => {
+  const handleGenerateStoryboard = async (scriptText, visualStyle, selectedMedia = [], selectedBgMedia = []) => {
     let projectId = selectedProjectId;
     let traits = [];
 
@@ -359,7 +360,8 @@ function App() {
         scriptText,
         visualStyle,
         traits,
-        selectedMedia
+        selectedMedia,
+        selectedBgMedia
       });
 
       // Refetch details
@@ -423,8 +425,8 @@ function App() {
     }
   };
 
-  // Main navigation sidebar layout for PROJECTS, STUDIO, BATCH views
-  if (!selectedProjectId || view === "PROJECTS" || view === "STUDIO" || view === "BATCH") {
+  // Main navigation sidebar layout for PROJECTS, STUDIO, BATCH, SETTINGS views
+  if (!selectedProjectId || view === "PROJECTS" || view === "STUDIO" || view === "BATCH" || view === "SETTINGS") {
     return (
       <div style={{ display: "flex", height: "100vh", overflow: "hidden", backgroundColor: "var(--bg-secondary)" }}>
         {/* Left Sidebar */}
@@ -564,6 +566,33 @@ function App() {
                 📁 Dự án
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => { setSelectedProjectId(null); setView("SETTINGS"); }}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  background: view === "SETTINGS" ? "rgba(99, 102, 241, 0.12)" : "none",
+                  border: "none",
+                  boxShadow: "none",
+                  color: view === "SETTINGS" ? "#6366f1" : "var(--text-secondary)",
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: view === "SETTINGS" ? "700" : "600",
+                  textTransform: "none",
+                  letterSpacing: "0",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  cursor: "pointer"
+                }}
+                onMouseEnter={(e) => { if (view !== "SETTINGS") e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.04)"; }}
+                onMouseLeave={(e) => { if (view !== "SETTINGS") e.currentTarget.style.backgroundColor = "transparent"; }}
+              >
+                ⚙️ Cài đặt API
+              </button>
+            </li>
           </ul>
         </nav>
 
@@ -604,6 +633,8 @@ function App() {
                   setView("PROJECTS");
                 }}
               />
+            ) : view === "SETTINGS" ? (
+              <SettingsPage onBack={() => setView("PROJECTS")} />
             ) : (
               <Dashboard
                 projects={projects}

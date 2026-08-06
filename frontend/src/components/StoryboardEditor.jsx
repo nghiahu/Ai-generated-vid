@@ -714,7 +714,7 @@ export const StoryboardEditor = ({
 
   const handleConfirmStyle = () => {
     setShowStyleModal(false);
-    onGenerateStoryboard(scriptText, selectedStyle, selectedMedia);
+    onGenerateStoryboard(scriptText, selectedStyle, selectedMedia, selectedBgMedia);
   };
 
   const handleFieldChange = (sceneId, field, value) => {
@@ -2462,17 +2462,21 @@ export const StoryboardEditor = ({
                   </div>
 
                   {/* Split Panel: Content Media on Left, Background Media on Right */}
-                  <div style={{
-                    borderTop: "1.5px solid #000000",
-                    paddingTop: "16px",
-                    marginTop: "8px",
-                    display: "grid",
-                    gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
-                    gap: "24px",
-                    boxSizing: "border-box"
-                  }}>
-                    {/* 1. Content Media Search & Suggestion Panel */}
-                    <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+                  {(() => {
+                    const supportsMockup = !["MetricShowcaseHook", "VignelliQuote", "StatsBanner", "Ending", "SplitBandChecklist", "IntegrationCloud"].includes(scene.visualLayout);
+                    return (
+                      <div style={{
+                        borderTop: "1.5px solid #000000",
+                        paddingTop: "16px",
+                        marginTop: "8px",
+                        display: "grid",
+                        gridTemplateColumns: supportsMockup ? "minmax(0, 1fr) minmax(0, 1fr)" : "minmax(0, 1fr)",
+                        gap: "24px",
+                        boxSizing: "border-box"
+                      }}>
+                        {/* 1. Content Media Search & Suggestion Panel */}
+                        {supportsMockup && (
+                          <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
                         <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Content Media (mockup)</label>
                         <button
@@ -2540,9 +2544,16 @@ export const StoryboardEditor = ({
                         })}
                       </div>
                     </div>
+                  )}
 
-                    {/* 2. Background Media Search & Suggestion Panel */}
-                    <div style={{ display: "flex", flexDirection: "column", borderLeft: "1.5px solid #000000", paddingLeft: "24px", minWidth: 0 }}>
+                  {/* 2. Background Media Search & Suggestion Panel */}
+                  <div style={{ 
+                    display: "flex", 
+                    flexDirection: "column", 
+                    borderLeft: supportsMockup ? "1.5px solid #000000" : "none", 
+                    paddingLeft: supportsMockup ? "24px" : "0px", 
+                    minWidth: 0 
+                  }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
                         <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Background (Nền cảnh)</label>
                         <button
@@ -2611,7 +2622,9 @@ export const StoryboardEditor = ({
                       </div>
                     </div>
                   </div>
-                </div>
+                );
+              })()}
+            </div>
               </article>
             );
           })}
