@@ -50,7 +50,7 @@ const PLANNER_SCHEMA = {
       },
       layoutId: {
         type: SchemaType.STRING,
-        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'CircularProgress', 'MetricShowcaseHook', 'MetricFocusShowcase', 'WebMockupHero', 'Ending'."
+        description: "The explicit Remotion Layout ID matching scene intent. Examples: 'IntroBriefingCard', 'IntroBubbleImage', 'BeforeAfterPanel', 'RankedImpactBullet', 'SplitProofBullet', 'HeroMetricCards', 'MetricCards', 'VersusArena', 'SplitBandChecklist', 'Pullquote', 'TimelineBeamRail', 'CircularProgress', 'MetricShowcaseHook', 'MetricFocusShowcase', 'WebMockupHero', 'NumberedAgentPanel', 'Ending'."
       },
       heading: {
         type: SchemaType.STRING,
@@ -261,6 +261,7 @@ Structure the sequence of scenes logically to build a story:
   - 'AppCardConcept': Use when introducing software, tech tools, mobile/desktop mockups, or platforms.
   - 'IntroFullImage': Use for high-impact visual hooks requiring a full-screen background image.
 - **Ending / CTA**: Select Ending, NextStepEnding, BrandOutro, or ContactCardEnding.
+- **Numbered Steps / Agent Panels**: Use 'NumberedAgentPanel' when listing 2-4 sequential steps, AI agents, roles, or phases that each perform a specific named action (e.g. listing reviewers, pipeline stages, sequential checklist steps).
   `;
 
   const userPrompt = `

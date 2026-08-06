@@ -126,6 +126,15 @@ const LAYOUT_CONTRACTS = {
     allowedPointTypes: ['badge_row', 'card'],
     aiHint: 'Layout trình diễn trình duyệt web bồng bềnh. QUAN TRỌNG: Luôn tạo ít nhất 1 point có type "badge_row" với field "badges" là mảng 2-4 chuỗi ngắn (ví dụ: ["★ 3.2K stars", "BY AuthorName", "LICENSE MIT", "v2.1"]). Các badge phải lấy nội dung thực từ kịch bản (tên tác giả, số sao, license, phiên bản). Card thứ hai nếu có thì dùng type "card" với text là mô tả ngắn về sản phẩm/repo hiển thị trong mockup.'
   },
+  NumberedAgentPanel: {
+    layoutId: 'NumberedAgentPanel',
+    family: 'List / Step',
+    headingMaxChars: 50,
+    pointsCount: { min: 2, max: 4, default: 3 },
+    pointMaxChars: 40,
+    allowedPointTypes: ['card'],
+    aiHint: 'Layout liệt kê bước/agent có số thứ tự (①②③④). QUAN TRỌNG: Mỗi point PHẢI dùng type "card". Field "text" là tên ngắn gọn (≤5 từ, ví dụ: "Security Architect", "Penetration Tester"). Field "subtext" là mô tả hành động cụ thể (≤8 từ, ví dụ: "soi lại thiết kế bản vá"). Lấy nội dung thực từ kịch bản.'
+  },
   FeedScrollHook: {
     layoutId: 'FeedScrollHook',
     family: 'Opening / Headline',
