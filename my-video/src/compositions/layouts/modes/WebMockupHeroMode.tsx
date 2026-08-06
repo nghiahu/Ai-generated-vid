@@ -73,16 +73,12 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
   });
 
   // 3D angles & floating sway values
-  const targetRotX = 12 * introProgress;
-  const targetRotY = -8 * introProgress;
-  const targetRotZ = 2 * introProgress;
+  const targetRotX = 14 * introProgress;
 
   const floatY = Math.sin(frame / 22) * 10 * introProgress;
   const swayRotX = Math.sin(frame / 32) * 1.5 * introProgress;
-  const swayRotY = Math.cos(frame / 32) * 1.5 * introProgress;
 
   const currentRotX = targetRotX + swayRotX;
-  const currentRotY = targetRotY + swayRotY;
 
   // Responsive sizes based on screen orientation
   const browserHeight = isVertical ? "520px" : "480px";
@@ -99,7 +95,7 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
     zIndex: 5,
     paddingLeft: isVertical ? "32px" : "20px",
     paddingRight: isVertical ? "32px" : "20px",
-    marginTop: isVertical ? "100px" : "40px"
+    marginTop: isVertical ? "160px" : "60px"
   };
 
   const isDefaultImage = (url: string) => {
@@ -178,7 +174,7 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: "10px"
+        marginTop: isVertical ? "52px" : "24px"
       }}>
         <div style={{
           width: "100%",
@@ -192,7 +188,7 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
             ? "0 30px 60px rgba(0, 0, 0, 0.12)"
             : `0 40px 90px rgba(0, 0, 0, 0.65), 0 0 40px rgba(${rgb}, 0.15)`,
           backgroundColor: isLight ? "#ffffff" : "#0A0B10",
-          transform: `perspective(1200px) scale(${scale}) translateY(${floatY}px) rotateX(${currentRotX}deg) rotateY(${currentRotY}deg) rotateZ(${targetRotZ}deg)`,
+          transform: `perspective(1200px) scale(${scale}) translateY(${floatY}px) rotateX(${currentRotX}deg)`,
           transformStyle: "preserve-3d",
           position: "relative"
         }}>
