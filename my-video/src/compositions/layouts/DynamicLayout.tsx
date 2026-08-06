@@ -56,7 +56,6 @@ export interface DynamicLayoutProps {
   highlightWords?: string[];
   config?: any;
   bgImageUrl?: string;
-  disableBackground?: boolean;
 }
 
 export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
@@ -73,8 +72,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
   category,
   highlightWords,
   config,
-  bgImageUrl,
-  disableBackground = false
+  bgImageUrl
 }) => {
   const theme = visualStyle || defaultTheme;
   const frame = useCurrentFrame();
@@ -287,7 +285,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
     imageUrl,
     imageScale,
     renderComponent,
-    renderBackground: disableBackground ? () => null : renderBackground,
+    renderBackground,
     visualStyle,
     fontScale,
     paddingScale,
