@@ -46,7 +46,8 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
   styles,
   fontScale,
   titleText,
-  highlightWords
+  highlightWords,
+  voiceover
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -102,6 +103,55 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
     c.data?.text &&
     !c.data.text.startsWith("$")
   );
+
+  // Extract extra cards from voiceover if they are missing
+  const extraCardTexts: string[] = [];
+  if (voiceover) {
+    const sentences = voiceover
+      .split(/[.?!]/)
+      .map(s => s.trim())
+      .filter(s => s.length > 5);
+      
+    // Look at subsequent sentences for key phrases
+    for (let i = 1; i < sentences.length; i++) {
+      let sentence = sentences[i];
+      // Clean up common leading Vietnamese filler/conjunctions
+      sentence = sentence.replace(/^(đây là|nhưng|và|hoặc|kiểu|như|là|cái này)\s+/i, "");
+      
+      // Smart shortening to punchy phrases matching user's specific request
+      if (sentence.toLowerCase().includes("không phải chuyện bịa")) {
+        sentence = "Không phải chuyện bịa đâu";
+      } else if (sentence.toLowerCase().includes("mức lương thực tế")) {
+        sentence = "Mức lương thực tế";
+      } else {
+        // Shorten to first clause if it has commas
+        if (sentence.includes(",")) {
+          sentence = sentence.split(",")[0].trim();
+        }
+      }
+      
+      // Capitalize first letter
+      sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+      
+      // Ensure sentence is punchy (under 60 chars) and not already displayed in another card or title
+      const cleanLower = sentence.toLowerCase();
+      const isAlreadyInTitle = titleText?.toLowerCase().includes(cleanLower);
+      const isAlreadyInMetric = metricSubtext?.toLowerCase().includes(cleanLower) || metricValue?.toLowerCase().includes(cleanLower);
+      const isAlreadyInCards = cardComps.some(c => c.data?.text?.toLowerCase().includes(cleanLower));
+      
+      if (sentence.length < 60 && !isAlreadyInTitle && !isAlreadyInMetric && !isAlreadyInCards) {
+        if (!extraCardTexts.includes(sentence)) {
+          extraCardTexts.push(sentence);
+        }
+      }
+    }
+  }
+
+  // Combine manual card components and extracted fallback cards
+  const allCardsText = [
+    ...cardComps.map(c => c.data?.text || ""),
+    ...extraCardTexts
+  ].filter(text => text.trim() !== "");
 
   // Animations start config
   const countStart = Math.round(0.8 * fps);
@@ -272,8 +322,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
       )}
 
       {/* 5. Secondary Info Cards (Stack of multiple cards, Teal/Mint Green colored) */}
-      {cardComps.map((cardComp, idx) => {
-        const cardText = cardComp.data?.text || "";
+      {allCardsText.map((cardText, idx) => {
         let cardPrefix = cardText;
         let cardSuffix = "";
         if (cardText.includes("+")) {
@@ -285,14 +334,14 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
           cardPrefix = parts[0].trim();
           cardSuffix = "- " + parts.slice(1).join("-").trim();
         } else {
-          const numPrefixMatch = cardText.match(/^(\d+\s*\w+)\s+(.*)$/);
+          const numPrefixMatch = cardText.match(/^([a-zA-Z0-9\s\u00C0-\u1EF9]+?)\s*:\s*(.*)$/) || cardText.match(/^(\d+\s*\w+)\s+(.*)$/);
           if (numPrefixMatch) {
             cardPrefix = numPrefixMatch[1];
             cardSuffix = numPrefixMatch[2];
           }
         }
         return (
-          <AnimatedBlock key={cardComp.id} animation="slide-up" delaySeconds={0.7 + idx * 0.15}>
+          <AnimatedBlock key={idx} animation="slide-up" delaySeconds={0.7 + idx * 0.15}>
             <div style={{
               borderRadius: "24px",
               padding: "20px 30px",
@@ -337,7 +386,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
 
       {/* 6. Terminal Prompt (Left aligned) */}
       {terminalComp && terminalComp.data?.text && (
-        <AnimatedBlock animation="slide-up" delaySeconds={0.9 + cardComps.length * 0.15}>
+        <AnimatedBlock animation="slide-up" delaySeconds={0.9 + allCardsText.length * 0.15}>
           <div style={{
             borderRadius: "14px",
             padding: "18px 24px",
