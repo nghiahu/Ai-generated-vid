@@ -73,12 +73,14 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
   });
 
   // 3D angles & floating sway values
-  const targetRotX = 14 * introProgress;
+  // The mockup starts standing flat/straight (0 degrees) and slowly tilts/rotates upwards to 10 degrees.
+  const currentRotX = interpolate(frame, [10, 95], [0, 10], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.out(Easing.quad)
+  });
 
-  const floatY = Math.sin(frame / 22) * 10 * introProgress;
-  const swayRotX = Math.sin(frame / 32) * 1.5 * introProgress;
-
-  const currentRotX = targetRotX + swayRotX;
+  const floatY = Math.sin(frame / 25) * 6 * introProgress;
 
   // Responsive sizes based on screen orientation
   const browserHeight = isVertical ? "520px" : "480px";
@@ -95,7 +97,7 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
     zIndex: 5,
     paddingLeft: isVertical ? "32px" : "20px",
     paddingRight: isVertical ? "32px" : "20px",
-    marginTop: isVertical ? "160px" : "60px"
+    marginTop: isVertical ? "240px" : "80px"
   };
 
   const isDefaultImage = (url: string) => {
@@ -174,7 +176,7 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: isVertical ? "52px" : "24px"
+        marginTop: isVertical ? "80px" : "36px"
       }}>
         <div style={{
           width: "100%",
