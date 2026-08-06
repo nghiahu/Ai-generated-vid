@@ -1,0 +1,65 @@
+{
+  "id": "NumberedAgentPanel",
+  "name": "Numbered Agent Panel",
+  "family": "list",
+  "layoutMode": "numbered_agent_panel",
+  "container": {
+    "paddingTop": "280px",
+    "maxWidth": "960px",
+    "gap": "20px"
+  },
+  "categoryPill": {
+    "text": "BƯỚC"
+  },
+  "accentDivider": null,
+  "title": {
+    "fontSize": "80px",
+    "fontWeight": "800",
+    "letterSpacing": "-0.04em",
+    "marginBottom": "40px",
+    "useAccentTextShadow": true
+  },
+  "positions": [],
+  "items": {
+    "rotations": [0, 0, 0],
+    "itemStyles": [
+      {
+        "v2": true,
+        "fontSize": "26px",
+        "fontWeight": "800",
+        "borderRadius": "20px",
+        "padding": "22px 24px",
+        "useAccentBg": true,
+        "useAccentBorder": true,
+        "useAccentShadow": true,
+        "useSubtleThemeBg": false,
+        "useThemeBorder": false
+      },
+      {
+        "v2": true,
+        "fontSize": "26px",
+        "fontWeight": "800",
+        "borderRadius": "20px",
+        "padding": "22px 24px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      },
+      {
+        "v2": true,
+        "fontSize": "26px",
+        "fontWeight": "800",
+        "borderRadius": "20px",
+        "padding": "22px 24px",
+        "useAccentBg": false,
+        "useAccentBorder": false,
+        "useAccentShadow": false,
+        "useSubtleThemeBg": true,
+        "useThemeBorder": true
+      }
+    ]
+  },
+  "subtitle": null
+}
