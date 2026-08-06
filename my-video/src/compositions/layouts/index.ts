@@ -73,6 +73,7 @@ import mediaShowcaseCardJson from "./templates/Opening-Headline/media_showcase_c
 import metricShowcaseHookJson from "./templates/Opening-Headline/metric_showcase_hook.json";
 import metricFocusShowcaseJson from "./templates/Opening-Headline/metric_focus_showcase.json";
 import webMockupHeroJson from "./templates/Opening-Headline/web_mockup_hero.json";
+import numberedAgentPanelJson from "./templates/List-Step/numbered_agent_panel.json";
 
 Object.entries(templates).forEach(([path, module]: [string, any]) => {
   const json = module.default || module;
@@ -98,7 +99,8 @@ const staticTemplates = [
   mediaShowcaseCardJson,
   metricShowcaseHookJson,
   metricFocusShowcaseJson,
-  webMockupHeroJson
+  webMockupHeroJson,
+  numberedAgentPanelJson
 ];
 
 staticTemplates.forEach((json: any) => {
