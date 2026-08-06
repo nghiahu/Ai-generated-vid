@@ -110,7 +110,7 @@ const SceneContainer: React.FC<{
 }> = ({ children, durationInFrames, disableTransitions = false }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const transitionFrames = Math.round(fps * 0.35); // Smooth 0.35s transition duration
+  const transitionFrames = Math.round(fps * 0.18); // Very short 0.18s to minimize flash
 
   // Default steady state
   let opacity = 1;
@@ -119,17 +119,15 @@ const SceneContainer: React.FC<{
   if (!disableTransitions) {
     if (frame < transitionFrames) {
       const t = Math.min(1, Math.max(0, frame / transitionFrames));
-      // Cubic Ease-out for smooth UI card entrance
-      const progress = 1 - Math.pow(1 - t, 3);
-      opacity = progress;
-      scale = 0.96 + 0.04 * progress;
+      const progress = 1 - Math.pow(1 - t, 2);
+      opacity = 0.7 + 0.3 * progress; // Start at 0.7 opacity (not 0) to reduce dark flash
+      scale = 0.985 + 0.015 * progress;
     } else if (frame > durationInFrames - transitionFrames) {
       const exitFrame = frame - (durationInFrames - transitionFrames);
       const t = Math.min(1, Math.max(0, exitFrame / transitionFrames));
-      // Cubic Ease-in for smooth UI card exit over continuous backdrop
       const progress = Math.pow(t, 2);
-      opacity = 1 - progress;
-      scale = 1.0 + 0.02 * progress;
+      opacity = 1 - progress * 0.6; // Exit to 0.4 opacity (not 0) to reduce dark flash
+      scale = 1.0 + 0.01 * progress;
     }
   }
 
