@@ -513,20 +513,22 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
               const tickFrames: number[] = [];
               let currentTick = countStart;
               let gapValue = 8;
-              while (currentTick < countStart + 30 && currentTick + 3 <= sceneDurationFrames) {
+              while (currentTick < countStart + 30 && currentTick < sceneDurationFrames) {
                 tickFrames.push(currentTick);
                 currentTick += Math.max(1, Math.round(gapValue));
                 gapValue *= 0.72;
               }
-              return tickFrames.map((tickFrame, idx) => (
-                <Sequence key={`tick_${idx}`} from={tickFrame} durationInFrames={3}>
-                  <Audio 
-                    src={staticFile("typewriter.mp3")} 
-                    volume={0.35}
-                    startFrom={10}
-                  />
-                </Sequence>
-              ));
+              return tickFrames.map((tickFrame, idx) => {
+                const duration = Math.max(1, sceneDurationFrames - tickFrame);
+                return (
+                  <Sequence key={`tick_${idx}`} from={tickFrame} durationInFrames={duration}>
+                    <Audio 
+                      src={staticFile("typewriter.mp3")} 
+                      volume={0.65}
+                    />
+                  </Sequence>
+                );
+              });
             })()}
           </Sequence>
         );
