@@ -2463,31 +2463,7 @@ export const StoryboardEditor = ({
 
                   {/* Split Panel: Content Media on Left, Background Media on Right */}
                   {(() => {
-                    const layoutsSupportingMockup = [
-                      "IntroBubbleImage",
-                      "IntroCutoutHeadlineImage",
-                      "IntroFullImage",
-                      "IntroMapPinsImage",
-                      "IntroRadarSignalImage",
-                      "AppCardConcept",
-                      "AppShowcaseTitle",
-                      "IntroChapterStack",
-                      "IntroEvidenceReadlineImage",
-                      "IntroEvidenceScanlineImage",
-                      "IntroEvidenceTimelineImage",
-                      "IntroMetricPillImage",
-                      "IntroSignalStepsImages",
-                      "BeforeAfterPanel",
-                      "VersusArena",
-                      "SplitProofBullet",
-                      "SelectorWheelRadio",
-                      "RankedImpactBullet",
-                      "IntroMediaHero",
-                      "MediaCard",
-                      "OpsMonitorHook",
-                      "FeedScrollHook"
-                    ];
-                    const supportsMockup = layoutsSupportingMockup.includes(scene.visualLayout);
+                    const supportsMockup = normalizeFamily(scene.layoutFamily, scene.visualLayout) === "Media";
                     return (
                       <div style={{
                         borderTop: "1.5px solid #000000",
