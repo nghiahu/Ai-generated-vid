@@ -311,7 +311,8 @@ const LAYOUTS_BY_FAMILY = {
   ],
   "Media": [
     { value: "IntroMediaHero", label: "Intro Media Hero" },
-    { value: "MediaCard", label: "Media Showcase Card" }
+    { value: "MediaCard", label: "Media Showcase Card" },
+    { value: "WebMockupHero", label: "Web Mockup Hero" }
   ],
   "Ending": [
     { value: "BottomAnchorOutro", label: "Bottom Anchor Outro" },
