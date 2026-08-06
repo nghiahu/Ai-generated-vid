@@ -34,7 +34,7 @@ export const highlightHeadingText = (text: string, accentColor: string, theme?: 
             key={index} 
             style={{ 
               color: glowColor,
-              textShadow: `0 2px 12px rgba(0, 0, 0, 0.95), 0 0 20px ${glowColor}cc`,
+              textShadow: "none",
               fontWeight: 900
             }}
           >
@@ -50,7 +50,7 @@ export const highlightHeadingText = (text: string, accentColor: string, theme?: 
               background: "linear-gradient(to bottom, #ffffff 10%, #00e5ff 60%, #3b82f6 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0 2px 10px rgba(0, 0, 0, 0.85))",
+              filter: "none",
               display: "inline-block",
               paddingTop: "0.22em",
               marginTop: "-0.22em",
