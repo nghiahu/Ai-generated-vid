@@ -1,5 +1,5 @@
 import React from "react";
-import { useCurrentFrame, useVideoConfig, interpolate, Easing, Sequence, Audio, staticFile } from "remotion";
+import { useCurrentFrame, useVideoConfig, interpolate, Easing } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
 
@@ -197,16 +197,6 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
 
   return (
     <div style={containerStyle}>
-      {/* Sound effect playing during count-up range counter ticking (rapid clicks) */}
-      {metricValue && tickFrames.map((tickFrame, idx) => (
-        <Sequence key={idx} from={tickFrame} durationInFrames={3}>
-          <Audio 
-            src={staticFile("typewriter.mp3")} 
-            volume={0.35}
-            startFrom={10}
-          />
-        </Sequence>
-      ))}
 
       {/* 1. Title / Heading (Left aligned, capitalized white with chrome metallic shimmer) */}
       {titleText && (

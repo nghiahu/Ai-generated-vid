@@ -307,6 +307,11 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
   const firstSceneTheme = scenes[0]?.theme && scenes[0]?.theme !== "default" ? scenes[0]?.theme : null;
   const vdeStyle = (firstSceneTheme || config?.visualStyle || config?.videoTheme || config?.theme || "rikkei").toLowerCase();
   const vdeTokens = getVDETokens(vdeStyle);
+
+  const resolvedConfig = config ? {
+    ...config,
+    bgImage: config.bgImage ? getFullUrl(config.bgImage) : undefined
+  } : undefined;
   const isRikkei = vdeStyle.includes("rikkei") || vdeStyle.includes("academic");
   const isLightTheme = isRikkei || vdeStyle.includes("light") || vdeStyle.includes("claude") || vdeStyle === "minimal";
   const isFintechEdu = vdeStyle.includes("fintech");
@@ -371,12 +376,12 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
 
         const imageUrl =
           scene.mediaList && scene.mediaList.length > 0 && scene.selectedMediaIndex !== -1
-            ? scene.mediaList[scene.selectedMediaIndex || 0]
+            ? getFullUrl(scene.mediaList[scene.selectedMediaIndex || 0])
             : "";
 
         const bgImageUrl =
           scene.bgMediaList && scene.bgMediaList.length > 0 && scene.selectedBgMediaIndex !== -1
-            ? scene.bgMediaList[scene.selectedBgMediaIndex || 0]
+            ? getFullUrl(scene.bgMediaList[scene.selectedBgMediaIndex || 0])
             : "";
 
         return (
@@ -412,7 +417,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                       hasMetrics: scene.points?.some(p => p && p.type === "metric") || false,
                       hasTerminal: scene.points?.some(p => p && p.type === "terminal") || false,
                     };
-                    return selectBestLayout(scene.sceneIntent, descriptors, LAYOUT_REGISTRY);
+                    return selectBestLayout(scene.sceneIntent, descriptors, LAYOUT_REGISTRY, scene.heading || scene.id || index.toString());
                   }
                   return "IntroMediaHero";
                 })();
@@ -464,7 +469,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                       layoutData={(scene as any).layout}
                       themeMetadata={(scene as any).themeMetadata}
                       highlightWords={scene.sceneIntent?.highlightWords}
-                      config={config}
+                      config={resolvedConfig}
                       bgImageUrl={bgImageUrl}
                     />
                     
@@ -495,6 +500,27 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                   useWebAudioApi={false}
                 />
               );
+            })()}
+            {/* Play Ticking SFX for MetricShowcaseHook layout */}
+            {scene.visualLayout === "MetricShowcaseHook" && (() => {
+              const countStart = Math.round(0.8 * fps);
+              const tickFrames: number[] = [];
+              let currentTick = countStart;
+              let gapValue = 8;
+              while (currentTick < countStart + 30) {
+                tickFrames.push(currentTick);
+                currentTick += Math.max(1, Math.round(gapValue));
+                gapValue *= 0.72;
+              }
+              return tickFrames.map((tickFrame, idx) => (
+                <Sequence key={`tick_${idx}`} from={tickFrame} durationInFrames={3}>
+                  <Audio 
+                    src={staticFile("typewriter.mp3")} 
+                    volume={0.35}
+                    startFrom={10}
+                  />
+                </Sequence>
+              ));
             })()}
           </Sequence>
         );
