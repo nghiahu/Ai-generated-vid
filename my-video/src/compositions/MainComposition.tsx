@@ -408,8 +408,8 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
               pointCount: scene.points?.length || 0,
               headingLength: scene.heading?.length || 0,
               hasImage: !!imageUrl,
-              hasMetrics: scene.points?.some(p => p && p.type === "metric") || false,
-              hasTerminal: scene.points?.some(p => p && p.type === "terminal") || false,
+              hasMetrics: Array.isArray(scene.points) && scene.points.some(p => p && p.type === "metric") || false,
+              hasTerminal: Array.isArray(scene.points) && scene.points.some(p => p && p.type === "terminal") || false,
             };
             return selectBestLayout(scene.sceneIntent, descriptors, LAYOUT_REGISTRY, scene.heading || scene.id || index.toString());
           }
@@ -520,11 +520,11 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
             })()}
             {/* Play Ticking SFX for MetricShowcaseHook layout */}
             {layoutId === "MetricShowcaseHook" && (() => {
-               const hasMetric = scene.points?.some((p) => {
-                const item = p as { type?: string; data?: { text?: string } };
-                return item && (item.type === "metric" || (item.data?.text && /\d+/.test(item.data.text)));
-              });
-              if (!hasMetric) return null;
+               const hasMetric = Array.isArray(scene.points) && scene.points.some((p) => {
+                 const item = p as { type?: string; data?: { text?: string } };
+                 return item && (item.type === "metric" || (item.data?.text && /\d+/.test(item.data.text)));
+               });
+               if (!hasMetric) return null;
 
               const countStart = Math.round(0.8 * fps);
               const tickFrames: number[] = [];
