@@ -71,6 +71,7 @@ import introMediaHeroJson from "./templates/Opening-Headline/intro_media_hero.js
 import vignelliQuoteJson from "./templates/Opening-Headline/vignelli_quote.json";
 import mediaShowcaseCardJson from "./templates/Opening-Headline/media_showcase_card.json";
 import metricShowcaseHookJson from "./templates/Opening-Headline/metric_showcase_hook.json";
+import metricFocusShowcaseJson from "./templates/Opening-Headline/metric_focus_showcase.json";
 
 Object.entries(templates).forEach(([path, module]: [string, any]) => {
   const json = module.default || module;
@@ -94,7 +95,8 @@ const staticTemplates = [
   introMediaHeroJson,
   vignelliQuoteJson,
   mediaShowcaseCardJson,
-  metricShowcaseHookJson
+  metricShowcaseHookJson,
+  metricFocusShowcaseJson
 ];
 
 staticTemplates.forEach((json: any) => {
