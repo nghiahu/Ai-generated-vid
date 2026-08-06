@@ -72,9 +72,8 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
     easing: Easing.bezier(0.16, 1, 0.3, 1)
   });
 
-  // 3D angles & floating sway values
-  // The mockup starts standing flat/straight (0 degrees) and slowly tilts/rotates upwards to 10 degrees.
-  const currentRotX = interpolate(frame, [10, 95], [0, 10], {
+  // 2D Rotation (Z-axis tilt). Starts almost flat and slowly rotates clockwise to 2.5 degrees as in the user's reference image.
+  const currentRotZ = interpolate(frame, [0, 95], [-1, 2.5], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.quad)
@@ -190,7 +189,7 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
             ? "0 30px 60px rgba(0, 0, 0, 0.12)"
             : `0 40px 90px rgba(0, 0, 0, 0.65), 0 0 40px rgba(${rgb}, 0.15)`,
           backgroundColor: isLight ? "#ffffff" : "#0A0B10",
-          transform: `perspective(1200px) scale(${scale}) translateY(${floatY}px) rotateX(${currentRotX}deg)`,
+          transform: `scale(${scale}) translateY(${floatY}px) rotate(${currentRotZ}deg)`,
           transformStyle: "preserve-3d",
           position: "relative"
         }}>
