@@ -163,6 +163,28 @@ const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => 
         controls={false}
         autoPlay={false}
         acknowledgeRemotionLicense
+        errorFallback={({ error }) => (
+          <div style={{
+            padding: "24px",
+            color: "#ef4444",
+            backgroundColor: "#fef2f2",
+            border: "2px solid #fee2e2",
+            borderRadius: "16px",
+            fontFamily: "monospace",
+            fontSize: "13px",
+            height: "100%",
+            width: "100%",
+            boxSizing: "border-box",
+            overflowY: "auto",
+            zIndex: 9999,
+            position: "absolute",
+            inset: 0
+          }}>
+            <h3 style={{ margin: "0 0 12px 0", fontSize: "16px", fontWeight: "bold" }}>Player Render Crash</h3>
+            <p style={{ margin: "0 0 16px 0", fontWeight: "bold" }}>{error?.toString()}</p>
+            <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: "11px", opacity: 0.85 }}>{error?.stack}</pre>
+          </div>
+        )}
       />
     </ErrorBoundary>
   );
