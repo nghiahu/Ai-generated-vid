@@ -123,6 +123,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
   const countStart = Math.round(0.8 * fps);
   
   const { n1, n2, suffix } = parseNumbers(metricValue);
+  const hasDigits = /\d+/.test(metricValue);
 
   // Number counting interpolation
   const animN1 = Math.round(interpolate(frame - countStart, [0, 30], [0, n1], {
@@ -292,20 +293,54 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
               width: "100%",
               textShadow: `0 8px 30px rgba(${metricRgb}, 0.25)`
             }}>
-              <span>
-                {n2 !== null && animN2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN")}
-              </span>
-              {suffix && (
-                <span style={{
-                  fontSize: `${Math.round(72 * fontScale)}px`,
-                  fontWeight: 900,
-                  color: metricColor,
-                  letterSpacing: "-0.02em",
-                  marginLeft: "12px",
-                  textTransform: "lowercase"
-                }}>
-                  {suffix}
-                </span>
+              {hasDigits ? (
+                <>
+                  <span>
+                    {n2 !== null && animN2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN")}
+                  </span>
+                  {suffix && (
+                    <span style={{
+                      fontSize: `${Math.round(72 * fontScale)}px`,
+                      fontWeight: 900,
+                      color: metricColor,
+                      letterSpacing: "-0.02em",
+                      marginLeft: "12px",
+                      textTransform: "lowercase"
+                    }}>
+                      {suffix}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <div style={{ display: "flex", flexWrap: "wrap" }}>
+                  {metricValue.split("").map((char, charIdx) => {
+                    const charFrame = frame - countStart - (charIdx * 3);
+                    const charOpacity = interpolate(charFrame, [0, 10], [0, 1], {
+                      extrapolateLeft: "clamp",
+                      extrapolateRight: "clamp"
+                    });
+                    const charScale = interpolate(charFrame, [0, 10], [0.7, 1], {
+                      extrapolateLeft: "clamp",
+                      extrapolateRight: "clamp",
+                      easing: Easing.bezier(0.16, 1, 0.3, 1)
+                    });
+                    return (
+                      <span
+                        key={charIdx}
+                        style={{
+                          display: "inline-block",
+                          opacity: charOpacity,
+                          transform: `scale(${charScale})`,
+                          transformOrigin: "center bottom",
+                          color: metricColor,
+                          whiteSpace: char === " " ? "pre" : "normal"
+                        }}
+                      >
+                        {char}
+                      </span>
+                    );
+                  })}
+                </div>
               )}
             </div>
             {metricSubtext && (
