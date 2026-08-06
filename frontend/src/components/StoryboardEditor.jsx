@@ -295,6 +295,7 @@ const LAYOUTS_BY_FAMILY = {
   "List / Steps": [
     { value: "AIHubGrid1", label: "AI Hub Grid 1 (Emotion Column)" },
     { value: "RankedImpactBullet", label: "Ranked Impact Bullet" },
+    { value: "NumberedAgentPanel", label: "Numbered Agent Panel" },
     { value: "SelectorWheelRadio", label: "Selector Wheel Radio" },
     { value: "SignalRailBullet", label: "Signal Rail Bullet" }
   ],
