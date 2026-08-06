@@ -56,12 +56,13 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
   // Word to highlight in bold inside insight bar
   const hw = highlightWords?.[0] || "";
 
-  // Sizes
-  const titleFontSize = Math.round((isVertical ? 64 : 80) * fontScale);
-  const cardFontSize = isVertical ? 20 : 26;
-  const subtextFontSize = isVertical ? 13 : 16;
-  const badgeSize = isVertical ? 40 : 52;
-  const cardGap = isVertical ? 12 : 16;
+  // Sizes — scaled to match reference image proportions
+  const titleFontSize = Math.round((isVertical ? 72 : 86) * fontScale);
+  const cardFontSize = isVertical ? 28 : 34;
+  const subtextFontSize = isVertical ? 16 : 20;
+  const badgeSize = isVertical ? 52 : 64;
+  const badgeFontSize = isVertical ? 22 : 28;
+  const cardGap = isVertical ? 16 : 20;
   const STAGGER = 8; // frames between card animations
 
   // Intro opacity fade
@@ -110,8 +111,8 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
-        padding: isVertical ? "80px 52px" : "100px 80px",
-        paddingTop: isVertical ? "110px" : "180px",
+        padding: isVertical ? "56px 52px" : "80px 80px",
+        paddingTop: isVertical ? "72px" : "120px",
         width: "100%",
         height: "100%",
         boxSizing: "border-box",
@@ -181,11 +182,11 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: isVertical ? 14 : 18,
+                gap: isVertical ? 18 : 22,
                 background: getCardBg(idx),
                 border: getCardBorder(idx),
-                borderRadius: isVertical ? 16 : 20,
-                padding: isVertical ? "14px 18px" : "18px 22px",
+                borderRadius: isVertical ? 18 : 22,
+                padding: isVertical ? "20px 24px" : "24px 28px",
                 opacity: cardProgress,
                 transform: `translateY(${cardY}px)`,
                 backdropFilter: "blur(12px)",
@@ -209,7 +210,7 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: isVertical ? 18 : 22,
+                  fontSize: badgeFontSize,
                   fontWeight: 900,
                   color:
                     idx === 0
