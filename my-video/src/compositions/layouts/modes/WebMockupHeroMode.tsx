@@ -21,21 +21,36 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
   // 1. Resolve Category Pill text
   const cleanCategory = category || (t.categoryPill?.text?.trim().toLowerCase() !== "ai viết video" && t.categoryPill?.text?.trim().toLowerCase() !== "ai viet video" ? t.categoryPill?.text : "") || "TRENDING";
 
-  // 2. Resolve Top Detail Pills
+  // 2. Resolve Top Detail Pills — pull from kịch bản
   let badgeComps = otherComps.filter(c => c.type === "badge_row" || (c.data?.badges && c.data.badges.length > 0));
   if (badgeComps.length === 0) {
-    badgeComps = [
-      {
-        id: "mock-badges-1",
-        type: "badge_row",
-        data: { badges: ["★ 3.4K stars", "BY MengTo", "LICENSE MIT"] }
-      }
-    ] as any[];
+    // Fallback: collect text from feature_card items in the script to build badge pills
+    const cardTexts = otherComps
+      .filter(c => (c.type === "feature_card" || c.type === "card") && c.data?.text?.trim())
+      .map(c => c.data.text.trim());
+    if (cardTexts.length > 0) {
+      badgeComps = [
+        {
+          id: "script-badges-from-cards",
+          type: "badge_row",
+          data: { badges: cardTexts }
+        }
+      ] as any[];
+    } else {
+      // Hard-coded decorative fallback
+      badgeComps = [
+        {
+          id: "mock-badges-1",
+          type: "badge_row",
+          data: { badges: ["★ 3.4K stars", "BY MengTo", "LICENSE MIT"] }
+        }
+      ] as any[];
+    }
   }
 
-  // 3. Resolve Browser Bottom-Left Overlay Tag
+  // 3. Resolve Browser Bottom-Left Overlay Tag — pull from kịch bản
   let overlayTag = "";
-  const firstCardComp = otherComps.find(c => c.type === "card" && c.data?.text);
+  const firstCardComp = otherComps.find(c => (c.type === "feature_card" || c.type === "card") && c.data?.text);
   if (firstCardComp) {
     overlayTag = firstCardComp.data.text;
     if (firstCardComp.data.value) {

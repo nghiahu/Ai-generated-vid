@@ -124,7 +124,7 @@ const LAYOUT_CONTRACTS = {
     pointsCount: { min: 1, max: 4, default: 2 },
     pointMaxChars: 50,
     allowedPointTypes: ['badge_row', 'card'],
-    aiHint: 'Layout trình diễn trình duyệt web xoay nghiêng 3D bồng bềnh, có các viên thuốc nhỏ chi tiết phía trên và phụ đề căn giữa ở dưới cùng.'
+    aiHint: 'Layout trình diễn trình duyệt web bồng bềnh. QUAN TRỌNG: Luôn tạo ít nhất 1 point có type "badge_row" với field "badges" là mảng 2-4 chuỗi ngắn (ví dụ: ["★ 3.2K stars", "BY AuthorName", "LICENSE MIT", "v2.1"]). Các badge phải lấy nội dung thực từ kịch bản (tên tác giả, số sao, license, phiên bản). Card thứ hai nếu có thì dùng type "card" với text là mô tả ngắn về sản phẩm/repo hiển thị trong mockup.'
   },
   FeedScrollHook: {
     layoutId: 'FeedScrollHook',
