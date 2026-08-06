@@ -163,6 +163,7 @@ const InlineScenePlayer = ({ playerRef, scene, config, isPlaying, onEnded }) => 
         controls={false}
         autoPlay={false}
         acknowledgeRemotionLicense
+        numberOfSharedAudioTags={100}
         errorFallback={({ error }) => (
           <div style={{
             padding: "24px",
