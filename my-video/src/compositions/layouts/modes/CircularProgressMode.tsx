@@ -43,6 +43,7 @@ const getCardTheme = (idx: number, isLight: boolean) => {
     case 0:
       return {
         color: "#f97316",
+        rgb: "249, 115, 22",
         icon: <Terminal size={24} color="#f97316" />,
         bg: isLight ? "rgba(249, 115, 22, 0.05)" : "rgba(249, 115, 22, 0.08)",
         border: isLight ? "rgba(249, 115, 22, 0.2)" : "rgba(249, 115, 22, 0.3)"
@@ -50,6 +51,7 @@ const getCardTheme = (idx: number, isLight: boolean) => {
     case 1:
       return {
         color: "#3b82f6",
+        rgb: "59, 130, 246",
         icon: <Layers size={24} color="#3b82f6" />,
         bg: isLight ? "rgba(59, 130, 246, 0.05)" : "rgba(59, 130, 246, 0.08)",
         border: isLight ? "rgba(59, 130, 246, 0.2)" : "rgba(59, 130, 246, 0.3)"
@@ -57,6 +59,7 @@ const getCardTheme = (idx: number, isLight: boolean) => {
     case 2:
       return {
         color: "#0d9488",
+        rgb: "13, 148, 136",
         icon: <Cpu size={24} color="#0d9488" />,
         bg: isLight ? "rgba(13, 148, 136, 0.05)" : "rgba(13, 148, 136, 0.08)",
         border: isLight ? "rgba(13, 148, 136, 0.2)" : "rgba(13, 148, 136, 0.3)"
@@ -64,6 +67,7 @@ const getCardTheme = (idx: number, isLight: boolean) => {
     case 3:
       return {
         color: "#eab308",
+        rgb: "234, 179, 8",
         icon: <Target size={24} color="#eab308" />,
         bg: isLight ? "rgba(234, 179, 8, 0.05)" : "rgba(234, 179, 8, 0.08)",
         border: isLight ? "rgba(234, 179, 8, 0.2)" : "rgba(234, 179, 8, 0.3)"
@@ -71,6 +75,7 @@ const getCardTheme = (idx: number, isLight: boolean) => {
     default:
       return {
         color: "#a855f7",
+        rgb: "168, 85, 247",
         icon: <Zap size={24} color="#a855f7" />,
         bg: isLight ? "rgba(168, 85, 247, 0.05)" : "rgba(168, 85, 247, 0.08)",
         border: isLight ? "rgba(168, 85, 247, 0.2)" : "rgba(168, 85, 247, 0.3)"
@@ -263,12 +268,12 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
             const individualCardStyle: React.CSSProperties = {
               ...cardStyle,
               background: isLight
-                ? `linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 244, 246, 0.92) 60%, ${theme.bg} 100%)`
-                : `linear-gradient(135deg, rgba(10, 16, 28, 0.92) 0%, rgba(8, 12, 24, 0.82) 60%, ${theme.bg} 100%)`, // Premium dark slate theme background with gradient
+                ? `linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 244, 246, 0.92) 100%)`
+                : `linear-gradient(135deg, rgba(8, 17, 37, 0.72) 0%, rgba(3, 7, 18, 0.88) 100%)`, // Matches exact screenshot theme gradient
               border: `1.5px solid ${theme.border}`, // Glowing theme border color
               boxShadow: isLight
                 ? "0 10px 30px rgba(0, 0, 0, 0.04)"
-                : `0 14px 40px rgba(0, 0, 0, 0.45), 0 0 20px rgba(0, 0, 0, 0.25)`,
+                : `0 16px 40px rgba(0, 0, 0, 0.4), 0 0 24px rgba(${theme.rgb}, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06)`, // Glowing shadow matching exact color
             };
 
             // Scale font size based on text length to fit the fixed height
