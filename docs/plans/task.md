@@ -2,5 +2,6 @@
 
 | Task | Description | Status |
 | --- | --- | --- |
-| Task 1 | Update StoryboardEditor.jsx with dynamic muting and reduced audio tags | `[x]` |
-| Task 2 | Reduce audio tag limits in MasterPlayer.jsx and Dashboard.jsx | `[x]` |
+| Task 1 | Adjust Line Height and Top Spacing of the Header | `[ ]` |
+| Task 2 | Increase Subtitle Font Size in Template JSON | `[ ]` |
+| Task 3 | Bind Subtitle Active Highlight Color to Theme Dynamic Accent Color | `[ ]` |
