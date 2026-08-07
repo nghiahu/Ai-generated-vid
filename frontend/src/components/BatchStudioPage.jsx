@@ -11,6 +11,8 @@ const createEmptySlot = () => ({
   status: "idle", // "idle" | "pending" | "running" | "done" | "error"
   projectName: null,
   error: null,
+  selectedMedia: [],
+  selectedBgMedia: [],
 });
 
 const VDE_PRESET_STYLES = [
@@ -107,13 +109,14 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
   const [showStyleModal, setShowStyleModal] = useState(false);
 
   // Media Modal States
-  const [selectedMedia, setSelectedMedia] = useState([]);
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [mediaTab, setMediaTab] = useState("YOUR_MEDIA"); // YOUR_MEDIA, UPLOAD, STOCK, AI
   const [previousMedia, setPreviousMedia] = useState([]);
   const [stockQuery, setStockQuery] = useState("");
   const [stockResults, setStockResults] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [activeSlotId, setActiveSlotId] = useState(null);
+  const [mediaModalContext, setMediaModalContext] = useState("content"); // "content" | "background"
 
   // Fetch VDE Themes on mount
   useEffect(() => {
@@ -163,7 +166,20 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
         const res = await axios.post("http://localhost:5000/api/upload", { file: reader.result });
         if (res.data && res.data.url) {
           const uploadedUrl = res.data.url.trim();
-          setSelectedMedia(prev => Array.from(new Set([...prev, uploadedUrl])));
+          
+          if (activeSlotId) {
+            setSlots(prev => prev.map(slot => {
+              if (slot.id !== activeSlotId) return slot;
+              if (mediaModalContext === "content") {
+                const list = slot.selectedMedia || [];
+                return { ...slot, selectedMedia: Array.from(new Set([...list, uploadedUrl])) };
+              } else {
+                const list = slot.selectedBgMedia || [];
+                return { ...slot, selectedBgMedia: Array.from(new Set([...list, uploadedUrl])) };
+              }
+            }));
+          }
+
           setPreviousMedia(prev => Array.from(new Set([uploadedUrl, ...prev])));
           setMediaTab("YOUR_MEDIA");
         }
@@ -188,18 +204,29 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
   };
 
   const handleToggleSelectMedia = (url) => {
-    setSelectedMedia(prev => {
-      if (prev.includes(url)) {
-        return prev.filter(u => u !== url);
+    if (!activeSlotId) return;
+    setSlots(prev => prev.map(slot => {
+      if (slot.id !== activeSlotId) return slot;
+      if (mediaModalContext === "content") {
+        const list = slot.selectedMedia || [];
+        const newList = list.includes(url) ? list.filter(u => u !== url) : [...list, url];
+        return { ...slot, selectedMedia: newList };
       } else {
-        return [...prev, url];
+        const list = slot.selectedBgMedia || [];
+        const newList = list.includes(url) ? list.filter(u => u !== url) : [...list, url];
+        return { ...slot, selectedBgMedia: newList };
       }
-    });
+    }));
   };
 
-  const handleCloseMediaModal = () => setShowMediaModal(false);
-  const handleMediaModalConfirm = () => setShowMediaModal(false);
-  const handleOpenMediaModal = () => setShowMediaModal(true);
+  const handleCloseMediaModal = () => {
+    setShowMediaModal(false);
+    setActiveSlotId(null);
+  };
+  const handleMediaModalConfirm = () => {
+    setShowMediaModal(false);
+    setActiveSlotId(null);
+  };
 
   const handleRunBatch = useCallback(async () => {
     const activeSlots = slots.filter(s => s.text.trim());
@@ -229,7 +256,7 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
 
         // 3. Generate storyboard
         const traits = sharedConfig.traits || [];
-        await api.generateStoryboard(newProj.id, slot.text, selectedStyle, traits, selectedMedia);
+        await api.generateStoryboard(newProj.id, slot.text, selectedStyle, traits, slot.selectedMedia || [], slot.selectedBgMedia || []);
 
         updateSlot(slot.id, { status: "done", projectName: title || `Batch Video #${i + 1}` });
       } catch (err) {
@@ -243,7 +270,7 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
     setIsRunning(false);
     // Navigate back after 2.5s
     setTimeout(() => onBatchComplete(), 2500);
-  }, [slots, sharedConfig, selectedStyle, selectedMedia, onBatchComplete]);
+  }, [slots, sharedConfig, selectedStyle, onBatchComplete]);
 
   const handleConfirmStyle = () => {
     setShowStyleModal(false);
@@ -277,6 +304,12 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
   // Render Project Images Modal
   const renderMediaModal = () => {
     if (!showMediaModal) return null;
+
+    const activeSlot = slots.find(s => s.id === activeSlotId);
+    const activeMediaList = activeSlot
+      ? (mediaModalContext === "content" ? (activeSlot.selectedMedia || []) : (activeSlot.selectedBgMedia || []))
+      : [];
+
     return (
       <div style={{
         position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.6)",
@@ -294,7 +327,9 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px", borderBottom: "1px solid rgba(15, 23, 42, 0.06)", backgroundColor: "#fafbfc" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <span style={{ fontSize: "20px" }}>🖼️</span>
-              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "700", color: "#0f172a" }}>Project Images</h3>
+              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "700", color: "#0f172a" }}>
+                {mediaModalContext === "content" ? "Chọn Ảnh Nội Dung" : "Chọn Ảnh Nền"}
+              </h3>
             </div>
 
             <div style={{ display: "flex", background: "#f1f5f9", padding: "4px", borderRadius: "30px", gap: "4px" }}>
@@ -323,7 +358,7 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
                 ) : (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: "16px" }}>
                     {previousMedia.map((url, idx) => {
-                      const isSelected = selectedMedia.includes(url);
+                      const isSelected = activeMediaList.includes(url);
                       return (
                         <div key={idx} onClick={() => handleToggleSelectMedia(url)} style={{ position: "relative", width: "100%", paddingTop: "100%", borderRadius: "12px", overflow: "hidden", cursor: "pointer", border: isSelected ? "3px solid #3b82f6" : "1px solid rgba(15,23,42,0.08)", boxShadow: isSelected ? "0 4px 12px rgba(59,130,246,0.15)" : "none", transition: "all 0.2s ease" }}>
                           <img src={url.startsWith("http") ? url : `http://localhost:5000${url}`} alt="Previous Media Item" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
@@ -370,7 +405,7 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
                 ) : (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: "16px" }}>
                     {stockResults.map((url, idx) => {
-                      const isSelected = selectedMedia.includes(url);
+                      const isSelected = activeMediaList.includes(url);
                       return (
                         <div key={idx} onClick={() => handleToggleSelectMedia(url)} style={{ position: "relative", width: "100%", paddingTop: "100%", borderRadius: "12px", overflow: "hidden", cursor: "pointer", border: isSelected ? "3px solid #3b82f6" : "1px solid rgba(15,23,42,0.08)", boxShadow: isSelected ? "0 4px 12px rgba(59,130,246,0.15)" : "none", transition: "all 0.2s ease" }}>
                           <img src={url} alt="Unsplash Stock" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
@@ -396,24 +431,33 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
           <div style={{ borderTop: "1px solid rgba(15, 23, 42, 0.06)", padding: "16px 24px", backgroundColor: "#fafbfc", display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: "13px", fontWeight: "700", color: "#475569" }}>
-                Selected Media ({selectedMedia.length} asset{selectedMedia.length !== 1 ? "s" : ""})
+                Đã chọn ({activeMediaList.length} ảnh)
               </span>
-              {selectedMedia.length > 0 && (
-                <button type="button" onClick={() => setSelectedMedia([])} style={{ border: "none", background: "none", color: "#ef4444", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>Xóa tất cả</button>
+              {activeMediaList.length > 0 && (
+                <button type="button" onClick={() => {
+                  setSlots(prev => prev.map(slot => {
+                    if (slot.id !== activeSlotId) return slot;
+                    if (mediaModalContext === "content") {
+                      return { ...slot, selectedMedia: [] };
+                    } else {
+                      return { ...slot, selectedBgMedia: [] };
+                    }
+                  }));
+                }} style={{ border: "none", background: "none", color: "#ef4444", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>Xóa tất cả</button>
               )}
             </div>
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px" }}>
               <div style={{ flex: 1, display: "flex", gap: "10px", overflowX: "auto", paddingBottom: "4px", minHeight: "56px" }}>
-                {selectedMedia.length === 0 ? (
+                {activeMediaList.length === 0 ? (
                   <span style={{ fontSize: "13px", color: "#94a3b8", fontStyle: "italic", alignSelf: "center" }}>
-                    No project media selected yet.
+                    Chưa chọn ảnh nào.
                   </span>
                 ) : (
-                  selectedMedia.map((url, idx) => (
+                  activeMediaList.map((url, idx) => (
                     <div key={idx} style={{ position: "relative", width: "50px", height: "50px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, border: "1px solid rgba(0,0,0,0.1)" }}>
                       <img src={url.startsWith("http") ? url : `http://localhost:5000${url}`} alt="Selected Thumbnail" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      <button type="button" onClick={() => handleToggleSelectMedia(url)} style={{ position: "absolute", top: "2px", right: "2px", width: "14px", height: "14px", borderRadius: "50%", backgroundColor: "rgba(0,0,0,0.6)", color: "#ffffff", border: "none", display: "flex", alignItems: "center", justifyInCenter: "center", fontSize: "8px", cursor: "pointer" }}>✕</button>
+                      <button type="button" onClick={() => handleToggleSelectMedia(url)} style={{ position: "absolute", top: "2px", right: "2px", width: "14px", height: "14px", borderRadius: "50%", backgroundColor: "rgba(0,0,0,0.6)", color: "#ffffff", border: "none", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "8px", cursor: "pointer", lineHeight: 1 }}>✕</button>
                     </div>
                   ))
                 )}
@@ -498,6 +542,83 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
                   opacity: isRunning ? 0.7 : 1
                 }}
               />
+
+              {/* Slot Media Buttons */}
+              <div style={{ display: "flex", gap: "10px", marginTop: "12px" }}>
+                {/* Content Media Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveSlotId(slot.id);
+                    setMediaModalContext("content");
+                    setShowMediaModal(true);
+                  }}
+                  disabled={isRunning}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "8px 16px",
+                    borderRadius: "20px",
+                    border: "1px solid rgba(15, 23, 42, 0.12)",
+                    background: "#ffffff",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    color: "var(--text-primary)",
+                    cursor: "pointer",
+                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--color-primary)";
+                    e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                  }}
+                >
+                  <span style={{ fontSize: "14px" }}>🖼️</span>
+                  ẢNH NỘI DUNG ({(slot.selectedMedia || []).length})
+                </button>
+
+                {/* Background Media Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveSlotId(slot.id);
+                    setMediaModalContext("background");
+                    setShowMediaModal(true);
+                  }}
+                  disabled={isRunning}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "8px 16px",
+                    borderRadius: "20px",
+                    border: "1px solid rgba(15, 23, 42, 0.12)",
+                    background: "#ffffff",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    color: "var(--text-primary)",
+                    cursor: "pointer",
+                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--color-primary)";
+                    e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                  }}
+                >
+                  <span style={{ fontSize: "14px" }}>🧱</span>
+                  ẢNH NỀN ({(slot.selectedBgMedia || []).length})
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -559,42 +680,9 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
           borderTop: "1px solid rgba(15, 23, 42, 0.08)",
           paddingTop: "20px",
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           alignItems: "center"
         }}>
-          {/* Media Button */}
-          <button
-            type="button"
-            onClick={handleOpenMediaModal}
-            disabled={isRunning}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "12px 24px",
-              borderRadius: "30px",
-              border: "1px solid rgba(15, 23, 42, 0.12)",
-              background: "#ffffff",
-              fontSize: "14px",
-              fontWeight: "600",
-              color: "var(--text-primary)",
-              cursor: "pointer",
-              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.04)",
-              transition: "all 0.2s ease"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "var(--color-primary)";
-              e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
-              e.currentTarget.style.backgroundColor = "#ffffff";
-            }}
-          >
-            <span style={{ fontSize: "16px" }}>🖼️</span>
-            Media ({selectedMedia.length})
-          </button>
-
           {/* Generate Button */}
           <button
             className="primary"

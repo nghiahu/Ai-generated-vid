@@ -62,13 +62,39 @@ export function scoreLayout(
 export function selectBestLayout(
   intent: SceneIntent,
   descriptors: SceneDescriptors,
-  registry: Record<string, { family: string }>
+  registry: Record<string, { family: string }>,
+  seed?: string
 ): string {
   const scored: ScoredLayout[] = Object.entries(registry).map(([id, meta]) => ({
     id,
     score: scoreLayout(id, meta.family, intent, descriptors)
   }));
 
-  scored.sort((a, b) => b.score - a.score);
-  return scored[0]?.id ?? "IntroMediaHero"; // fallback
+  if (scored.length === 0) return "IntroMediaHero";
+
+  // Find the maximum score
+  let maxScore = -Infinity;
+  for (const item of scored) {
+    if (item.score > maxScore) {
+      maxScore = item.score;
+    }
+  }
+
+  // Filter all candidates that share the maximum score
+  const candidates = scored.filter(item => item.score === maxScore);
+
+  if (candidates.length === 1 || !seed) {
+    return candidates[0]?.id ?? "IntroMediaHero";
+  }
+
+  // Hash the seed deterministically
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0; // Convert to 32bit integer
+  }
+  const idx = Math.abs(hash) % candidates.length;
+  return candidates[idx].id;
 }
+

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cài đặt API - AI Video Creator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 32px 24px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6366f1, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 28px;
+    }
+
+    .status-bar {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      color: #f59e0b;
+      font-size: 13px;
+      display: none;
+    }
+    .status-bar.visible { display: block; }
+    .status-bar.ok {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #10b981;
+    }
+
+    .section {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 14px;
+    }
+
+    .field { margin-bottom: 14px; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #e2e8f0;
+      font-size: 13px;
+      font-family: monospace;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus { border-color: rgba(99, 102, 241, 0.5); }
+
+    .hint {
+      font-size: 11px;
+      color: #475569;
+      margin-top: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: default; }
+
+    #message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+    #message.success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10b981;
+      display: block;
+    }
+    #message.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+      display: block;
+    }
+
+    .note {
+      text-align: center;
+      font-size: 11px;
+      color: #475569;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚙️ Cài đặt API Keys</h1>
+  <p class="subtitle">Nhập API keys để kích hoạt đầy đủ tính năng AI Video Creator</p>
+
+  <div class="status-bar" id="statusBar">
+    ⚠️ Chưa có API key nào. Vui lòng nhập ít nhất Gemini API Key để bắt đầu.
+  </div>
+
+  <form id="configForm">
+    <!-- Gemini -->
+    <div class="section">
+      <div class="section-title">🤖 Google Gemini AI</div>
+      <div class="field">
+        <label>Gemini API Key</label>
+        <input type="password" id="GEMINI_API_KEY" placeholder="AIza..." autocomplete="off" />
+        <p class="hint">Lấy tại: https://aistudio.google.com/app/apikey</p>
+      </div>
+      <div class="field">
+        <label>Gemini Model (tùy chọn)</label>
+        <input type="text" id="GEMINI_MODEL" placeholder="gemini-2.0-flash-lite" />
+        <p class="hint">Để trống để dùng mặc định</p>
+      </div>
+    </div>
+
+    <!-- VBEE -->
+    <div class="section">
+      <div class="section-title">🎙️ VBEE Text-to-Speech</div>
+      <div class="field">
+        <label>VBEE API Key</label>
+        <input type="password" id="VBEE_API_KEY" placeholder="eyJhbGci..." autocomplete="off" />
+        <p class="hint">Lấy tại: https://vbee.vn → Dashboard</p>
+      </div>
+      <div class="field">
+        <label>VBEE App ID</label>
+        <input type="text" id="VBEE_APP_ID" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+        <p class="hint">App ID từ VBEE Dashboard của bạn</p>
+      </div>
+    </div>
+
+    <!-- Cloudinary -->
+    <div class="section">
+      <div class="section-title">☁️ Cloudinary Media</div>
+      <div class="field">
+        <label>Cloud Name</label>
+        <input type="text" id="CLOUDINARY_CLOUD_NAME" placeholder="my-cloud" />
+      </div>
+      <div class="field">
+        <label>API Key</label>
+        <input type="password" id="CLOUDINARY_API_KEY" placeholder="123456789012345" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label>API Secret</label>
+        <input type="password" id="CLOUDINARY_API_SECRET" placeholder="xxxxxxxxxxxxxxx" autocomplete="off" />
+        <p class="hint">Lấy tại: https://cloudinary.com/console</p>
+      </div>
+    </div>
+
+    <!-- OmniVoice -->
+    <div class="section">
+      <div class="section-title">🔊 OmniVoice TTS (Offline Local)</div>
+      <div class="field">
+        <label>Đường dẫn omnivoice-infer.exe</label>
+        <input type="text" id="OMNIVOICE_INFER_PATH" placeholder="C:\Users\...\Scripts\omnivoice-infer.exe" />
+        <p class="hint">Đường dẫn đầy đủ tới file omnivoice-infer.exe của bạn</p>
+      </div>
+    </div>
+
+    <button type="submit" id="saveBtn">💾 Lưu cấu hình</button>
+    <div id="message"></div>
+    <p class="note">🔒 API keys được lưu cục bộ trên máy tính của bạn</p>
+  </form>
+
+  <script>
+    const fields = ['GEMINI_API_KEY', 'GEMINI_MODEL', 'VBEE_API_KEY', 'VBEE_APP_ID', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET', 'OMNIVOICE_INFER_PATH'];
+
+    // Load current config status
+    async function checkStatus() {
+      try {
+        const res = await fetch('http://localhost:5000/api/config/status');
+        const data = await res.json();
+        const bar = document.getElementById('statusBar');
+        if (data.configured) {
+          bar.textContent = '✅ App đã được cấu hình. Bạn có thể cập nhật API keys bên dưới.';
+          bar.className = 'status-bar visible ok';
+        } else {
+          bar.className = 'status-bar visible';
+        }
+      } catch (e) {
+        // Backend not ready yet, ignore
+      }
+    }
+
+    checkStatus();
+
+    document.getElementById('configForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('saveBtn');
+      const msg = document.getElementById('message');
+      btn.disabled = true;
+      btn.textContent = '⏳ Đang lưu...';
+      msg.className = '';
+      msg.textContent = '';
+
+      const payload = {};
+      for (const field of fields) {
+        const val = document.getElementById(field)?.value?.trim();
+        if (val) payload[field] = val;
+      }
+
+      try {
+        const res = await fetch('http://localhost:5000/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          msg.textContent = '✅ Đã lưu thành công! App đã sẵn sàng sử dụng.';
+          msg.className = 'success';
+          // Clear fields after save
+          fields.forEach(f => { if (document.getElementById(f)) document.getElementById(f).value = ''; });
+          checkStatus();
+        } else {
+          msg.textContent = '❌ Lỗi: ' + (data.error || 'Không thể lưu');
+          msg.className = 'error';
+        }
+      } catch (err) {
+        msg.textContent = '❌ Không kết nối được backend. Thử lại sau.';
+        msg.className = 'error';
+      }
+
+      btn.disabled = false;
+      btn.textContent = '💾 Lưu cấu hình';
+    });
+  </script>
+</body>
+</html>

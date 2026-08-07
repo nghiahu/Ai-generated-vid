@@ -2325,7 +2325,7 @@ const get_project_name_1 = __webpack_require__(2754);
 Object.defineProperty(exports, "getProjectName", ({ enumerable: true, get: function () { return get_project_name_1.getProjectName; } }));
 const hot_middleware_1 = __webpack_require__(3356);
 Object.defineProperty(exports, "hotMiddlewareOptions", ({ enumerable: true, get: function () { return hot_middleware_1.hotMiddlewareOptions; } }));
-const keyframe_easing_presets_1 = __webpack_require__(4835);
+const keyframe_easing_presets_1 = __webpack_require__(7216);
 Object.defineProperty(exports, "KEYFRAME_EASING_PRESETS", ({ enumerable: true, get: function () { return keyframe_easing_presets_1.KEYFRAME_EASING_PRESETS; } }));
 Object.defineProperty(exports, "LINEAR_KEYFRAME_EASING", ({ enumerable: true, get: function () { return keyframe_easing_presets_1.LINEAR_KEYFRAME_EASING; } }));
 const keyframe_interpolation_function_1 = __webpack_require__(3537);
@@ -2389,7 +2389,7 @@ Object.defineProperty(exports, "isUrl", ({ enumerable: true, get: function () { 
 
 /***/ },
 
-/***/ 4835
+/***/ 7216
 (__unused_webpack_module, exports) {
 
 "use strict";
@@ -2556,7 +2556,7 @@ exports.DEFAULT_TIMELINE_TRACKS = 90;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.optimisticAddEffectKeyframe = exports.optimisticAddSequenceKeyframe = void 0;
-const keyframe_easing_presets_1 = __webpack_require__(4835);
+const keyframe_easing_presets_1 = __webpack_require__(7216);
 const keyframe_interpolation_function_1 = __webpack_require__(3537);
 const getEasingIndexToDuplicate = ({ insertedKeyframeIndex, easingLength, keyframeCount, }) => {
     const isSplittingExistingSegment = insertedKeyframeIndex > 0 && insertedKeyframeIndex < keyframeCount - 1;
@@ -3098,7 +3098,7 @@ exports.optimisticUpdateForPropStatuses = optimisticUpdateForPropStatuses;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.optimisticUpdateEffectKeyframeSettings = exports.optimisticUpdateSequenceKeyframeSettings = void 0;
-const keyframe_easing_presets_1 = __webpack_require__(4835);
+const keyframe_easing_presets_1 = __webpack_require__(7216);
 const updateEasing = ({ easing, segmentCount, segmentIndex, value, }) => {
     if (!Number.isInteger(segmentIndex) ||
         segmentIndex < 0 ||

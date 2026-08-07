@@ -1752,16 +1752,27 @@ function assignPatternSlots(sceneCount) {
     "PROCESS_TIMELINE", "DONUT_GAUGE", "STAT_GRID_2X2", "QUOTE_NATURE_CARD",
     "BULLET_GLASS", "ENDING_CTA"
   ];
+  const OPENING_PATTERNS = [
+    "TITLE_HOOK",
+    "TITLE_CARD_HOOK",
+    "TITLE_GLOW_HOOK",
+    "TITLE_SPLIT_HOOK"
+  ];
+
   if (sceneCount <= 0) return [];
-  if (sceneCount === 1) return ["TITLE_HOOK"];
-  if (sceneCount === 2) return ["TITLE_HOOK", "ENDING_CTA"];
+
+  // Deterministically select opening pattern using sceneCount + timestamp to rotate across generations
+  const openingPattern = OPENING_PATTERNS[(sceneCount + Date.now()) % OPENING_PATTERNS.length];
+
+  if (sceneCount === 1) return [openingPattern];
+  if (sceneCount === 2) return [openingPattern, "ENDING_CTA"];
 
   const slots = new Array(sceneCount).fill(null);
-  slots[0] = "TITLE_HOOK";
+  slots[0] = openingPattern;
   slots[sceneCount - 1] = "ENDING_CTA";
 
   // Pool for middle scenes — exclude already pinned
-  const pinned = new Set(["TITLE_HOOK", "ENDING_CTA"]);
+  const pinned = new Set(["TITLE_HOOK", "TITLE_CARD_HOOK", "TITLE_GLOW_HOOK", "TITLE_SPLIT_HOOK", "ENDING_CTA"]);
   const pool = ALL_PATTERNS.filter(p => !pinned.has(p));
 
   // Deterministic shuffle using scene count as seed (stable across reruns)
@@ -2183,7 +2194,8 @@ module.exports = {
   sanitizeTSXCode,
   generateSafetyNetTSX,
   validateGeneratedCode,
-  validateCompiledJS
+  validateCompiledJS,
+  assignPatternSlots
 };
 
 

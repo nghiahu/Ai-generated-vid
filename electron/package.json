@@ -1,0 +1,87 @@
+{
+  "name": "ai-video-app",
+  "version": "1.0.0",
+  "description": "AI Video Creator - Desktop App",
+  "main": "main.js",
+  "author": "YupClip",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "build:dev": "electron-builder --win --x64 --dir"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.yupclip.aivideo",
+    "productName": "AI Video Creator",
+    "copyright": "Copyright © 2024 YupClip",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "settings-window.html"
+    ],
+    "extraResources": [
+      {
+        "from": "temp-resources/renderer",
+        "to": "renderer",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "temp-resources/backend",
+        "to": "backend",
+        "filter": [
+          "**/*",
+          "!node_modules/.cache/**",
+          "!error.log",
+          "!database.sqlite",
+          "!debug_utf8_out.wav",
+          "!test_output.wav",
+          "!scratch/**",
+          "!gemini_error_response.json"
+        ]
+      },
+      {
+        "from": "temp-resources/my-video",
+        "to": "my-video",
+        "filter": [
+          "**/*",
+          "!node_modules/.cache/**",
+          "!out.mp4",
+          "!output.mp4",
+          "!out_sprint3.mp4",
+          "!*.png",
+          "!*.gif",
+          "!build/**"
+        ]
+      },
+      {
+        "from": "temp-resources/mp3",
+        "to": "mp3",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "AI Video Creator"
+    }
+  }
+}

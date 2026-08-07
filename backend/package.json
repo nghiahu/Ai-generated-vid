@@ -10,6 +10,7 @@
     "@babel/generator": "^7.29.7",
     "@babel/parser": "^7.24.0",
     "@babel/traverse": "^7.24.0",
+    "@databases/sqlite": "^4.0.2",
     "@google/generative-ai": "^0.24.1",
     "body-parser": "^1.20.2",
     "cloudinary": "^2.10.0",
@@ -17,7 +18,9 @@
     "dotenv": "^16.4.5",
     "edge-tts-universal": "^1.4.0",
     "express": "^4.19.2",
+    "node-sqlite3-wasm": "^0.8.60",
     "pg": "^8.22.0",
+    "sql.js": "^1.14.1",
     "sucrase": "^3.35.1"
   },
   "devDependencies": {

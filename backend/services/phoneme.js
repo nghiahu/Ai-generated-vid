@@ -5,6 +5,10 @@ const db = require("./db");
 
 const TECH_TERMS_TRANSLITERATION = {
   'ai': "ây-ai",
+  'llm': "eo-eo-em",
+  'tts': "ti-ti-ét",
+  'gpt': "gi-pi-ti",
+  'whisper': "uít-xpơ",
   'remotion': 'ri-mô-sần',
   'video': 'vi-đê-ô',
   'marketing': 'mác-két-tinh',

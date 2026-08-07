@@ -5,6 +5,7 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: './',  // Required for Electron: use relative paths in built output
   resolve: {
     dedupe: ['react', 'react-dom', 'remotion', '@remotion/player'],
     alias: {
