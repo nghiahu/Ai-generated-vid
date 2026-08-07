@@ -53,7 +53,7 @@
   },
   "subtitle": {
     "bottom": "300px",
-    "fontSize": "44px",
+    "fontSize": "56px",
     "fontWeight": "950",
     "useThemeTextShadow": true
   }
