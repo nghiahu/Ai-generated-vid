@@ -498,11 +498,48 @@ async function generateStoryboard(projectId, scriptText, visualStyle = "rikkei",
         }
         
         if (validHighlightWords.length === 0) {
-          const headingWords = headingStr.split(/\s+/).filter(w => w.length >= 3 && !["cho", "với", "như", "này", "được"].includes(w.toLowerCase()));
-          if (headingWords.length >= 2) {
-            validHighlightWords = [headingWords.slice(-2).join(" ")];
-          } else if (headingWords.length === 1) {
-            validHighlightWords = [headingWords[0]];
+          const allWords = headingStr.split(/\s+/).filter(w => w.trim().length > 0);
+          let found = false;
+          const isStrong = (w) => w && w.length >= 3 && !["cho", "với", "như", "này", "được", "của", "tại", "vào", "lên", "cho", "qua", "theo"].includes(w.toLowerCase());
+          
+          // 1. Try to find consecutive 2 words ending near the end of the sentence where both are strong
+          for (let i = allWords.length - 1; i >= 1; i--) {
+            const w1 = allWords[i - 1];
+            const w2 = allWords[i];
+            if (isStrong(w2) && isStrong(w1)) {
+              validHighlightWords = [`${w1} ${w2}`];
+              found = true;
+              break;
+            }
+          }
+          
+          // 2. Fallback: Try to find consecutive 2 words where at least one is strong
+          if (!found) {
+            for (let i = allWords.length - 1; i >= 1; i--) {
+              const w1 = allWords[i - 1];
+              const w2 = allWords[i];
+              if (isStrong(w2) || isStrong(w1)) {
+                validHighlightWords = [`${w1} ${w2}`];
+                found = true;
+                break;
+              }
+            }
+          }
+          
+          // 3. Fallback: Try to find a single strong word near the end
+          if (!found) {
+            for (let i = allWords.length - 1; i >= 0; i--) {
+              if (isStrong(allWords[i])) {
+                validHighlightWords = [allWords[i]];
+                found = true;
+                break;
+              }
+            }
+          }
+          
+          // 4. Ultimate fallback: Last word of the sentence
+          if (!found && allWords.length > 0) {
+            validHighlightWords = [allWords[allWords.length - 1]];
           }
         }
       }
