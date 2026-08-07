@@ -457,7 +457,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                         durationSeconds={safeParseFloat(scene.duration)}
                         voiceoverDuration={(scene as any).voiceoverDuration}
                         subtitlesJson={scene.subtitlesJson || (scene as any).voiceoverTtsJson}
-                        accentColor={scene.accentColor || "#f97316"}
+                        accentColor={vdeTokens.colors.accent}
                         visualStyle={vdeStyle}
                       />
                     </>
@@ -489,7 +489,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                       durationSeconds={safeParseFloat(scene.duration)}
                       voiceoverDuration={scene.voiceoverDuration}
                       subtitlesJson={scene.subtitlesJson}
-                      accentColor={scene.accentColor}
+                      accentColor={vdeTokens.colors.accent}
                       visualStyle={vdeStyle}
                       customSubtitle={getLayoutById(layoutId)?.templateJson?.subtitle}
                     />
