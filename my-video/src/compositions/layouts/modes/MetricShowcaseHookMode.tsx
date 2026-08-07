@@ -163,7 +163,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
         <AnimatedBlock animation="slide-up" delaySeconds={0.15}>
           <div style={{
             fontSize: `${Math.round(108 * fontScale)}px`,
-            lineHeight: 0.95,
+            lineHeight: 1.15,
             fontWeight: 950,
             letterSpacing: "-0.07em",
             textAlign: "left",
@@ -175,6 +175,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             filter: isLight ? "none" : `drop-shadow(0 4px 16px rgba(255, 255, 255, 0.12))`,
+            paddingTop: "12px",
             marginBottom: "10px",
             width: "100%",
             wordBreak: "break-word"
