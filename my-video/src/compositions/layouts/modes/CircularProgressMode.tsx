@@ -84,7 +84,9 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
   isLight,
   styles,
   gap,
-  titleText
+  titleText,
+  accentColor,
+  rgb
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -163,8 +165,9 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
     transform: "translate(-50%, -50%)",
     fontSize: dynamicFontSize,
     fontWeight: 950,
-    color: "#ff7a00",
+    color: accentColor,
     fontFamily: styles.fontFamily,
+    textShadow: `0 8px 30px rgba(${rgb}, 0.25)`
   };
 
   const cardsContainerStyle: React.CSSProperties = {
@@ -219,7 +222,7 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
                 cy="100"
                 r={R}
                 fill="none"
-                stroke="#ff7a00"
+                stroke={accentColor}
                 strokeWidth="14"
                 strokeLinecap="round"
                 strokeDasharray={C}
@@ -260,8 +263,8 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
             const individualCardStyle: React.CSSProperties = {
               ...cardStyle,
               background: isLight
-                ? "rgba(255, 255, 255, 0.95)"
-                : "rgba(10, 16, 28, 0.85)", // Premium dark slate theme background
+                ? `linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 244, 246, 0.92) 60%, ${theme.bg} 100%)`
+                : `linear-gradient(135deg, rgba(10, 16, 28, 0.92) 0%, rgba(8, 12, 24, 0.82) 60%, ${theme.bg} 100%)`, // Premium dark slate theme background with gradient
               border: `1.5px solid ${theme.border}`, // Glowing theme border color
               boxShadow: isLight
                 ? "0 10px 30px rgba(0, 0, 0, 0.04)"
