@@ -138,9 +138,9 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
         #ffffff 70%, 
         #ffffff 100%)`;
 
-  // Visual Theme Colors matching reference: White, Orange, Teal Green
-  const metricColor = "#f97316"; // Bright Orange
-  const metricRgb = "249, 115, 22";
+  // Visual Theme Colors matching reference: White, Theme Accent, Teal Green
+  const metricColor = accentColor;
+  const metricRgb = rgb;
   const cardTealColor = isLight ? "#0d9488" : "#2dd4bf"; // Teal / Mint Green
 
   const containerStyle: React.CSSProperties = {
@@ -249,7 +249,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
             width: "100%"
           }}>
             <div style={{
-              fontSize: `${Math.round(124 * fontScale)}px`,
+              fontSize: `${Math.round(160 * fontScale)}px`,
               lineHeight: 1,
               fontWeight: 950,
               letterSpacing: "-0.06em",
@@ -275,7 +275,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
                   </span>
                   {suffix && (
                     <span style={{
-                      fontSize: `${Math.round(72 * fontScale)}px`,
+                      fontSize: `${Math.round(96 * fontScale)}px`,
                       fontWeight: 900,
                       color: metricColor,
                       letterSpacing: "-0.02em",
