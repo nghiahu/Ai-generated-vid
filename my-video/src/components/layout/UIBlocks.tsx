@@ -64,7 +64,7 @@ export const highlightHeadingText = (text: string, accentColor: string, theme?: 
         );
       }
       return (
-        <span key={index} style={{ color: accentColor }}>
+        <span key={index} style={{ color: accentColor, WebkitTextFillColor: accentColor }}>
           {part}
         </span>
       );

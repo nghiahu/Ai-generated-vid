@@ -3,6 +3,7 @@ import { useCurrentFrame, useVideoConfig, interpolate, Easing } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
 import { parseNumbers } from "../../../utils/numberParser";
+import { highlightHeadingText } from "../../../components/layout/UIBlocks";
 
 
 export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
@@ -15,7 +16,8 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
   fontScale,
   titleText,
   highlightWords,
-  voiceover
+  voiceover,
+  theme
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -180,7 +182,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
             width: "100%",
             wordBreak: "break-word"
           }}>
-            {titleText}
+            {highlightHeadingText(titleText, accentColor, theme, highlightWords)}
           </div>
         </AnimatedBlock>
       )}
