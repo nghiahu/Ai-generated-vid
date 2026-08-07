@@ -57,7 +57,7 @@ const DashboardProjectPlayer = ({ scenes, config, totalDurationFrames }) => {
       style={{ width: "100%", height: "100%" }}
       controls={true}
       loop={false}
-      numberOfSharedAudioTags={100}
+      numberOfSharedAudioTags={5}
     />
   );
 };

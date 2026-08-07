@@ -133,6 +133,26 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   // Outer container padding/alignment
   const isCenteredLayout = layoutMode === "centered_text";
   const isFlywheel = t.id === "AIHubGrid1" || t.id === "Flywheel";
+  
+  const titleText = titleComp?.data?.text || "";
+
+  const calculatedPaddingTop = (() => {
+    if (isFlywheel || isCenteredLayout || isBottomAligned) return 0;
+    const basePadding = parseInt(String(t.container?.paddingTop || "380"));
+    if (!titleText) return basePadding;
+    if (titleText.length > 40) return Math.max(100, basePadding - 180);
+    if (titleText.length > 25) return Math.max(150, basePadding - 100);
+    return basePadding;
+  })();
+
+  const calculatedMarginBottom = (() => {
+    const baseMargin = parseInt(String(t.title?.marginBottom || "100"));
+    if (!titleText) return baseMargin;
+    if (titleText.length > 40) return Math.max(30, baseMargin - 60);
+    if (titleText.length > 25) return Math.max(40, baseMargin - 40);
+    return baseMargin;
+  })();
+
   const containerStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
@@ -145,7 +165,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
         ? "0px"
         : (isBottomAligned
           ? "0px"
-          : (layoutMode === "fintech_edu" || layoutMode === "hust_x_rikkei" || layoutMode === "web_mockup_hero" ? "0px" : (t.container?.paddingTop || "380px")))),
+          : (layoutMode === "fintech_edu" || layoutMode === "hust_x_rikkei" || layoutMode === "web_mockup_hero" ? "0px" : `${calculatedPaddingTop}px`))),
     paddingBottom: isFlywheel ? "0px" : (isCenteredLayout ? "0px" : (isBottomAligned ? "480px" : "86px")),
     boxSizing: "border-box",
     position: "relative",
@@ -290,9 +310,9 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
 
       {/* Content layer — carries containerStyle (flex/padding) and sits above overlay via zIndex: 1 */}
       <div style={{ ...containerStyle, position: "relative", zIndex: 1, fontFamily: styles.fontFamily }}>
-        {titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "fintech_edu" && layoutMode !== "blank" && layoutMode !== "metric_showcase_hook" && layoutMode !== "metric_focus_showcase" && layoutMode !== "web_mockup_hero" && layoutMode !== "numbered_agent_panel" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && (
+        {titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "fintech_edu" && layoutMode !== "blank" && layoutMode !== "metric_showcase_hook" && layoutMode !== "metric_focus_showcase" && layoutMode !== "web_mockup_hero" && layoutMode !== "numbered_agent_panel" && layoutMode !== "circular_progress" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && (
           <div style={{
-            marginBottom: `${parseInt(String(t.title.marginBottom || 100)) + 50}px`,
+            marginBottom: `${calculatedMarginBottom}px`,
             zIndex: 10,
             display: "flex",
             flexDirection: "column",

@@ -3,47 +3,8 @@ import { useCurrentFrame, useVideoConfig, interpolate, Easing } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
 import { CategoryPill } from "../../../components/atoms/VideoAtoms";
+import { parseNumbers } from "../../../utils/numberParser";
 
-function parseNumbers(valueStr: any): { prefix: string; n1: number; n2: number | null; suffix: string } {
-  const str = String(valueStr || "").trim();
-  if (!str) return { prefix: "", n1: 0, n2: null, suffix: "" };
-  
-  // Look for range "X - Y", "X đến Y", "X to Y" (with decimals/dots)
-  const rangeRegex = /(\d+(?:[.,]\d+)?)\s*(?:-|đến|to)\s*(\d+(?:[.,]\d+)?)/i;
-  const match = str.match(rangeRegex);
-  
-  if (match) {
-    const rawN1 = parseFloat(match[1].replace(/\./g, "").replace(/,/g, "."));
-    const rawN2 = parseFloat(match[2].replace(/\./g, "").replace(/,/g, "."));
-    const matchIndex = str.indexOf(match[0]);
-    const prefix = str.substring(0, matchIndex).trim();
-    const suffix = str.substring(matchIndex + match[0].length).trim();
-    return {
-      prefix,
-      n1: isNaN(rawN1) ? 0 : rawN1,
-      n2: isNaN(rawN2) ? 0 : rawN2,
-      suffix
-    };
-  }
-  
-  // Single number case
-  const singleRegex = /(\d+(?:[.,]\d+)?)/;
-  const singleMatch = str.match(singleRegex);
-  if (singleMatch) {
-    const rawN = parseFloat(singleMatch[1].replace(/\./g, "").replace(/,/g, "."));
-    const matchIndex = str.indexOf(singleMatch[0]);
-    const prefix = str.substring(0, matchIndex).trim();
-    const suffix = str.substring(matchIndex + singleMatch[0].length).trim();
-    return {
-      prefix,
-      n1: isNaN(rawN) ? 0 : rawN,
-      n2: null,
-      suffix
-    };
-  }
-  
-  return { prefix: "", n1: 0, n2: null, suffix: str };
-}
 
 export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
   otherComps,
@@ -102,7 +63,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
       { id: "mock-badges-2", type: "badge_row", data: { badges: ["COBOL", "JCL", "ABAP"] } },
       { id: "mock-badges-3", type: "badge_row", data: { badges: ["Terraform", "Solidity"] } },
       { id: "mock-badges-4", type: "badge_row", data: { badges: ["77 CWE được map"] } }
-    ] as any[];
+    ] as (typeof otherComps);
   }
 
   // 4. Progress Card Components (Bottom cards)
@@ -115,7 +76,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
     cardComps = [
       { id: "mock-card-1", type: "card", data: { text: "Remediate S10", value: "$10", subtext: "60%" } },
       { id: "mock-card-2", type: "card", data: { text: "Detect S1-S9", value: "$25", subtext: "100%" } }
-    ] as any[];
+    ] as (typeof otherComps);
   }
 
   // Animations configuration
@@ -136,6 +97,27 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
     extrapolateRight: "clamp",
     easing: Easing.bezier(0.16, 1, 0.3, 1)
   })) : null;
+
+  const isLongMetric = metricValue.length > 6;
+  const useColumnLayout = isVertical && (!hasDigits || isLongMetric);
+
+  const getDynamicFontSize = () => {
+    const base = isVertical ? 250 : 210;
+    const len = metricValue.length;
+    if (hasDigits) {
+      if (len > 8) return Math.round(base * 0.6 * fontScale);
+      if (len > 5) return Math.round(base * 0.8 * fontScale);
+      return Math.round(base * fontScale);
+    } else {
+      if (len > 20) return Math.round(base * 0.3 * fontScale);
+      if (len > 15) return Math.round(base * 0.38 * fontScale);
+      if (len > 10) return Math.round(base * 0.48 * fontScale);
+      if (len > 6) return Math.round(base * 0.65 * fontScale);
+      return Math.round(base * 0.85 * fontScale);
+    }
+  };
+
+  const dynamicFontSize = getDynamicFontSize();
 
   const containerStyle: React.CSSProperties = {
     width: "100%",
@@ -180,22 +162,22 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
         </AnimatedBlock>
       )}
 
-      {/* 2. Main Metric (Side-by-side Layout) */}
+      {/* 2. Main Metric (Side-by-side or Stacked Layout) */}
       {metricValue && (
         <AnimatedBlock animation="scale-in" delaySeconds={0.3}>
           <div style={{
             display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: useColumnLayout ? "column" : "row",
+            alignItems: useColumnLayout ? "flex-start" : "center",
             justifyContent: "flex-start",
-            gap: isVertical ? "32px" : "24px",
+            gap: useColumnLayout ? "12px" : (isVertical ? "32px" : "24px"),
             marginTop: "10px",
             marginBottom: "10px",
             width: "100%"
           }}>
             {/* Left huge count-up number (accentColor from theme) */}
             <div style={{
-              fontSize: isVertical ? `${Math.round(250 * fontScale)}px` : `${Math.round(210 * fontScale)}px`,
+              fontSize: `${dynamicFontSize}px`,
               lineHeight: 0.95,
               fontWeight: 950,
               letterSpacing: "-0.06em",
@@ -204,7 +186,9 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
               textShadow: isLight ? "none" : `0 8px 32px rgba(${rgb}, 0.35)`,
               display: "flex",
               alignItems: "baseline",
-              flexShrink: 0
+              flexWrap: "wrap",
+              wordBreak: "break-word",
+              maxWidth: "100%"
             }}>
               {hasDigits ? (
                 <>

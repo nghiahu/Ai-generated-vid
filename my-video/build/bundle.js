@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 2118
+/***/ 8077
 (__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6068,6 +6068,7 @@ const DossierNotesMode = ({
 
 
 
+
 function splitCardContent(raw) {
   const text = (raw || "").trim();
   const words = text.split(/\s+/).filter(Boolean);
@@ -6089,7 +6090,6 @@ const EarningsSnapshotMode = ({
   const frame = (0,esm.useCurrentFrame)();
   const { fps } = (0,esm.useVideoConfig)();
   const visibleComps = otherComps.slice(0, 4);
-  const cardCount = Math.max(visibleComps.length, 1);
   const defaultPercentages = [83, 47, 69, 55];
   const containerStyle = {
     borderRadius: "36px",
@@ -6106,119 +6106,143 @@ const EarningsSnapshotMode = ({
     width: "100%",
     maxWidth: t.container.maxWidth || "1020px",
     zIndex: 5,
-    boxSizing: "border-box"
+    boxSizing: "border-box",
+    flexShrink: 0
   };
-  return /* @__PURE__ */ react.createElement("div", { style: containerStyle }, /* @__PURE__ */ react.createElement("div", { style: { display: "grid", gap: "12px" } }, visibleComps.map((comp, idx) => {
-    var _a;
-    const isFirst = idx === 0;
-    const rawText = ((_a = comp == null ? void 0 : comp.data) == null ? void 0 : _a.text) || "";
-    const { headline, subtitle } = splitCardContent(rawText);
-    const badgeNum = String(idx + 1).padStart(2, "0");
-    const animConfig = getAnimationConfig(
-      comp,
-      idx,
-      "slide-right",
-      0.3 + idx * 0.1,
-      t
-    );
-    const cardStyle = {
-      borderRadius: "24px",
-      padding: "20px 26px",
-      background: isFirst ? isLight ? `rgba(${rgb}, 0.08)` : `rgba(${rgb}, 0.11)` : isLight ? "rgba(0, 0, 0, 0.025)" : "rgba(255, 255, 255, 0.04)",
-      border: isFirst ? `1px solid rgba(${rgb}, ${isLight ? 0.28 : 0.38})` : isLight ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.12)",
-      boxShadow: isLight ? "none" : "rgba(0, 0, 0, 0.14) 0px 14px 38px",
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: containerStyle, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "grid", gap: "12px" }, children: visibleComps.map((comp, idx) => {
+      var _a;
+      const isFirst = idx === 0;
+      const rawText = ((_a = comp == null ? void 0 : comp.data) == null ? void 0 : _a.text) || "";
+      const { headline, subtitle } = splitCardContent(rawText);
+      const badgeNum = String(idx + 1).padStart(2, "0");
+      const animConfig = getAnimationConfig(
+        comp,
+        idx,
+        "slide-right",
+        0.3 + idx * 0.1,
+        t
+      );
+      const cardStyle = {
+        borderRadius: "24px",
+        padding: "20px 26px",
+        background: isFirst ? isLight ? `rgba(${rgb}, 0.08)` : `rgba(${rgb}, 0.11)` : isLight ? "rgba(0, 0, 0, 0.025)" : "rgba(255, 255, 255, 0.04)",
+        border: isFirst ? `1px solid rgba(${rgb}, ${isLight ? 0.28 : 0.38})` : isLight ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.12)",
+        boxShadow: isLight ? "none" : "rgba(0, 0, 0, 0.14) 0px 14px 38px",
+        backdropFilter: "blur(6px)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        gap: "6px",
+        boxSizing: "border-box",
+        minHeight: "174px"
+      };
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        AnimatedBlock,
+        {
+          animation: animConfig.animation,
+          delaySeconds: animConfig.delay,
+          style: { height: "100%" },
+          children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: cardStyle, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+              fontSize: "11px",
+              fontWeight: 900,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: isFirst ? accentColor : isLight ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.3)",
+              fontFamily: styles.fontFamily
+            }, children: badgeNum }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+              fontSize: `${Math.round(28 * fontScale)}px`,
+              lineHeight: 1.1,
+              fontWeight: 850,
+              color: isLight ? "#1e293b" : "rgb(248, 250, 252)",
+              fontFamily: styles.fontFamily
+            }, children: headline }),
+            subtitle && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+              fontSize: `${Math.round(14 * fontScale)}px`,
+              lineHeight: 1.4,
+              fontWeight: 600,
+              color: isLight ? "#64748b" : "rgba(248, 250, 252, 0.45)",
+              fontFamily: styles.fontFamily,
+              maxWidth: "92%"
+            }, children: subtitle })
+          ] })
+        },
+        comp.id || idx
+      );
+    }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-left", delaySeconds: 0.8, style: { height: "100%" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+      background: isLight ? "rgba(0, 0, 0, 0.025)" : "rgba(255, 255, 255, 0.04)",
+      border: isLight ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.12)",
+      borderRadius: "28px",
+      padding: resolvePadding("28px 24px", paddingScale),
+      boxShadow: isLight ? "none" : "rgba(255, 255, 255, 0.043) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.14) 0px 18px 44px",
       backdropFilter: "blur(6px)",
       display: "flex",
       flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      textAlign: "center",
-      gap: "6px",
+      justifyContent: "flex-end",
+      gap: "20px",
       boxSizing: "border-box",
-      minHeight: "174px"
-    };
-    return /* @__PURE__ */ react.createElement(
-      AnimatedBlock,
-      {
-        key: comp.id || idx,
-        animation: animConfig.animation,
-        delaySeconds: animConfig.delay,
-        style: { height: "100%" }
-      },
-      /* @__PURE__ */ react.createElement("div", { style: cardStyle }, /* @__PURE__ */ react.createElement("div", { style: {
-        fontSize: "11px",
-        fontWeight: 900,
-        letterSpacing: "0.2em",
-        textTransform: "uppercase",
-        color: isFirst ? accentColor : isLight ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.3)",
-        fontFamily: styles.fontFamily
-      } }, badgeNum), /* @__PURE__ */ react.createElement("div", { style: {
-        fontSize: `${Math.round(28 * fontScale)}px`,
-        lineHeight: 1.1,
-        fontWeight: 850,
-        color: isLight ? "#1e293b" : "rgb(248, 250, 252)",
-        fontFamily: styles.fontFamily
-      } }, headline), subtitle && /* @__PURE__ */ react.createElement("div", { style: {
-        fontSize: `${Math.round(14 * fontScale)}px`,
-        lineHeight: 1.4,
-        fontWeight: 600,
-        color: isLight ? "#64748b" : "rgba(248, 250, 252, 0.45)",
-        fontFamily: styles.fontFamily,
-        maxWidth: "92%"
-      } }, subtitle))
-    );
-  })), /* @__PURE__ */ react.createElement(AnimatedBlock, { animation: "slide-left", delaySeconds: 0.8, style: { height: "100%" } }, /* @__PURE__ */ react.createElement("div", { style: {
-    background: isLight ? "rgba(0, 0, 0, 0.025)" : "rgba(255, 255, 255, 0.04)",
-    border: isLight ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.12)",
-    borderRadius: "28px",
-    padding: resolvePadding("28px 24px", paddingScale),
-    boxShadow: isLight ? "none" : "rgba(255, 255, 255, 0.043) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.14) 0px 18px 44px",
-    backdropFilter: "blur(6px)",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    gap: "20px",
-    boxSizing: "border-box",
-    height: "100%"
-  } }, visibleComps.map((comp, idx) => {
-    var _a, _b;
-    const rawText = ((_a = comp == null ? void 0 : comp.data) == null ? void 0 : _a.text) || "";
-    const label = rawText.split(/\s+/)[0] || `#${idx + 1}`;
-    const pct = ((_b = comp == null ? void 0 : comp.data) == null ? void 0 : _b.value) ? parseInt(String(comp.data.value).replace("%", ""), 10) : defaultPercentages[idx] ?? 50;
-    const barStartFrame = Math.round((1 + idx * 0.15) * fps);
-    const barRelativeFrame = frame - barStartFrame;
-    const currentPct = Math.round((0,esm.interpolate)(barRelativeFrame, [0, 22], [0, pct], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
-    }));
-    return /* @__PURE__ */ react.createElement("div", { key: idx, style: { display: "grid", gap: "8px" } }, /* @__PURE__ */ react.createElement("div", { style: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "baseline",
-      color: isLight ? "#475569" : "rgb(203, 213, 225)",
-      fontSize: "13px",
-      fontWeight: 750,
-      fontFamily: styles.fontFamily,
-      textTransform: "uppercase",
-      letterSpacing: "0.08em"
-    } }, /* @__PURE__ */ react.createElement("span", null, label), /* @__PURE__ */ react.createElement("span", { style: {
-      fontWeight: 900,
-      fontSize: "16px",
-      color: isLight ? accentColor : accentColor
-    } }, currentPct, "%")), /* @__PURE__ */ react.createElement("div", { style: {
-      height: "16px",
-      borderRadius: "999px",
-      background: isLight ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.1)",
-      overflow: "hidden"
-    } }, /* @__PURE__ */ react.createElement("div", { style: {
-      height: "100%",
-      width: `${currentPct}%`,
-      borderRadius: "999px",
-      background: accentColor,
-      boxShadow: `rgba(${rgb}, 0.45) 0px 0px 22px`
-    } })));
-  }))));
+      height: "100%"
+    }, children: visibleComps.map((comp, idx) => {
+      var _a, _b;
+      const rawText = ((_a = comp == null ? void 0 : comp.data) == null ? void 0 : _a.text) || "";
+      const label = rawText.split(/\s+/)[0] || `#${idx + 1}`;
+      const rawVal = (_b = comp == null ? void 0 : comp.data) == null ? void 0 : _b.value;
+      let pct = defaultPercentages[idx] ?? 50;
+      if (rawVal) {
+        const parsed = parseInt(String(rawVal).replace(/[^\d]/g, ""), 10);
+        if (!isNaN(parsed)) {
+          pct = Math.min(100, Math.max(0, parsed));
+        }
+      }
+      const barStartFrame = Math.round((1 + idx * 0.15) * fps);
+      const barRelativeFrame = frame - barStartFrame;
+      const currentPct = Math.round((0,esm.interpolate)(barRelativeFrame, [0, 22], [0, pct], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+        easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
+      }));
+      return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "grid", gap: "8px" }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+          color: isLight ? "#475569" : "rgb(203, 213, 225)",
+          fontSize: "13px",
+          fontWeight: 750,
+          fontFamily: styles.fontFamily,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em"
+        }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: label }),
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("span", { style: {
+            fontWeight: 900,
+            fontSize: "16px",
+            color: isLight ? accentColor : accentColor
+          }, children: [
+            currentPct,
+            "%"
+          ] })
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          height: "16px",
+          borderRadius: "999px",
+          background: isLight ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.1)",
+          overflow: "hidden"
+        }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          height: "100%",
+          width: `${currentPct}%`,
+          borderRadius: "999px",
+          background: accentColor,
+          boxShadow: `rgba(${rgb}, 0.45) 0px 0px 22px`
+        } }) })
+      ] }, idx);
+    }) }) })
+  ] });
 };
 
 ;// ./src/compositions/layouts/modes/EvidenceBoardMode.tsx
@@ -12236,30 +12260,536 @@ const TimelineShiftMode = (props) => {
   }
 };
 
+;// ./src/utils/numberParser.ts
+
+function parseNumbers(valueStr) {
+  const str = String(valueStr || "").trim();
+  if (!str) return { prefix: "", n1: 0, n2: null, suffix: "" };
+  const normalizeNumericString = (numStr) => {
+    if (numStr.includes(",") && numStr.includes(".")) {
+      const firstComma = numStr.indexOf(",");
+      const firstDot = numStr.indexOf(".");
+      if (firstComma < firstDot) {
+        return parseFloat(numStr.replace(/,/g, ""));
+      } else {
+        return parseFloat(numStr.replace(/\./g, "").replace(/,/g, "."));
+      }
+    }
+    if (numStr.includes(",")) {
+      const parts = numStr.split(",");
+      if (parts[parts.length - 1].length === 3) {
+        return parseFloat(numStr.replace(/,/g, ""));
+      } else {
+        return parseFloat(numStr.replace(/,/g, "."));
+      }
+    }
+    if (numStr.includes(".")) {
+      const parts = numStr.split(".");
+      if (parts[parts.length - 1].length === 3) {
+        return parseFloat(numStr.replace(/\./g, ""));
+      } else {
+        return parseFloat(numStr);
+      }
+    }
+    return parseFloat(numStr);
+  };
+  const rangeRegex = /(\d+(?:[.,]\d+)*)\s*(?:-|đến|to)\s*(\d+(?:[.,]\d+)*)/i;
+  const match = str.match(rangeRegex);
+  if (match) {
+    const rawN1 = normalizeNumericString(match[1]);
+    const rawN2 = normalizeNumericString(match[2]);
+    const matchIndex = str.indexOf(match[0]);
+    const prefix = str.substring(0, matchIndex).trim();
+    const suffix = str.substring(matchIndex + match[0].length).trim();
+    return {
+      prefix,
+      n1: isNaN(rawN1) ? 0 : rawN1,
+      n2: isNaN(rawN2) ? 0 : rawN2,
+      suffix
+    };
+  }
+  const singleRegex = /(\d+(?:[.,]\d+)*)/;
+  const singleMatch = str.match(singleRegex);
+  if (singleMatch) {
+    const rawN = normalizeNumericString(singleMatch[1]);
+    const matchIndex = str.indexOf(singleMatch[0]);
+    const prefix = str.substring(0, matchIndex).trim();
+    const suffix = str.substring(matchIndex + singleMatch[0].length).trim();
+    return {
+      prefix,
+      n1: isNaN(rawN) ? 0 : rawN,
+      n2: null,
+      suffix
+    };
+  }
+  return { prefix: "", n1: 0, n2: null, suffix: str };
+}
+
+;// ./node_modules/lucide-react/dist/esm/shared/src/utils/mergeClasses.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+const mergeClasses = (...classes) => classes.filter((className, index, array) => {
+  return Boolean(className) && className.trim() !== "" && array.indexOf(className) === index;
+}).join(" ").trim();
+
+
+//# sourceMappingURL=mergeClasses.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/shared/src/utils/toKebabCase.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+const toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
+
+//# sourceMappingURL=toKebabCase.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/shared/src/utils/toCamelCase.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+const toCamelCase = (string) => string.replace(
+  /^([A-Z])|[\s-_]+(\w)/g,
+  (match, p1, p2) => p2 ? p2.toUpperCase() : p1.toLowerCase()
+);
+
+
+//# sourceMappingURL=toCamelCase.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/shared/src/utils/toPascalCase.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+const toPascalCase = (string) => {
+  const camelCase = toCamelCase(string);
+  return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
+};
+
+
+//# sourceMappingURL=toPascalCase.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/defaultAttributes.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+var defaultAttributes = {
+  xmlns: "http://www.w3.org/2000/svg",
+  width: 24,
+  height: 24,
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round",
+  strokeLinejoin: "round"
+};
+
+
+//# sourceMappingURL=defaultAttributes.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/shared/src/utils/hasA11yProp.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+const hasA11yProp = (props) => {
+  for (const prop in props) {
+    if (prop.startsWith("aria-") || prop === "role" || prop === "title") {
+      return true;
+    }
+  }
+  return false;
+};
+
+
+//# sourceMappingURL=hasA11yProp.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/context.mjs
+/* unused harmony import specifier */ var useMemo;
+/* unused harmony import specifier */ var createElement;
+
+"use client";
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+const LucideContext = (0,react.createContext)({});
+function LucideProvider({
+  children,
+  size,
+  color,
+  strokeWidth,
+  absoluteStrokeWidth,
+  className
+}) {
+  const value = useMemo(
+    () => ({
+      size,
+      color,
+      strokeWidth,
+      absoluteStrokeWidth,
+      className
+    }),
+    [size, color, strokeWidth, absoluteStrokeWidth, className]
+  );
+  return createElement(LucideContext.Provider, { value }, children);
+}
+const useLucideContext = () => (0,react.useContext)(LucideContext);
+
+
+//# sourceMappingURL=context.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/Icon.mjs
+
+"use client";
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+
+
+
+
+const Icon = (0,react.forwardRef)(
+  ({ color, size, strokeWidth, absoluteStrokeWidth, className = "", children, iconNode, ...rest }, ref) => {
+    const {
+      size: contextSize = 24,
+      strokeWidth: contextStrokeWidth = 2,
+      absoluteStrokeWidth: contextAbsoluteStrokeWidth = false,
+      color: contextColor = "currentColor",
+      className: contextClass = ""
+    } = useLucideContext() ?? {};
+    const calculatedStrokeWidth = absoluteStrokeWidth ?? contextAbsoluteStrokeWidth ? Number(strokeWidth ?? contextStrokeWidth) * 24 / Number(size ?? contextSize) : strokeWidth ?? contextStrokeWidth;
+    return (0,react.createElement)(
+      "svg",
+      {
+        ref,
+        ...defaultAttributes,
+        width: size ?? contextSize ?? defaultAttributes.width,
+        height: size ?? contextSize ?? defaultAttributes.height,
+        stroke: color ?? contextColor,
+        strokeWidth: calculatedStrokeWidth,
+        className: mergeClasses("lucide", contextClass, className),
+        ...!children && !hasA11yProp(rest) && { "aria-hidden": "true" },
+        ...rest
+      },
+      [
+        ...iconNode.map(([tag, attrs]) => (0,react.createElement)(tag, attrs)),
+        ...Array.isArray(children) ? children : [children]
+      ]
+    );
+  }
+);
+
+
+//# sourceMappingURL=Icon.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/createLucideIcon.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+
+
+
+
+const createLucideIcon = (iconName, iconNode) => {
+  const Component = (0,react.forwardRef)(
+    ({ className, ...props }, ref) => (0,react.createElement)(Icon, {
+      ref,
+      iconNode,
+      className: mergeClasses(
+        `lucide-${toKebabCase(toPascalCase(iconName))}`,
+        `lucide-${iconName}`,
+        className
+      ),
+      ...props
+    })
+  );
+  Component.displayName = toPascalCase(iconName);
+  return Component;
+};
+
+
+//# sourceMappingURL=createLucideIcon.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/icons/terminal.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+const __iconNode = [
+  ["path", { d: "M12 19h8", key: "baeox8" }],
+  ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
+];
+const Terminal = createLucideIcon("terminal", __iconNode);
+
+
+//# sourceMappingURL=terminal.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/icons/layers.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+const layers_iconNode = [
+  [
+    "path",
+    {
+      d: "M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z",
+      key: "zw3jo"
+    }
+  ],
+  [
+    "path",
+    {
+      d: "M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12",
+      key: "1wduqc"
+    }
+  ],
+  [
+    "path",
+    {
+      d: "M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17",
+      key: "kqbvx6"
+    }
+  ]
+];
+const Layers = createLucideIcon("layers", layers_iconNode);
+
+
+//# sourceMappingURL=layers.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/icons/cpu.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+const cpu_iconNode = [
+  ["path", { d: "M12 20v2", key: "1lh1kg" }],
+  ["path", { d: "M12 2v2", key: "tus03m" }],
+  ["path", { d: "M17 20v2", key: "1rnc9c" }],
+  ["path", { d: "M17 2v2", key: "11trls" }],
+  ["path", { d: "M2 12h2", key: "1t8f8n" }],
+  ["path", { d: "M2 17h2", key: "7oei6x" }],
+  ["path", { d: "M2 7h2", key: "asdhe0" }],
+  ["path", { d: "M20 12h2", key: "1q8mjw" }],
+  ["path", { d: "M20 17h2", key: "1fpfkl" }],
+  ["path", { d: "M20 7h2", key: "1o8tra" }],
+  ["path", { d: "M7 20v2", key: "4gnj0m" }],
+  ["path", { d: "M7 2v2", key: "1i4yhu" }],
+  ["rect", { x: "4", y: "4", width: "16", height: "16", rx: "2", key: "1vbyd7" }],
+  ["rect", { x: "8", y: "8", width: "8", height: "8", rx: "1", key: "z9xiuo" }]
+];
+const Cpu = createLucideIcon("cpu", cpu_iconNode);
+
+
+//# sourceMappingURL=cpu.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/icons/target.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+const target_iconNode = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["circle", { cx: "12", cy: "12", r: "6", key: "1vlfrh" }],
+  ["circle", { cx: "12", cy: "12", r: "2", key: "1c9p78" }]
+];
+const Target = createLucideIcon("target", target_iconNode);
+
+
+//# sourceMappingURL=target.mjs.map
+
+;// ./node_modules/lucide-react/dist/esm/icons/zap.mjs
+/**
+ * @license lucide-react v1.23.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+const zap_iconNode = [
+  [
+    "path",
+    {
+      d: "M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z",
+      key: "1xq2db"
+    }
+  ]
+];
+const Zap = createLucideIcon("zap", zap_iconNode);
+
+
+//# sourceMappingURL=zap.mjs.map
+
 ;// ./src/compositions/layouts/modes/CircularProgressMode.tsx
 
 
 
 
+
+
+
+const parseCardContent = (comp) => {
+  var _a, _b, _c;
+  const text = ((_a = comp.data) == null ? void 0 : _a.text) || "";
+  const value = ((_b = comp.data) == null ? void 0 : _b.value) || "";
+  const subtext = ((_c = comp.data) == null ? void 0 : _c.subtext) || "";
+  if (value || subtext) {
+    return { value, title: text, subtext };
+  }
+  const metricRegex = /^([+-]?\d+(?:\.\d+)?%?[+-°]?|[a-zA-Z]{1,3}\s*\d+)\s+([^-—:(]+)(?:[-—:(]+(.*)\)?)?$/i;
+  const match = text.match(metricRegex);
+  if (match) {
+    return {
+      value: match[1].trim(),
+      title: match[2].trim(),
+      subtext: match[3] ? match[3].replace(/\)$/, "").trim() : ""
+    };
+  }
+  const splitMatch = text.match(/^([^—:-]+)\s*[—:-]\s*(.*)$/);
+  if (splitMatch) {
+    return {
+      value: "",
+      title: splitMatch[1].trim(),
+      subtext: splitMatch[2].trim()
+    };
+  }
+  return { value: "", title: text, subtext: "" };
+};
+const getCardTheme = (idx, isLight) => {
+  switch (idx) {
+    case 0:
+      return {
+        color: "#f97316",
+        icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(Terminal, { size: 24, color: "#f97316" }),
+        bg: isLight ? "rgba(249, 115, 22, 0.05)" : "rgba(249, 115, 22, 0.08)",
+        border: isLight ? "rgba(249, 115, 22, 0.2)" : "rgba(249, 115, 22, 0.3)"
+      };
+    case 1:
+      return {
+        color: "#3b82f6",
+        icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(Layers, { size: 24, color: "#3b82f6" }),
+        bg: isLight ? "rgba(59, 130, 246, 0.05)" : "rgba(59, 130, 246, 0.08)",
+        border: isLight ? "rgba(59, 130, 246, 0.2)" : "rgba(59, 130, 246, 0.3)"
+      };
+    case 2:
+      return {
+        color: "#0d9488",
+        icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(Cpu, { size: 24, color: "#0d9488" }),
+        bg: isLight ? "rgba(13, 148, 136, 0.05)" : "rgba(13, 148, 136, 0.08)",
+        border: isLight ? "rgba(13, 148, 136, 0.2)" : "rgba(13, 148, 136, 0.3)"
+      };
+    case 3:
+      return {
+        color: "#eab308",
+        icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(Target, { size: 24, color: "#eab308" }),
+        bg: isLight ? "rgba(234, 179, 8, 0.05)" : "rgba(234, 179, 8, 0.08)",
+        border: isLight ? "rgba(234, 179, 8, 0.2)" : "rgba(234, 179, 8, 0.3)"
+      };
+    default:
+      return {
+        color: "#a855f7",
+        icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(Zap, { size: 24, color: "#a855f7" }),
+        bg: isLight ? "rgba(168, 85, 247, 0.05)" : "rgba(168, 85, 247, 0.08)",
+        border: isLight ? "rgba(168, 85, 247, 0.2)" : "rgba(168, 85, 247, 0.3)"
+      };
+  }
+};
 const CircularProgressMode = ({
   otherComps,
   t,
-  accentColor,
-  darkAccentColor,
   isLight,
   styles,
-  gap
+  gap,
+  titleText
 }) => {
-  var _a, _b, _c, _d, _e;
+  var _a, _b, _c, _d;
   const frame = (0,esm.useCurrentFrame)();
   const { fps } = (0,esm.useVideoConfig)();
   console.log("[CircularProgressMode] RENDER. otherComps:", otherComps);
-  const metricComp = otherComps[0];
-  const metricValueText = String(((_a = metricComp == null ? void 0 : metricComp.data) == null ? void 0 : _a.value) || ((_b = metricComp == null ? void 0 : metricComp.data) == null ? void 0 : _b.text) || "0");
-  const parsedValue = parseInt(metricValueText.replace(/[^\d]/g, ""), 10);
-  const targetValue = isNaN(parsedValue) ? 0 : Math.min(100, Math.max(0, parsedValue));
-  const metricLabel = ((_c = metricComp == null ? void 0 : metricComp.data) == null ? void 0 : _c.text) || "";
-  const cardComps = otherComps.slice(1, 4);
+  let targetValue = 0;
+  let hasExtractedFromTitle = false;
+  let metricComp = null;
+  const titlePctMatch = titleText ? titleText.match(/(\d+(?:\.\d+)?)\s*%/i) : null;
+  if (titlePctMatch) {
+    const val = parseInt(titlePctMatch[1], 10);
+    if (!isNaN(val)) {
+      targetValue = Math.min(100, Math.max(0, val));
+      hasExtractedFromTitle = true;
+    }
+  }
+  if (!hasExtractedFromTitle) {
+    metricComp = otherComps[0];
+    const metricValueText = String(((_a = metricComp == null ? void 0 : metricComp.data) == null ? void 0 : _a.value) || ((_b = metricComp == null ? void 0 : metricComp.data) == null ? void 0 : _b.text) || "0");
+    const parsedValue = parseInt(metricValueText.replace(/[^\d]/g, ""), 10);
+    targetValue = isNaN(parsedValue) ? 0 : Math.min(100, Math.max(0, parsedValue));
+  }
+  const cardComps = hasExtractedFromTitle ? otherComps.slice(0, 4) : otherComps.slice(1, 5);
   const R = 70;
   const C = 2 * Math.PI * R;
   const startFrame = Math.round(0.3 * fps);
@@ -12275,8 +12805,9 @@ const CircularProgressMode = ({
     flexDirection: "column",
     alignItems: "center",
     width: "100%",
-    maxWidth: ((_d = t.container) == null ? void 0 : _d.maxWidth) || "960px",
-    zIndex: 5
+    maxWidth: ((_c = t.container) == null ? void 0 : _c.maxWidth) || "960px",
+    zIndex: 5,
+    flexShrink: 0
   };
   const circleSectionStyle = {
     display: "flex",
@@ -12285,92 +12816,146 @@ const CircularProgressMode = ({
     position: "relative",
     marginBottom: "20px"
   };
+  const textToShow = `${Math.round(progress)}%`;
+  const dynamicFontSize = textToShow.length >= 4 ? "105px" : textToShow.length === 3 ? "120px" : "135px";
   const numberOverlayStyle = {
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    fontSize: "110px",
+    fontSize: dynamicFontSize,
     fontWeight: 950,
     color: "#ff7a00",
     fontFamily: styles.fontFamily
   };
-  const labelStyle = {
-    fontSize: "24px",
-    fontWeight: 800,
-    color: isLight ? "#1f2937" : "#ffffff",
-    fontFamily: styles.fontFamily,
-    marginTop: "16px",
-    textAlign: "center",
-    maxWidth: "500px",
-    lineHeight: 1.3
-  };
   const cardsContainerStyle = {
-    display: "flex",
-    flexDirection: "row",
-    gap: gap !== void 0 ? `${gap}px` : ((_e = t.container) == null ? void 0 : _e.gap) || "24px",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: gap !== void 0 ? `${gap}px` : ((_d = t.container) == null ? void 0 : _d.gap) || "20px",
     width: "100%",
-    justifyContent: "center",
-    marginTop: "24px"
+    marginTop: "24px",
+    boxSizing: "border-box",
+    padding: "0 20px"
   };
   const cardStyle = {
-    flex: 1,
-    borderRadius: "24px",
+    width: "100%",
+    height: "240px",
+    // Fixed height to guarantee all cards are equal
+    borderRadius: "28px",
     padding: "24px",
-    background: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(255, 255, 255, 0.05)",
+    background: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(255, 255, 255, 0.03)",
     border: `1px solid ${isLight ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.12)"}`,
     boxShadow: `0 14px 34px rgba(0, 0, 0, 0.15)`,
     display: "flex",
     flexDirection: "column",
-    gap: "8px",
+    alignItems: "center",
+    justifyContent: "center",
+    // Vertically center content
+    textAlign: "center",
     boxSizing: "border-box",
-    minHeight: "140px"
-  };
-  const badgeStyle = {
-    fontSize: "16px",
-    fontWeight: 900,
-    color: accentColor,
-    textTransform: "uppercase",
-    letterSpacing: "0.1em",
-    fontFamily: styles.fontFamily
-  };
-  const textStyle = {
-    fontSize: "20px",
-    fontWeight: 800,
-    color: isLight ? "#1f2937" : "#ffffff",
-    lineHeight: 1.3,
-    fontFamily: styles.fontFamily
+    backdropFilter: "blur(8px)"
   };
   const animCircleConfig = metricComp ? getAnimationConfig(metricComp, 0, "scale-in", 0, t) : { animation: "scale-in", delay: 0.1 };
-  return /* @__PURE__ */ react.createElement("div", { style: containerStyle }, /* @__PURE__ */ react.createElement(AnimatedBlock, { animation: animCircleConfig.animation, delaySeconds: 0.1 }, /* @__PURE__ */ react.createElement("div", { style: circleSectionStyle }, /* @__PURE__ */ react.createElement("div", { style: { position: "relative", width: "420px", height: "420px" } }, /* @__PURE__ */ react.createElement("svg", { viewBox: "0 0 200 200", style: { width: "100%", height: "100%" } }, /* @__PURE__ */ react.createElement(
-    "circle",
-    {
-      cx: "100",
-      cy: "100",
-      r: R,
-      fill: "none",
-      stroke: isLight ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)",
-      strokeWidth: "14"
-    }
-  ), /* @__PURE__ */ react.createElement(
-    "circle",
-    {
-      cx: "100",
-      cy: "100",
-      r: R,
-      fill: "none",
-      stroke: "#ff7a00",
-      strokeWidth: "14",
-      strokeLinecap: "round",
-      strokeDasharray: C,
-      strokeDashoffset,
-      transform: "rotate(-90 100 100)"
-    }
-  )), /* @__PURE__ */ react.createElement("div", { style: numberOverlayStyle }, Math.round(progress), "%")))), cardComps.length > 0 && /* @__PURE__ */ react.createElement("div", { style: cardsContainerStyle }, cardComps.map((comp, idx) => {
-    var _a2;
-    const animCardConfig = getAnimationConfig(comp, idx, "slide-up", 1.2 + 0.3 * idx, t);
-    return /* @__PURE__ */ react.createElement(AnimatedBlock, { key: comp.id || idx, animation: animCardConfig.animation, delaySeconds: animCardConfig.delay }, /* @__PURE__ */ react.createElement("div", { style: cardStyle }, /* @__PURE__ */ react.createElement("div", { style: badgeStyle }, "CH\u1EC8 TI\xCAU ", String(idx + 1).padStart(2, "0")), /* @__PURE__ */ react.createElement("div", { style: textStyle }, ((_a2 = comp == null ? void 0 : comp.data) == null ? void 0 : _a2.text) || "")));
-  })));
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: containerStyle, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animCircleConfig.animation, delaySeconds: 0.1, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: circleSectionStyle, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", width: "480px", height: "480px" }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("svg", { viewBox: "0 0 200 200", style: { width: "100%", height: "100%" }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "circle",
+          {
+            cx: "100",
+            cy: "100",
+            r: R,
+            fill: "none",
+            stroke: isLight ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)",
+            strokeWidth: "14"
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "circle",
+          {
+            cx: "100",
+            cy: "100",
+            r: R,
+            fill: "none",
+            stroke: "#ff7a00",
+            strokeWidth: "14",
+            strokeLinecap: "round",
+            strokeDasharray: C,
+            strokeDashoffset,
+            transform: "rotate(-90 100 100)"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: numberOverlayStyle, children: [
+        Math.round(progress),
+        "%"
+      ] })
+    ] }) }) }),
+    cardComps.length > 0 && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: cardsContainerStyle, children: cardComps.map((comp, idx) => {
+      const { value, title, subtext } = parseCardContent(comp);
+      const theme = getCardTheme(idx, isLight);
+      const animCardConfig = getAnimationConfig(comp, idx, "slide-up", 1.2 + 0.25 * idx, t);
+      const cardStartFrame = startFrame + durationFrames + 5 + idx * 8;
+      const { n1, suffix } = parseNumbers(value);
+      const hasDigits = /\d+/.test(value);
+      const cardProgress = (0,esm.interpolate)(frame - cardStartFrame, [0, 25], [0, n1], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+        easing: esm.Easing.bezier(0.25, 1, 0.5, 1)
+      });
+      const animatedValue = Math.round(cardProgress);
+      const individualCardStyle = {
+        ...cardStyle,
+        background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 28, 0.85)",
+        // Premium dark slate theme background
+        border: `1.5px solid ${theme.border}`,
+        // Glowing theme border color
+        boxShadow: isLight ? "0 10px 30px rgba(0, 0, 0, 0.04)" : `0 14px 40px rgba(0, 0, 0, 0.45), 0 0 20px rgba(0, 0, 0, 0.25)`
+      };
+      const titleFontSize = title.length > 25 ? "15px" : title.length > 15 ? "18px" : "21px";
+      const subtextFontSize = subtext.length > 30 ? "13px" : "15px";
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: animCardConfig.animation, delaySeconds: animCardConfig.delay, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: individualCardStyle, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          width: "56px",
+          height: "56px",
+          borderRadius: "16px",
+          background: theme.bg,
+          border: `1.5px solid ${theme.border}`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "14px"
+        }, children: theme.icon }),
+        value && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          fontSize: "52px",
+          fontWeight: 950,
+          color: theme.color,
+          fontFamily: styles.fontFamily,
+          lineHeight: 1.1,
+          letterSpacing: "-0.03em"
+        }, children: hasDigits ? /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+          animatedValue,
+          suffix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontSize: "32px", fontWeight: 800, marginLeft: "2px" }, children: suffix })
+        ] }) : value }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          fontSize: titleFontSize,
+          fontWeight: 800,
+          color: isLight ? "#1e293b" : "#ffffff",
+          fontFamily: styles.fontFamily,
+          marginTop: "8px",
+          lineHeight: 1.2
+        }, children: title }),
+        subtext && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          fontSize: subtextFontSize,
+          fontWeight: 500,
+          color: isLight ? "#475569" : "#94a3b8",
+          fontFamily: styles.fontFamily,
+          marginTop: "6px",
+          lineHeight: 1.3
+        }, children: subtext })
+      ] }) }, comp.id || idx);
+    }) })
+  ] });
 };
 
 ;// ./src/compositions/layouts/modes/MetricShowcaseHookMode.tsx
@@ -12378,34 +12963,7 @@ const CircularProgressMode = ({
 
 
 
-function parseNumbers(valueStr) {
-  const str = String(valueStr || "").trim();
-  if (!str) return { n1: 0, n2: null, suffix: "" };
-  const rangeRegex = /(\d+(?:[.,]\d+)?)\s*(?:-|đến|to)\s*(\d+(?:[.,]\d+)?)/i;
-  const match = str.match(rangeRegex);
-  if (match) {
-    const rawN1 = parseFloat(match[1].replace(/\./g, "").replace(/,/g, "."));
-    const rawN2 = parseFloat(match[2].replace(/\./g, "").replace(/,/g, "."));
-    const suffix = str.replace(match[0], "").trim();
-    return {
-      n1: isNaN(rawN1) ? 0 : rawN1,
-      n2: isNaN(rawN2) ? 0 : rawN2,
-      suffix
-    };
-  }
-  const singleRegex = /(\d+(?:[.,]\d+)?)/;
-  const singleMatch = str.match(singleRegex);
-  if (singleMatch) {
-    const rawN = parseFloat(singleMatch[1].replace(/\./g, "").replace(/,/g, "."));
-    const suffix = str.replace(singleMatch[0], "").trim();
-    return {
-      n1: isNaN(rawN) ? 0 : rawN,
-      n2: null,
-      suffix
-    };
-  }
-  return { n1: 0, n2: null, suffix: str };
-}
+
 const MetricShowcaseHookMode = ({
   otherComps,
   t,
@@ -12476,7 +13034,7 @@ const MetricShowcaseHookMode = ({
     }
   );
   const countStart = Math.round(0.8 * fps);
-  const { n1, n2, suffix } = parseNumbers(metricValue);
+  const { prefix, n1, n2, suffix } = parseNumbers(metricValue);
   const hasDigits = /\d+/.test(metricValue);
   const animN1 = Math.round((0,esm.interpolate)(frame - countStart, [0, 30], [0, n1], {
     extrapolateLeft: "clamp",
@@ -12607,6 +13165,9 @@ const MetricShowcaseHookMode = ({
         width: "100%",
         textShadow: `0 8px 30px rgba(${metricRgb}, 0.25)`
       }, children: hasDigits ? /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+        prefix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+          marginRight: "4px"
+        }, children: prefix }),
         /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: n2 !== null && animN2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN") }),
         suffix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
           fontSize: `${Math.round(72 * fontScale)}px`,
@@ -12730,7 +13291,806 @@ const MetricShowcaseHookMode = ({
   ] });
 };
 
+;// ./src/compositions/layouts/modes/MetricFocusShowcaseMode.tsx
+
+
+
+
+
+
+const MetricFocusShowcaseMode = ({
+  otherComps,
+  t,
+  accentColor,
+  rgb,
+  isLight,
+  isVertical,
+  styles,
+  fontScale,
+  highlightWords,
+  category
+}) => {
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i;
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  let metricValue = "";
+  let metricSubtext = "";
+  let usedMetricCompId = "";
+  const explicitMetric = otherComps.find((c) => c.type === "hero_metric" || c.type === "metric");
+  if (explicitMetric) {
+    metricValue = ((_a = explicitMetric.data) == null ? void 0 : _a.value) || ((_b = explicitMetric.data) == null ? void 0 : _b.text) || "";
+    metricSubtext = ((_c = explicitMetric.data) == null ? void 0 : _c.subtext) || "";
+    usedMetricCompId = explicitMetric.id;
+  } else {
+    const metricCandidate = otherComps.find((c) => {
+      var _a2;
+      return ((_a2 = c.data) == null ? void 0 : _a2.text) && /\d+/.test(c.data.text);
+    });
+    if (metricCandidate) {
+      const text = metricCandidate.data.text;
+      const metricRegex = /(\d+(?:\s*(?:-|đến|to)\s*\d+)?\s*(?:triệu|tr|sao|k|%|usd|đ|vnd|triệu\/tháng|fork|tools|skills)?)/i;
+      const match = text.match(metricRegex);
+      if (match) {
+        metricValue = match[0].trim();
+        metricSubtext = text.replace(match[0], "").replace(/^[-\s:.,=]+/g, "").replace(/[-\s:.,=]+$/g, "").trim();
+        usedMetricCompId = metricCandidate.id;
+      }
+    }
+  }
+  if (!metricValue && highlightWords && highlightWords.length > 0) {
+    metricValue = highlightWords[0];
+    metricSubtext = /\d+/.test(highlightWords[0]) ? "Th\xF4ng s\u1ED1 n\u1ED5i b\u1EADt" : "T\u1EEB kh\xF3a n\u1ED5i b\u1EADt";
+  }
+  const cleanCategory = category || (((_e = (_d = t.categoryPill) == null ? void 0 : _d.text) == null ? void 0 : _e.trim().toLowerCase()) !== "ai vi\u1EBFt video" && ((_g = (_f = t.categoryPill) == null ? void 0 : _f.text) == null ? void 0 : _g.trim().toLowerCase()) !== "ai viet video" ? (_h = t.categoryPill) == null ? void 0 : _h.text : "") || (metricValue ? `${metricValue} ${metricSubtext}`.toUpperCase() : "");
+  let badgeComps = otherComps.filter((c) => {
+    var _a2;
+    return c.type === "badge_row" || ((_a2 = c.data) == null ? void 0 : _a2.badges) && c.data.badges.length > 0;
+  });
+  if (badgeComps.length === 0) {
+    badgeComps = [
+      { id: "mock-badges-1", type: "badge_row", data: { badges: ["Python", "Java", "Go"] } },
+      { id: "mock-badges-2", type: "badge_row", data: { badges: ["COBOL", "JCL", "ABAP"] } },
+      { id: "mock-badges-3", type: "badge_row", data: { badges: ["Terraform", "Solidity"] } },
+      { id: "mock-badges-4", type: "badge_row", data: { badges: ["77 CWE \u0111\u01B0\u1EE3c map"] } }
+    ];
+  }
+  let cardComps = otherComps.filter(
+    (c) => {
+      var _a2;
+      return c.id !== usedMetricCompId && c.type === "card" && ((_a2 = c.data) == null ? void 0 : _a2.text);
+    }
+  );
+  if (cardComps.length === 0) {
+    cardComps = [
+      { id: "mock-card-1", type: "card", data: { text: "Remediate S10", value: "$10", subtext: "60%" } },
+      { id: "mock-card-2", type: "card", data: { text: "Detect S1-S9", value: "$25", subtext: "100%" } }
+    ];
+  }
+  const countStart = Math.round(0.8 * fps);
+  const { prefix, n1, n2, suffix } = parseNumbers(metricValue);
+  const hasDigits = /\d+/.test(metricValue);
+  const animN1 = Math.round((0,esm.interpolate)(frame - countStart, [0, 25], [0, n1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
+  }));
+  const animN2 = n2 !== null ? Math.round((0,esm.interpolate)(frame - countStart, [0, 25], [0, n2], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
+  })) : null;
+  const isLongMetric = metricValue.length > 6;
+  const useColumnLayout = isVertical && (!hasDigits || isLongMetric);
+  const getDynamicFontSize = () => {
+    const base = isVertical ? 250 : 210;
+    const len = metricValue.length;
+    if (hasDigits) {
+      if (len > 8) return Math.round(base * 0.6 * fontScale);
+      if (len > 5) return Math.round(base * 0.8 * fontScale);
+      return Math.round(base * fontScale);
+    } else {
+      if (len > 20) return Math.round(base * 0.3 * fontScale);
+      if (len > 15) return Math.round(base * 0.38 * fontScale);
+      if (len > 10) return Math.round(base * 0.48 * fontScale);
+      if (len > 6) return Math.round(base * 0.65 * fontScale);
+      return Math.round(base * 0.85 * fontScale);
+    }
+  };
+  const dynamicFontSize = getDynamicFontSize();
+  const containerStyle = {
+    width: "100%",
+    maxWidth: isVertical ? "100%" : ((_i = t.container) == null ? void 0 : _i.maxWidth) || "940px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: isVertical ? "52px" : "28px",
+    boxSizing: "border-box",
+    zIndex: 5,
+    paddingLeft: isVertical ? "32px" : "20px",
+    paddingRight: isVertical ? "32px" : "20px"
+  };
+  const resolvedCardStyle = {
+    ...styles.cardStyle,
+    display: "flex",
+    flexDirection: "column",
+    gap: isVertical ? "28px" : "18px",
+    width: "100%",
+    maxWidth: "100%",
+    boxSizing: "border-box",
+    padding: isVertical ? "32px 40px" : "24px 30px"
+  };
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: containerStyle, children: [
+    cleanCategory && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-down", delaySeconds: 0.15, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      CategoryPill,
+      {
+        text: cleanCategory,
+        bgRgba: isLight ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)",
+        borderRgba: isLight ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.12)",
+        textRgba: accentColor,
+        hasDot: true,
+        dotRgba: accentColor,
+        fontSize: isVertical ? "20px" : "17px",
+        fontFamily: styles.fontFamily
+      }
+    ) }),
+    metricValue && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "scale-in", delaySeconds: 0.3, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      display: "flex",
+      flexDirection: useColumnLayout ? "column" : "row",
+      alignItems: useColumnLayout ? "flex-start" : "center",
+      justifyContent: "flex-start",
+      gap: useColumnLayout ? "12px" : isVertical ? "32px" : "24px",
+      marginTop: "10px",
+      marginBottom: "10px",
+      width: "100%"
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        fontSize: `${dynamicFontSize}px`,
+        lineHeight: 0.95,
+        fontWeight: 950,
+        letterSpacing: "-0.06em",
+        color: accentColor,
+        fontFamily: styles.fontFamily,
+        textShadow: isLight ? "none" : `0 8px 32px rgba(${rgb}, 0.35)`,
+        display: "flex",
+        alignItems: "baseline",
+        flexWrap: "wrap",
+        wordBreak: "break-word",
+        maxWidth: "100%"
+      }, children: hasDigits ? /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+        prefix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { marginRight: "4px" }, children: prefix }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: n2 !== null && animN2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN") }),
+        suffix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+          fontSize: isVertical ? `${Math.round(130 * fontScale)}px` : `${Math.round(110 * fontScale)}px`,
+          fontWeight: 900,
+          color: accentColor,
+          marginLeft: "8px",
+          textTransform: "lowercase"
+        }, children: suffix })
+      ] }) : /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: accentColor }, children: metricValue }) }),
+      metricSubtext && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-left", delaySeconds: 0.5, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+        fontSize: isVertical ? `${Math.round(64 * fontScale)}px` : `${Math.round(48 * fontScale)}px`,
+        fontWeight: 900,
+        color: isLight ? "#111111" : "#ffffff",
+        fontFamily: styles.fontFamily,
+        textAlign: "left",
+        lineHeight: 1.1,
+        letterSpacing: "-0.02em",
+        maxWidth: isVertical ? "550px" : "450px",
+        wordBreak: "break-word"
+      }, children: metricSubtext }) })
+    ] }) }),
+    badgeComps.length > 0 && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: "12px", width: "100%" }, children: badgeComps.map((badgeComp, bIdx) => {
+      var _a2;
+      const badges = ((_a2 = badgeComp.data) == null ? void 0 : _a2.badges) || [];
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.45 + bIdx * 0.15, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "flex", justifyContent: "flex-start", gap: "14px", flexWrap: "wrap", width: "100%" }, children: badges.map((badge, idx) => {
+        const isOrangeRow = bIdx % 2 === 0;
+        const pillColor = isOrangeRow ? accentColor : isLight ? "#334155" : "#e2e8f0";
+        const pillBg = isOrangeRow ? isLight ? "rgba(0, 0, 0, 0.04)" : `rgba(${rgb}, 0.08)` : isLight ? "rgba(0, 0, 0, 0.02)" : "rgba(255, 255, 255, 0.04)";
+        const pillBorder = isOrangeRow ? `rgba(${rgb}, 0.25)` : isLight ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.14)";
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+          borderRadius: "24px",
+          padding: isVertical ? "12px 24px" : "8px 18px",
+          background: pillBg,
+          border: `1.5px solid ${pillBorder}`,
+          color: pillColor,
+          fontWeight: 800,
+          fontSize: isVertical ? "26px" : "20px",
+          fontFamily: styles.fontFamily,
+          display: "inline-flex",
+          alignItems: "center"
+        }, children: badge }, idx);
+      }) }) }, badgeComp.id);
+    }) }),
+    cardComps.length > 0 && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.7, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: resolvedCardStyle, children: cardComps.map((cardComp, idx) => {
+      var _a2, _b2, _c2;
+      const cardText = ((_a2 = cardComp.data) == null ? void 0 : _a2.text) || "";
+      const cardValue = ((_b2 = cardComp.data) == null ? void 0 : _b2.value) || "";
+      let percentage = 75;
+      if (idx === 0) percentage = 60;
+      if (idx === 1) percentage = 100;
+      if (idx === 2) percentage = 45;
+      const pctMatch = (cardValue + " " + (((_c2 = cardComp.data) == null ? void 0 : _c2.subtext) || "")).match(/(\d+)%/);
+      if (pctMatch) {
+        percentage = parseInt(pctMatch[1], 10);
+      } else {
+        const numMatch = cardValue.match(/(\d+)/);
+        if (numMatch) {
+          const numVal = parseInt(numMatch[1], 10);
+          if (numVal > 0 && numVal <= 100) {
+            percentage = numVal;
+          }
+        }
+      }
+      const barFill = (0,esm.interpolate)(
+        frame,
+        [50 + idx * 5, 75 + idx * 5],
+        [0, percentage],
+        { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: esm.Easing.bezier(0.16, 1, 0.3, 1) }
+      );
+      const progressBarColor = idx === 0 ? accentColor : isLight ? "#c2410c" : "#f87171";
+      const progressRgb = idx === 0 ? rgb : "239, 68, 68";
+      return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "grid", gap: "8px", width: "100%" }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+          width: "100%"
+        }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+            fontSize: isVertical ? "26px" : "22px",
+            fontWeight: 800,
+            color: isLight ? "#111111" : "#ffffff",
+            fontFamily: styles.fontFamily
+          }, children: cardText }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+            fontSize: isVertical ? "24px" : "20px",
+            fontWeight: 900,
+            color: progressBarColor,
+            fontFamily: styles.fontFamily
+          }, children: cardValue })
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          height: isVertical ? "14px" : "10px",
+          borderRadius: "6px",
+          background: isLight ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.08)",
+          overflow: "hidden",
+          position: "relative",
+          width: "100%"
+        }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          position: "absolute",
+          left: 0,
+          top: 0,
+          height: "100%",
+          width: `${barFill}%`,
+          borderRadius: "6px",
+          background: progressBarColor,
+          boxShadow: isLight ? "none" : `0 0 8px rgba(${progressRgb}, 0.4)`
+        } }) })
+      ] }, cardComp.id);
+    }) }) })
+  ] });
+};
+
+;// ./src/compositions/layouts/modes/WebMockupHeroMode.tsx
+
+
+
+
+
+const WebMockupHeroMode = ({
+  otherComps,
+  t,
+  accentColor,
+  rgb,
+  isLight,
+  isVertical,
+  styles,
+  fontScale,
+  imageUrl,
+  category
+}) => {
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+  const frame = (0,esm.useCurrentFrame)();
+  const cleanCategory = category || (((_b = (_a = t.categoryPill) == null ? void 0 : _a.text) == null ? void 0 : _b.trim().toLowerCase()) !== "ai vi\u1EBFt video" && ((_d = (_c = t.categoryPill) == null ? void 0 : _c.text) == null ? void 0 : _d.trim().toLowerCase()) !== "ai viet video" ? (_e = t.categoryPill) == null ? void 0 : _e.text : "") || "TRENDING";
+  let badgeComps = otherComps.filter((c) => {
+    var _a2;
+    return c.type === "badge_row" || ((_a2 = c.data) == null ? void 0 : _a2.badges) && c.data.badges.length > 0;
+  });
+  if (badgeComps.length === 0) {
+    const cardTexts = otherComps.filter((c) => {
+      var _a2, _b2;
+      return (c.type === "feature_card" || c.type === "card") && ((_b2 = (_a2 = c.data) == null ? void 0 : _a2.text) == null ? void 0 : _b2.trim());
+    }).map((c) => c.data.text.trim());
+    if (cardTexts.length > 0) {
+      badgeComps = [
+        {
+          id: "script-badges-from-cards",
+          type: "badge_row",
+          data: { badges: cardTexts }
+        }
+      ];
+    } else {
+      badgeComps = [
+        {
+          id: "mock-badges-1",
+          type: "badge_row",
+          data: { badges: ["\u2605 3.4K stars", "BY MengTo", "LICENSE MIT"] }
+        }
+      ];
+    }
+  }
+  let overlayTag = "";
+  const firstCardComp = otherComps.find((c) => {
+    var _a2;
+    return (c.type === "feature_card" || c.type === "card") && ((_a2 = c.data) == null ? void 0 : _a2.text);
+  });
+  if (firstCardComp) {
+    overlayTag = firstCardComp.data.text;
+    if (firstCardComp.data.value) {
+      overlayTag += ` \xB7 ${firstCardComp.data.value}`;
+    }
+  } else {
+    overlayTag = "\u2022 89 demo \xB7 gallery xem tr\u01B0\u1EDBc";
+  }
+  let addressUrl = "github.com/mengto/skills";
+  const badgesList = ((_g = (_f = badgeComps[0]) == null ? void 0 : _f.data) == null ? void 0 : _g.badges) || [];
+  const authorBadge = badgesList.find((b) => b.toLowerCase().includes("by ") || b.toLowerCase().includes("author"));
+  if (authorBadge) {
+    const authorName = authorBadge.replace(/by\s+/i, "").trim().toLowerCase();
+    addressUrl = `github.com/${authorName}/skills`;
+  }
+  const mountStart = 0;
+  const mountDuration = 35;
+  const scale = (0,esm.interpolate)(frame - mountStart, [0, mountDuration], [0.85, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
+  });
+  const introProgress = (0,esm.interpolate)(frame - mountStart, [0, mountDuration], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
+  });
+  const currentRotZ = (0,esm.interpolate)(frame, [0, 95], [-1, 2.5], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: esm.Easing.out(esm.Easing.quad)
+  });
+  const floatY = Math.sin(frame / 25) * 6 * introProgress;
+  const browserHeight = isVertical ? "520px" : "480px";
+  const containerGap = isVertical ? "48px" : "28px";
+  const containerStyle = {
+    width: "100%",
+    maxWidth: isVertical ? "100%" : ((_h = t.container) == null ? void 0 : _h.maxWidth) || "940px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: containerGap,
+    boxSizing: "border-box",
+    zIndex: 5,
+    paddingLeft: isVertical ? "32px" : "20px",
+    paddingRight: isVertical ? "32px" : "20px",
+    marginTop: isVertical ? "320px" : "120px"
+  };
+  const isDefaultImage = (url) => {
+    if (!url) return true;
+    const lower = url.toLowerCase();
+    return lower === "undefined" || lower === "null" || lower.endsWith("/undefined") || lower.endsWith("/null") || lower.includes("placeholder") || lower.includes("bg") || lower.includes("background") || lower.includes("circuit") || lower.includes("bokeh");
+  };
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: containerStyle, children: [
+    cleanCategory && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-down", delaySeconds: 0.15, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      CategoryPill,
+      {
+        text: cleanCategory,
+        bgRgba: isLight ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)",
+        borderRgba: isLight ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.12)",
+        textRgba: accentColor,
+        hasDot: true,
+        dotRgba: accentColor,
+        fontSize: isVertical ? "20px" : "17px",
+        fontFamily: styles.fontFamily
+      }
+    ) }),
+    badgeComps.length > 0 && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-down", delaySeconds: 0.3, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "flex", justifyContent: "flex-start", gap: "14px", flexWrap: "wrap", width: "100%" }, children: (_j = (_i = badgeComps[0].data) == null ? void 0 : _i.badges) == null ? void 0 : _j.map((badge, idx) => {
+      const pillColor = idx === 0 ? accentColor : isLight ? "#334155" : "#e2e8f0";
+      const pillBg = idx === 0 ? isLight ? "rgba(0, 0, 0, 0.04)" : `rgba(${rgb}, 0.08)` : isLight ? "rgba(0, 0, 0, 0.02)" : "rgba(255, 255, 255, 0.04)";
+      const pillBorder = idx === 0 ? `rgba(${rgb}, 0.25)` : isLight ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.14)";
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
+        borderRadius: "24px",
+        padding: isVertical ? "12px 24px" : "8px 18px",
+        background: pillBg,
+        border: `1.5px solid ${pillBorder}`,
+        color: pillColor,
+        fontWeight: 800,
+        fontSize: isVertical ? "24px" : "20px",
+        fontFamily: styles.fontFamily,
+        display: "inline-flex",
+        alignItems: "center"
+      }, children: badge }, idx);
+    }) }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+      width: "100%",
+      perspective: "1200px",
+      transformStyle: "preserve-3d",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: isVertical ? "120px" : "48px"
+    }, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+      width: "100%",
+      height: browserHeight,
+      display: "flex",
+      flexDirection: "column",
+      borderRadius: "20px",
+      overflow: "hidden",
+      border: isLight ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.08)",
+      boxShadow: isLight ? "0 30px 60px rgba(0, 0, 0, 0.12)" : `0 40px 90px rgba(0, 0, 0, 0.65), 0 0 40px rgba(${rgb}, 0.15)`,
+      backgroundColor: isLight ? "#ffffff" : "#0A0B10",
+      transform: `scale(${scale}) translateY(${floatY}px) rotate(${currentRotZ}deg)`,
+      transformStyle: "preserve-3d",
+      position: "relative"
+    }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: isVertical ? "20px 24px" : "16px 20px",
+        backgroundColor: isLight ? "rgba(0, 0, 0, 0.02)" : "rgba(255, 255, 255, 0.03)",
+        borderBottom: isLight ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.08)"
+      }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", gap: "8px" }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#FF5F56" } }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#FFBD2E" } }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#27C93F" } })
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          fontSize: isVertical ? "16px" : "14px",
+          color: isLight ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.35)",
+          fontFamily: styles.fontFamily,
+          backgroundColor: isLight ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)",
+          padding: "4px 30px",
+          borderRadius: "8px",
+          width: isVertical ? "200px" : "280px",
+          textAlign: "center",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
+        }, children: addressUrl }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { width: "52px" } })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { flex: 1, position: "relative", overflow: "hidden", background: isLight ? "#f8fafc" : "#020617" }, children: [
+        imageUrl && !isDefaultImage(imageUrl) ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "img",
+          {
+            src: imageUrl,
+            style: {
+              width: "100%",
+              height: "100%",
+              objectFit: "cover"
+            },
+            alt: "Web Mockup"
+          }
+        ) : (
+          // Default premium dashboard UI placeholder if no image
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+            width: "100%",
+            height: "100%",
+            padding: "40px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "24px",
+            color: isLight ? "#1e293b" : "#f8fafc",
+            fontFamily: styles.fontFamily,
+            boxSizing: "border-box"
+          }, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { height: "48px", width: "40%", background: isLight ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.05)", borderRadius: "8px" } }),
+            /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", gap: "20px" }, children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { flex: 1, height: "180px", background: isLight ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.02)", borderRadius: "16px", border: isLight ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255,255,255,0.08)" } }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { flex: 1, height: "180px", background: isLight ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.02)", borderRadius: "16px", border: isLight ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255,255,255,0.08)" } })
+            ] })
+          ] })
+        ),
+        overlayTag && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          position: "absolute",
+          bottom: "20px",
+          left: "20px",
+          background: isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(10, 15, 30, 0.65)",
+          backdropFilter: "blur(12px)",
+          border: isLight ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.15)",
+          borderRadius: "24px",
+          padding: "10px 20px",
+          fontSize: isVertical ? "20px" : "18px",
+          fontWeight: "900",
+          color: isLight ? "#1e293b" : "#ffffff",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
+          zIndex: 10,
+          display: "inline-flex",
+          alignItems: "center",
+          fontFamily: styles.fontFamily
+        }, children: overlayTag })
+      ] })
+    ] }) })
+  ] });
+};
+
+;// ./src/compositions/layouts/modes/NumberedAgentPanelMode.tsx
+
+
+
+
+
+const NUMBER_CHARS = ["\u2460", "\u2461", "\u2462", "\u2463"];
+const NumberedAgentPanelMode = ({
+  otherComps,
+  t,
+  accentColor,
+  rgb,
+  isLight,
+  isVertical,
+  styles,
+  fontScale,
+  voiceover,
+  category,
+  titleText,
+  highlightWords
+}) => {
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+  const frame = (0,esm.useCurrentFrame)();
+  const cleanCategory = category || (((_b = (_a = t.categoryPill) == null ? void 0 : _a.text) == null ? void 0 : _b.trim().toLowerCase()) !== "ai vi\u1EBFt video" && ((_d = (_c = t.categoryPill) == null ? void 0 : _c.text) == null ? void 0 : _d.trim().toLowerCase()) !== "ai viet video" ? (_e = t.categoryPill) == null ? void 0 : _e.text : "") || "B\u01AF\u1EDAC";
+  const cardItems = otherComps.filter(
+    (c) => {
+      var _a2, _b2;
+      return (c.type === "feature_card" || c.type === "card") && ((_b2 = (_a2 = c.data) == null ? void 0 : _a2.text) == null ? void 0 : _b2.trim());
+    }
+  );
+  const resolvedCards = cardItems.length > 0 ? cardItems.slice(0, 4) : [
+    { id: "fb1", data: { text: "Security Architect", subtext: "soi l\u1EA1i thi\u1EBFt k\u1EBF b\u1EA3n v\xE1" } },
+    { id: "fb2", data: { text: "Penetration Tester", subtext: "th\u1EED ph\xE1 ch\xEDnh b\u1EA3n v\xE1 \u0111\xF3" } },
+    { id: "fb3", data: { text: "Cross-Repo Analyzer", subtext: "b\u1EAFt khi fix tr\xE1i \u2265 2 repo" } }
+  ];
+  const insightText = voiceover && voiceover.trim().length < 100 ? voiceover.trim() : ((_g = (_f = resolvedCards[resolvedCards.length - 1]) == null ? void 0 : _f.data) == null ? void 0 : _g.subtext) || "";
+  const hw = (highlightWords == null ? void 0 : highlightWords[0]) || "";
+  const titleFontSize = Math.round((isVertical ? 80 : 96) * fontScale);
+  const cardFontSize = isVertical ? 28 : 34;
+  const subtextFontSize = isVertical ? 16 : 20;
+  const badgeSize = isVertical ? 78 : 96;
+  const badgeFontSize = isVertical ? 22 : 28;
+  const cardGap = isVertical ? 24 : 30;
+  const STAGGER = 8;
+  const itemStyles = ((_h = t.items) == null ? void 0 : _h.itemStyles) || [];
+  const getCardBg = (idx) => {
+    const s = itemStyles[idx] || itemStyles[itemStyles.length - 1] || {};
+    if (s.useAccentBg) {
+      return isLight ? `rgba(${rgb}, 0.22)` : `rgba(${rgb}, 0.28)`;
+    }
+    if (s.useSubtleThemeBg) {
+      return isLight ? "rgba(255, 255, 255, 0.38)" : "rgba(0, 0, 0, 0.35)";
+    }
+    return isLight ? "rgba(255,255,255,0.30)" : "rgba(0,0,0,0.25)";
+  };
+  const getCardBorder = (idx) => {
+    const s = itemStyles[idx] || itemStyles[itemStyles.length - 1] || {};
+    if (s.useAccentBorder) {
+      return `2px solid rgba(${rgb}, 0.7)`;
+    }
+    if (s.useThemeBorder) {
+      return isLight ? "1.5px solid rgba(255, 255, 255, 0.65)" : "1.5px solid rgba(255, 255, 255, 0.18)";
+    }
+    return isLight ? "1px solid rgba(255,255,255,0.50)" : "1px solid rgba(255,255,255,0.12)";
+  };
+  const getBadgeBg = (idx) => {
+    if (idx === 0) return accentColor;
+    return isLight ? "rgba(255,255,255,0.55)" : `rgba(${rgb}, 0.22)`;
+  };
+  const getBadgeColor = (idx) => {
+    if (idx === 0) return isLight ? "#000000" : "#ffffff";
+    return isLight ? accentColor : accentColor;
+  };
+  const renderInsight = (text) => {
+    if (!hw || !text.includes(hw)) return text;
+    const parts = text.split(hw);
+    return parts.map((part, i) => /* @__PURE__ */ (0,jsx_runtime.jsxs)(react.Fragment, { children: [
+      part,
+      i < parts.length - 1 && /* @__PURE__ */ (0,jsx_runtime.jsx)("strong", { style: { color: accentColor, fontStyle: "normal", fontWeight: 800 }, children: hw })
+    ] }, i));
+  };
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        padding: isVertical ? "56px 64px" : "80px 100px",
+        paddingTop: isVertical ? "320px" : "400px",
+        width: "100%",
+        height: "100%",
+        boxSizing: "border-box",
+        position: "relative",
+        fontFamily: styles.fontFamily
+      },
+      children: [
+        cleanCategory && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
+          marginBottom: isVertical ? 16 : 22,
+          opacity: (0,esm.interpolate)(frame, [0, 12], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+          transform: `translateY(${(0,esm.interpolate)(frame, [0, 12], [10, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}px)`
+        }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          CategoryPill,
+          {
+            text: cleanCategory,
+            bgRgba: ((_i = t.categoryPill) == null ? void 0 : _i.bgRgba) || "rgba(2,6,23,0.72)",
+            borderRgba: ((_j = t.categoryPill) == null ? void 0 : _j.borderRgba) || `rgba(${rgb},0.4)`,
+            textRgba: ((_k = t.categoryPill) == null ? void 0 : _k.textRgba) || "rgba(255,255,255,0.92)",
+            dotRgba: accentColor,
+            fontFamily: styles.fontFamily
+          }
+        ) }),
+        titleText && /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              fontSize: titleFontSize,
+              fontWeight: 800,
+              letterSpacing: "-0.04em",
+              lineHeight: 1.1,
+              color: styles.titleColor || (isLight ? "#111111" : "#ffffff"),
+              marginBottom: isVertical ? 22 : 36,
+              maxWidth: isVertical ? "92%" : "880px",
+              textShadow: ((_l = t.title) == null ? void 0 : _l.useAccentTextShadow) ? `0 0 60px rgba(${rgb},0.45)` : void 0,
+              opacity: (0,esm.interpolate)(frame, [2, 18], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: esm.Easing.bezier(0.16, 1, 0.3, 1) }),
+              transform: `translateY(${(0,esm.interpolate)(frame, [2, 18], [16, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}px)`
+            },
+            children: titleText
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              display: "flex",
+              flexDirection: "column",
+              gap: cardGap,
+              width: "100%",
+              maxWidth: isVertical ? "100%" : "880px"
+            },
+            children: resolvedCards.map((card, idx) => {
+              const delay = idx * STAGGER;
+              const cardProgress = (0,esm.interpolate)(frame - delay, [0, 22], [0, 1], {
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+                easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
+              });
+              const cardY = (0,esm.interpolate)(frame - delay, [0, 22], [20, 0], {
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp"
+              });
+              return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+                "div",
+                {
+                  style: {
+                    display: "flex",
+                    alignItems: "center",
+                    gap: isVertical ? 24 : 30,
+                    background: getCardBg(idx),
+                    border: getCardBorder(idx),
+                    borderRadius: isVertical ? 24 : 30,
+                    padding: isVertical ? "30px 32px" : "36px 40px",
+                    opacity: cardProgress,
+                    transform: `translateY(${cardY}px)`,
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    boxShadow: idx === 0 ? `0 4px 28px rgba(${rgb},0.22)` : "0 2px 10px rgba(0,0,0,0.12)"
+                  },
+                  children: [
+                    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                      "div",
+                      {
+                        style: {
+                          width: badgeSize,
+                          height: badgeSize,
+                          minWidth: badgeSize,
+                          borderRadius: "50%",
+                          background: getBadgeBg(idx),
+                          border: idx === 0 ? `2px solid rgba(${rgb}, 0.7)` : `2px solid rgba(${rgb}, 0.45)`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: badgeFontSize,
+                          fontWeight: 900,
+                          color: getBadgeColor(idx),
+                          flexShrink: 0,
+                          fontFamily: styles.fontFamily
+                        },
+                        children: NUMBER_CHARS[idx] || `${idx + 1}`
+                      }
+                    ),
+                    /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: 3 }, children: [
+                      /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                        "div",
+                        {
+                          style: {
+                            fontSize: cardFontSize,
+                            fontWeight: 800,
+                            color: styles.titleColor || (isLight ? "#111111" : "#ffffff"),
+                            lineHeight: 1.2,
+                            letterSpacing: "-0.02em"
+                          },
+                          children: card.data.text
+                        }
+                      ),
+                      card.data.subtext && /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                        "div",
+                        {
+                          style: {
+                            fontSize: subtextFontSize,
+                            fontWeight: 400,
+                            color: isLight ? "rgba(0,0,0,0.52)" : "rgba(255,255,255,0.52)",
+                            lineHeight: 1.4
+                          },
+                          children: card.data.subtext
+                        }
+                      )
+                    ] })
+                  ]
+                },
+                card.id || idx
+              );
+            })
+          }
+        ),
+        insightText && /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              marginTop: isVertical ? 18 : 24,
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              opacity: (0,esm.interpolate)(
+                frame - resolvedCards.length * STAGGER - 4,
+                [0, 18],
+                [0, 1],
+                { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+              ),
+              transform: `translateY(${(0,esm.interpolate)(
+                frame - resolvedCards.length * STAGGER - 4,
+                [0, 18],
+                [10, 0],
+                { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+              )}px)`,
+              background: `rgba(${rgb}, 0.07)`,
+              border: `1px solid rgba(${rgb}, 0.22)`,
+              borderRadius: isVertical ? 10 : 12,
+              padding: isVertical ? "9px 14px" : "11px 18px",
+              maxWidth: isVertical ? "100%" : "860px"
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { fontSize: isVertical ? 16 : 18, flexShrink: 0 }, children: "\u{1F4A1}" }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "span",
+                {
+                  style: {
+                    fontSize: isVertical ? 12 : 14,
+                    fontStyle: "italic",
+                    color: isLight ? "rgba(0,0,0,0.65)" : "rgba(255,255,255,0.65)",
+                    lineHeight: 1.5,
+                    fontFamily: styles.fontFamily
+                  },
+                  children: renderInsight(insightText)
+                }
+              )
+            ]
+          }
+        )
+      ]
+    }
+  );
+};
+
 ;// ./src/compositions/layouts/TemplateLayout.tsx
+
+
+
 
 
 
@@ -12842,13 +14202,31 @@ const TemplateLayout = ({
   const isBottomAligned = layoutType.toLowerCase().includes("fullimage") || layoutType.toLowerCase().includes("imagebackground") || t.container && t.container.align === "bottom";
   const isCenteredLayout = layoutMode === "centered_text";
   const isFlywheel = t.id === "AIHubGrid1" || t.id === "Flywheel";
+  const titleText = ((_f = titleComp == null ? void 0 : titleComp.data) == null ? void 0 : _f.text) || "";
+  const calculatedPaddingTop = (() => {
+    var _a2;
+    if (isFlywheel || isCenteredLayout || isBottomAligned) return 0;
+    const basePadding = parseInt(String(((_a2 = t.container) == null ? void 0 : _a2.paddingTop) || "380"));
+    if (!titleText) return basePadding;
+    if (titleText.length > 40) return Math.max(100, basePadding - 180);
+    if (titleText.length > 25) return Math.max(150, basePadding - 100);
+    return basePadding;
+  })();
+  const calculatedMarginBottom = (() => {
+    var _a2;
+    const baseMargin = parseInt(String(((_a2 = t.title) == null ? void 0 : _a2.marginBottom) || "100"));
+    if (!titleText) return baseMargin;
+    if (titleText.length > 40) return Math.max(30, baseMargin - 60);
+    if (titleText.length > 25) return Math.max(40, baseMargin - 40);
+    return baseMargin;
+  })();
   const containerStyle = {
     display: "flex",
     flexDirection: "column",
-    alignItems: isCenteredLayout ? "center" : isBottomAligned || layoutMode === "metric_showcase_hook" ? "flex-start" : "center",
+    alignItems: isCenteredLayout ? "center" : isBottomAligned || layoutMode === "metric_showcase_hook" || layoutMode === "metric_focus_showcase" || layoutMode === "web_mockup_hero" ? "flex-start" : "center",
     padding: isFlywheel ? "0px" : isCenteredLayout ? "0 64px" : "86px",
     justifyContent: isCenteredLayout ? "center" : isBottomAligned ? "flex-end" : "flex-start",
-    paddingTop: isFlywheel ? "0px" : isCenteredLayout ? "0px" : isBottomAligned ? "0px" : layoutMode === "fintech_edu" || layoutMode === "hust_x_rikkei" ? "0px" : ((_f = t.container) == null ? void 0 : _f.paddingTop) || "380px",
+    paddingTop: isFlywheel ? "0px" : isCenteredLayout ? "0px" : isBottomAligned ? "0px" : layoutMode === "fintech_edu" || layoutMode === "hust_x_rikkei" || layoutMode === "web_mockup_hero" ? "0px" : `${calculatedPaddingTop}px`,
     paddingBottom: isFlywheel ? "0px" : isCenteredLayout ? "0px" : isBottomAligned ? "480px" : "86px",
     boxSizing: "border-box",
     position: "relative",
@@ -12955,6 +14333,12 @@ const TemplateLayout = ({
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(MediaShowcaseCardMode, { ...modeProps });
       case "metric_showcase_hook":
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(MetricShowcaseHookMode, { ...modeProps });
+      case "metric_focus_showcase":
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(MetricFocusShowcaseMode, { ...modeProps });
+      case "web_mockup_hero":
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(WebMockupHeroMode, { ...modeProps });
+      case "numbered_agent_panel":
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(NumberedAgentPanelMode, { ...modeProps });
       case "centered_text":
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(CenteredTextMode, { ...modeProps });
       case "fintech_edu":
@@ -12975,8 +14359,8 @@ const TemplateLayout = ({
       pointerEvents: "none"
     } }),
     /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { ...containerStyle, position: "relative", zIndex: 1, fontFamily: styles.fontFamily }, children: [
-      titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "fintech_edu" && layoutMode !== "blank" && layoutMode !== "metric_showcase_hook" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
-        marginBottom: `${parseInt(String(t.title.marginBottom || 100)) + 50}px`,
+      titleComp && layoutMode !== "intro_briefing_card" && layoutMode !== "chapter_stack" && layoutMode !== "cutout_headline" && layoutMode !== "evidence_readline" && layoutMode !== "evidence_scanline" && layoutMode !== "evidence_timeline" && layoutMode !== "intro_full_image" && layoutMode !== "split_headline" && layoutMode !== "centered_text" && layoutMode !== "hust_x_rikkei" && layoutMode !== "fintech_edu" && layoutMode !== "blank" && layoutMode !== "metric_showcase_hook" && layoutMode !== "metric_focus_showcase" && layoutMode !== "web_mockup_hero" && layoutMode !== "numbered_agent_panel" && layoutMode !== "circular_progress" && t.id !== "AIHubGrid2" && t.id !== "AIHubGrid1" && t.id !== "AIHubGrid3" && /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+        marginBottom: `${calculatedMarginBottom}px`,
         zIndex: 10,
         display: "flex",
         flexDirection: "column",
@@ -13070,6 +14454,12 @@ var vignelli_quote = __webpack_require__(4860);
 var media_showcase_card = __webpack_require__(9960);
 // EXTERNAL MODULE: ./src/compositions/layouts/templates/Opening-Headline/metric_showcase_hook.json
 var metric_showcase_hook = __webpack_require__(4835);
+// EXTERNAL MODULE: ./src/compositions/layouts/templates/Opening-Headline/metric_focus_showcase.json
+var metric_focus_showcase = __webpack_require__(4654);
+// EXTERNAL MODULE: ./src/compositions/layouts/templates/Opening-Headline/web_mockup_hero.json
+var web_mockup_hero = __webpack_require__(2518);
+// EXTERNAL MODULE: ./src/compositions/layouts/templates/List-Step/numbered_agent_panel.json
+var numbered_agent_panel = __webpack_require__(4046);
 ;// ./src/compositions/layouts/index.ts
 
 
@@ -13113,6 +14503,9 @@ if (!templates || Object.keys(templates).length === 0) {
 
 
 
+
+
+
 Object.entries(templates).forEach(([path, module]) => {
   const json = module.default || module;
   if (!json || !json.id) return;
@@ -13131,7 +14524,10 @@ const staticTemplates = [
   intro_media_hero,
   vignelli_quote,
   media_showcase_card,
-  metric_showcase_hook
+  metric_showcase_hook,
+  metric_focus_showcase,
+  web_mockup_hero,
+  numbered_agent_panel
 ];
 staticTemplates.forEach((json) => {
   const normId = json.id.replace(/[-_\s]+/g, "").toLowerCase();
@@ -14131,29 +15527,26 @@ const { ${named[1].replace(/[\r\n]+/g, " ").trim()} } = args.React;`;
 const SceneContainer = ({ children, durationInFrames, disableTransitions = false }) => {
   const frame = (0,esm.useCurrentFrame)();
   const { fps } = (0,esm.useVideoConfig)();
-  const transitionFrames = Math.round(fps * 0.35);
-  let opacity = 1;
+  const transitionFrames = Math.round(fps * 0.2);
   let scale = 1;
   if (!disableTransitions) {
     if (frame < transitionFrames) {
       const t = Math.min(1, Math.max(0, frame / transitionFrames));
       const progress = 1 - Math.pow(1 - t, 3);
-      opacity = progress;
-      scale = 0.96 + 0.04 * progress;
+      scale = 0.98 + 0.02 * progress;
     } else if (frame > durationInFrames - transitionFrames) {
       const exitFrame = frame - (durationInFrames - transitionFrames);
       const t = Math.min(1, Math.max(0, exitFrame / transitionFrames));
-      const progress = Math.pow(t, 2);
-      opacity = 1 - progress;
-      scale = 1 + 0.02 * progress;
+      scale = 1 + 0.01 * Math.pow(t, 2);
     }
   }
   return /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
     width: "100%",
     height: "100%",
-    opacity,
+    opacity: 1,
+    // ALWAYS 1 — no fade to prevent dark flash
     transform: `scale(${scale.toFixed(4)})`,
-    willChange: "transform, opacity",
+    willChange: "transform",
     backfaceVisibility: "hidden",
     transformStyle: "preserve-3d"
   }, children });
@@ -14434,24 +15827,13 @@ const MainComposition = ({
               });
               if (!hasMetric) return null;
               const countStart = Math.round(0.8 * fps);
-              const tickFrames = [];
-              let currentTick = countStart;
-              let gapValue = 8;
-              while (currentTick < countStart + 30 && currentTick < sceneDurationFrames) {
-                tickFrames.push(currentTick);
-                currentTick += Math.max(1, Math.round(gapValue));
-                gapValue *= 0.72;
-              }
-              return tickFrames.map((tickFrame, idx) => {
-                const duration = Math.max(1, sceneDurationFrames - tickFrame);
-                return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: tickFrame, durationInFrames: duration, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
-                  esm.Audio,
-                  {
-                    src: (0,esm.staticFile)("typewriter.mp3"),
-                    volume: 0.65
-                  }
-                ) }, `tick_${idx}`);
-              });
+              return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: countStart, durationInFrames: Math.max(1, sceneDurationFrames - countStart), children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                esm.Audio,
+                {
+                  src: (0,esm.staticFile)("typewriter.mp3"),
+                  volume: 0.65
+                }
+              ) });
             })()
           ]
         },
@@ -32158,6 +33540,7 @@ var map = {
 	"./Ending/minimal.json": 4300,
 	"./Ending/next_step_ending.json": 8103,
 	"./List-Step/ai_hub_grid_1.json": 8624,
+	"./List-Step/numbered_agent_panel.json": 4046,
 	"./List-Step/ranked_impact_bullet.json": 6118,
 	"./List-Step/selector_wheel_radio.json": 6624,
 	"./List-Step/signal_rail_bullet.json": 3295,
@@ -32188,6 +33571,7 @@ var map = {
 	"./Opening-Headline/intro_radar_signal_image.json": 2977,
 	"./Opening-Headline/intro_signal_steps_images.json": 4937,
 	"./Opening-Headline/media_showcase_card.json": 9960,
+	"./Opening-Headline/metric_focus_showcase.json": 4654,
 	"./Opening-Headline/metric_showcase_hook.json": 4835,
 	"./Opening-Headline/ops_monitor_hook.json": 960,
 	"./Opening-Headline/pullquote.json": 5542,
@@ -32195,6 +33579,7 @@ var map = {
 	"./Opening-Headline/split_proof_bullet.json": 2823,
 	"./Opening-Headline/versus_arena.json": 587,
 	"./Opening-Headline/vignelli_quote.json": 4860,
+	"./Opening-Headline/web_mockup_hero.json": 2518,
 	"./Timeline/timeline_beam_rail.json": 6117,
 	"./Timeline/timeline_chapters.json": 4757
 };
@@ -46614,6 +47999,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"AIHubGrid1","name":"AI Hub Grid
 
 /***/ },
 
+/***/ 4046
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"NumberedAgentPanel","name":"Numbered Agent Panel","family":"list","layoutMode":"numbered_agent_panel","container":{"paddingTop":"280px","maxWidth":"960px","gap":"20px"},"categoryPill":{"text":"BƯỚC"},"accentDivider":null,"title":{"fontSize":"80px","fontWeight":"800","letterSpacing":"-0.04em","marginBottom":"40px","useAccentTextShadow":true},"positions":[],"items":{"rotations":[0,0,0],"itemStyles":[{"v2":true,"fontSize":"26px","fontWeight":"800","borderRadius":"20px","padding":"22px 24px","useAccentBg":true,"useAccentBorder":true,"useAccentShadow":true,"useSubtleThemeBg":false,"useThemeBorder":false},{"v2":true,"fontSize":"26px","fontWeight":"800","borderRadius":"20px","padding":"22px 24px","useAccentBg":false,"useAccentBorder":false,"useAccentShadow":false,"useSubtleThemeBg":true,"useThemeBorder":true},{"v2":true,"fontSize":"26px","fontWeight":"800","borderRadius":"20px","padding":"22px 24px","useAccentBg":false,"useAccentBorder":false,"useAccentShadow":false,"useSubtleThemeBg":true,"useThemeBorder":true}]},"subtitle":null}');
+
+/***/ },
+
 /***/ 6118
 (module) {
 
@@ -46854,6 +48247,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"Gallery","name":"Media Showcase
 
 /***/ },
 
+/***/ 4654
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"MetricFocusShowcase","name":"Metric Focus Showcase","family":"opening","layoutMode":"metric_focus_showcase","container":{"paddingTop":"260px","maxWidth":"940px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"96px","fontWeight":"950","letterSpacing":"-0.06em","marginBottom":"40px","useAccentTextShadow":true},"positions":[{"left":"0px","top":"0px","width":"100%","height":"720px","zIndex":"1","nestedStructure":null}],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"22px","fontWeight":"800","borderRadius":"24px","padding":"12px 24px"}]},"subtitle":null}');
+
+/***/ },
+
 /***/ 4835
 (module) {
 
@@ -46907,6 +48308,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"VersusArena","name":"Versus Are
 
 "use strict";
 module.exports = /*#__PURE__*/JSON.parse('{"id":"VignelliQuote","name":"Vignelli Quote","family":"quote","layoutMode":"vignelliquote","container":{"paddingTop":"220px","maxWidth":"860px","gap":"32px"},"title":{"fontSize":"80px","fontWeight":"900","letterSpacing":"-0.04em","marginBottom":"20px"}}');
+
+/***/ },
+
+/***/ 2518
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"id":"WebMockupHero","name":"Web Mockup Hero","family":"media","layoutMode":"web_mockup_hero","container":{"paddingTop":"140px","maxWidth":"940px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"86px","fontWeight":"950","letterSpacing":"-0.06em","marginBottom":"40px","useAccentTextShadow":true},"positions":[{"left":"0px","top":"0px","width":"100%","height":"720px","zIndex":"1","nestedStructure":null}],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"22px","fontWeight":"800","borderRadius":"24px","padding":"12px 24px"}]},"subtitle":null}');
 
 /***/ },
 
@@ -47224,7 +48633,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"TimelineChapters","name":"Timel
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
 /******/ 	__webpack_require__(6507);
-/******/ 	__webpack_require__(2118);
+/******/ 	__webpack_require__(8077);
 /******/ 	__webpack_require__(3610);
 /******/ 	var __webpack_exports__ = __webpack_require__(3482);
 /******/ 	

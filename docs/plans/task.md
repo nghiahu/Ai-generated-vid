@@ -2,8 +2,5 @@
 
 | Task | Description | Status |
 | --- | --- | --- |
-| Task 1 | AI Backend Contract and Prompt Guidelines | `[x]` |
-| Task 2 | Layout Template Configuration and Registry | `[x]` |
-| Task 3 | Layout Mode Switch Integration | `[x]` |
-| Task 4 | Frontend Storyboard Option Integration | `[x]` |
-| Task 5 | Complete Implementation of WebMockupHeroMode | `[x]` |
+| Task 1 | Update StoryboardEditor.jsx with dynamic muting and reduced audio tags | `[x]` |
+| Task 2 | Reduce audio tag limits in MasterPlayer.jsx and Dashboard.jsx | `[x]` |

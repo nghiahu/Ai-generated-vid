@@ -157,7 +157,7 @@ export const MasterPlayer = ({
               }}
               controls
               acknowledgeRemotionLicense
-              numberOfSharedAudioTags={100}
+              numberOfSharedAudioTags={5}
             />
           ) : (
             <div style={{

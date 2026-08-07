@@ -32,7 +32,6 @@ export const EarningsSnapshotMode: React.FC<ModeRendererProps> = ({
   const { fps } = useVideoConfig();
 
   const visibleComps = otherComps.slice(0, 4);
-  const cardCount = Math.max(visibleComps.length, 1);
   const defaultPercentages = [83, 47, 69, 55];
 
   // ── Outer container ─────────────────────────────────────────────────────
@@ -57,7 +56,8 @@ export const EarningsSnapshotMode: React.FC<ModeRendererProps> = ({
     width: "100%",
     maxWidth: t.container.maxWidth || "1020px",
     zIndex: 5,
-    boxSizing: "border-box"
+    boxSizing: "border-box",
+    flexShrink: 0
   };
 
   return (
@@ -171,9 +171,15 @@ export const EarningsSnapshotMode: React.FC<ModeRendererProps> = ({
             const rawText = comp?.data?.text || "";
             // Use first word of comp as bar label (keeps it tight)
             const label = rawText.split(/\s+/)[0] || `#${idx + 1}`;
-            const pct = comp?.data?.value
-              ? parseInt(String(comp.data.value).replace("%", ""), 10)
-              : defaultPercentages[idx] ?? 50;
+            
+            const rawVal = comp?.data?.value;
+            let pct = defaultPercentages[idx] ?? 50;
+            if (rawVal) {
+              const parsed = parseInt(String(rawVal).replace(/[^\d]/g, ""), 10);
+              if (!isNaN(parsed)) {
+                pct = Math.min(100, Math.max(0, parsed));
+              }
+            }
 
             const barStartFrame = Math.round((1.0 + idx * 0.15) * fps);
             const barRelativeFrame = frame - barStartFrame;

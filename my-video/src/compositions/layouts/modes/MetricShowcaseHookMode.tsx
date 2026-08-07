@@ -2,47 +2,8 @@ import React from "react";
 import { useCurrentFrame, useVideoConfig, interpolate, Easing } from "remotion";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { ModeRendererProps } from "./LayoutModeTypes";
+import { parseNumbers } from "../../../utils/numberParser";
 
-function parseNumbers(valueStr: any): { prefix: string; n1: number; n2: number | null; suffix: string } {
-  const str = String(valueStr || "").trim();
-  if (!str) return { prefix: "", n1: 0, n2: null, suffix: "" };
-  
-  // Look for range "X - Y", "X đến Y", "X to Y" (with decimals/dots)
-  const rangeRegex = /(\d+(?:[.,]\d+)?)\s*(?:-|đến|to)\s*(\d+(?:[.,]\d+)?)/i;
-  const match = str.match(rangeRegex);
-  
-  if (match) {
-    const rawN1 = parseFloat(match[1].replace(/\./g, "").replace(/,/g, "."));
-    const rawN2 = parseFloat(match[2].replace(/\./g, "").replace(/,/g, "."));
-    const matchIndex = str.indexOf(match[0]);
-    const prefix = str.substring(0, matchIndex).trim();
-    const suffix = str.substring(matchIndex + match[0].length).trim();
-    return {
-      prefix,
-      n1: isNaN(rawN1) ? 0 : rawN1,
-      n2: isNaN(rawN2) ? 0 : rawN2,
-      suffix
-    };
-  }
-  
-  // Single number case
-  const singleRegex = /(\d+(?:[.,]\d+)?)/;
-  const singleMatch = str.match(singleRegex);
-  if (singleMatch) {
-    const rawN = parseFloat(singleMatch[1].replace(/\./g, "").replace(/,/g, "."));
-    const matchIndex = str.indexOf(singleMatch[0]);
-    const prefix = str.substring(0, matchIndex).trim();
-    const suffix = str.substring(matchIndex + singleMatch[0].length).trim();
-    return {
-      prefix,
-      n1: isNaN(rawN) ? 0 : rawN,
-      n2: null,
-      suffix
-    };
-  }
-  
-  return { prefix: "", n1: 0, n2: null, suffix: str };
-}
 
 export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
   otherComps,
