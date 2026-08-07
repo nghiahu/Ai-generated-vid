@@ -134,6 +134,12 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
 
   const resolvedCardStyle: React.CSSProperties = {
     ...styles.cardStyle,
+    background: isLight
+      ? `linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 244, 246, 0.92) 100%)`
+      : `linear-gradient(135deg, rgba(8, 17, 37, 0.72) 0%, rgba(3, 7, 18, 0.88) 100%)`, // Matches premium theme gradient
+    boxShadow: isLight
+      ? "0 10px 30px rgba(0, 0, 0, 0.04)"
+      : `0 16px 40px rgba(0, 0, 0, 0.4), 0 0 24px rgba(${rgb}, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06)`, // Glowing shadow matching theme accent color
     display: "flex",
     flexDirection: "column",
     gap: isVertical ? "28px" : "18px",
@@ -186,8 +192,9 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
               textShadow: isLight ? "none" : `0 8px 32px rgba(${rgb}, 0.35)`,
               display: "flex",
               alignItems: "baseline",
-              flexWrap: "wrap",
-              wordBreak: "break-word",
+              flexWrap: "nowrap",
+              flexShrink: 0,
+              wordBreak: "keep-all",
               maxWidth: "100%"
             }}>
               {hasDigits ? (
