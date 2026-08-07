@@ -45,8 +45,8 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
     const metricCandidate = otherComps.find(c => c.data?.text && /\d+/.test(c.data.text));
     if (metricCandidate) {
       const text = metricCandidate.data.text;
-      // Regex to match ranges like "15 - 20 triệu", "15 đến 20 triệu", "4.600 sao", "20 triệu", "18 tools"
-      const metricRegex = /(\d+(?:\s*(?:-|đến|to)\s*\d+)?\s*(?:triệu|tr|sao|k|%|usd|đ|vnd|triệu\/tháng|fork|tools|skills)?)/i;
+      // Regex to match ranges like "15 - 20 triệu", "15 đến 20 triệu", "4.600 sao", "20 triệu", "18 tools", "70B"
+      const metricRegex = /(\d+(?:\s*(?:-|đến|to)\s*\d+)?\s*(?:triệu|tr|sao|k|%|usd|đ|vnd|triệu\/tháng|fork|tools|skills|b|m)?)/i;
       const match = text.match(metricRegex);
       if (match) {
         metricValue = match[0].trim();
