@@ -114,12 +114,6 @@ export function SettingsPage({ onBack }) {
             <span style={status.hasVbee ? styles.badgeOk : styles.badgeMissing}>
               {status.hasVbee ? "✓" : "✗"} VBEE TTS
             </span>
-            <span style={status.hasCloudinary ? styles.badgeOk : styles.badgeMissing}>
-              {status.hasCloudinary ? "✓" : "✗"} Cloudinary
-            </span>
-            <span style={status.hasOmnivoice ? styles.badgeOk : styles.badgeMissing}>
-              {status.hasOmnivoice ? "✓" : "✗"} OmniVoice (Offline)
-            </span>
           </div>
         </div>
       )}
