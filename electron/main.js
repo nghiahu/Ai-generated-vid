@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
+const AdmZip = require('adm-zip');
 
 // ─────────────────────────────────────────────
 // App Data Directory (where config + database live)
@@ -260,9 +261,86 @@ ipcMain.handle('open-external', (event, url) => {
 });
 
 // ─────────────────────────────────────────────
+// OmniVoice Extraction Check & Runtime Setup
+// ─────────────────────────────────────────────
+function ensureOmniVoice() {
+  return new Promise((resolve) => {
+    const omnivoiceDir = path.join(app.getPath('userData'), 'omnivoice-runtime');
+    const exePath = path.join(omnivoiceDir, 'Scripts', 'omnivoice-infer.exe');
+    
+    if (fs.existsSync(exePath)) {
+      console.log('[Main] OmniVoice runtime found at:', exePath);
+      resolve(exePath);
+      return;
+    }
+    
+    const zipSource = getResourcePath('omnivoice-runtime.zip');
+    if (!fs.existsSync(zipSource)) {
+      console.warn('[Main] OmniVoice runtime zip not found at:', zipSource, 'Skipping extraction.');
+      resolve(null);
+      return;
+    }
+    
+    console.log('[Main] OmniVoice runtime not found. Starting extraction from:', zipSource);
+    
+    // Show setup loading window
+    const setupWindow = new BrowserWindow({
+      width: 500,
+      height: 350,
+      frame: false,
+      resizable: false,
+      transparent: true,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true
+      }
+    });
+    
+    setupWindow.loadFile(path.join(__dirname, 'setup-loading.html'));
+    
+    // Decompress asynchronously to keep Electron window responsive
+    setTimeout(() => {
+      try {
+        const zip = new AdmZip(zipSource);
+        fs.mkdirSync(omnivoiceDir, { recursive: true });
+        zip.extractAllToAsync(omnivoiceDir, true, false, (err) => {
+          if (err) {
+            console.error('[Main] Failed to extract OmniVoice runtime:', err.message);
+            dialog.showErrorBox(
+              'Lỗi cài đặt giọng đọc Offline',
+              'Không thể cài đặt bộ thư viện giọng đọc ngoại tuyến. Vui lòng kiểm tra dung lượng ổ đĩa và thử lại.\nChi tiết: ' + err.message
+            );
+            setupWindow.close();
+            resolve(null);
+          } else {
+            console.log('[Main] OmniVoice runtime extracted successfully to:', omnivoiceDir);
+            setupWindow.close();
+            resolve(exePath);
+          }
+        });
+      } catch (err) {
+        console.error('[Main] Failed to initialize zip extraction:', err.message);
+        dialog.showErrorBox(
+          'Lỗi cài đặt giọng đọc Offline',
+          'Không thể khởi chạy giải nén bộ thư viện giọng đọc ngoại tuyến.\nChi tiết: ' + err.message
+        );
+        setupWindow.close();
+        resolve(null);
+      }
+    }, 1000);
+  });
+}
+
+// ─────────────────────────────────────────────
 // App Lifecycle
 // ─────────────────────────────────────────────
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  const exePath = await ensureOmniVoice();
+  if (exePath) {
+    process.env.OMNIVOICE_INFER_PATH = exePath;
+    console.log('[Main] AppData OmniVoice path registered:', process.env.OMNIVOICE_INFER_PATH);
+  }
+
   createMainWindow();
 
   app.on('activate', () => {
