@@ -412,10 +412,10 @@ async function getPhonemesForTerms(terms, projectId = null) {
   for (const term of terms) {
     const cleanTerm = term.toLowerCase().trim();
 
-    // 1. Kiểm tra database cache có manual_override = 1 (Ưu tiên tuyệt đối từ người dùng)
+    // 1. Kiểm tra database cache có manual_override = 1 và source = 'manual' (Ưu tiên tuyệt đối từ người dùng)
     try {
       const cached = await db.getPhonemeFromCache(cleanTerm);
-      if (cached && cached.phoneme && cached.manual_override === 1) {
+      if (cached && cached.phoneme && cached.manual_override === 1 && cached.source === 'manual') {
         mapping[term] = cached.phoneme;
         console.log(`[Phoneme Engine] Tra cứu thành công Custom Dict từ DB: "${term}" -> "${cached.phoneme}"`);
         continue;
