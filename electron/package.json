@@ -32,6 +32,10 @@
     ],
     "extraResources": [
       {
+        "from": "temp-resources/omnivoice-runtime.zip",
+        "to": "omnivoice-runtime.zip"
+      },
+      {
         "from": "temp-resources/renderer",
         "to": "renderer",
         "filter": ["**/*"]
