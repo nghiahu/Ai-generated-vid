@@ -86,6 +86,7 @@ const DashboardProjectPlayerWrapper = ({ projectId }) => {
 
 export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) => {
   const [playingProjectId, setPlayingProjectId] = useState(null);
+  const [projectToDelete, setProjectToDelete] = useState(null);
 
   // Filter projects to exclude legacy AIGEN type projects
   const filteredProjects = projects.filter(p => p.type !== "AIGEN");
@@ -276,9 +277,7 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (window.confirm(`Bạn có chắc chắn muốn xóa dự án "${project.title}" không?`)) {
-                                onDeleteProject(project.id);
-                              }
+                              setProjectToDelete(project);
                             }}
                             style={{
                               background: "none",
@@ -410,6 +409,79 @@ export const Dashboard = ({ projects = [], onSelectProject, onDeleteProject }) =
           </div>
         )}
       </div>
+
+      {projectToDelete && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(15, 23, 42, 0.4)",
+          backdropFilter: "blur(8px)",
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}>
+          <div style={{
+            backgroundColor: "#ffffff",
+            borderRadius: "16px",
+            width: "400px",
+            maxWidth: "90%",
+            padding: "24px",
+            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+            fontFamily: "Space Grotesk, sans-serif"
+          }}>
+            <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 8px 0" }}>
+              Xác nhận xóa dự án
+            </h3>
+            <p style={{ fontSize: "14px", color: "#475569", lineHeight: "1.5", margin: "0 0 20px 0" }}>
+              Bạn có chắc chắn muốn xóa dự án <strong>{projectToDelete.title}</strong> không? Hành động này sẽ xóa vĩnh viễn dự án này và không thể hoàn tác.
+            </p>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+              <button
+                type="button"
+                onClick={() => setProjectToDelete(null)}
+                style={{
+                  padding: "10px 18px",
+                  borderRadius: "20px",
+                  border: "1px solid #cbd5e1",
+                  backgroundColor: "#ffffff",
+                  color: "#334155",
+                  fontSize: "13px",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  outline: "none"
+                }}
+              >
+                Hủy bỏ
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  onDeleteProject(projectToDelete.id);
+                  setProjectToDelete(null);
+                }}
+                style={{
+                  padding: "10px 18px",
+                  borderRadius: "20px",
+                  border: "none",
+                  backgroundColor: "#ef4444",
+                  color: "#ffffff",
+                  fontSize: "13px",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  outline: "none",
+                  boxShadow: "0 4px 12px rgba(239, 68, 68, 0.2)"
+                }}
+              >
+                Xác nhận xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
