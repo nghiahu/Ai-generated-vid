@@ -574,6 +574,7 @@ export const StoryboardEditor = ({
   const [localTexts, setLocalTexts] = useState({});
   const [uploadingScenes, setUploadingScenes] = useState({});
   const [savingBeforeTtsId, setSavingBeforeTtsId] = useState(null);
+  const [savingVoiceoverSceneId, setSavingVoiceoverSceneId] = useState(null);
   const [playingSceneId, setPlayingSceneId] = useState(null);
   const [showStyleModal, setShowStyleModal] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState("minimal");
@@ -2511,14 +2512,14 @@ export const StoryboardEditor = ({
                         <button
                           type="button"
                           onClick={() => handleRegenerateTtsClick(scene)}
-                          disabled={regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id}
+                          disabled={regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id || savingVoiceoverSceneId === scene.id}
                           style={{
                             background: "none",
                             border: "none",
                             fontSize: "11px",
-                            color: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id) ? "#94a3b8" : "var(--color-primary, #2563eb)",
-                            textDecoration: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id) ? "none" : "underline",
-                            cursor: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id) ? "not-allowed" : "pointer",
+                            color: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id || savingVoiceoverSceneId === scene.id) ? "#94a3b8" : "var(--color-primary, #2563eb)",
+                            textDecoration: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id || savingVoiceoverSceneId === scene.id) ? "none" : "underline",
+                            cursor: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id || savingVoiceoverSceneId === scene.id) ? "not-allowed" : "pointer",
                             fontFamily: "Space Grotesk, sans-serif",
                             fontWeight: "bold",
                             padding: 0,
@@ -2559,21 +2560,60 @@ export const StoryboardEditor = ({
                         </button>
                       )}
                     </div>
-                    <textarea
-                      className="form-input-mono"
-                      value={localTexts[`${scene.id}_voiceover`] !== undefined ? localTexts[`${scene.id}_voiceover`] : scene.voiceover}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setLocalTexts(prev => ({ ...prev, [`${scene.id}_voiceover`]: val }));
-                      }}
-                      onBlur={() => {
-                        const val = localTexts[`${scene.id}_voiceover`];
-                        if (val !== undefined && val !== scene.voiceover) {
-                          handleFieldChange(scene.id, "voiceover", val);
-                        }
-                      }}
-                      style={{ height: "60px", fontSize: "13px", resize: "none" }}
-                    />
+                    <div style={{ position: "relative" }}>
+                      <textarea
+                        className="form-input-mono"
+                        value={localTexts[`${scene.id}_voiceover`] !== undefined ? localTexts[`${scene.id}_voiceover`] : scene.voiceover}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setLocalTexts(prev => ({ ...prev, [`${scene.id}_voiceover`]: val }));
+                        }}
+                        onBlur={async () => {
+                          const val = localTexts[`${scene.id}_voiceover`];
+                          if (val !== undefined && val !== scene.voiceover) {
+                            setSavingVoiceoverSceneId(scene.id);
+                            try {
+                              const updatedScene = {
+                                ...scene,
+                                voiceover: val
+                              };
+                              await onUpdateScene(scene.id, updatedScene);
+                            } catch (err) {
+                              console.error(err);
+                            } finally {
+                              setSavingVoiceoverSceneId(null);
+                            }
+                          }
+                        }}
+                        style={{ height: "60px", fontSize: "13px", resize: "none", width: "100%", display: "block", boxSizing: "border-box" }}
+                      />
+                      {(savingVoiceoverSceneId === scene.id || savingBeforeTtsId === scene.id) && (
+                        <div style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          backgroundColor: "rgba(255, 255, 255, 0.65)",
+                          backdropFilter: "blur(1.5px)",
+                          borderRadius: "10px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          zIndex: 10
+                        }}>
+                          <div style={{
+                            display: "inline-block",
+                            width: "16px",
+                            height: "16px",
+                            border: "2.5px solid #6366f1",
+                            borderTopColor: "transparent",
+                            borderRadius: "50%",
+                            animation: "spin 0.8s linear infinite"
+                          }} />
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Split Panel: Content Media on Left, Background Media on Right */}
