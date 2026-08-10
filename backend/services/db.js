@@ -667,5 +667,32 @@ module.exports = {
       console.error("[db.js] Error getting uploaded media:", err.message);
       return [];
     }
+  },
+
+  getAllCustomPhonemes: async () => {
+    await initDb();
+    const database = getDb();
+    try {
+      return database.prepare(`
+        SELECT id, term, display_term, phoneme 
+        FROM phoneme_cache 
+        WHERE manual_override = 1 
+        ORDER BY term ASC
+      `).all();
+    } catch (err) {
+      console.error("[db.js] Error getting custom phonemes:", err.message);
+      return [];
+    }
+  },
+
+  deleteCustomPhoneme: async (term) => {
+    await initDb();
+    const database = getDb();
+    const cleanTerm = term.toLowerCase().trim();
+    try {
+      database.prepare('DELETE FROM phoneme_cache WHERE term = ? AND manual_override = 1').run([cleanTerm]);
+    } catch (err) {
+      console.error("[db.js] Error deleting custom phoneme:", err.message);
+    }
   }
 };
