@@ -32,7 +32,7 @@
     ],
     "extraResources": [
       {
-        "from": "temp-resources/omnivoice-runtime.zip",
+        "from": "runtimes/omnivoice-runtime.zip",
         "to": "omnivoice-runtime.zip"
       },
       {

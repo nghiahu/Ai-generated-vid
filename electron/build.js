@@ -85,20 +85,6 @@ async function build() {
       path.join(ROOT, 'mp3'),
       path.join(tempDir, 'mp3')
     );
-
-    // Copy omnivoice-runtime.zip
-    console.log('  - Copying omnivoice-runtime.zip...');
-    const zipSrc = path.join(__dirname, 'runtimes', 'omnivoice-runtime.zip');
-    const zipDest = path.join(tempDir, 'omnivoice-runtime.zip');
-    const runtimesDir = path.dirname(zipSrc);
-    if (!fs.existsSync(runtimesDir)) {
-      fs.mkdirSync(runtimesDir, { recursive: true });
-    }
-    if (fs.existsSync(zipSrc)) {
-      fs.copyFileSync(zipSrc, zipDest);
-    } else {
-      console.warn('  ⚠️ WARNING: electron/runtimes/omnivoice-runtime.zip not found! Build will package without it.');
-    }
     
     // Re-install production dependencies inside copy folders to prevent carrying dev bloat
     console.log('  - Installing production node_modules in backend temp...');
