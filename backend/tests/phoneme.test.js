@@ -21,3 +21,24 @@ test('TTS Phoneme Case Sensitivity - normal terms', async () => {
   assert.doesNotMatch(result, /rikkei/i);
   assert.match(result, /rì-kây/);
 });
+
+test('TTS Custom Phoneme Override', async () => {
+  const db = require('../services/db');
+  // HUST default in static dict is "hớt"
+  // We override it with "đại học bách khoa hà nội"
+  await db.savePhonemeToCache({
+    term: 'hust',
+    display_term: 'HUST',
+    phoneme: 'đại học bách khoa hà nội',
+    manual_override: 1,
+    source: 'manual'
+  });
+
+  const input = "Tôi học ở HUST.";
+  const result = await optimizeTextForPhonemes(input);
+  
+  // Clean up DB
+  await db.deleteCustomPhoneme('hust');
+
+  assert.match(result, /đại học bách khoa hà nội/);
+});
