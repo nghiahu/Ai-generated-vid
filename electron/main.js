@@ -301,25 +301,42 @@ function ensureOmniVoice() {
     // Decompress asynchronously to keep Electron window responsive
     setTimeout(() => {
       try {
-        const zip = new AdmZip(zipSource);
         fs.mkdirSync(omnivoiceDir, { recursive: true });
-        zip.extractAllToAsync(omnivoiceDir, true, false, (err) => {
+        
+        // Use native tar.exe on Windows for fast extraction and supporting >2GB files
+        const { exec } = require('child_process');
+        const cmd = `tar -xf "${zipSource}" -C "${omnivoiceDir}"`;
+        console.log('[Main] Running extraction command:', cmd);
+        
+        exec(cmd, (err, stdout, stderr) => {
           if (err) {
-            console.error('[Main] Failed to extract OmniVoice runtime:', err.message);
-            dialog.showErrorBox(
-              'Lỗi cài đặt giọng đọc Offline',
-              'Không thể cài đặt bộ thư viện giọng đọc ngoại tuyến. Vui lòng kiểm tra dung lượng ổ đĩa và thử lại.\nChi tiết: ' + err.message
-            );
-            setupWindow.close();
-            resolve(null);
+            console.error('[Main] tar extraction failed:', err.message, stderr);
+            // Fallback to PowerShell Expand-Archive
+            console.log('[Main] Falling back to PowerShell Expand-Archive...');
+            const psCmd = `powershell -NoProfile -Command "Expand-Archive -Path '${zipSource}' -DestinationPath '${omnivoiceDir}' -Force"`;
+            exec(psCmd, (psErr, psStdout, psStderr) => {
+              if (psErr) {
+                console.error('[Main] PowerShell extraction failed:', psErr.message, psStderr);
+                dialog.showErrorBox(
+                  'Lỗi cài đặt giọng đọc Offline',
+                  'Không thể giải nén bộ thư viện giọng đọc ngoại tuyến.\nChi tiết: ' + psErr.message
+                );
+                setupWindow.close();
+                resolve(null);
+              } else {
+                console.log('[Main] PowerShell extraction successful.');
+                setupWindow.close();
+                resolve(exePath);
+              }
+            });
           } else {
-            console.log('[Main] OmniVoice runtime extracted successfully to:', omnivoiceDir);
+            console.log('[Main] tar extraction successful to:', omnivoiceDir);
             setupWindow.close();
             resolve(exePath);
           }
         });
       } catch (err) {
-        console.error('[Main] Failed to initialize zip extraction:', err.message);
+        console.error('[Main] Extraction error:', err.message);
         dialog.showErrorBox(
           'Lỗi cài đặt giọng đọc Offline',
           'Không thể khởi chạy giải nén bộ thư viện giọng đọc ngoại tuyến.\nChi tiết: ' + err.message
