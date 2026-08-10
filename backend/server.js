@@ -813,6 +813,51 @@ app.get('/api/config/status', (req, res) => {
   });
 });
 
+// ─────────────────────────────────────────────
+// Pronunciation Dictionary (Phoneme Overrides)
+// ─────────────────────────────────────────────
+app.get('/api/phonemes', async (req, res) => {
+  try {
+    const list = await db.getAllCustomPhonemes();
+    res.json(list);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/phonemes', async (req, res) => {
+  try {
+    const { term, phoneme: pronunciation } = req.body || {};
+    if (!term || !pronunciation) {
+      return res.status(400).json({ error: "Thiếu từ khóa hoặc cách phát âm" });
+    }
+    const cleanTerm = term.toLowerCase().trim();
+    await db.savePhonemeToCache({
+      term: cleanTerm,
+      display_term: term.trim(),
+      phoneme: pronunciation.trim(),
+      manual_override: 1,
+      source: 'manual'
+    });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/phonemes/:term', async (req, res) => {
+  try {
+    const { term } = req.params;
+    if (!term) {
+      return res.status(400).json({ error: "Thiếu từ khóa cần xóa" });
+    }
+    await db.deleteCustomPhoneme(term);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Boot server
 const server = app.listen(PORT, async () => {
   console.log(`Express Backend Server is running on port ${PORT}`);
