@@ -569,13 +569,13 @@ module.exports = {
 
       let phonemeId;
       if (existing) {
-        if (!existing.manual_override) {
+        if (!existing.manual_override || manualOverride === 1) {
           database.prepare(`
             UPDATE phoneme_cache
             SET display_term = ?, phoneme = ?, phoneme_format = ?, language = ?, source = ?,
-                confidence = ?, review_required = ?, updated_at = datetime('now')
+                confidence = ?, manual_override = ?, review_required = ?, updated_at = datetime('now')
             WHERE id = ?
-          `).run([displayTerm, phoneme, phonemeFormat, language, source, confidence, reviewRequired, existing.id]);
+          `).run([displayTerm, phoneme, phonemeFormat, language, source, confidence, manualOverride, reviewRequired, existing.id]);
         }
         phonemeId = existing.id;
       } else {
