@@ -412,7 +412,19 @@ async function getPhonemesForTerms(terms, projectId = null) {
   for (const term of terms) {
     const cleanTerm = term.toLowerCase().trim();
 
-    // 1. Kiểm tra từ điển dịch tĩnh TECH_TERMS_TRANSLITERATION (Ưu tiên cao nhất)
+    // 1. Kiểm tra database cache có manual_override = 1 (Ưu tiên tuyệt đối từ người dùng)
+    try {
+      const cached = await db.getPhonemeFromCache(cleanTerm);
+      if (cached && cached.phoneme && cached.manual_override === 1) {
+        mapping[term] = cached.phoneme;
+        console.log(`[Phoneme Engine] Tra cứu thành công Custom Dict từ DB: "${term}" -> "${cached.phoneme}"`);
+        continue;
+      }
+    } catch (dbErr) {
+      console.error("[Phoneme Engine] Lỗi truy vấn Custom Dict từ DB:", dbErr.message);
+    }
+
+    // 2. Kiểm tra từ điển dịch tĩnh TECH_TERMS_TRANSLITERATION (Mặc định)
     if (TECH_TERMS_TRANSLITERATION[cleanTerm]) {
       const transliterated = TECH_TERMS_TRANSLITERATION[cleanTerm];
       mapping[term] = transliterated;
@@ -602,10 +614,25 @@ async function optimizeTextForPhonemes(text, projectId = null) {
       return regex.test(text);
     });
 
-    // Gộp cả 2 danh sách lại và loại bỏ trùng lặp theo lowercase
+    // 1.2. Tự động quét các từ khóa tự cấu hình của người dùng trong database
+    let customTerms = [];
+    try {
+      const customPhrases = await db.getAllCustomPhonemes();
+      customTerms = customPhrases.map(p => p.term).filter(term => {
+        const isStopWordTerm = VIETNAMESE_STOP_WORDS.has(term.toLowerCase());
+        const searchPattern = isStopWordTerm ? term.toUpperCase() : term;
+        const escaped = searchPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(`(?<=^|\\s|[-.,!?;()'"""\\/\\\\*+={}\\[\\]])${escaped}(?=$|\\s|[-.,!?;()'"""\\/\\\\*+={}\\[\\]])`, isStopWordTerm ? "g" : "i");
+        return regex.test(text);
+      });
+    } catch (err) {
+      console.error("[Phoneme Agent] Lỗi quét custom terms từ DB:", err.message);
+    }
+
+    // Gộp cả 3 danh sách lại và loại bỏ trùng lặp theo lowercase
     // (tránh double-replace khi 'AI' và 'ai' đều có trong danh sách)
     const seenLower = new Set();
-    const terms = [...aiTerms, ...staticTerms].filter(t => {
+    const terms = [...aiTerms, ...staticTerms, ...customTerms].filter(t => {
       const lc = t.toLowerCase();
       if (seenLower.has(lc)) return false;
       seenLower.add(lc);
