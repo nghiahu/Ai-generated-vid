@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
 
-export const SidebarConfig = ({ config = {}, onChange }) => {
+export const SidebarConfig = ({ config = {}, onChange, onOpenPronunciationModal }) => {
   const fileInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -155,7 +155,7 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
         {/* AI Voice selector */}
         <div>
           <label className="form-label-mono">AI Voice</label>
-          <div style={{ position: "relative", marginBottom: "8px" }}>
+          <div style={{ position: "relative", marginBottom: "4px" }}>
             <select
               className="form-input-mono"
               value={config.voice || "omnivoice_duythanh"}
@@ -172,7 +172,25 @@ export const SidebarConfig = ({ config = {}, onChange }) => {
               <option value="vbee_minhquan">Vbee - Giọng Minh Quân (Nam miền Bắc)</option>
             </select>
           </div>
-
+          <button 
+            type="button" 
+            onClick={onOpenPronunciationModal}
+            style={{ 
+              background: "none", 
+              border: "none", 
+              color: "#4f46e5", 
+              fontSize: "12px", 
+              cursor: "pointer", 
+              fontWeight: "600", 
+              padding: "4px 0",
+              outline: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px"
+            }}
+          >
+            🗣️ Cấu hình cách đọc từ viết tắt
+          </button>
         </div>
 
         {/* BGM select */}

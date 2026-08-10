@@ -116,7 +116,7 @@ const AIGEN_PLANNER_SCHEMA = {
       },
       heading: {
         type: SchemaType.STRING,
-        description: "Short hook heading in Vietnamese (max 60 chars)"
+        description: "An extremely short, punchy heading for the scene in Vietnamese. MAXIMUM 35-45 characters or 6-8 words. E.g. 'RAG = 3 BƯỚC', 'HỌC NHIỀU VẪN IM'. Never use long sentences."
       },
       voiceover: {
         type: SchemaType.STRING,

@@ -459,7 +459,7 @@ function smartTrimWordBoundary(text, maxChars) {
 
 function validateAndFormatSceneContent(scene, contract) {
   const warnings = [];
-  const maxHeadingChars = Math.max(80, contract.headingMaxChars || 80);
+  const maxHeadingChars = contract.headingMaxChars || 80;
   const maxPointChars = contract.pointMaxChars || 60;
 
   // 1. Heading Validation & Trimming (Word-boundary safe, no mid-word cuts)

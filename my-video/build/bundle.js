@@ -2469,7 +2469,7 @@ const highlightHeadingText = (text, accentColor, theme, highlightWords) => {
           index
         );
       }
-      return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: accentColor }, children: part }, index);
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: accentColor, WebkitTextFillColor: accentColor }, children: part }, index);
     }
     return part;
   });
@@ -12726,6 +12726,7 @@ const getCardTheme = (idx, isLight) => {
     case 0:
       return {
         color: "#f97316",
+        rgb: "249, 115, 22",
         icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(Terminal, { size: 24, color: "#f97316" }),
         bg: isLight ? "rgba(249, 115, 22, 0.05)" : "rgba(249, 115, 22, 0.08)",
         border: isLight ? "rgba(249, 115, 22, 0.2)" : "rgba(249, 115, 22, 0.3)"
@@ -12733,6 +12734,7 @@ const getCardTheme = (idx, isLight) => {
     case 1:
       return {
         color: "#3b82f6",
+        rgb: "59, 130, 246",
         icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(Layers, { size: 24, color: "#3b82f6" }),
         bg: isLight ? "rgba(59, 130, 246, 0.05)" : "rgba(59, 130, 246, 0.08)",
         border: isLight ? "rgba(59, 130, 246, 0.2)" : "rgba(59, 130, 246, 0.3)"
@@ -12740,6 +12742,7 @@ const getCardTheme = (idx, isLight) => {
     case 2:
       return {
         color: "#0d9488",
+        rgb: "13, 148, 136",
         icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(Cpu, { size: 24, color: "#0d9488" }),
         bg: isLight ? "rgba(13, 148, 136, 0.05)" : "rgba(13, 148, 136, 0.08)",
         border: isLight ? "rgba(13, 148, 136, 0.2)" : "rgba(13, 148, 136, 0.3)"
@@ -12747,6 +12750,7 @@ const getCardTheme = (idx, isLight) => {
     case 3:
       return {
         color: "#eab308",
+        rgb: "234, 179, 8",
         icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(Target, { size: 24, color: "#eab308" }),
         bg: isLight ? "rgba(234, 179, 8, 0.05)" : "rgba(234, 179, 8, 0.08)",
         border: isLight ? "rgba(234, 179, 8, 0.2)" : "rgba(234, 179, 8, 0.3)"
@@ -12754,6 +12758,7 @@ const getCardTheme = (idx, isLight) => {
     default:
       return {
         color: "#a855f7",
+        rgb: "168, 85, 247",
         icon: /* @__PURE__ */ (0,jsx_runtime.jsx)(Zap, { size: 24, color: "#a855f7" }),
         bg: isLight ? "rgba(168, 85, 247, 0.05)" : "rgba(168, 85, 247, 0.08)",
         border: isLight ? "rgba(168, 85, 247, 0.2)" : "rgba(168, 85, 247, 0.3)"
@@ -12766,7 +12771,9 @@ const CircularProgressMode = ({
   isLight,
   styles,
   gap,
-  titleText
+  titleText,
+  accentColor,
+  rgb
 }) => {
   var _a, _b, _c, _d;
   const frame = (0,esm.useCurrentFrame)();
@@ -12825,8 +12832,9 @@ const CircularProgressMode = ({
     transform: "translate(-50%, -50%)",
     fontSize: dynamicFontSize,
     fontWeight: 950,
-    color: "#ff7a00",
-    fontFamily: styles.fontFamily
+    color: accentColor,
+    fontFamily: styles.fontFamily,
+    textShadow: `0 8px 30px rgba(${rgb}, 0.25)`
   };
   const cardsContainerStyle = {
     display: "grid",
@@ -12877,7 +12885,7 @@ const CircularProgressMode = ({
             cy: "100",
             r: R,
             fill: "none",
-            stroke: "#ff7a00",
+            stroke: accentColor,
             strokeWidth: "14",
             strokeLinecap: "round",
             strokeDasharray: C,
@@ -12906,11 +12914,12 @@ const CircularProgressMode = ({
       const animatedValue = Math.round(cardProgress);
       const individualCardStyle = {
         ...cardStyle,
-        background: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 16, 28, 0.85)",
-        // Premium dark slate theme background
+        background: isLight ? `linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 244, 246, 0.92) 100%)` : `linear-gradient(135deg, rgba(8, 17, 37, 0.72) 0%, rgba(3, 7, 18, 0.88) 100%)`,
+        // Matches exact screenshot theme gradient
         border: `1.5px solid ${theme.border}`,
         // Glowing theme border color
-        boxShadow: isLight ? "0 10px 30px rgba(0, 0, 0, 0.04)" : `0 14px 40px rgba(0, 0, 0, 0.45), 0 0 20px rgba(0, 0, 0, 0.25)`
+        boxShadow: isLight ? "0 10px 30px rgba(0, 0, 0, 0.04)" : `0 16px 40px rgba(0, 0, 0, 0.4), 0 0 24px rgba(${theme.rgb}, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06)`
+        // Glowing shadow matching exact color
       };
       const titleFontSize = title.length > 25 ? "15px" : title.length > 15 ? "18px" : "21px";
       const subtextFontSize = subtext.length > 30 ? "13px" : "15px";
@@ -12964,6 +12973,7 @@ const CircularProgressMode = ({
 
 
 
+
 const MetricShowcaseHookMode = ({
   otherComps,
   t,
@@ -12974,7 +12984,8 @@ const MetricShowcaseHookMode = ({
   fontScale,
   titleText,
   highlightWords,
-  voiceover
+  voiceover,
+  theme
 }) => {
   var _a, _b, _c, _d, _e;
   const frame = (0,esm.useCurrentFrame)();
@@ -13003,7 +13014,7 @@ const MetricShowcaseHookMode = ({
     });
     if (metricCandidate) {
       const text = metricCandidate.data.text;
-      const metricRegex = /(\d+(?:\s*(?:-|đến|to)\s*\d+)?\s*(?:triệu|tr|sao|k|%|usd|đ|vnd|triệu\/tháng|fork|tools|skills)?)/i;
+      const metricRegex = /(\d+(?:\s*(?:-|đến|to)\s*\d+)?\s*(?:triệu|tr|sao|k|%|usd|đ|vnd|triệu\/tháng|fork|tools|skills|b|m)?)/i;
       const match = text.match(metricRegex);
       if (match) {
         metricValue = match[0].trim();
@@ -13073,8 +13084,8 @@ const MetricShowcaseHookMode = ({
         #e2e8f0 65%, 
         #ffffff 70%, 
         #ffffff 100%)`;
-  const metricColor = "#f97316";
-  const metricRgb = "249, 115, 22";
+  const metricColor = accentColor;
+  const metricRgb = rgb;
   const cardTealColor = isLight ? "#0d9488" : "#2dd4bf";
   const containerStyle = {
     width: "100%",
@@ -13091,7 +13102,7 @@ const MetricShowcaseHookMode = ({
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: containerStyle, children: [
     titleText && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.15, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
       fontSize: `${Math.round(108 * fontScale)}px`,
-      lineHeight: 0.95,
+      lineHeight: 1.15,
       fontWeight: 950,
       letterSpacing: "-0.07em",
       textAlign: "left",
@@ -13103,10 +13114,11 @@ const MetricShowcaseHookMode = ({
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent",
       filter: isLight ? "none" : `drop-shadow(0 4px 16px rgba(255, 255, 255, 0.12))`,
+      paddingTop: "12px",
       marginBottom: "10px",
       width: "100%",
       wordBreak: "break-word"
-    }, children: titleText }) }),
+    }, children: highlightHeadingText(titleText, accentColor, theme, highlightWords) }) }),
     allBadges.length > 0 && /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.3, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "flex", justifyContent: "flex-start", gap: "14px", flexWrap: "wrap", marginBottom: "10px", width: "100%" }, children: allBadges.map((badge, idx) => {
       const hasStar = badge.toLowerCase().includes("sao") || badge.toLowerCase().includes("star");
       return /* @__PURE__ */ (0,jsx_runtime.jsxs)("span", { style: {
@@ -13153,7 +13165,7 @@ const MetricShowcaseHookMode = ({
       width: "100%"
     }, children: [
       /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
-        fontSize: `${Math.round(124 * fontScale)}px`,
+        fontSize: `${Math.round(160 * fontScale)}px`,
         lineHeight: 1,
         fontWeight: 950,
         letterSpacing: "-0.06em",
@@ -13170,7 +13182,7 @@ const MetricShowcaseHookMode = ({
         }, children: prefix }),
         /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: n2 !== null && animN2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN") }),
         suffix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
-          fontSize: `${Math.round(72 * fontScale)}px`,
+          fontSize: `${Math.round(96 * fontScale)}px`,
           fontWeight: 900,
           color: metricColor,
           letterSpacing: "-0.02em",
@@ -13328,7 +13340,7 @@ const MetricFocusShowcaseMode = ({
     });
     if (metricCandidate) {
       const text = metricCandidate.data.text;
-      const metricRegex = /(\d+(?:\s*(?:-|đến|to)\s*\d+)?\s*(?:triệu|tr|sao|k|%|usd|đ|vnd|triệu\/tháng|fork|tools|skills)?)/i;
+      const metricRegex = /(\d+(?:\s*(?:-|đến|to)\s*\d+)?\s*(?:triệu|tr|sao|k|%|usd|đ|vnd|triệu\/tháng|fork|tools|skills|b|m)?)/i;
       const match = text.match(metricRegex);
       if (match) {
         metricValue = match[0].trim();
@@ -13411,6 +13423,10 @@ const MetricFocusShowcaseMode = ({
   };
   const resolvedCardStyle = {
     ...styles.cardStyle,
+    background: isLight ? `linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 244, 246, 0.92) 100%)` : `linear-gradient(135deg, rgba(8, 17, 37, 0.72) 0%, rgba(3, 7, 18, 0.88) 100%)`,
+    // Matches premium theme gradient
+    boxShadow: isLight ? "0 10px 30px rgba(0, 0, 0, 0.04)" : `0 16px 40px rgba(0, 0, 0, 0.4), 0 0 24px rgba(${rgb}, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06)`,
+    // Glowing shadow matching theme accent color
     display: "flex",
     flexDirection: "column",
     gap: isVertical ? "28px" : "18px",
@@ -13453,8 +13469,9 @@ const MetricFocusShowcaseMode = ({
         textShadow: isLight ? "none" : `0 8px 32px rgba(${rgb}, 0.35)`,
         display: "flex",
         alignItems: "baseline",
-        flexWrap: "wrap",
-        wordBreak: "break-word",
+        flexWrap: "nowrap",
+        flexShrink: 0,
+        wordBreak: "keep-all",
         maxWidth: "100%"
       }, children: hasDigits ? /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
         prefix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { marginRight: "4px" }, children: prefix }),
@@ -15765,7 +15782,7 @@ const MainComposition = ({
                         durationSeconds: safeParseFloat(scene.duration),
                         voiceoverDuration: scene.voiceoverDuration,
                         subtitlesJson: scene.subtitlesJson || scene.voiceoverTtsJson,
-                        accentColor: scene.accentColor || "#f97316",
+                        accentColor: vdeTokens.colors.accent,
                         visualStyle: vdeStyle
                       }
                     )
@@ -15798,7 +15815,7 @@ const MainComposition = ({
                       durationSeconds: safeParseFloat(scene.duration),
                       voiceoverDuration: scene.voiceoverDuration,
                       subtitlesJson: scene.subtitlesJson,
-                      accentColor: scene.accentColor,
+                      accentColor: vdeTokens.colors.accent,
                       visualStyle: vdeStyle,
                       customSubtitle: (_c2 = (_b2 = getLayoutById(layoutId)) == null ? void 0 : _b2.templateJson) == null ? void 0 : _c2.subtitle
                     }
@@ -48259,7 +48276,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"MetricFocusShowcase","name":"Me
 (module) {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"id":"MetricShowcaseHook","name":"Metric Showcase Hook","family":"opening","layoutMode":"metric_showcase_hook","container":{"paddingTop":"320px","maxWidth":"960px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"92px","fontWeight":"950","letterSpacing":"-0.06em","marginBottom":"80px","useAccentTextShadow":true},"positions":[{"left":"0px","top":"0px","width":"100%","height":"720px","zIndex":"1","nestedStructure":{"type":"card_with_nested_pills","badgeText":"","titleText":"","pills":[]}}],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"26px","fontWeight":"800","borderRadius":"32px","padding":"36px 40px","scale":1,"backdropBlur":"8px","useAccentBg":true,"useAccentBorder":true,"useAccentShadow":true,"useSubtleThemeBg":false,"useThemeBorder":false}]},"subtitle":{"bottom":"300px","fontSize":"44px","fontWeight":"950","useThemeTextShadow":true}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"MetricShowcaseHook","name":"Metric Showcase Hook","family":"opening","layoutMode":"metric_showcase_hook","container":{"paddingTop":"320px","maxWidth":"960px","gap":"24px"},"categoryPill":null,"accentDivider":null,"title":{"fontSize":"92px","fontWeight":"950","letterSpacing":"-0.06em","marginBottom":"80px","useAccentTextShadow":true},"positions":[{"left":"0px","top":"0px","width":"100%","height":"720px","zIndex":"1","nestedStructure":{"type":"card_with_nested_pills","badgeText":"","titleText":"","pills":[]}}],"items":{"rotations":[0],"itemStyles":[{"v2":true,"fontSize":"26px","fontWeight":"800","borderRadius":"32px","padding":"36px 40px","scale":1,"backdropBlur":"8px","useAccentBg":true,"useAccentBorder":true,"useAccentShadow":true,"useSubtleThemeBg":false,"useThemeBorder":false}]},"subtitle":{"bottom":"300px","fontSize":"56px","fontWeight":"950","useThemeTextShadow":true}}');
 
 /***/ },
 

@@ -54,7 +54,7 @@ const PLANNER_SCHEMA = {
       },
       heading: {
         type: SchemaType.STRING,
-        description: "A short, engaging heading for the scene in Vietnamese"
+        description: "An extremely short, punchy heading for the scene in Vietnamese. MAXIMUM 35-45 characters or 6-8 words. E.g. 'RAG = 3 BƯỚC', 'HỌC NHIỀU VẪN IM'. Never use long sentences."
       },
       voiceover: {
         type: SchemaType.STRING,
@@ -236,6 +236,7 @@ Convert a raw script into a structured list of chronological scenes (scene plan)
 4. Every scene's voiceover must consist of complete sentences. Do not split a single sentence across scenes.
 4. Keep all technical and English terms in "voiceover" in their original lowercase English form (e.g. "html", "css", "react", "node.js"). EXCEPT for acronyms and terms that conflict with common Vietnamese words (like "AI", "BA", "AN"), which MUST be written in ALL CAPS (uppercase) to distinguish them from Vietnamese words.
 5. Never use mathematical symbols (like ">", "<", "=") or long dashes ("—", "--") in the "voiceover" field. Instead, write them out in natural words (e.g., "lớn hơn", "nhỏ hơn", "bằng") or use standard punctuation (like commas ",", colons ":", or periods ".") to ensure the TTS reads it smoothly without dropping words.
+6. Every scene's heading MUST be extremely short, punchy, and concise (MAXIMUM 35-45 characters or 6-8 words). E.g. 'RAG = 3 BƯỚC', 'HỌC NHIỀU VẪN IM'. Never write full long sentences or explanatory phrases in headings.
 
 # SCENE FLOW STRUCTURE (Decision Tree)
 Structure the sequence of scenes logically to build a story:
