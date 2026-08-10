@@ -573,6 +573,7 @@ export const StoryboardEditor = ({
   const [scriptText, setScriptText] = useState("");
   const [localTexts, setLocalTexts] = useState({});
   const [uploadingScenes, setUploadingScenes] = useState({});
+  const [savingBeforeTtsId, setSavingBeforeTtsId] = useState(null);
   const [playingSceneId, setPlayingSceneId] = useState(null);
   const [showStyleModal, setShowStyleModal] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState("minimal");
@@ -799,6 +800,31 @@ export const StoryboardEditor = ({
       updatedScene.compiledJS = null;
     }
     onUpdateScene(sceneId, updatedScene);
+  };
+
+  const handleRegenerateTtsClick = async (scene) => {
+    const localVal = localTexts[`${scene.id}_voiceover`];
+    
+    // Check if there is an unsaved text change
+    if (localVal !== undefined && localVal !== scene.voiceover) {
+      setSavingBeforeTtsId(scene.id);
+      try {
+        const updatedScene = {
+          ...scene,
+          voiceover: localVal
+        };
+        // Wait for the update scene promise to complete!
+        await onUpdateScene(scene.id, updatedScene);
+      } catch (err) {
+        console.error("Failed to save voiceover before regenerating TTS:", err);
+        setSavingBeforeTtsId(null);
+        return; // Don't proceed to regenerate TTS if save failed
+      }
+      setSavingBeforeTtsId(null);
+    }
+    
+    // Proceed to regenerate TTS
+    onRegenerateSceneTts(scene.id);
   };
 
 
@@ -2484,15 +2510,15 @@ export const StoryboardEditor = ({
                       {onRegenerateSceneTts && scene.voiceover && (
                         <button
                           type="button"
-                          onClick={() => onRegenerateSceneTts(scene.id)}
-                          disabled={regeneratingSceneId === scene.id}
+                          onClick={() => handleRegenerateTtsClick(scene)}
+                          disabled={regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id}
                           style={{
                             background: "none",
                             border: "none",
                             fontSize: "11px",
-                            color: regeneratingSceneId === scene.id ? "#94a3b8" : "var(--color-primary, #2563eb)",
-                            textDecoration: regeneratingSceneId === scene.id ? "none" : "underline",
-                            cursor: regeneratingSceneId === scene.id ? "not-allowed" : "pointer",
+                            color: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id) ? "#94a3b8" : "var(--color-primary, #2563eb)",
+                            textDecoration: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id) ? "none" : "underline",
+                            cursor: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id) ? "not-allowed" : "pointer",
                             fontFamily: "Space Grotesk, sans-serif",
                             fontWeight: "bold",
                             padding: 0,
@@ -2501,7 +2527,20 @@ export const StoryboardEditor = ({
                             gap: "4px"
                           }}
                         >
-                          {regeneratingSceneId === scene.id ? (
+                          {savingBeforeTtsId === scene.id ? (
+                            <>
+                              <span style={{
+                                display: "inline-block",
+                                width: "10px",
+                                height: "10px",
+                                border: "2px solid #2563eb",
+                                borderTopColor: "transparent",
+                                borderRadius: "50%",
+                                animation: "spin 0.8s linear infinite"
+                              }} />
+                              <span>⏳ Đang lưu kịch bản...</span>
+                            </>
+                          ) : regeneratingSceneId === scene.id ? (
                             <>
                               <span style={{
                                 display: "inline-block",
