@@ -418,26 +418,6 @@ app.put('/api/projects/:id/scenes/:sceneId', async (req, res) => {
     let voiceoverAudioUrl = oldScene.voiceoverAudioUrl;
     let voiceoverDuration = oldScene.voiceoverDuration || 0;
 
-    // If voiceover text has changed, regenerate TTS using currently configured voice
-    if (sceneData.voiceover !== undefined && sceneData.voiceover !== oldScene.voiceover) {
-      // Regenerate optimized TTS phonetic script (CMU phonemes)
-      const voiceoverTts = await phoneme.optimizeTextForPhonemes(sceneData.voiceover, projectId);
-      sceneData.voiceoverTts = voiceoverTts;
-
-      const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
-        ? project.config.customVoiceId 
-        : (project.config.voice || 'omnivoice_duythanh');
-      const voiceoverText = voiceoverTts || sceneData.voiceover;
-      const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
-      voiceoverAudioUrl = ttsResult.url;
-      voiceoverDuration = ttsResult.duration;
-      sceneData.duration = ttsResult.duration;
-
-      const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
-      const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, sceneData.voiceover, ttsResult.duration);
-      sceneData.subtitlesJson = subtitlesJson;
-    }
-
     const updatedScene = await db.updateScene(projectId, sceneId, {
       ...sceneData,
       voiceoverAudioUrl,
