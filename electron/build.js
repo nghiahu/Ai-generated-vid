@@ -118,7 +118,11 @@ async function build() {
     console.log('\n[5/5] Packaging Electron app...');
     // Detect OS and set build target
     const isMac = process.platform === 'darwin';
-    const targetFlag = isMac ? '--mac' : '--win --x64';
+    const isDir = process.argv.includes('--dir');
+    let targetFlag = isMac ? '--mac' : '--win --x64';
+    if (isDir) {
+      targetFlag += ' --dir';
+    }
     
     runCmd(`npx electron-builder ${targetFlag}`, __dirname);
     

@@ -8,8 +8,8 @@
   "private": true,
   "scripts": {
     "start": "electron .",
-    "build": "node build.js && electron-builder --win --x64",
-    "build:dev": "node build.js && electron-builder --win --x64 --dir"
+    "build": "node build.js",
+    "build:dir": "node build.js --dir"
   },
   "devDependencies": {
     "electron": "^31.0.0",
