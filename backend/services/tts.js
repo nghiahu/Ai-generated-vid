@@ -10,7 +10,11 @@ const execFileAsync = promisify(execFile);
 function normalizeTextForTTS(text) {
   if (!text) return "";
 
-  let temp = text.replace(/["""'']/g, ' ');
+  // Chuẩn hóa số có dấu chấm ngăn cách phần nghìn tiếng Việt (vd: 2.048.000 -> 2048000, 1.500 -> 1500)
+  // để tránh TTS đọc nhầm thành dấu chấm câu hoặc số thập phân lẻ
+  let temp = text.replace(/\b(\d+)(?:\.(\d{3}))+\b/g, m => m.replace(/\./g, ''));
+
+  temp = temp.replace(/["""'']/g, ' ');
   temp = temp.replace(/[—–]/g, ', ');
   temp = temp.replace(/-/g, ' ');
   temp = temp.replace(/>/g, ' lớn hơn ');
