@@ -676,7 +676,7 @@ module.exports = {
       return database.prepare(`
         SELECT id, term, display_term, phoneme 
         FROM phoneme_cache 
-        WHERE manual_override = 1 
+        WHERE manual_override = 1 AND source = 'manual'
         ORDER BY term ASC
       `).all();
     } catch (err) {
