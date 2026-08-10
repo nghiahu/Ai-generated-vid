@@ -1,8 +1,8 @@
 | Task | Status | Description |
 | --- | --- | --- |
-| Explore project context | [x] | Analyzed db.js phoneme cache schema and phoneme.js transliteration logic |
-| Ask clarifying questions | [x] | Solicited user feedback on UI button placement |
-| Propose 2-3 approaches | [x] | Formulate database-driven vs JSON-based cloner dictionary approaches |
-| Present design | [x] | Outline API endpoints, database methods, and UI modal component |
-| Write design doc | [x] | Document final design to docs/plans/2026-08-10-pronunciation-dictionary-design.md |
-| Transition to implementation | [x] | Create implementation plan |
+| Implement database methods in db.js | [x] | Add getAllCustomPhonemes and deleteCustomPhoneme helpers in db.js |
+| Update transliteration logic in phoneme.js | [x] | Prioritize manual overrides in getPhonemesForTerms and scan custom terms |
+| Add API routes in server.js | [x] | Add GET, POST, DELETE endpoints for custom phonemes in Express server |
+| Create the UI modal PronunciationModal.jsx | [/] | Build PronunciationModal React component matching user mockup |
+| Add trigger button in SidebarConfig.jsx and modal logic in App.jsx | [ ] | Connect trigger link and render modal overlay in app |
+| End-to-End Verification | [ ] | Verify custom pronunciations work successfully on TTS generation |
