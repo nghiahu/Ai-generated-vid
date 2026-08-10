@@ -648,6 +648,9 @@ function App() {
             )}
           </Suspense>
         </div>
+        {showPronunciationModal && (
+          <PronunciationModal onClose={() => setShowPronunciationModal(false)} />
+        )}
       </div>
     );
   }
