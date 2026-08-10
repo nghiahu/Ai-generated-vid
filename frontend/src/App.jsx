@@ -14,6 +14,7 @@ import {
 } from "./hooks/useProjectQueries";
 import { SkeletonLoader } from "./components/SkeletonLoader";
 import { SettingsPage } from "./components/SettingsPage";
+import { PronunciationModal } from "./components/PronunciationModal";
 import "./App.css";
 
 const Dashboard = React.lazy(() => import("./components/Dashboard").then(m => ({ default: m.Dashboard })));
@@ -82,6 +83,7 @@ function App() {
     }, 3500);
   };
   const [showVoiceModal, setShowVoiceModal] = useState(false);
+  const [showPronunciationModal, setShowPronunciationModal] = useState(false);
   const [modalVoice, setModalVoice] = useState("rachel");
   const [modalCustomVoiceId, setModalCustomVoiceId] = useState("");
 
@@ -621,6 +623,7 @@ function App() {
                     config={draftConfig}
                     onChange={setDraftConfig}
                     onBack={() => setView("PROJECTS")}
+                    onOpenPronunciationModal={() => setShowPronunciationModal(true)}
                   />
                 </div>
               </div>
@@ -736,6 +739,7 @@ function App() {
                   config={currentProject?.config || {}}
                   onChange={handleUpdateConfig}
                   onBack={() => { setSelectedProjectId(null); setView("DASHBOARD"); }}
+                  onOpenPronunciationModal={() => setShowPronunciationModal(true)}
                 />
               </div>
             </div>
@@ -875,6 +879,10 @@ function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {showPronunciationModal && (
+        <PronunciationModal onClose={() => setShowPronunciationModal(false)} />
       )}
 
       {/* Floating Bottom-Right Toast Notification */}
