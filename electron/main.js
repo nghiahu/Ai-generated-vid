@@ -36,7 +36,37 @@ const MY_VIDEO_PATH = getResourcePath('my-video');
 let backendProcess = null;
 const BACKEND_PORT = 5000;
 
+function killPort5000Sync() {
+  if (process.platform !== 'win32') return;
+  try {
+    const { execSync } = require('child_process');
+    const output = execSync('netstat -aon').toString();
+    const lines = output.split('\n');
+    const pidsToKill = new Set();
+    for (const line of lines) {
+      if (line.includes(`:${BACKEND_PORT}`)) {
+        const parts = line.trim().split(/\s+/);
+        const pid = parts[parts.length - 1];
+        if (pid && !isNaN(pid) && pid !== '0') {
+          pidsToKill.add(pid);
+        }
+      }
+    }
+    for (const pid of pidsToKill) {
+      console.log(`[Main] Killing old zombie process on port ${BACKEND_PORT} with PID: ${pid}`);
+      try {
+        execSync(`taskkill /pid ${pid} /T /F`);
+      } catch (err) { }
+    }
+  } catch (e) {
+    console.error('[Main] Failed to check or kill processes on port 5000:', e.message);
+  }
+}
+
 function startBackend() {
+  // Clean up any old zombie processes occupying port 5000 first
+  killPort5000Sync();
+
   const serverFile = path.join(BACKEND_PATH, 'server.js');
 
   if (!fs.existsSync(serverFile)) {
@@ -84,7 +114,18 @@ function startBackend() {
 
 function stopBackend() {
   if (backendProcess) {
-    backendProcess.kill('SIGTERM');
+    if (process.platform === 'win32') {
+      try {
+        const { execSync } = require('child_process');
+        execSync(`taskkill /pid ${backendProcess.pid} /T /F`);
+        console.log('[Main] Forcefully killed backend process tree (PID:', backendProcess.pid, ')');
+      } catch (e) {
+        console.error('[Main] Failed to taskkill backend process tree:', e.message);
+        backendProcess.kill('SIGKILL');
+      }
+    } else {
+      backendProcess.kill('SIGTERM');
+    }
     backendProcess = null;
   }
 }
