@@ -304,10 +304,16 @@ ipcMain.handle('open-external', (event, url) => {
 // ─────────────────────────────────────────────
 // OmniVoice Extraction Check & Runtime Setup
 // ─────────────────────────────────────────────
+function getResolvedExePath(omnivoiceDir) {
+  const nested = path.join(omnivoiceDir, 'Python311', 'Scripts', 'omnivoice-infer.exe');
+  const standard = path.join(omnivoiceDir, 'Scripts', 'omnivoice-infer.exe');
+  return fs.existsSync(nested) ? nested : standard;
+}
+
 function ensureOmniVoice() {
   return new Promise((resolve) => {
     const omnivoiceDir = path.join(app.getPath('userData'), 'omnivoice-runtime');
-    const exePath = path.join(omnivoiceDir, 'Scripts', 'omnivoice-infer.exe');
+    const exePath = getResolvedExePath(omnivoiceDir);
     
     if (fs.existsSync(exePath)) {
       console.log('[Main] OmniVoice runtime found at:', exePath);
@@ -367,13 +373,13 @@ function ensureOmniVoice() {
               } else {
                 console.log('[Main] PowerShell extraction successful.');
                 setupWindow.close();
-                resolve(exePath);
+                resolve(getResolvedExePath(omnivoiceDir));
               }
             });
           } else {
             console.log('[Main] tar extraction successful to:', omnivoiceDir);
             setupWindow.close();
-            resolve(exePath);
+            resolve(getResolvedExePath(omnivoiceDir));
           }
         });
       } catch (err) {
