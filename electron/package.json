@@ -28,7 +28,8 @@
     "files": [
       "main.js",
       "preload.js",
-      "settings-window.html"
+      "settings-window.html",
+      "setup-loading.html"
     ],
     "extraResources": [
       {
