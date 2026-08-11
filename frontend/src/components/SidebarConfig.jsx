@@ -43,9 +43,12 @@ export const SidebarConfig = ({ config = {}, onChange, onOpenPronunciationModal 
     });
   };
 
-  const currentLength = config.length
-    ? (config.length.includes("Short") ? "Short" : config.length.includes("Medium") ? "Medium" : "Long")
-    : "Short";
+  const lengthStr = String(config.length || "");
+  const currentLength = lengthStr.includes("Medium")
+    ? "Medium"
+    : lengthStr.includes("Long")
+      ? "Long"
+      : "Short";
 
   return (
     <div className="custom-scrollbar" style={{
