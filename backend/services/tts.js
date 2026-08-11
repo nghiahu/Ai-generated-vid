@@ -215,7 +215,9 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
             env: {
               ...process.env,
               PYTHONUTF8: "1",
-              PYTHONIOENCODING: "utf-8"
+              PYTHONIOENCODING: "utf-8",
+              HF_ENDPOINT: "https://hf-mirror.com",
+              HF_HOME: process.env.HF_HOME
             }
           });
         });
