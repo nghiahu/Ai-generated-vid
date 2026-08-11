@@ -80,7 +80,8 @@ function startBackend() {
     ELECTRON_APP_DATA: APP_DATA_DIR,
     MY_VIDEO_PATH: MY_VIDEO_PATH,
     NODE_ENV: 'production',
-    ELECTRON_RUN_AS_NODE: '1' // Critical: prevent spawning infinite Electron windows
+    ELECTRON_RUN_AS_NODE: '1', // Critical: prevent spawning infinite Electron windows
+    HF_HOME: process.env.HF_HOME
   };
 
   // Use Node.js from the system (or Electron's own node)
@@ -312,7 +313,7 @@ function getResolvedExePath(omnivoiceDir) {
 
 function ensureOmniVoice() {
   return new Promise((resolve) => {
-    const omnivoiceDir = path.join(app.getPath('userData'), 'omnivoice-runtime');
+    const omnivoiceDir = path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime');
     const exePath = getResolvedExePath(omnivoiceDir);
     
     if (fs.existsSync(exePath)) {
@@ -401,8 +402,11 @@ function ensureOmniVoice() {
 app.whenReady().then(async () => {
   const exePath = await ensureOmniVoice();
   if (exePath) {
+    const omnivoiceDir = path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime');
     process.env.OMNIVOICE_INFER_PATH = exePath;
+    process.env.HF_HOME = path.join(omnivoiceDir, 'hf_cache');
     console.log('[Main] AppData OmniVoice path registered:', process.env.OMNIVOICE_INFER_PATH);
+    console.log('[Main] AppData HF_HOME cache path registered:', process.env.HF_HOME);
   }
 
   createMainWindow();
