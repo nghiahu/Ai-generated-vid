@@ -407,6 +407,18 @@ app.whenReady().then(async () => {
     process.env.HF_HOME = path.join(omnivoiceDir, 'hf_cache');
     console.log('[Main] AppData OmniVoice path registered:', process.env.OMNIVOICE_INFER_PATH);
     console.log('[Main] AppData HF_HOME cache path registered:', process.env.HF_HOME);
+    
+    // Save to config file so standalone or spawned backend can read it directly
+    try {
+      const config = readConfig();
+      if (config.OMNIVOICE_INFER_PATH !== exePath) {
+        config.OMNIVOICE_INFER_PATH = exePath;
+        fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf8');
+        console.log('[Main] Saved OMNIVOICE_INFER_PATH to config file:', CONFIG_FILE);
+      }
+    } catch (err) {
+      console.error('[Main] Failed to save OMNIVOICE_INFER_PATH to config:', err.message);
+    }
   }
 
   createMainWindow();
