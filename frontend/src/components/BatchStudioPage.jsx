@@ -102,6 +102,38 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
   const [slots, setSlots] = useState([createEmptySlot()]);
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [importToast, setImportToast] = useState(null);
+
+  useEffect(() => {
+    if (importToast) {
+      const timer = setTimeout(() => setImportToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [importToast]);
+
+  const handleImportScriptForSlot = (slotId, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target.result || "";
+      handleSlotTextChange(slotId, text);
+      setImportToast({
+        message: `Đã tải kịch bản slot #${slots.findIndex(s => s.id === slotId) + 1}: ${file.name}`,
+        type: "success"
+      });
+    };
+    reader.onerror = (err) => {
+      console.error("Failed to read file:", err);
+      setImportToast({
+        message: "Không thể đọc tệp kịch bản này.",
+        type: "error"
+      });
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
 
   // Styles & Modals States
   const [selectedStyle, setSelectedStyle] = useState("minimal");
@@ -515,6 +547,48 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
                     letterSpacing: "0.08em", color: "#888", textTransform: "uppercase"
                   }}>#{idx + 1}</span>
                   {getStatusBadge(slot)}
+                  
+                  <input
+                    type="file"
+                    id={`file-input-${slot.id}`}
+                    accept=".md,.txt"
+                    style={{ display: "none" }}
+                    onChange={(e) => handleImportScriptForSlot(slot.id, e)}
+                  />
+                  <button
+                    type="button"
+                    disabled={isRunning}
+                    onClick={() => document.getElementById(`file-input-${slot.id}`)?.click()}
+                    style={{
+                      background: "rgba(37, 99, 235, 0.08)",
+                      border: "1px solid rgba(37, 99, 235, 0.2)",
+                      borderRadius: "12px",
+                      padding: "3px 8px",
+                      fontSize: "11px",
+                      fontWeight: "600",
+                      color: "#2563eb",
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "3px",
+                      transition: "all 0.2s ease",
+                      opacity: isRunning ? 0.5 : 1
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isRunning) {
+                        e.currentTarget.style.background = "rgba(37, 99, 235, 0.15)";
+                        e.currentTarget.style.borderColor = "#2563eb";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isRunning) {
+                        e.currentTarget.style.background = "rgba(37, 99, 235, 0.08)";
+                        e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.2)";
+                      }
+                    }}
+                  >
+                    📝 Tải file MD/TXT
+                  </button>
                 </div>
                 {slots.length > 1 && !isRunning && (
                   <button
@@ -809,6 +883,30 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
 
       {/* Render Project Images Modal */}
       {renderMediaModal()}
+
+      {importToast && (
+        <div style={{
+          position: "fixed",
+          bottom: "24px",
+          right: "24px",
+          background: importToast.type === "success" ? "rgba(15, 23, 42, 0.95)" : "rgba(220, 38, 38, 0.95)",
+          backdropFilter: "blur(8px)",
+          color: "#ffffff",
+          padding: "12px 20px",
+          borderRadius: "30px",
+          boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+          zIndex: 99999,
+          fontSize: "13px",
+          fontFamily: "Inter, sans-serif",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          animation: "fadeInUp 0.3s ease"
+        }}>
+          <span>{importToast.type === "success" ? "✅" : "❌"}</span>
+          <span>{importToast.message}</span>
+        </div>
+      )}
     </div>
   );
 };

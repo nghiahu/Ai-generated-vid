@@ -571,6 +571,40 @@ export const StoryboardEditor = ({
 }) => {
   const [topicText, setTopicText] = useState("");
   const [scriptText, setScriptText] = useState("");
+  const fileInputRef = useRef(null);
+  const [importToast, setImportToast] = useState(null);
+
+  useEffect(() => {
+    if (importToast) {
+      const timer = setTimeout(() => setImportToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [importToast]);
+
+  const handleImportScript = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target.result || "";
+      setScriptText(text);
+      setImportToast({
+        message: `Đã tải kịch bản: ${file.name} (${text.length} ký tự)`,
+        type: "success"
+      });
+    };
+    reader.onerror = (err) => {
+      console.error("Failed to read file:", err);
+      setImportToast({
+        message: "Không thể đọc tệp kịch bản này.",
+        type: "error"
+      });
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
+
   const [localTexts, setLocalTexts] = useState({});
   const [uploadingScenes, setUploadingScenes] = useState({});
   const [savingBeforeTtsId, setSavingBeforeTtsId] = useState(null);
@@ -1628,8 +1662,45 @@ export const StoryboardEditor = ({
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: 1 }}>
 
             <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: "250px" }}>
-              <div style={{ display: "flex", justifyBetween: "space-between", alignItems: "flex-end", marginBottom: "8px" }}>
-                <label className="form-label-mono" style={{ fontSize: "15px", marginBottom: 0 }}>Kịch bản chi tiết</label>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "8px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <label className="form-label-mono" style={{ fontSize: "15px", marginBottom: 0 }}>Kịch bản chi tiết</label>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept=".md,.txt"
+                    style={{ display: "none" }}
+                    onChange={handleImportScript}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    style={{
+                      background: "rgba(37, 99, 235, 0.08)",
+                      border: "1px solid rgba(37, 99, 235, 0.2)",
+                      borderRadius: "12px",
+                      padding: "4px 10px",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      color: "#2563eb",
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      transition: "all 0.2s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(37, 99, 235, 0.15)";
+                      e.currentTarget.style.borderColor = "#2563eb";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "rgba(37, 99, 235, 0.08)";
+                      e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.2)";
+                    }}
+                  >
+                    📥 Tải kịch bản (.md/.txt)
+                  </button>
+                </div>
                 <span style={{ fontSize: "12px", color: "#555555", fontFamily: "Inter" }}>~150 words</span>
               </div>
               <textarea
@@ -1736,6 +1807,30 @@ export const StoryboardEditor = ({
         )}
 
         {renderMediaModal()}
+
+        {importToast && (
+          <div style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            background: importToast.type === "success" ? "rgba(15, 23, 42, 0.95)" : "rgba(220, 38, 38, 0.95)",
+            backdropFilter: "blur(8px)",
+            color: "#ffffff",
+            padding: "12px 20px",
+            borderRadius: "30px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+            zIndex: 99999,
+            fontSize: "13px",
+            fontFamily: "Inter, sans-serif",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            animation: "fadeInUp 0.3s ease"
+          }}>
+            <span>{importToast.type === "success" ? "✅" : "❌"}</span>
+            <span>{importToast.message}</span>
+          </div>
+        )}
 
         {showStyleModal && (
           <div style={{
