@@ -282,16 +282,11 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
       refAudioPath = ensureWavReferenceAudio(refAudioPath);
     }
 
-    const wavFileName = `tts_${projectId}_${sceneId}_${version}.wav`;
-    const wavOutputPath = path.join(outputDir, wavFileName);
-    const cleanText = normalizeTextForTTS(text);
-
     console.log(`[TTS] Local OmniVoice offline for scene ${sceneId} with voice ${effectiveVoice}...`);
 
     const backendDir = path.resolve(__dirname, '..');
     const relativeWavOutputPath = path.relative(backendDir, wavOutputPath).replace(/\\/g, '/');
     const relativeRefAudioPath = path.relative(backendDir, refAudioPath).replace(/\\/g, '/');
-    const speed = parseFloat(process.env.OMNIVOICE_SPEED) || 0.95;
 
     const args = [
       "--text", cleanText,
