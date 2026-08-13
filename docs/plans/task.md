@@ -1,5 +1,7 @@
 | Task | Status | Description |
 | --- | --- | --- |
-| Task 1: Update extraction path and environment variables in Electron main.js | [x] | Relocate extraction path to C:\Users\Public\ai-video-app-runtime and inject process.env.HF_HOME and OMNIVOICE_INFER_PATH in electron/main.js |
-| Task 2: Inject HF_HOME into subprocess environment inside tts.js | [x] | Pass HF_HOME explicitly inside the env block of execFileAsync inside backend/services/tts.js |
-| Task 3: Package application and verify end-to-end extraction and execution | [x] | Re-build directory using npm run build:dir, clear existing runtime, verify successful extraction and backend boot |
+| Task 1: Create the Serverless Python Worker (`handler.py`) | [ ] | Create python code for RunPod native handler that runs OmniVoice inference |
+| Task 2: Create Dockerfile for Serverless Deployment | [ ] | Create Dockerfile with PyTorch CUDA runtime, pip packages, pre-loaded weights, and handler copy |
+| Task 3: Integrate Node.js Backend with Cloud API | [ ] | Update backend/services/tts.js to perform HTTP fetch requests to RunPod and decode base64 audio |
+| Task 4: Add Unit Tests for Cloud TTS Integration | [ ] | Write backend/tests/cloudTts.test.js and run verification tests using node:test |
+| Task 5: Document and update .env configuration template | [ ] | Update backend/.env with OMNIVOICE_CLOUD_* variables template |
