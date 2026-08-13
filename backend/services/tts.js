@@ -130,6 +130,43 @@ async function runOmniVoiceSequentially(fn) {
   return resultPromise;
 }
 
+// Run process and append stdout/stderr to local tts_debug.log in real-time to ease debugging
+function runProcessWithLogging(spawnExe, spawnArgs, options) {
+  return new Promise((resolve, reject) => {
+    const debugLogPath = path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'tts_debug.log');
+    
+    try {
+      fs.appendFileSync(debugLogPath, `\n--- [${new Date().toISOString()}] TTS Run ---\nCommand: "${spawnExe}" ${spawnArgs.join(' ')}\n`);
+    } catch (err) {
+      console.warn("Failed to write to tts_debug.log header:", err.message);
+    }
+
+    const child = execFile(spawnExe, spawnArgs, options, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve({ stdout, stderr });
+      }
+    });
+
+    if (child.stdout) {
+      child.stdout.on('data', (data) => {
+        try {
+          fs.appendFileSync(debugLogPath, data.toString());
+        } catch (e) {}
+      });
+    }
+
+    if (child.stderr) {
+      child.stderr.on('data', (data) => {
+        try {
+          fs.appendFileSync(debugLogPath, data.toString());
+        } catch (e) {}
+      });
+    }
+  });
+}
+
 /**
  * Generate TTS audio using VBEE (online) or OmniVoice (offline).
  */
@@ -154,9 +191,81 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
 
   let effectiveVoice = voiceKey || "vbee_ngochuyen";
   
-  // ─── Off-line OmniVoice Path ───
+  // ─── Off-line/Online Cloud OmniVoice Path ───
   if (effectiveVoice.toLowerCase().startsWith("omnivoice_")) {
-    const omnivoiceExe = process.env.OMNIVOICE_INFER_PATH;
+    const cloudApiUrl = process.env.OMNIVOICE_CLOUD_API_URL;
+    const cloudApiKey = process.env.OMNIVOICE_CLOUD_API_KEY;
+    const cleanText = normalizeTextForTTS(text);
+    const wavFileName = `tts_${projectId}_${sceneId}_${version}.wav`;
+    const wavOutputPath = path.join(outputDir, wavFileName);
+    const speed = parseFloat(process.env.OMNIVOICE_SPEED) || 0.95;
+
+    // --- CASE A: Cloud Serverless Path ---
+    if (cloudApiUrl && cloudApiKey) {
+      console.log(`[TTS] Routing OmniVoice request to RunPod Cloud API for scene ${sceneId}...`);
+      let voiceId = "duythanh";
+      if (effectiveVoice.toLowerCase() === "omnivoice_quanganh" || effectiveVoice.toLowerCase() === "omnivoice_quang_anh") {
+        voiceId = "quanganh";
+      }
+
+      try {
+        const response = await fetch(cloudApiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${cloudApiKey}`
+          },
+          body: JSON.stringify({
+            input: {
+              text: cleanText,
+              voice: voiceId,
+              speed: speed
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error(`RunPod API request failed: status ${response.status} - ${errText}`);
+        }
+
+        const body = await response.json();
+        if (body.status === "FAILED") {
+          throw new Error(`RunPod generation job failed: ${body.error || JSON.stringify(body)}`);
+        }
+
+        const audioBase64 = body.output?.audio_base64;
+        if (!audioBase64) {
+          throw new Error(`RunPod did not return audio_base64. Response: ${JSON.stringify(body)}`);
+        }
+
+        // Decode and write to output path
+        fs.writeFileSync(wavOutputPath, Buffer.from(audioBase64, 'base64'));
+        
+        // Postprocessing
+        addSilentPadding(wavOutputPath);
+        const duration = getAudioDuration(wavOutputPath);
+        return { url: `/tts/${wavFileName}`, duration };
+
+      } catch (err) {
+        console.error(`[TTS] Cloud OmniVoice failed: ${err.message}. Falling back to local execution checks...`);
+        // Fall through to local implementation if cloud fails
+      }
+    }
+
+    // --- CASE B: Local Fallback Path ---
+    let omnivoiceExe = process.env.OMNIVOICE_INFER_PATH;
+    
+    // Auto-detect and prefer the bundled offline runtime if it exists
+    const defaultBundledPath = path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'Python311', 'Scripts', 'omnivoice-infer.exe');
+    const alternativeBundledPath = path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'Scripts', 'omnivoice-infer.exe');
+    
+    if (fs.existsSync(defaultBundledPath)) {
+      omnivoiceExe = defaultBundledPath;
+    } else if (fs.existsSync(alternativeBundledPath)) {
+      omnivoiceExe = alternativeBundledPath;
+    }
+
     if (!omnivoiceExe || !fs.existsSync(omnivoiceExe)) {
       throw new Error(`Chưa cài đặt OmniVoice hoặc cấu hình sai đường dẫn OMNIVOICE_INFER_PATH trong Settings. File không tìm thấy: "${omnivoiceExe || 'trống'}"`);
     }
@@ -204,11 +313,33 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
     let attempts = 0;
     const maxAttempts = 2;
 
+    let spawnExe = omnivoiceExe;
+    let spawnArgs = args;
+
+    // Detect if we can run via python -m omnivoice.cli.infer to bypass broken wrapper exe
+    if (omnivoiceExe) {
+      const parentDir = path.dirname(omnivoiceExe);
+      const grandParentDir = path.dirname(parentDir);
+      const pythonCandidates = [
+        path.join(grandParentDir, 'python.exe'),
+        path.join(parentDir, 'python.exe')
+      ];
+      
+      for (const candidate of pythonCandidates) {
+        if (fs.existsSync(candidate)) {
+          spawnExe = candidate;
+          spawnArgs = ["-m", "omnivoice.cli.infer", ...args];
+          console.log(`[TTS] Bypassing wrapper. Using python: "${candidate}"`);
+          break;
+        }
+      }
+    }
+
     while (!success && attempts < maxAttempts) {
       try {
         attempts++;
         await runOmniVoiceSequentially(async () => {
-          return await execFileAsync(omnivoiceExe, args, {
+          return await runProcessWithLogging(spawnExe, spawnArgs, {
             cwd: backendDir,
             timeout: 300000,
             maxBuffer: 10 * 1024 * 1024,
@@ -217,7 +348,10 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
               PYTHONUTF8: "1",
               PYTHONIOENCODING: "utf-8",
               HF_ENDPOINT: "https://hf-mirror.com",
-              HF_HOME: process.env.HF_HOME
+              HF_HOME: process.env.HF_HOME || path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'hf_cache'),
+              HF_HUB_OFFLINE: "1",
+              TRANSFORMERS_OFFLINE: "1",
+              HF_DATASETS_OFFLINE: "1"
             }
           });
         });
