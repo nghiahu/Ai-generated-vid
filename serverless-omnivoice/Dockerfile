@@ -2,7 +2,6 @@
 FROM pytorch/pytorch:2.2.1-cuda12.1-cudnn8-runtime
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV HF_ENDPOINT=https://hf-mirror.com
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
