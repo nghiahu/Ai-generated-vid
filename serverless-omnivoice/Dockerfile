@@ -19,9 +19,10 @@ RUN pip install --no-cache-dir \
     runpod \
     soundfile
 
-# Install compatible torchvision and torchaudio with CUDA 12.1 support
-RUN pip install --no-cache-dir \
-    torchvision==0.17.1+cu121 \
+# Uninstall torchvision to prevent transformers import check crash (we don't need vision models)
+# Install compatible torchaudio with CUDA 12.1 support
+RUN pip uninstall -y torchvision \
+    && pip install --no-cache-dir \
     torchaudio==2.2.1+cu121 \
     --extra-index-url https://download.pytorch.org/whl/cu121
 
