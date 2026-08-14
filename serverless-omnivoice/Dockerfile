@@ -17,8 +17,16 @@ WORKDIR /app
 # Install Python requirements
 RUN pip install --no-cache-dir \
     runpod \
-    soundfile \
-    torchaudio \
+    soundfile
+
+# Install compatible torchvision and torchaudio with CUDA 12.1 support
+RUN pip install --no-cache-dir \
+    torchvision==0.17.1+cu121 \
+    torchaudio==2.2.1+cu121 \
+    --extra-index-url https://download.pytorch.org/whl/cu121
+
+# Install omnivoice and other dependencies
+RUN pip install --no-cache-dir \
     omnivoice
 
 # Pre-download the model weights during Docker build to eliminate cold start downloads
