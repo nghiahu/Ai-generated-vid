@@ -311,13 +311,51 @@ function getResolvedExePath(omnivoiceDir) {
   return fs.existsSync(nested) ? nested : standard;
 }
 
+function applyPostExtractionPatches(omnivoiceDir) {
+  try {
+    // 1. Copy optimized CPU float32 patch for infer.py
+    const patchDest = path.join(omnivoiceDir, 'Python311', 'Lib', 'site-packages', 'omnivoice', 'cli', 'infer.py');
+    const patchSrc = path.join(__dirname, 'infer.py');
+    if (fs.existsSync(patchSrc)) {
+      fs.copyFileSync(patchSrc, patchDest);
+      console.log('[Main] Successfully applied CPU float32 patch to:', patchDest);
+    } else {
+      console.warn('[Main] CPU patch source file not found:', patchSrc);
+    }
+  } catch (err) {
+    console.error('[Main] Failed to copy infer.py patch:', err.message);
+  }
+
+  try {
+    // 2. Copy missing VC++ DLLs from sklearn to Python311 root to fix missing DLL load errors on clean systems
+    const pythonRoot = path.join(omnivoiceDir, 'Python311');
+    const sklearnLibs = path.join(pythonRoot, 'Lib', 'site-packages', 'sklearn', '.libs');
+    
+    const dlls = ['msvcp140.dll', 'vcomp140.dll'];
+    for (const dll of dlls) {
+      const src = path.join(sklearnLibs, dll);
+      const dest = path.join(pythonRoot, dll);
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, dest);
+        console.log(`[Main] Copied DLL to root: ${dll}`);
+      } else {
+        console.warn(`[Main] DLL source not found inside sklearn: ${src}`);
+      }
+    }
+  } catch (err) {
+    console.error('[Main] Failed to copy C++ DLLs to Python root:', err.message);
+  }
+}
+
 function ensureOmniVoice() {
   return new Promise((resolve) => {
     const omnivoiceDir = path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime');
     const exePath = getResolvedExePath(omnivoiceDir);
+    const hfCachePath = path.join(omnivoiceDir, 'hf_cache');
     
-    if (fs.existsSync(exePath)) {
-      console.log('[Main] OmniVoice runtime found at:', exePath);
+    if (fs.existsSync(exePath) && fs.existsSync(hfCachePath)) {
+      console.log('[Main] OmniVoice runtime and HF Cache found at:', exePath);
+      applyPostExtractionPatches(omnivoiceDir); // Ensure patches are applied even on existing installations
       resolve(exePath);
       return;
     }
@@ -373,12 +411,14 @@ function ensureOmniVoice() {
                 resolve(null);
               } else {
                 console.log('[Main] PowerShell extraction successful.');
+                applyPostExtractionPatches(omnivoiceDir);
                 setupWindow.close();
                 resolve(getResolvedExePath(omnivoiceDir));
               }
             });
           } else {
             console.log('[Main] tar extraction successful to:', omnivoiceDir);
+            applyPostExtractionPatches(omnivoiceDir);
             setupWindow.close();
             resolve(getResolvedExePath(omnivoiceDir));
           }

@@ -197,7 +197,7 @@ export const IntroBriefingCardMode: React.FC<ModeRendererProps> = ({
 
               <div style={{
                 display: "grid",
-                gap: "8px",
+                gap: "16px",
                 textTransform: "uppercase",
                 width: "100%",
                 borderRadius: "24px",
@@ -210,7 +210,7 @@ export const IntroBriefingCardMode: React.FC<ModeRendererProps> = ({
               }}>
                 <div style={{
                   fontSize: `${Math.round(100 * fontScale)}px`,
-                  lineHeight: 1.02,
+                  lineHeight: 1.2,
                   fontWeight: 900,
                   letterSpacing: "-0.07em",
                   color: isLight ? "#1e293b" : "rgb(248, 250, 252)",
@@ -222,7 +222,7 @@ export const IntroBriefingCardMode: React.FC<ModeRendererProps> = ({
                 {titleLine2 && (
                   <div style={{
                     fontSize: `${Math.round(86 * fontScale)}px`,
-                    lineHeight: 1.02,
+                    lineHeight: 1.2,
                     fontWeight: 900,
                     letterSpacing: "-0.07em",
                     color: accentColor,

@@ -434,7 +434,7 @@ const VDE_PRESET_STYLES = [
   }
 ];
 
-const CircularProgressLoader = ({ loadingMessage, projectId }) => {
+const CircularProgressLoader = ({ loadingMessage, projectId, onCancel }) => {
   const [progress, setProgress] = useState(5);
   const [stageMessage, setStageMessage] = useState(loadingMessage || "Đang dùng AI phân tích kịch bản & trích xuất phân cảnh...");
 
@@ -549,12 +549,36 @@ const CircularProgressLoader = ({ loadingMessage, projectId }) => {
       <span style={{ marginTop: "6px", fontSize: "12px", color: "var(--text-secondary)", fontFamily: "Inter", fontWeight: "500" }}>
         Tiến trình cập nhật theo thời gian thực từ Backend AI...
       </span>
+      {onCancel && (
+        <button
+          type="button"
+          onClick={onCancel}
+          style={{
+            marginTop: "20px",
+            padding: "8px 16px",
+            backgroundColor: "rgba(220, 38, 38, 0.08)",
+            border: "1px solid rgba(220, 38, 38, 0.2)",
+            borderRadius: "20px",
+            color: "#dc2626",
+            fontSize: "12px",
+            fontWeight: "600",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px"
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.15)"}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.08)"}
+        >
+          ❌ Hủy bỏ quá trình
+        </button>
+      )}
     </div>
   );
 };
 
 export const StoryboardEditor = ({
-
   scenes = [],
   config = {},
   projectId,
@@ -564,6 +588,7 @@ export const StoryboardEditor = ({
   regeneratingSceneId,
   loading,
   loadingMessage,
+  onCancelGenerate,
   selectedSceneId,
   onSelectScene,
   onUpdateConfig,
@@ -617,6 +642,7 @@ export const StoryboardEditor = ({
   // Media Modal & Upload states
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [selectedBgMedia, setSelectedBgMedia] = useState(config.bgMediaList || []);
+  const [selectedCtaMedia, setSelectedCtaMedia] = useState([]);
   const [modalSelectedMedia, setModalSelectedMedia] = useState([]);
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [mediaTab, setMediaTab] = useState("YOUR_MEDIA"); // YOUR_MEDIA, UPLOAD, STOCK, AI
@@ -755,6 +781,8 @@ export const StoryboardEditor = ({
       }
     } else if (mediaModalContext === 'project-content-list') {
       setSelectedMedia(modalSelectedMedia);
+    } else if (mediaModalContext === 'project-cta-list') {
+      setSelectedCtaMedia(modalSelectedMedia);
     }
 
     // Reset state and close modal
@@ -766,6 +794,9 @@ export const StoryboardEditor = ({
 
   const handleToggleSelectMedia = (url) => {
     setModalSelectedMedia(prev => {
+      if (mediaModalContext === 'project-cta-list') {
+        return prev.includes(url) ? [] : [url];
+      }
       if (prev.includes(url)) {
         return prev.filter(u => u !== url);
       } else {
@@ -794,7 +825,11 @@ export const StoryboardEditor = ({
         const res = await axios.post("http://localhost:5000/api/upload", { file: reader.result });
         if (res.data && res.data.url) {
           const uploadedUrl = res.data.url.trim();
-          setModalSelectedMedia(prev => Array.from(new Set([...prev, uploadedUrl])));
+          if (mediaModalContext === 'project-cta-list') {
+            setModalSelectedMedia([uploadedUrl]);
+          } else {
+            setModalSelectedMedia(prev => Array.from(new Set([...prev, uploadedUrl])));
+          }
           setPreviousMedia(prev => Array.from(new Set([uploadedUrl, ...prev])));
           setMediaTab("YOUR_MEDIA");
         }
@@ -820,7 +855,7 @@ export const StoryboardEditor = ({
 
   const handleConfirmStyle = () => {
     setShowStyleModal(false);
-    onGenerateStoryboard(scriptText, selectedStyle, selectedMedia, selectedBgMedia);
+    onGenerateStoryboard(scriptText, selectedStyle, selectedMedia, selectedBgMedia, selectedCtaMedia);
   };
 
   const handleFieldChange = (sceneId, field, value) => {
@@ -1069,7 +1104,13 @@ export const StoryboardEditor = ({
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <span style={{ fontSize: "20px" }}>🖼️</span>
-              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "700", color: "#0f172a" }}>Project Images</h3>
+              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "700", color: "#0f172a" }}>
+                {mediaModalContext === 'project-content-list' 
+                  ? "Chọn Ảnh Nội Dung" 
+                  : (mediaModalContext === 'project-background-list' 
+                      ? "Chọn Ảnh Nền" 
+                      : (mediaModalContext === 'project-cta-list' ? "Chọn Ảnh/Video CTA" : "Chọn Ảnh/Video"))}
+              </h3>
             </div>
 
             {/* Tabs Switcher */}
@@ -1194,18 +1235,35 @@ export const StoryboardEditor = ({
                             transition: "all 0.2s ease"
                           }}
                         >
-                          <img
-                            src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
-                            alt="Previous Media Item"
-                            style={{
-                              position: "absolute",
-                              top: 0,
-                              left: 0,
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover"
-                            }}
-                          />
+                          {url.toLowerCase().includes("/video/upload/") || /\.(mp4|webm|ogg|mov|avi|flv|mkv)$/i.test(url.toLowerCase()) ? (
+                            <video
+                              src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover"
+                              }}
+                              muted
+                              loop
+                              playsInline
+                            />
+                          ) : (
+                            <img
+                              src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
+                              alt="Previous Media Item"
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover"
+                              }}
+                            />
+                          )}
                           {isSelected && (
                             <div style={{
                               position: "absolute",
@@ -1263,20 +1321,32 @@ export const StoryboardEditor = ({
                   <input
                     type="file"
                     id="media-modal-upload-input"
-                    accept="image/*"
+                    accept={
+                      mediaModalContext === 'project-cta-list' || mediaModalContext === 'cta'
+                        ? "image/*,video/*"
+                        : "image/*"
+                    }
                     onChange={handleFileUpload}
                     style={{ display: "none" }}
                   />
                   {uploading ? (
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <div style={{ width: "30px", height: "30px", border: "3px solid #cbd5e1", borderTop: "3px solid #3b82f6", borderRadius: "50%", animation: "spin 1s linear infinite", marginBottom: "12px" }} />
-                      <span style={{ fontSize: "14px", fontWeight: "600", color: "#64748b" }}>Đang tải ảnh lên Cloudinary...</span>
+                      <span style={{ fontSize: "14px", fontWeight: "600", color: "#64748b" }}>
+                        {mediaModalContext === 'project-cta-list' || mediaModalContext === 'cta'
+                          ? "Đang tải file lên Cloudinary..."
+                          : "Đang tải ảnh lên Cloudinary..."}
+                      </span>
                     </div>
                   ) : (
                     <div style={{ textAlign: "center" }}>
                       <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>☁️</span>
                       <span style={{ fontSize: "15px", fontWeight: "700", color: "#334155", display: "block", marginBottom: "4px" }}>Click to upload files</span>
-                      <span style={{ fontSize: "12px", color: "#64748b" }}>Supports JPG, PNG, GIF up to 5MB</span>
+                      <span style={{ fontSize: "12px", color: "#64748b" }}>
+                        {mediaModalContext === 'project-cta-list' || mediaModalContext === 'cta'
+                          ? "Supports JPG, PNG, GIF, MP4 up to 10MB"
+                          : "Supports JPG, PNG, GIF up to 5MB"}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -1591,11 +1661,19 @@ export const StoryboardEditor = ({
                         border: "1px solid rgba(0,0,0,0.1)"
                       }}
                     >
-                      <img
-                        src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
-                        alt="Selected Thumbnail"
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                      />
+                      {url.toLowerCase().includes("/video/upload/") || /\.(mp4|webm|ogg|mov|avi|flv|mkv)$/i.test(url.toLowerCase()) ? (
+                        <video
+                          src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          muted
+                        />
+                      ) : (
+                        <img
+                          src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
+                          alt="Selected Thumbnail"
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                      )}
                       <button
                         type="button"
                         onClick={() => handleToggleSelectMedia(url)}
@@ -1657,7 +1735,7 @@ export const StoryboardEditor = ({
       <div className="custom-scrollbar" style={{ flex: 1, padding: "30px", display: "flex", flexDirection: "column", gap: "25px", overflowY: "auto", boxSizing: "border-box" }}>
 
         {loading ? (
-          <CircularProgressLoader loadingMessage={loadingMessage} projectId={projectId} />
+          <CircularProgressLoader loadingMessage={loadingMessage} projectId={projectId} onCancel={onCancelGenerate} />
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: 1 }}>
 
@@ -1784,6 +1862,42 @@ export const StoryboardEditor = ({
                 >
                   <span style={{ fontSize: "14px" }}>🧱</span>
                   Ảnh Nền ({selectedBgMedia.length})
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMediaModalContext('project-cta-list');
+                    setActiveUploadSceneId(null);
+                    setModalSelectedMedia(selectedCtaMedia || []);
+                    setShowMediaModal(true);
+                  }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "12px 20px",
+                    borderRadius: "30px",
+                    border: "1px solid rgba(15, 23, 42, 0.12)",
+                    background: "#ffffff",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    color: "var(--text-primary)",
+                    cursor: "pointer",
+                    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.04)",
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--color-primary)";
+                    e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                  }}
+                >
+                  <span style={{ fontSize: "14px" }}>📣</span>
+                  CTA ({selectedCtaMedia.length})
                 </button>
               </div>
 
@@ -2031,7 +2145,7 @@ export const StoryboardEditor = ({
                             </div>
                           ) : (
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "7px", color: style.tokens.textSecondary }}>
-                              <span>• HYPERFRAMES</span>
+                              <span>• KISAFRESH</span>
                               <span>0:15</span>
                             </div>
                           )}
@@ -2907,3 +3021,4 @@ export const StoryboardEditor = ({
     </div>
   );
 };
+// Force Vite refresh

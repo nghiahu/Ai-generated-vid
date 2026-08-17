@@ -8,7 +8,12 @@
     "error.log",
     "*.wav",
     "*.mp3",
-    "test_*.js"
+    "test_*.js",
+    "database.sqlite",
+    "db.json",
+    "video_token_usage.log",
+    "../video_token_usage.log",
+    "../../video_token_usage.log"
   ],
-  "delay": "1000"
+  "delay": "2500"
 }

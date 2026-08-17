@@ -4,6 +4,12 @@ const fs = require("fs");
 const { optimizeTimeline } = require("./subtitleOptimizer");
 
 function getPythonExecutable() {
+  // Check the bundled offline python first to support client machines perfectly
+  const bundledPython = "C:\\Users\\Public\\ai-video-app-runtime\\Python311\\python.exe";
+  if (fs.existsSync(bundledPython)) {
+    return bundledPython;
+  }
+
   // Use custom python path if defined in .env or config, otherwise default to typical python.exe
   const pythonPath = process.env.PYTHON_PATH || "C:\\Users\\nghia\\AppData\\Local\\Programs\\Python\\Python311\\python.exe";
   if (fs.existsSync(pythonPath)) {
@@ -33,7 +39,12 @@ function getWordTimestamps(audioPath, originalText, audioDuration) {
         env: {
           ...process.env,
           PYTHONUTF8: "1",
-          PYTHONIOENCODING: "utf-8"
+          PYTHONIOENCODING: "utf-8",
+          HF_ENDPOINT: "https://hf-mirror.com",
+          HF_HOME: process.env.HF_HOME || path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'hf_cache'),
+          HF_HUB_OFFLINE: "1",
+          TRANSFORMERS_OFFLINE: "1",
+          HF_DATASETS_OFFLINE: "1"
         }
       },
       (error, stdout, stderr) => {

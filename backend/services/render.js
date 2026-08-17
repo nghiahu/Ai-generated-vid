@@ -50,6 +50,8 @@ async function renderVideo(projectId, projectData) {
     shell: true
   });
 
+  activeRenders[renderId].process = remotionProcess;
+
   remotionProcess.stdout.on('data', (data) => {
     const rawText = data.toString();
     const cleanText = rawText.replace(/\u001b\[[0-9;]*m/g, "");
@@ -133,7 +135,28 @@ async function renderVideo(projectId, projectData) {
   return renderId;
 }
 
+function cancelRender(renderId) {
+  const renderInfo = activeRenders[renderId];
+  if (renderInfo) {
+    if (renderInfo.status === 'rendering' && renderInfo.process) {
+      try {
+        if (process.platform === 'win32') {
+          const { execSync } = require('child_process');
+          execSync(`taskkill /pid ${renderInfo.process.pid} /T /F`);
+        } else {
+          renderInfo.process.kill('SIGKILL');
+        }
+        console.log(`[Render] Successfully cancelled render process for ${renderId}`);
+      } catch (e) {
+        console.error(`[Render] Failed to kill render process:`, e.message);
+      }
+    }
+    renderInfo.status = 'failed';
+  }
+}
+
 module.exports = {
   renderVideo,
-  getRenderStatus
+  getRenderStatus,
+  cancelRender
 };

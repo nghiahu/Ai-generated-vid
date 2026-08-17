@@ -1,6 +1,7 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import { api } from "./services/api";
 import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import {
   useProjects,
   useProjectDetail,
@@ -22,6 +23,15 @@ const SidebarConfig = React.lazy(() => import("./components/SidebarConfig").then
 const StoryboardEditor = React.lazy(() => import("./components/StoryboardEditor").then(m => ({ default: m.StoryboardEditor })));
 const MasterPlayer = React.lazy(() => import("./components/MasterPlayer").then(m => ({ default: m.MasterPlayer })));
 const BatchStudioPage = React.lazy(() => import("./components/BatchStudioPage").then(m => ({ default: m.BatchStudioPage })));
+
+const INITIAL_DRAFT_CONFIG = {
+  length: "Short (~60s)",
+  language: "Vietnamese",
+  voice: "rachel",
+  watermark: { enabled: true, text: "yupclip.com", position: "top-right", color: "#000000" },
+  backgroundMusic: "Chill Lofi Beats",
+  backgroundMusicVolume: 0.025
+};
 
 function App() {
   const queryClient = useQueryClient();
@@ -55,14 +65,7 @@ function App() {
   const [selectedProjectId, setSelectedProjectId] = useState(getInitialProjectId);
   const [selectedSceneId, setSelectedSceneId] = useState(null);
   const [view, setView] = useState(getInitialView); // "PROJECTS", "STUDIO", "STUDIO_AI_GEN", "BATCH", "WORKSPACE_EDITOR", "WORKSPACE_SETUP"
-  const [draftConfig, setDraftConfig] = useState({
-    length: "Short (~60s)",
-    language: "Vietnamese",
-    voice: "rachel",
-    watermark: { enabled: true, text: "yupclip.com", position: "top-right", color: "#000000" },
-    backgroundMusic: "Chill Lofi Beats",
-    backgroundMusicVolume: 0.025
-  });
+  const [draftConfig, setDraftConfig] = useState(INITIAL_DRAFT_CONFIG);
 
   // States for generation & rendering loading
   const [loading, setLoading] = useState(false);
@@ -75,6 +78,10 @@ function App() {
   const [regeneratingTts, setRegeneratingTts] = useState(false);
   const [regeneratingSceneId, setRegeneratingSceneId] = useState(null);
   const [toast, setToast] = useState(null);
+
+  const [activeRenderId, setActiveRenderId] = useState(null);
+  const pollIntervalRef = useRef(null);
+  const generateAbortControllerRef = useRef(null);
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -312,7 +319,7 @@ function App() {
     }
   };
 
-  const handleGenerateStoryboard = async (scriptText, visualStyle, selectedMedia = [], selectedBgMedia = []) => {
+  const handleGenerateStoryboard = async (scriptText, visualStyle, selectedMedia = [], selectedBgMedia = [], selectedCtaMedia = []) => {
     let projectId = selectedProjectId;
     let traits = [];
 
@@ -356,6 +363,9 @@ function App() {
     setLoading(true);
     setLoadingMessage("AI đang phân tích kịch bản và sinh phân cảnh...");
 
+    const controller = new AbortController();
+    generateAbortControllerRef.current = controller;
+
     try {
       await generateStoryboardMutation.mutateAsync({
         projectId,
@@ -363,17 +373,24 @@ function App() {
         visualStyle,
         traits,
         selectedMedia,
-        selectedBgMedia
+        selectedBgMedia,
+        selectedCtaMedia,
+        options: { signal: controller.signal }
       });
 
       // Refetch details
       queryClient.invalidateQueries({ queryKey: ["projects", projectId] });
       setView("WORKSPACE_EDITOR");
     } catch (error) {
+      if (error.name === "CanceledError" || axios.isCancel(error) || error.message === "canceled") {
+        console.log("Storyboard generation cancelled by user");
+        return;
+      }
       console.error("Failed to generate storyboard:", error);
       alert(`Lỗi tạo Storyboard bằng AI: ${error.response?.data?.error || error.message}`);
     } finally {
       setLoading(false);
+      generateAbortControllerRef.current = null;
     }
   };
 
@@ -388,6 +405,7 @@ function App() {
     try {
       const renderResponse = await api.triggerRender(currentProject.id);
       const renderId = renderResponse.renderId;
+      setActiveRenderId(renderId);
 
       const pollInterval = setInterval(async () => {
         try {
@@ -407,24 +425,58 @@ function App() {
           if (statusRes.status === "completed") {
             setVideoUrl(statusRes.videoUrl);
             setRendering(false);
+            setActiveRenderId(null);
             clearInterval(pollInterval);
           } else if (statusRes.status === "failed") {
             alert("Kết xuất video thất bại!");
             setRendering(false);
+            setActiveRenderId(null);
             clearInterval(pollInterval);
           }
         } catch (err) {
           console.error("Error polling render status:", err);
           setRendering(false);
+          setActiveRenderId(null);
           clearInterval(pollInterval);
         }
       }, 300);
+      pollIntervalRef.current = pollInterval;
 
     } catch (error) {
       console.error("Failed to start video rendering:", error);
       alert(`Không thể khởi động tiến trình xuất video: ${error.response?.data?.error || error.message}`);
       setRendering(false);
+      setActiveRenderId(null);
     }
+  };
+
+  const handleCancelRender = async () => {
+    if (!currentProject || !activeRenderId) return;
+    try {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
+      await axios.post(`http://localhost:5000/api/projects/${currentProject.id}/render/cancel/${activeRenderId}`);
+      showToast("Đã hủy quá trình xuất video!", "info");
+    } catch (err) {
+      console.error("Failed to cancel render:", err);
+    } finally {
+      setRendering(false);
+      setActiveRenderId(null);
+      setRenderProgress(0);
+      setRenderedFrames(0);
+      setRenderTotalFrames(0);
+    }
+  };
+
+  const handleCancelGenerate = () => {
+    if (generateAbortControllerRef.current) {
+      generateAbortControllerRef.current.abort();
+      generateAbortControllerRef.current = null;
+    }
+    setLoading(false);
+    showToast("Đã hủy quá trình phân tích kịch bản!", "info");
   };
 
   // Main navigation sidebar layout for PROJECTS, STUDIO, BATCH, SETTINGS views
@@ -489,7 +541,11 @@ function App() {
             </li>
             <li>
               <button
-                onClick={() => { setSelectedProjectId(null); setView("STUDIO"); }}
+                onClick={() => {
+                  setSelectedProjectId(null);
+                  setView("STUDIO");
+                  setDraftConfig(INITIAL_DRAFT_CONFIG);
+                }}
                 style={{
                   width: "100%",
                   textAlign: "left",
@@ -631,6 +687,7 @@ function App() {
               <BatchStudioPage
                 sharedConfig={draftConfig}
                 onConfigChange={setDraftConfig}
+                onOpenPronunciationModal={() => setShowPronunciationModal(true)}
                 onBatchComplete={async () => {
                   queryClient.invalidateQueries({ queryKey: ["projects"] });
                   setView("PROJECTS");
@@ -684,7 +741,7 @@ function App() {
             }}
             onClick={() => { setSelectedProjectId(null); setView("DASHBOARD"); }}
           >
-            HYPERFRAMES
+            KISAFRESH
           </span>
 
           <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
@@ -732,6 +789,7 @@ function App() {
                   onUpdateScene={handleUpdateScene}
                   loading={loading}
                   loadingMessage={loadingMessage}
+                  onCancelGenerate={handleCancelGenerate}
                   selectedSceneId={selectedSceneId}
                   onSelectScene={setSelectedSceneId}
                 />
@@ -763,6 +821,7 @@ function App() {
                   regeneratingSceneId={regeneratingSceneId}
                   loading={loading}
                   loadingMessage={loadingMessage}
+                  onCancelGenerate={handleCancelGenerate}
                   selectedSceneId={selectedSceneId}
                   onSelectScene={setSelectedSceneId}
                 />
@@ -775,6 +834,7 @@ function App() {
                   config={currentProject?.config || {}}
                   projectTitle={currentProject?.title}
                   onRender={handleRenderVideo}
+                  onCancelRender={handleCancelRender}
                   rendering={rendering}
                   renderProgress={renderProgress}
                   renderedFrames={renderedFrames}

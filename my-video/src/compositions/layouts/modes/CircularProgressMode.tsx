@@ -102,10 +102,10 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
   let targetValue = 0;
   let hasExtractedFromTitle = false;
   let metricComp: (typeof otherComps)[number] | null = null;
-  const titlePctMatch = titleText ? titleText.match(/(\d+(?:\.\d+)?)\s*%/i) : null;
+  const titlePctMatch = titleText ? titleText.match(/(\d+(?:[.,]\d+)?)\s*%/i) : null;
 
   if (titlePctMatch) {
-    const val = parseInt(titlePctMatch[1], 10);
+    const val = parseFloat(titlePctMatch[1].replace(",", "."));
     if (!isNaN(val)) {
       targetValue = Math.min(100, Math.max(0, val));
       hasExtractedFromTitle = true;
@@ -116,8 +116,9 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
   if (!hasExtractedFromTitle) {
     metricComp = otherComps[0];
     const metricValueText = String(metricComp?.data?.value || metricComp?.data?.text || "0");
-    const parsedValue = parseInt(metricValueText.replace(/[^\d]/g, ""), 10);
-    targetValue = isNaN(parsedValue) ? 0 : Math.min(100, Math.max(0, parsedValue));
+    const parsed = parseNumbersUtil(metricValueText);
+    const val = parsed.n1;
+    targetValue = isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
   }
 
   // 2. Extract remaining comps for cards underneath
@@ -160,8 +161,19 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
     marginBottom: "20px",
   };
 
-  const textToShow = `${Math.round(progress)}%`;
-  const dynamicFontSize = textToShow.length >= 4 ? "105px" : textToShow.length === 3 ? "120px" : "135px";
+  const isDecimal = targetValue % 1 !== 0;
+  let textToShow = `${isDecimal ? progress.toFixed(1) : Math.round(progress)}%`;
+  
+  const metricCompText = !hasExtractedFromTitle && metricComp
+    ? String(metricComp.data?.value || metricComp.data?.text || "")
+    : "";
+  const originalHasComma = (hasExtractedFromTitle && titleText && titleText.includes(",")) ||
+                           (!hasExtractedFromTitle && metricCompText.includes(","));
+
+  if (isDecimal && originalHasComma) {
+    textToShow = textToShow.replace(".", ",");
+  }
+  const dynamicFontSize = textToShow.length >= 5 ? "90px" : textToShow.length === 4 ? "105px" : textToShow.length === 3 ? "120px" : "135px";
 
   const numberOverlayStyle: React.CSSProperties = {
     position: "absolute",
@@ -236,7 +248,7 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
               />
             </svg>
             <div style={numberOverlayStyle}>
-              {Math.round(progress)}%
+              {textToShow}
             </div>
           </div>
         </div>
@@ -254,8 +266,11 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
             const cardStartFrame = startFrame + durationFrames + 5 + (idx * 8);
 
             // Parse numeric component and suffix for count-up
-            const { n1, suffix } = parseNumbersUtil(value);
-            const hasDigits = /\d+/.test(value);
+            let { n1, suffix } = parseNumbersUtil(value);
+            if (idx === 0 && hasExtractedFromTitle) {
+              n1 = targetValue;
+            }
+            const hasDigits = /\d+/.test(value) || (idx === 0 && hasExtractedFromTitle);
 
             const cardProgress = interpolate(frame - cardStartFrame, [0, 25], [0, n1], {
               extrapolateLeft: "clamp",
@@ -263,7 +278,12 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
               easing: Easing.bezier(0.25, 1, 0.5, 1),
             });
 
-            const animatedValue = Math.round(cardProgress);
+            const cardIsDecimal = n1 % 1 !== 0;
+            let animatedValue = cardIsDecimal ? cardProgress.toFixed(1) : String(Math.round(cardProgress));
+            const originalCardHasComma = value.includes(",") || (idx === 0 && hasExtractedFromTitle && titleText && titleText.includes(","));
+            if (cardIsDecimal && originalCardHasComma) {
+              animatedValue = animatedValue.replace(".", ",");
+            }
 
             const individualCardStyle: React.CSSProperties = {
               ...cardStyle,

@@ -7,6 +7,7 @@ export const MasterPlayer = ({
   config = {}, 
   projectTitle = "",
   onRender, 
+  onCancelRender,
   rendering, 
   renderProgress, 
   renderedFrames,
@@ -26,37 +27,56 @@ export const MasterPlayer = ({
     const fullUrl = `http://localhost:5000${videoUrl}`;
     
     // Determine title for default filename
-    const rawTitle = projectTitle || scenes[0]?.heading || "Video_Hyperframe";
+    const rawTitle = projectTitle || scenes[0]?.heading || "Video_kisafresh";
     // Sanitize title for valid OS filename
     const safeTitle = rawTitle.replace(/[/\\?%*:|"<>]/g, "_").trim().replace(/\s+/g, "_");
     const defaultFilename = `${safeTitle}.mp4`;
 
-    // 1. Native File System Access API (allows custom filename + folder selection)
-    if (window.showSaveFilePicker) {
-      try {
-        const handle = await window.showSaveFilePicker({
-          suggestedName: defaultFilename,
-          types: [{
-            description: "Video MP4",
-            accept: { "video/mp4": [".mp4"] }
-          }]
-        });
-        const response = await fetch(fullUrl);
-        const blob = await response.blob();
-        const writable = await handle.createWritable();
-        await writable.write(blob);
-        await writable.close();
-        return;
-      } catch (err) {
-        if (err.name === "AbortError") return; // User cancelled dialog
-        console.warn("File System Access API error / fallback:", err);
-      }
-    }
+    const triggerDirectDownload = () => {
+      const downloadUrl = `${fullUrl}?download=1&filename=${encodeURIComponent(defaultFilename)}`;
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = defaultFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
 
-    // 2. Fallback Anchor Download
     try {
+      // Fetch the file FIRST to ensure network/CORS/extensions don't block the request.
+      // Since it's localhost, this is extremely fast and preserves the user gesture.
       const response = await fetch(fullUrl);
+      if (!response.ok) {
+        throw new Error(`Server returned status ${response.status}: ${response.statusText}`);
+      }
       const blob = await response.blob();
+
+      // If we have the blob and showSaveFilePicker is supported, try to save it via the picker
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: defaultFilename,
+            types: [{
+              description: "Video MP4",
+              accept: { "video/mp4": [".mp4"] }
+            }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          return; // Success!
+        } catch (pickerErr) {
+          if (pickerErr.name === "AbortError") {
+            return; // User cancelled the save dialog, exit silently
+          }
+          console.warn("File System Access API picker/write error, falling back to direct download:", pickerErr);
+          // Fall back if gesture expired (SecurityError) or other write errors occurred
+          triggerDirectDownload();
+          return;
+        }
+      }
+
+      // If showSaveFilePicker is not supported, download the blob using URL.createObjectURL
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = blobUrl;
@@ -65,9 +85,11 @@ export const MasterPlayer = ({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
-    } catch (fallbackErr) {
-      console.error("Download fallback error:", fallbackErr);
-      window.open(fullUrl, "_blank");
+
+    } catch (err) {
+      console.error("Fetch failed or browser blocked download, using fallback:", err);
+      // Fallback: direct download via link (failsafe)
+      triggerDirectDownload();
     }
   };
 
@@ -205,6 +227,33 @@ export const MasterPlayer = ({
                 transition: "width 0.2s ease-out"
               }} />
             </div>
+            {onCancelRender && (
+              <button 
+                type="button"
+                onClick={onCancelRender}
+                style={{
+                  marginTop: "14px",
+                  width: "100%",
+                  padding: "10px",
+                  backgroundColor: "rgba(220, 38, 38, 0.08)",
+                  border: "1px solid rgba(220, 38, 38, 0.2)",
+                  borderRadius: "var(--radius-pill)",
+                  color: "#dc2626",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.15)"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.08)"}
+              >
+                ❌ Hủy xuất video
+              </button>
+            )}
           </div>
         ) : videoUrl ? (
           /* Successfully Rendered State */

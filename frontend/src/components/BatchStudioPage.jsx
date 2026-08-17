@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { SidebarConfig } from "./SidebarConfig";
 import { api } from "../services/api";
 import axios from "axios";
@@ -13,6 +13,7 @@ const createEmptySlot = () => ({
   error: null,
   selectedMedia: [],
   selectedBgMedia: [],
+  selectedCtaMedia: [],
 });
 
 const VDE_PRESET_STYLES = [
@@ -98,11 +99,14 @@ const VDE_PRESET_STYLES = [
   }
 ];
 
-export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete }) => {
+export const BatchStudioPage = ({ sharedConfig, onConfigChange, onOpenPronunciationModal, onBatchComplete }) => {
   const [slots, setSlots] = useState([createEmptySlot()]);
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [importToast, setImportToast] = useState(null);
+
+  const shouldCancelRef = useRef(false);
+  const activeBatchControllerRef = useRef(null);
 
   useEffect(() => {
     if (importToast) {
@@ -205,9 +209,11 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
               if (mediaModalContext === "content") {
                 const list = slot.selectedMedia || [];
                 return { ...slot, selectedMedia: Array.from(new Set([...list, uploadedUrl])) };
-              } else {
+              } else if (mediaModalContext === "background") {
                 const list = slot.selectedBgMedia || [];
                 return { ...slot, selectedBgMedia: Array.from(new Set([...list, uploadedUrl])) };
+              } else {
+                return { ...slot, selectedCtaMedia: [uploadedUrl] };
               }
             }));
           }
@@ -243,10 +249,14 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
         const list = slot.selectedMedia || [];
         const newList = list.includes(url) ? list.filter(u => u !== url) : [...list, url];
         return { ...slot, selectedMedia: newList };
-      } else {
+      } else if (mediaModalContext === "background") {
         const list = slot.selectedBgMedia || [];
         const newList = list.includes(url) ? list.filter(u => u !== url) : [...list, url];
         return { ...slot, selectedBgMedia: newList };
+      } else {
+        const list = slot.selectedCtaMedia || [];
+        const newList = list.includes(url) ? [] : [url];
+        return { ...slot, selectedCtaMedia: newList };
       }
     }));
   };
@@ -265,6 +275,7 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
     if (!activeSlots.length) return;
 
     setIsRunning(true);
+    shouldCancelRef.current = false;
     setProgress({ current: 0, total: activeSlots.length });
 
     // Mark all active as pending
@@ -273,9 +284,16 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
     ));
 
     for (let i = 0; i < activeSlots.length; i++) {
+      if (shouldCancelRef.current) {
+        console.log("Batch run aborted by user.");
+        break;
+      }
       const slot = activeSlots[i];
       setProgress({ current: i + 1, total: activeSlots.length });
       updateSlot(slot.id, { status: "running" });
+
+      const controller = new AbortController();
+      activeBatchControllerRef.current = controller;
 
       try {
         // 1. Create project
@@ -283,26 +301,67 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
         const title = firstLine.length > 40 ? firstLine.slice(0, 37) + "..." : firstLine;
         const newProj = await api.createProject(title || `Batch Video #${i + 1}`);
 
+        if (shouldCancelRef.current) break;
+
         // 2. Apply shared config
         await api.updateProjectConfig(newProj.id, sharedConfig);
 
+        if (shouldCancelRef.current) break;
+
         // 3. Generate storyboard
         const traits = sharedConfig.traits || [];
-        await api.generateStoryboard(newProj.id, slot.text, selectedStyle, traits, slot.selectedMedia || [], slot.selectedBgMedia || []);
+        await api.generateStoryboard(
+          newProj.id,
+          slot.text,
+          selectedStyle,
+          traits,
+          slot.selectedMedia || [],
+          slot.selectedBgMedia || [],
+          slot.selectedCtaMedia || [],
+          { signal: controller.signal }
+        );
 
         updateSlot(slot.id, { status: "done", projectName: title || `Batch Video #${i + 1}` });
       } catch (err) {
+        if (err.name === "CanceledError" || axios.isCancel(err) || err.message === "canceled" || shouldCancelRef.current) {
+          updateSlot(slot.id, {
+            status: "error",
+            error: "Đã hủy bởi người dùng"
+          });
+          break;
+        }
         updateSlot(slot.id, {
           status: "error",
           error: err?.response?.data?.error || err.message || "Lỗi không xác định"
         });
+      } finally {
+        activeBatchControllerRef.current = null;
       }
     }
 
+    const wasCancelled = shouldCancelRef.current;
     setIsRunning(false);
-    // Navigate back after 2.5s
-    setTimeout(() => onBatchComplete(), 2500);
+    
+    if (!wasCancelled) {
+      // Navigate back after 2.5s
+      setTimeout(() => onBatchComplete(), 2500);
+    }
   }, [slots, sharedConfig, selectedStyle, onBatchComplete]);
+
+  const handleCancelBatch = () => {
+    shouldCancelRef.current = true;
+    if (activeBatchControllerRef.current) {
+      activeBatchControllerRef.current.abort();
+    }
+    // Update any running or pending slot statuses to idle/cancelled
+    setSlots(prev => prev.map(s => 
+      s.status === "running" || s.status === "pending" 
+        ? { ...s, status: "idle", error: "Đã hủy" } 
+        : s
+    ));
+    setIsRunning(false);
+    alert("Đã hủy tiến trình tạo hàng loạt.");
+  };
 
   const handleConfirmStyle = () => {
     setShowStyleModal(false);
@@ -339,7 +398,11 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
 
     const activeSlot = slots.find(s => s.id === activeSlotId);
     const activeMediaList = activeSlot
-      ? (mediaModalContext === "content" ? (activeSlot.selectedMedia || []) : (activeSlot.selectedBgMedia || []))
+      ? (mediaModalContext === "content" 
+          ? (activeSlot.selectedMedia || []) 
+          : (mediaModalContext === "background" 
+              ? (activeSlot.selectedBgMedia || []) 
+              : (activeSlot.selectedCtaMedia || [])))
       : [];
 
     return (
@@ -360,7 +423,11 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <span style={{ fontSize: "20px" }}>🖼️</span>
               <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "700", color: "#0f172a" }}>
-                {mediaModalContext === "content" ? "Chọn Ảnh Nội Dung" : "Chọn Ảnh Nền"}
+                {mediaModalContext === "content" 
+                  ? "Chọn Ảnh Nội Dung" 
+                  : (mediaModalContext === "background" 
+                      ? "Chọn Ảnh Nền" 
+                      : "Chọn Ảnh/Video CTA")}
               </h3>
             </div>
 
@@ -393,7 +460,35 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
                       const isSelected = activeMediaList.includes(url);
                       return (
                         <div key={idx} onClick={() => handleToggleSelectMedia(url)} style={{ position: "relative", width: "100%", paddingTop: "100%", borderRadius: "12px", overflow: "hidden", cursor: "pointer", border: isSelected ? "3px solid #3b82f6" : "1px solid rgba(15,23,42,0.08)", boxShadow: isSelected ? "0 4px 12px rgba(59,130,246,0.15)" : "none", transition: "all 0.2s ease" }}>
-                          <img src={url.startsWith("http") ? url : `http://localhost:5000${url}`} alt="Previous Media Item" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                          {url.toLowerCase().includes("/video/upload/") || /\.(mp4|webm|ogg|mov|avi|flv|mkv)$/i.test(url.toLowerCase()) ? (
+                            <video
+                              src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover"
+                              }}
+                              muted
+                              loop
+                              playsInline
+                            />
+                          ) : (
+                            <img
+                              src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
+                              alt="Previous Media Item"
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover"
+                              }}
+                            />
+                          )}
                           {isSelected && <div style={{ position: "absolute", top: "8px", right: "8px", backgroundColor: "#3b82f6", color: "#ffffff", borderRadius: "50%", width: "20px", height: "20px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "bold" }}>✓</div>}
                         </div>
                       );
@@ -406,17 +501,21 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
             {mediaTab === "UPLOAD" && (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", minHeight: "300px" }}>
                 <div onClick={() => document.getElementById("media-modal-upload-input").click()} style={{ width: "100%", maxWidth: "500px", border: "2px dashed #cbd5e1", borderRadius: "16px", padding: "48px 24px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", backgroundColor: "#f8fafc", transition: "all 0.2s ease" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#3b82f6"; e.currentTarget.style.backgroundColor = "#f0f9ff"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#cbd5e1"; e.currentTarget.style.backgroundColor = "#f8fafc"; }}>
-                  <input type="file" id="media-modal-upload-input" accept="image/*" onChange={handleFileUpload} style={{ display: "none" }} />
+                  <input type="file" id="media-modal-upload-input" accept={mediaModalContext === "cta" ? "image/*,video/*" : "image/*"} onChange={handleFileUpload} style={{ display: "none" }} />
                   {uploading ? (
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <div style={{ width: "30px", height: "30px", border: "3px solid #cbd5e1", borderTop: "3px solid #3b82f6", borderRadius: "50%", animation: "spin 1s linear infinite", marginBottom: "12px" }} />
-                      <span style={{ fontSize: "14px", fontWeight: "600", color: "#64748b" }}>Đang tải ảnh lên Cloudinary...</span>
+                      <span style={{ fontSize: "14px", fontWeight: "600", color: "#64748b" }}>
+                        {mediaModalContext === "cta" ? "Đang tải file lên Cloudinary..." : "Đang tải ảnh lên Cloudinary..."}
+                      </span>
                     </div>
                   ) : (
                     <div style={{ textAlign: "center" }}>
                       <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>☁️</span>
                       <span style={{ fontSize: "15px", fontWeight: "700", color: "#334155", display: "block", marginBottom: "4px" }}>Click to upload files</span>
-                      <span style={{ fontSize: "12px", color: "#64748b" }}>Supports JPG, PNG, GIF up to 5MB</span>
+                      <span style={{ fontSize: "12px", color: "#64748b" }}>
+                        {mediaModalContext === "cta" ? "Supports JPG, PNG, GIF, MP4 up to 10MB" : "Supports JPG, PNG, GIF up to 5MB"}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -463,7 +562,7 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
           <div style={{ borderTop: "1px solid rgba(15, 23, 42, 0.06)", padding: "16px 24px", backgroundColor: "#fafbfc", display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: "13px", fontWeight: "700", color: "#475569" }}>
-                Đã chọn ({activeMediaList.length} ảnh)
+                Đã chọn ({activeMediaList.length} file)
               </span>
               {activeMediaList.length > 0 && (
                 <button type="button" onClick={() => {
@@ -471,8 +570,10 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
                     if (slot.id !== activeSlotId) return slot;
                     if (mediaModalContext === "content") {
                       return { ...slot, selectedMedia: [] };
-                    } else {
+                    } else if (mediaModalContext === "background") {
                       return { ...slot, selectedBgMedia: [] };
+                    } else {
+                      return { ...slot, selectedCtaMedia: [] };
                     }
                   }));
                 }} style={{ border: "none", background: "none", color: "#ef4444", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>Xóa tất cả</button>
@@ -488,7 +589,11 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
                 ) : (
                   activeMediaList.map((url, idx) => (
                     <div key={idx} style={{ position: "relative", width: "50px", height: "50px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, border: "1px solid rgba(0,0,0,0.1)" }}>
-                      <img src={url.startsWith("http") ? url : `http://localhost:5000${url}`} alt="Selected Thumbnail" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      {url.toLowerCase().includes("/video/upload/") || /\.(mp4|webm|ogg|mov|avi|flv|mkv)$/i.test(url.toLowerCase()) ? (
+                        <video src={url.startsWith("http") ? url : `http://localhost:5000${url}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} muted />
+                      ) : (
+                        <img src={url.startsWith("http") ? url : `http://localhost:5000${url}`} alt="Selected Thumbnail" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      )}
                       <button type="button" onClick={() => handleToggleSelectMedia(url)} style={{ position: "absolute", top: "2px", right: "2px", width: "14px", height: "14px", borderRadius: "50%", backgroundColor: "rgba(0,0,0,0.6)", color: "#ffffff", border: "none", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "8px", cursor: "pointer", lineHeight: 1 }}>✕</button>
                     </div>
                   ))
@@ -692,6 +797,43 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
                   <span style={{ fontSize: "14px" }}>🧱</span>
                   ẢNH NỀN ({(slot.selectedBgMedia || []).length})
                 </button>
+
+                {/* CTA Media Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveSlotId(slot.id);
+                    setMediaModalContext("cta");
+                    setShowMediaModal(true);
+                  }}
+                  disabled={isRunning}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "8px 16px",
+                    borderRadius: "20px",
+                    border: "1px solid rgba(15, 23, 42, 0.12)",
+                    background: "#ffffff",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    color: "var(--text-primary)",
+                    cursor: "pointer",
+                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--color-primary)";
+                    e.currentTarget.style.backgroundColor = "var(--bg-secondary)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.12)";
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                  }}
+                >
+                  <span style={{ fontSize: "14px" }}>📣</span>
+                  CTA ({(slot.selectedCtaMedia || []).length})
+                </button>
               </div>
             </div>
           ))}
@@ -728,12 +870,33 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
             background: "rgba(37,99,235,0.05)", borderRadius: "10px",
             border: "1px solid rgba(37,99,235,0.15)"
           }}>
-            <p style={{
-              margin: 0, fontSize: "14px", fontWeight: "600",
-              color: "#2563eb", fontFamily: "Inter"
-            }}>
-              🔄 Đang xử lý {progress.current} / {progress.total} kịch bản...
-            </p>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <p style={{
+                margin: 0, fontSize: "14px", fontWeight: "600",
+                color: "#2563eb", fontFamily: "Inter"
+              }}>
+                🔄 Đang xử lý {progress.current} / {progress.total} kịch bản...
+              </p>
+              <button
+                type="button"
+                onClick={handleCancelBatch}
+                style={{
+                  border: "1px solid rgba(220,38,38,0.2)",
+                  background: "rgba(220,38,38,0.05)",
+                  color: "#dc2626",
+                  padding: "4px 10px",
+                  borderRadius: "20px",
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(220,38,38,0.12)"}
+                onMouseLeave={e => e.currentTarget.style.background = "rgba(220,38,38,0.05)"}
+              >
+                ❌ Hủy bỏ
+              </button>
+            </div>
             {/* Simple progress track */}
             <div style={{
               marginTop: "10px", height: "4px", borderRadius: "999px",
@@ -782,7 +945,7 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
         flex: "0 0 380px", borderLeft: "1px solid rgba(15, 23, 42, 0.08)",
         overflowY: "auto"
       }}>
-        <SidebarConfig config={sharedConfig} onChange={onConfigChange} />
+        <SidebarConfig config={sharedConfig} onChange={onConfigChange} onOpenPronunciationModal={onOpenPronunciationModal} />
       </div>
 
       {/* VDE Style Selection Modal */}
@@ -855,7 +1018,7 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
                           </div>
                         ) : (
                           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "7px", color: style.tokens.textSecondary }}>
-                            <span>• HYPERFRAMES</span>
+                            <span>• KISAFRESH</span>
                             <span>0:15</span>
                           </div>
                         )}
@@ -910,3 +1073,4 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onBatchComplete 
     </div>
   );
 };
+// Force Vite refresh

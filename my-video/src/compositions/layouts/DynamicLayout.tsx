@@ -1,11 +1,11 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
 import { parseSceneToComponents, adaptiveLayoutEngine } from "../../utils/layoutResolver";
-import { 
-  TitleBlock, 
-  TerminalBlock, 
-  HeroMetricBlock, 
-  FeatureCardBlock, 
+import {
+  TitleBlock,
+  TerminalBlock,
+  HeroMetricBlock,
+  FeatureCardBlock,
   BadgeRowBlock,
   SubheaderBlock,
   LogoRowBlock,
@@ -96,16 +96,16 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
     if (finalBgImage) {
       return (
         <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
-          <img 
-            src={finalBgImage} 
-            style={{ 
+          <img
+            src={finalBgImage}
+            style={{
               position: "absolute",
               inset: 0,
-              width: "100%", 
-              height: "100%", 
-              objectFit: "cover", 
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
               opacity: 1.0
-            }} 
+            }}
             alt="Video Background"
           />
         </AbsoluteFill>
@@ -134,15 +134,15 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
     const tokens = getVDETokens(theme);
     const bgColor = tokens.colors?.background || "#090d1a";
     const isLight = theme === "claude" || theme === "light" || theme === "anime" || theme === "rikkei";
-    
+
     // Detect if layout is designed to show full-screen background image
-    const isFullImageBg = layoutType.toLowerCase().includes("fullimage") || 
-                          layoutType.toLowerCase().includes("imagebackground") ||
-                          layoutType.toLowerCase().includes("backgrounddefault") ||
-                          layoutType.toLowerCase().includes("backgroundbadge") ||
-                          layoutType.toLowerCase().includes("backgroundglobe") ||
-                          layoutType.toLowerCase().includes("backgroundposter") ||
-                          layoutType.toLowerCase().includes("blank");
+    const isFullImageBg = layoutType.toLowerCase().includes("fullimage") ||
+      layoutType.toLowerCase().includes("imagebackground") ||
+      layoutType.toLowerCase().includes("backgrounddefault") ||
+      layoutType.toLowerCase().includes("backgroundbadge") ||
+      layoutType.toLowerCase().includes("backgroundglobe") ||
+      layoutType.toLowerCase().includes("backgroundposter") ||
+      layoutType.toLowerCase().includes("blank");
 
     // Choose gradient matching VDE background color
     const rgbStr = hexToRgb(bgColor);
@@ -151,13 +151,13 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
       : isLight
         ? `linear-gradient(to bottom, rgba(${rgbStr}, 0.2) 0%, rgba(${rgbStr}, 0.6) 100%)`
         : "linear-gradient(to bottom, rgba(6, 8, 19, 0.35) 0%, rgba(6, 8, 19, 0.75) 100%)";
-        
+
     const imageOpacity = isRikkei
       ? 0.95
       : isFullImageBg
         ? 1.0
         : isLight ? 0.45 : 0.4;
-      
+
     const imageFilter = isRikkei
       ? "none"
       : isFullImageBg
@@ -167,41 +167,41 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
     return (
       <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
         {/* Blurred duplicate backdrop to cover screen gaps for non-9:16 images */}
-        <img 
-          src={bgImgUrl} 
-          style={{ 
+        <img
+          src={bgImgUrl}
+          style={{
             position: "absolute",
             top: 0,
             left: 0,
-            width: "100%", 
-            height: "100%", 
-            objectFit: "cover", 
-            opacity: 1.0, 
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: 1.0,
             filter: "blur(45px) brightness(0.9)",
             transform: "scale(1.2)"
-          }} 
+          }}
           alt="Blurred Backdrop Background"
         />
 
         {/* Sharp foreground image centered and fit perfectly */}
-        <img 
-          src={bgImgUrl} 
-          style={{ 
+        <img
+          src={bgImgUrl}
+          style={{
             position: "absolute",
             top: 0,
             left: 0,
-            width: "100%", 
-            height: "100%", 
-            objectFit: "cover", 
-            opacity: imageOpacity, 
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: imageOpacity,
             filter: imageFilter,
-            transform: isRikkei ? "none" : `scale(${imageScale})` 
-          }} 
+            transform: isRikkei ? "none" : `scale(${imageScale})`
+          }}
           alt="Scene Background"
         />
         {layoutType.toLowerCase() !== "blank" && !isRikkei && (
-          <AbsoluteFill style={{ 
-            background: overlayGradient, 
+          <AbsoluteFill style={{
+            background: overlayGradient,
             zIndex: 1,
             mixBlendMode: isFullImageBg ? undefined : (isLight ? "multiply" : "normal")
           }} />
@@ -244,12 +244,12 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
         const isPrimaryCard = featureCardCount === 0;
         featureCardCount++;
         content = (
-          <FeatureCardBlock 
-            text={comp.data.text} 
-            theme={theme} 
-            accentColor={accentColor} 
-            isPrimary={isPrimaryCard} 
-            {...overrides} 
+          <FeatureCardBlock
+            text={comp.data.text}
+            theme={theme}
+            accentColor={accentColor}
+            isPrimary={isPrimaryCard}
+            {...overrides}
           />
         );
         break;

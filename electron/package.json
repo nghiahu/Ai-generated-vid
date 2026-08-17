@@ -29,7 +29,8 @@
       "main.js",
       "preload.js",
       "settings-window.html",
-      "setup-loading.html"
+      "setup-loading.html",
+      "infer.py"
     ],
     "extraResources": [
       {

@@ -86,17 +86,33 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
   const hasDigits = /\d+/.test(metricValue);
 
   // Number counting interpolation
-  const animN1 = Math.round(interpolate(frame - countStart, [0, 25], [0, n1], {
+  const rawAnimN1 = interpolate(frame - countStart, [0, 25], [0, n1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.bezier(0.16, 1, 0.3, 1)
-  }));
+  });
 
-  const animN2 = n2 !== null ? Math.round(interpolate(frame - countStart, [0, 25], [0, n2], {
+  const rawAnimN2 = n2 !== null ? interpolate(frame - countStart, [0, 25], [0, n2], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.bezier(0.16, 1, 0.3, 1)
-  })) : null;
+  }) : null;
+
+  const isN1Decimal = n1 % 1 !== 0;
+  let animN1Text = isN1Decimal 
+    ? rawAnimN1.toFixed(1) 
+    : Math.round(rawAnimN1).toLocaleString("vi-VN");
+  if (isN1Decimal && metricValue.includes(",")) {
+    animN1Text = animN1Text.replace(".", ",");
+  }
+
+  const isN2Decimal = n2 !== null && n2 % 1 !== 0;
+  let animN2Text = n2 !== null 
+    ? (isN2Decimal ? rawAnimN2.toFixed(1) : Math.round(rawAnimN2).toLocaleString("vi-VN")) 
+    : "";
+  if (isN2Decimal && metricValue.includes(",")) {
+    animN2Text = animN2Text.replace(".", ",");
+  }
 
   const isLongMetric = metricValue.length > 6;
   const useColumnLayout = isVertical && (!hasDigits || isLongMetric);
@@ -201,7 +217,7 @@ export const MetricFocusShowcaseMode: React.FC<ModeRendererProps> = ({
                 <>
                   {prefix && <span style={{ marginRight: "4px" }}>{prefix}</span>}
                   <span>
-                    {n2 !== null && animN2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN")}
+                    {n2 !== null ? `${animN1Text} - ${animN2Text}` : animN1Text}
                   </span>
                   {suffix && (
                     <span style={{

@@ -12775,16 +12775,16 @@ const CircularProgressMode = ({
   accentColor,
   rgb
 }) => {
-  var _a, _b, _c, _d;
+  var _a, _b, _c, _d, _e, _f;
   const frame = (0,esm.useCurrentFrame)();
   const { fps } = (0,esm.useVideoConfig)();
   console.log("[CircularProgressMode] RENDER. otherComps:", otherComps);
   let targetValue = 0;
   let hasExtractedFromTitle = false;
   let metricComp = null;
-  const titlePctMatch = titleText ? titleText.match(/(\d+(?:\.\d+)?)\s*%/i) : null;
+  const titlePctMatch = titleText ? titleText.match(/(\d+(?:[.,]\d+)?)\s*%/i) : null;
   if (titlePctMatch) {
-    const val = parseInt(titlePctMatch[1], 10);
+    const val = parseFloat(titlePctMatch[1].replace(",", "."));
     if (!isNaN(val)) {
       targetValue = Math.min(100, Math.max(0, val));
       hasExtractedFromTitle = true;
@@ -12793,8 +12793,9 @@ const CircularProgressMode = ({
   if (!hasExtractedFromTitle) {
     metricComp = otherComps[0];
     const metricValueText = String(((_a = metricComp == null ? void 0 : metricComp.data) == null ? void 0 : _a.value) || ((_b = metricComp == null ? void 0 : metricComp.data) == null ? void 0 : _b.text) || "0");
-    const parsedValue = parseInt(metricValueText.replace(/[^\d]/g, ""), 10);
-    targetValue = isNaN(parsedValue) ? 0 : Math.min(100, Math.max(0, parsedValue));
+    const parsed = parseNumbers(metricValueText);
+    const val = parsed.n1;
+    targetValue = isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
   }
   const cardComps = hasExtractedFromTitle ? otherComps.slice(0, 4) : otherComps.slice(1, 5);
   const R = 70;
@@ -12823,8 +12824,14 @@ const CircularProgressMode = ({
     position: "relative",
     marginBottom: "20px"
   };
-  const textToShow = `${Math.round(progress)}%`;
-  const dynamicFontSize = textToShow.length >= 4 ? "105px" : textToShow.length === 3 ? "120px" : "135px";
+  const isDecimal = targetValue % 1 !== 0;
+  let textToShow = `${isDecimal ? progress.toFixed(1) : Math.round(progress)}%`;
+  const metricCompText = !hasExtractedFromTitle && metricComp ? String(((_d = metricComp.data) == null ? void 0 : _d.value) || ((_e = metricComp.data) == null ? void 0 : _e.text) || "") : "";
+  const originalHasComma = hasExtractedFromTitle && titleText && titleText.includes(",") || !hasExtractedFromTitle && metricCompText.includes(",");
+  if (isDecimal && originalHasComma) {
+    textToShow = textToShow.replace(".", ",");
+  }
+  const dynamicFontSize = textToShow.length >= 5 ? "90px" : textToShow.length === 4 ? "105px" : textToShow.length === 3 ? "120px" : "135px";
   const numberOverlayStyle = {
     position: "absolute",
     top: "50%",
@@ -12839,7 +12846,7 @@ const CircularProgressMode = ({
   const cardsContainerStyle = {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
-    gap: gap !== void 0 ? `${gap}px` : ((_d = t.container) == null ? void 0 : _d.gap) || "20px",
+    gap: gap !== void 0 ? `${gap}px` : ((_f = t.container) == null ? void 0 : _f.gap) || "20px",
     width: "100%",
     marginTop: "24px",
     boxSizing: "border-box",
@@ -12894,24 +12901,29 @@ const CircularProgressMode = ({
           }
         )
       ] }),
-      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: numberOverlayStyle, children: [
-        Math.round(progress),
-        "%"
-      ] })
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: numberOverlayStyle, children: textToShow })
     ] }) }) }),
     cardComps.length > 0 && /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: cardsContainerStyle, children: cardComps.map((comp, idx) => {
       const { value, title, subtext } = parseCardContent(comp);
       const theme = getCardTheme(idx, isLight);
       const animCardConfig = getAnimationConfig(comp, idx, "slide-up", 1.2 + 0.25 * idx, t);
       const cardStartFrame = startFrame + durationFrames + 5 + idx * 8;
-      const { n1, suffix } = parseNumbers(value);
-      const hasDigits = /\d+/.test(value);
+      let { n1, suffix } = parseNumbers(value);
+      if (idx === 0 && hasExtractedFromTitle) {
+        n1 = targetValue;
+      }
+      const hasDigits = /\d+/.test(value) || idx === 0 && hasExtractedFromTitle;
       const cardProgress = (0,esm.interpolate)(frame - cardStartFrame, [0, 25], [0, n1], {
         extrapolateLeft: "clamp",
         extrapolateRight: "clamp",
         easing: esm.Easing.bezier(0.25, 1, 0.5, 1)
       });
-      const animatedValue = Math.round(cardProgress);
+      const cardIsDecimal = n1 % 1 !== 0;
+      let animatedValue = cardIsDecimal ? cardProgress.toFixed(1) : String(Math.round(cardProgress));
+      const originalCardHasComma = value.includes(",") || idx === 0 && hasExtractedFromTitle && titleText && titleText.includes(",");
+      if (cardIsDecimal && originalCardHasComma) {
+        animatedValue = animatedValue.replace(".", ",");
+      }
       const individualCardStyle = {
         ...cardStyle,
         background: isLight ? `linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 244, 246, 0.92) 100%)` : `linear-gradient(135deg, rgba(8, 17, 37, 0.72) 0%, rgba(3, 7, 18, 0.88) 100%)`,
@@ -13047,16 +13059,26 @@ const MetricShowcaseHookMode = ({
   const countStart = Math.round(0.8 * fps);
   const { prefix, n1, n2, suffix } = parseNumbers(metricValue);
   const hasDigits = /\d+/.test(metricValue);
-  const animN1 = Math.round((0,esm.interpolate)(frame - countStart, [0, 30], [0, n1], {
+  const rawAnimN1 = (0,esm.interpolate)(frame - countStart, [0, 30], [0, n1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
-  }));
-  const animN2 = n2 !== null ? Math.round((0,esm.interpolate)(frame - countStart, [0, 30], [0, n2], {
+  });
+  const rawAnimN2 = n2 !== null ? (0,esm.interpolate)(frame - countStart, [0, 30], [0, n2], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
-  })) : null;
+  }) : null;
+  const isN1Decimal = n1 % 1 !== 0;
+  let animN1Text = isN1Decimal ? rawAnimN1.toFixed(1) : Math.round(rawAnimN1).toLocaleString("vi-VN");
+  if (isN1Decimal && metricValue.includes(",")) {
+    animN1Text = animN1Text.replace(".", ",");
+  }
+  const isN2Decimal = n2 !== null && n2 % 1 !== 0;
+  let animN2Text = n2 !== null ? isN2Decimal ? rawAnimN2.toFixed(1) : Math.round(rawAnimN2).toLocaleString("vi-VN") : "";
+  if (isN2Decimal && metricValue.includes(",")) {
+    animN2Text = animN2Text.replace(".", ",");
+  }
   const shimmerFrame = frame - 15;
   const shimmerPos = (0,esm.interpolate)(shimmerFrame, [0, 45], [-100, 200], {
     extrapolateLeft: "clamp",
@@ -13180,7 +13202,7 @@ const MetricShowcaseHookMode = ({
         prefix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
           marginRight: "4px"
         }, children: prefix }),
-        /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: n2 !== null && animN2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN") }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: n2 !== null ? `${animN1Text} - ${animN2Text}` : animN1Text }),
         suffix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
           fontSize: `${Math.round(96 * fontScale)}px`,
           fontWeight: 900,
@@ -13381,16 +13403,26 @@ const MetricFocusShowcaseMode = ({
   const countStart = Math.round(0.8 * fps);
   const { prefix, n1, n2, suffix } = parseNumbers(metricValue);
   const hasDigits = /\d+/.test(metricValue);
-  const animN1 = Math.round((0,esm.interpolate)(frame - countStart, [0, 25], [0, n1], {
+  const rawAnimN1 = (0,esm.interpolate)(frame - countStart, [0, 25], [0, n1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
-  }));
-  const animN2 = n2 !== null ? Math.round((0,esm.interpolate)(frame - countStart, [0, 25], [0, n2], {
+  });
+  const rawAnimN2 = n2 !== null ? (0,esm.interpolate)(frame - countStart, [0, 25], [0, n2], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: esm.Easing.bezier(0.16, 1, 0.3, 1)
-  })) : null;
+  }) : null;
+  const isN1Decimal = n1 % 1 !== 0;
+  let animN1Text = isN1Decimal ? rawAnimN1.toFixed(1) : Math.round(rawAnimN1).toLocaleString("vi-VN");
+  if (isN1Decimal && metricValue.includes(",")) {
+    animN1Text = animN1Text.replace(".", ",");
+  }
+  const isN2Decimal = n2 !== null && n2 % 1 !== 0;
+  let animN2Text = n2 !== null ? isN2Decimal ? rawAnimN2.toFixed(1) : Math.round(rawAnimN2).toLocaleString("vi-VN") : "";
+  if (isN2Decimal && metricValue.includes(",")) {
+    animN2Text = animN2Text.replace(".", ",");
+  }
   const isLongMetric = metricValue.length > 6;
   const useColumnLayout = isVertical && (!hasDigits || isLongMetric);
   const getDynamicFontSize = () => {
@@ -13475,7 +13507,7 @@ const MetricFocusShowcaseMode = ({
         maxWidth: "100%"
       }, children: hasDigits ? /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
         prefix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { marginRight: "4px" }, children: prefix }),
-        /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: n2 !== null && animN2 !== null ? `${animN1.toLocaleString("vi-VN")} - ${animN2.toLocaleString("vi-VN")}` : animN1.toLocaleString("vi-VN") }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: n2 !== null ? `${animN1Text} - ${animN2Text}` : animN1Text }),
         suffix && /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: {
           fontSize: isVertical ? `${Math.round(130 * fontScale)}px` : `${Math.round(110 * fontScale)}px`,
           fontWeight: 900,

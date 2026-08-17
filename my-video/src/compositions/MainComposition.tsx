@@ -1,5 +1,5 @@
 import React from "react"; // trigger rebuild for CircularProgress
-import { AbsoluteFill, Audio, Sequence, useVideoConfig, useCurrentFrame, staticFile } from "remotion";
+import { AbsoluteFill, Audio, Sequence, useVideoConfig, useCurrentFrame, staticFile, Video } from "remotion";
 import * as Remotion from "remotion";
 import { DynamicLayout } from "./layouts/DynamicLayout";
 import { getLayoutById, LAYOUT_REGISTRY } from "./layouts";
@@ -432,6 +432,36 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
 
               {/* Render component-based dynamic layout resolving constraints */}
               {(() => {
+                const isVideo = imageUrl && (
+                  imageUrl.toLowerCase().includes("/video/upload/") ||
+                  /\.(mp4|webm|ogg|mov|avi|flv|mkv)$/i.test(imageUrl.toLowerCase())
+                );
+
+                if (isVideo) {
+                  return (
+                    <>
+                      <AbsoluteFill style={{ backgroundColor: "#000000" }}>
+                        <Video
+                          src={imageUrl}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover"
+                          }}
+                        />
+                      </AbsoluteFill>
+                      <DynamicSubtitle
+                        voiceover={scene.voiceover}
+                        durationSeconds={safeParseFloat(scene.duration)}
+                        voiceoverDuration={scene.voiceoverDuration}
+                        subtitlesJson={scene.subtitlesJson || (scene as any).voiceoverTtsJson}
+                        accentColor={vdeTokens.colors.accent}
+                        visualStyle={vdeStyle}
+                      />
+                    </>
+                  );
+                }
+
                 const flatThemeTokens = {
                   bg: vdeTokens.colors.background,
                   cardBg: vdeTokens.colors.cardBg,

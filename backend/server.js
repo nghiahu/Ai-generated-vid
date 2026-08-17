@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
@@ -44,14 +45,18 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// Serve downloads directory with attachment header to force browser download
-app.use('/downloads', express.static(path.join(__dirname, 'public/downloads'), {
-  setHeaders: function (res, filePath) {
-    if (filePath.endsWith('.mp4')) {
-      res.set('Content-Disposition', 'attachment');
-    }
+// Serve downloads directory with optional forced download parameter (?download=1)
+app.get('/downloads/:filename', (req, res) => {
+  const filePath = path.join(__dirname, 'public/downloads', req.params.filename);
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).send('File not found');
   }
-}));
+  if (req.query.download === '1') {
+    const downloadName = req.query.filename || req.params.filename;
+    return res.download(filePath, downloadName);
+  }
+  res.sendFile(filePath);
+});
 
 // Serve other static assets (voiceover audio, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -449,7 +454,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    const { scriptText, visualStyle, traits, selectedMedia, selectedBgMedia } = req.body;
+    const { scriptText, visualStyle, traits, selectedMedia, selectedBgMedia, selectedCtaMedia } = req.body;
     if (!scriptText) {
       return res.status(400).json({ error: 'Script text is required' });
     }
@@ -488,6 +493,17 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
 
     // Step 2: For each scene, fetch images and generate voiceover TTS
     const scenes = [];
+    
+    // Find the Ending/CTA scene index (usually the last scene)
+    let ctaSceneIndex = rawScenes.length - 1;
+    for (let i = rawScenes.length - 1; i >= 0; i--) {
+      const scene = rawScenes[i];
+      if (scene.sceneIntent?.type === 'ending' || scene.layoutId?.toLowerCase().includes('ending')) {
+        ctaSceneIndex = i;
+        break;
+      }
+    }
+
     for (let i = 0; i < rawScenes.length; i++) {
       const scenePct = Math.round(35 + ((i + 1) / rawScenes.length) * 55);
       storyboardProgressMap.set(projectId, { 
@@ -497,9 +513,21 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       const scene = rawScenes[i];
       const sceneId = `scene_${projectId}_${i}_${Math.random().toString(36).substr(2, 4)}`;
       
+      let isCtaApplied = false;
+      let ctaUrl = "";
+      let isVideoCta = false;
+      if (i === ctaSceneIndex && Array.isArray(selectedCtaMedia) && selectedCtaMedia.length > 0 && selectedCtaMedia[0]) {
+        ctaUrl = selectedCtaMedia[0].trim();
+        isVideoCta = ctaUrl.toLowerCase().includes("/video/upload/") || 
+                     /\.(mp4|webm|ogg|mov|avi|flv|mkv)$/i.test(ctaUrl.toLowerCase());
+        isCtaApplied = true;
+      }
+
       // Get images: use user selected media sequentially if available, otherwise leave empty
       let mediaList = [];
-      if (Array.isArray(selectedMedia) && selectedMedia.length > 0) {
+      if (isCtaApplied) {
+        mediaList = [ctaUrl];
+      } else if (Array.isArray(selectedMedia) && selectedMedia.length > 0) {
         const userImg = selectedMedia[i % selectedMedia.length];
         mediaList = [userImg];
       }
@@ -507,7 +535,12 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       // Get background images: use user selected bg media sequentially if available
       let bgMediaList = [];
       let selectedBgMediaIndex = -1;
-      if (Array.isArray(selectedBgMedia) && selectedBgMedia.length > 0) {
+      if (isCtaApplied) {
+        if (!isVideoCta) {
+          bgMediaList = [ctaUrl];
+          selectedBgMediaIndex = 0;
+        }
+      } else if (Array.isArray(selectedBgMedia) && selectedBgMedia.length > 0) {
         const userBgImg = selectedBgMedia[i % selectedBgMedia.length];
         bgMediaList = [userBgImg];
         selectedBgMediaIndex = 0;
@@ -527,8 +560,8 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
         id: sceneId,
         sceneIndex: i,
         duration: ttsResult.duration || scene.duration || 6.0,
-        layoutFamily: scene.layoutFamily || null,
-        visualLayout: scene.visualLayout || null,
+        layoutFamily: (isCtaApplied && !isVideoCta) ? "blank" : (scene.layoutFamily || null),
+        visualLayout: (isCtaApplied && !isVideoCta) ? "Blank" : (scene.visualLayout || null),
         sceneIntent: scene.sceneIntent || null,
         heading: scene.heading,
         category: scene.category || "",
@@ -540,7 +573,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
         subtitlesJson,
         placement: scene.placement,
         mediaList,
-        selectedMediaIndex: 0,
+        selectedMediaIndex: mediaList.length > 0 ? 0 : -1,
         bgMediaList,
         selectedBgMediaIndex,
         theme: scene.theme || "default",
@@ -747,6 +780,17 @@ app.get('/api/projects/:id/render/status/:renderId', (req, res) => {
   }
 });
 
+// 9b. POST /api/projects/:id/render/cancel/:renderId: Cancel video render
+app.post('/api/projects/:id/render/cancel/:renderId', (req, res) => {
+  try {
+    const { renderId } = req.params;
+    render.cancelRender(renderId);
+    res.json({ success: true, message: 'Render cancelled successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Config API — read/write API keys (used by Electron Settings)
 app.get('/api/config', (req, res) => {
   try {
@@ -848,6 +892,21 @@ const server = app.listen(PORT, async () => {
   }
 });
 server.timeout = 600000; // 10 phút timeout để hỗ trợ các tác vụ AI và render video nặng
+
+// Auto-shutdown backend if parent process (Electron) exits
+if (process.env.ELECTRON_RUN_AS_NODE === '1') {
+  setInterval(() => {
+    try {
+      process.kill(process.ppid, 0);
+    } catch (e) {
+      console.log('[Backend] Parent process (Electron) has exited. Shutting down gracefully...');
+      try {
+        db.closeDb();
+      } catch (err) {}
+      process.exit(0);
+    }
+  }, 2000);
+}
 
 // Graceful shutdown handling to prevent database locking issues
 function gracefulShutdown(signal) {

@@ -334,6 +334,11 @@ Convert planned scenes into a detailed UI Storyboard by rendering point componen
 4. The number of items in the "points" array MUST be strictly between contractConstraints.pointsCount.min and contractConstraints.pointsCount.max. If default is specified, aim for that exact count.
 5. Do not generate layout placement, theme, accentColor, delays, or durations (these are injected by the backend).
 6. Every scene must have a short, relevant Vietnamese category/label tag in the "category" field representing the context (max 20 chars), e.g. "LẬP TRÌNH NHÚNG" for programming, "SO SÁNH" for comparison, "KẾT LUẬN" for ending, or "GIỚI THIỆU" for hooks. Match the scene context topic. Never use placeholders.
+7. NO FABRICATED METRICS OR STATISTICS: Never invent numbers, percentages, or statistics (such as "98%", "99%", "+150%") if they do not exist in the original scene's voiceover script or heading.
+   - If a layout requires a metric value (e.g. \`MetricFocusShowcase\`, \`MetricShowcaseHook\`, \`CircularProgress\`, \`HeroMetricCards\`, \`MetricCards\`, \`GridMetrics\`) but there are no numbers in the script:
+     - You MUST extract 1 or 2 key highlighted words/phrases from the scene's heading (e.g., "Vũ khí", "An ninh", "Lọc lõi") and use them as the \`value\` instead of a fabricated number.
+     - The corresponding point \`text\` should describe the concept (e.g., text: "Khái niệm nổi bật" or "Mục tiêu chính").
+
 
 # UNSPLASH KEYWORDS RULE
 For Unsplash search keywords, choose 3 concrete visual nouns instead of generic concepts:

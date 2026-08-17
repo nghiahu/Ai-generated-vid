@@ -80,8 +80,8 @@ export function useRegenerateSceneTts() {
 export function useGenerateStoryboard() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ projectId, scriptText, visualStyle, traits, selectedMedia, selectedBgMedia }) =>
-      api.generateStoryboard(projectId, scriptText, visualStyle, traits, selectedMedia, selectedBgMedia),
+    mutationFn: ({ projectId, scriptText, visualStyle, traits, selectedMedia, selectedBgMedia, selectedCtaMedia, options }) =>
+      api.generateStoryboard(projectId, scriptText, visualStyle, traits, selectedMedia, selectedBgMedia, selectedCtaMedia, options),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId] });
     },
