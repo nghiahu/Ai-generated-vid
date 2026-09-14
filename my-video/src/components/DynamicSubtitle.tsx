@@ -18,7 +18,7 @@ export interface DynamicSubtitleProps {
   voiceover: string;
   durationSeconds: number;
   voiceoverDuration?: number;
-  subtitlesJson?: SubtitleWord[] | Array<{word: string, start: number, end: number}>;
+  subtitlesJson?: SubtitleWord[] | Array<{ word: string, start: number, end: number }>;
   accentColor?: string;
   visualStyle?: string;
   customSubtitle?: {
@@ -57,12 +57,12 @@ function normalizeWords(words: DynamicSubtitleProps["subtitlesJson"]): SubtitleW
   }
 
   // Legacy schema: map safely to new schema
-  return (words as Array<{word: string, start: number, end: number}>).map((w, i, arr) => {
+  return (words as Array<{ word: string, start: number, end: number }>).map((w, i, arr) => {
     const next = arr[i + 1];
     const startVal = safeNum(w.start);
     const endVal = safeNum(w.end, startVal + 0.2);
     const nextStartVal = next ? safeNum(next.start, endVal) : endVal + 0.35;
-    
+
     return {
       word: w.word || "",
       speechStart: startVal,
@@ -93,12 +93,22 @@ function binarySearchActiveWord(words: SubtitleWord[], currentSeconds: number): 
 }
 
 /** Parse a hex color into {r, g, b} components */
-function parseRGB(hex: string | null | undefined): {r: number, g: number, b: number} {
+function parseRGB(hex: string | null | undefined): { r: number, g: number, b: number } {
   if (!hex || typeof hex !== "string") {
-    return {r: 255, g: 183, b: 197};
+    return { r: 255, g: 183, b: 197 };
   }
-  const clean = hex.replace("#", "").trim();
-  if (clean.length === 6) {
+  const clean = hex.replace("#", "").trim().toLowerCase();
+
+  if (clean.length === 3) {
+    const r = parseInt(clean[0] + clean[0], 16);
+    const g = parseInt(clean[1] + clean[1], 16);
+    const b = parseInt(clean[2] + clean[2], 16);
+    if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+      return { r, g, b };
+    }
+  }
+
+  if (clean.length === 6 || clean.length === 8) {
     const r = parseInt(clean.slice(0, 2), 16);
     const g = parseInt(clean.slice(2, 4), 16);
     const b = parseInt(clean.slice(4, 6), 16);
@@ -106,7 +116,18 @@ function parseRGB(hex: string | null | undefined): {r: number, g: number, b: num
       return { r, g, b };
     }
   }
-  return {r: 255, g: 183, b: 197};
+
+  if (clean.length > 0 && clean.length < 6) {
+    const padded = clean.padEnd(6, clean[clean.length - 1] || 'f');
+    const r = parseInt(padded.slice(0, 2), 16);
+    const g = parseInt(padded.slice(2, 4), 16);
+    const b = parseInt(padded.slice(4, 6), 16);
+    if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+      return { r, g, b };
+    }
+  }
+
+  return { r: 255, g: 183, b: 197 };
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -125,23 +146,28 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
   const { fps } = useVideoConfig();
 
   // Check if subtitles match current voiceover script
+  const voiceoverWords = useMemo(() => {
+    return (voiceover ?? "").split(/\s+/).filter(w => w.trim().length > 0);
+  }, [voiceover]);
+
+  const cleanWord = (w: string) => (w || "").toLowerCase().replace(/[^a-z0-9àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/gi, "").trim();
+
+  const voiceoverWordsClean = useMemo(() => {
+    return voiceoverWords.map(cleanWord).filter(Boolean);
+  }, [voiceoverWords]);
+
   const isTimestampsOutOfDate = useMemo(() => {
     if (!subtitlesJson || !Array.isArray(subtitlesJson) || subtitlesJson.length === 0) return true;
-    
-    // Normalize and compare word arrays (ignoring case, punctuation and spacing)
-    const cleanWord = (w: string) => (w || "").toLowerCase().replace(/[^a-z0-9àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/gi, "").trim();
-    const voiceoverWords = (voiceover ?? "").split(/\s+/).map(cleanWord).filter(Boolean);
+
     const subWords = subtitlesJson.map(w => cleanWord(w.word || (w as any).word)).filter(Boolean);
-    
-    if (voiceoverWords.length !== subWords.length) return true;
-    
-    // Check first and last elements as simple heuristics
-    if (voiceoverWords.length > 0) {
-      if (voiceoverWords[0] !== subWords[0]) return true;
-      if (voiceoverWords[voiceoverWords.length - 1] !== subWords[subWords.length - 1]) return true;
+
+    // Check if subWords is a prefix of voiceoverWordsClean
+    if (subWords.length > voiceoverWordsClean.length) return true;
+    for (let i = 0; i < subWords.length; i++) {
+      if (voiceoverWordsClean[i] !== subWords[i]) return true;
     }
     return false;
-  }, [voiceover, subtitlesJson]);
+  }, [voiceoverWordsClean, subtitlesJson]);
 
   // Normalize subtitle words once (pure memo, no side effects)
   const words = useMemo(() => {
@@ -166,7 +192,7 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
     if (rawWords.length === 0) return [];
     const result: string[][] = [];
     let currentLine: string[] = [];
-    
+
     rawWords.forEach((word) => {
       currentLine.push(word);
       const hasPunctuation = /[.?!,:]$/.test(word.trim());
@@ -175,7 +201,7 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
         currentLine = [];
       }
     });
-    
+
     if (currentLine.length > 0) {
       result.push(currentLine);
     }
@@ -186,7 +212,7 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
     if (words.length === 0) return [];
     const result: SubtitleWord[][] = [];
     let currentLine: SubtitleWord[] = [];
-    
+
     words.forEach((w) => {
       currentLine.push(w);
       const hasPunctuation = /[.?!,:]$/.test((w.word || "").trim());
@@ -195,22 +221,54 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
         currentLine = [];
       }
     });
-    
+
     if (currentLine.length > 0) {
       result.push(currentLine);
     }
     return result;
   }, [words]);
 
+  const hasSuggestions = useMemo(() => {
+    return hasTimestamps && voiceoverWords.length > words.length;
+  }, [hasTimestamps, voiceoverWords, words]);
+
+  const finalTimestampedGroups = useMemo<SubtitleWord[][]>(() => {
+    if (timestampedGroups.length === 0) return [];
+    const result = [...timestampedGroups.map(g => [...g])];
+    const lastGroup = result[result.length - 1];
+
+    if (hasSuggestions) {
+      const extraWords = voiceoverWords.slice(words.length);
+      const lastSpokenWord = words[words.length - 1];
+
+      const staticWords = extraWords.map((word) => {
+        const displayStart = lastSpokenWord ? lastSpokenWord.displayEnd : 0;
+        const displayEnd = activeDurationSeconds;
+        return {
+          word,
+          speechStart: displayStart,
+          speechEnd: displayEnd,
+          displayStart,
+          displayEnd,
+          highlightStart: activeDurationSeconds + 1,
+          highlightPeak: activeDurationSeconds + 1,
+          highlightEnd: activeDurationSeconds + 1
+        };
+      });
+      lastGroup.push(...staticWords);
+    }
+    return result;
+  }, [timestampedGroups, words, voiceoverWords, hasSuggestions, activeDurationSeconds]);
+
   const wordToGroupMap = useMemo(() => {
     const map: number[] = [];
-    timestampedGroups.forEach((group, gIdx) => {
+    finalTimestampedGroups.forEach((group, gIdx) => {
       group.forEach(() => {
         map.push(gIdx);
       });
     });
     return map;
-  }, [timestampedGroups]);
+  }, [finalTimestampedGroups]);
 
   const totalFrames = activeDurationSeconds * fps;
   const startOffsetFrames = Math.min(10, Math.floor(fps * 0.15));
@@ -234,11 +292,12 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
 
   if (hasTimestamps && words.length > 0) {
     const lastWord = words[words.length - 1];
-    if (currentSeconds > lastWord.displayEnd + 0.05) return null;
+    const hideTime = hasSuggestions ? activeDurationSeconds : lastWord.displayEnd + 0.05;
+    if (currentSeconds > hideTime) return null;
 
     const curWord = words[activeWordIdx];
     const nextWord = words[activeWordIdx + 1] ?? null;
-    if (currentSeconds > curWord.displayEnd && nextWord && currentSeconds < nextWord.displayStart) {
+    if (!hasSuggestions && currentSeconds > curWord.displayEnd && nextWord && currentSeconds < nextWord.displayStart) {
       return null; // hide during long pause
     }
   } else {
@@ -246,7 +305,7 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
   }
 
   const currentGroup = hasTimestamps
-    ? (timestampedGroups[activeGroupIdx] || []).map(w => w.word)
+    ? (finalTimestampedGroups[activeGroupIdx] || []).map(w => w.word)
     : groups[activeGroupIdx] || [];
 
   if (currentGroup.length === 0) return null;
@@ -255,7 +314,7 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
     if (hasTimestamps) {
       let sum = 0;
       for (let i = 0; i < activeGroupIdx; i++) {
-        sum += timestampedGroups[i]?.length || 0;
+        sum += finalTimestampedGroups[i]?.length || 0;
       }
       return sum;
     } else {
@@ -270,13 +329,12 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
   // ── Styling ──────────────────────────────────────────────────────────────────
   const styleName = (visualStyle || "").toLowerCase();
   const isRikkei = styleName.includes("rikkei") || styleName.includes("academic");
-  const isLightBg = isRikkei || styleName.includes("claude") || styleName.includes("light") || styleName.includes("anime");
+  const isLightBg = isRikkei || styleName.includes("claude") || styleName.includes("light") || styleName.includes("anime") || styleName.includes("ba") || styleName.includes("editorial") || styleName.includes("retro_editorial");
+  const is2k9 = styleName.includes("2k9") || styleName.includes("students_2k9");
 
   const inactiveColor = isLightBg ? "rgba(25, 25, 25, 0.65)" : "rgba(255, 255, 255, 0.70)";
   const textColor = isLightBg ? "#191919" : "#ffffff";
-  const effectiveAccentColor = isRikkei 
-    ? "#A8232A" 
-    : (styleName.includes("fintech") ? "#00e5ff" : accentColor);
+  const effectiveAccentColor = accentColor;
   const accent = parseRGB(effectiveAccentColor);
 
   const rawBottom = customSubtitle?.bottom || "300px";
@@ -284,9 +342,21 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
   const bottom = isNaN(bottomPx) || bottomPx < 300 ? "300px" : `${bottomPx}px`;
   const fontSize = customSubtitle?.fontSize || "46px";
   const fontWeight = customSubtitle?.fontWeight ? parseInt(customSubtitle.fontWeight) : 800;
-  const textShadow = isLightBg 
-    ? "0px 1px 2px rgba(255, 255, 255, 0.9), 0px 0px 4px rgba(255, 255, 255, 0.5)" 
+  const textShadow = isLightBg
+    ? "0px 1px 2px rgba(255, 255, 255, 0.9), 0px 0px 4px rgba(255, 255, 255, 0.5)"
     : "0px 2px 10px rgba(0, 0, 0, 0.75), 0px 1px 3px rgba(0, 0, 0, 0.5)";
+
+  const containerStyle: React.CSSProperties = is2k9 ? {
+    backgroundColor: "rgba(11, 25, 44, 0.85)",
+    border: "1.5px solid rgba(56, 189, 248, 0.4)",
+    borderRadius: "12px",
+    padding: "16px 24px",
+    boxShadow: "0 10px 25px rgba(11, 25, 44, 0.5)",
+  } : {
+    background: "none",
+    boxShadow: "none",
+    border: "none",
+  };
 
   // ── Group fade-in (Remotion-native interpolate) ──────────────────────────────
   let groupOpacity: number;
@@ -331,15 +401,12 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
           lineHeight: 1.45,
           textShadow,
           margin: 0,
-          padding: 0,
-          background: "none",
-          boxShadow: "none",
-          border: "none",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
           columnGap: "14px",
-          rowGap: "14px"
+          rowGap: "14px",
+          ...containerStyle
         }}
       >
         {currentGroup.map((rawWord, wIdx) => {
@@ -353,7 +420,7 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
           if (hasTimestamps && words[absoluteWordIdx]) {
             const w = words[absoluteWordIdx];
             const enterFrame = Math.floor(w.highlightStart * fps);
-            const peakFrame  = enterFrame + 1;
+            const peakFrame = enterFrame + 1;
             const peakEndFrame = peakFrame + 1;
             const leaveFrame = Math.max(peakEndFrame + 1, Math.floor(w.highlightEnd * fps));
 
@@ -371,7 +438,7 @@ export const DynamicSubtitle: React.FC<DynamicSubtitleProps> = ({
                 extrapolateLeft: "clamp",
                 extrapolateRight: "clamp"
               });
-              const inRGB = isLightBg ? {r: 0, g: 0, b: 0} : {r: 255, g: 255, b: 255};
+              const inRGB = isLightBg ? { r: 0, g: 0, b: 0 } : { r: 255, g: 255, b: 255 };
               const r = Math.round(inRGB.r + (accent.r - inRGB.r) * colorProg);
               const g = Math.round(inRGB.g + (accent.g - inRGB.g) * colorProg);
               const b = Math.round(inRGB.b + (accent.b - inRGB.b) * colorProg);

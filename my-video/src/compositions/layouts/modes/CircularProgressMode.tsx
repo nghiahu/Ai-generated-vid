@@ -266,7 +266,7 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
             const cardStartFrame = startFrame + durationFrames + 5 + (idx * 8);
 
             // Parse numeric component and suffix for count-up
-            let { n1, suffix } = parseNumbersUtil(value);
+            let { n1, suffix, decimals1 } = parseNumbersUtil(value);
             if (idx === 0 && hasExtractedFromTitle) {
               n1 = targetValue;
             }
@@ -278,10 +278,10 @@ export const CircularProgressMode: React.FC<ModeRendererProps> = ({
               easing: Easing.bezier(0.25, 1, 0.5, 1),
             });
 
-            const cardIsDecimal = n1 % 1 !== 0;
-            let animatedValue = cardIsDecimal ? cardProgress.toFixed(1) : String(Math.round(cardProgress));
+            const cardDec = decimals1 ?? (n1 % 1 !== 0 ? 1 : 0);
+            let animatedValue = cardDec > 0 ? cardProgress.toFixed(cardDec) : String(Math.round(cardProgress));
             const originalCardHasComma = value.includes(",") || (idx === 0 && hasExtractedFromTitle && titleText && titleText.includes(","));
-            if (cardIsDecimal && originalCardHasComma) {
+            if (cardDec > 0 && originalCardHasComma) {
               animatedValue = animatedValue.replace(".", ",");
             }
 

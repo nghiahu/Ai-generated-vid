@@ -91,7 +91,7 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
   // Animations start config
   const countStart = Math.round(0.8 * fps);
   
-  const { prefix, n1, n2, suffix } = parseNumbers(metricValue);
+  const { prefix, n1, n2, suffix, decimals1, decimals2 } = parseNumbers(metricValue);
   const hasDigits = /\d+/.test(metricValue);
 
   // Number counting interpolation
@@ -107,19 +107,19 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
     easing: Easing.bezier(0.16, 1, 0.3, 1)
   }) : null;
 
-  const isN1Decimal = n1 % 1 !== 0;
-  let animN1Text = isN1Decimal 
-    ? rawAnimN1.toFixed(1) 
+  const dec1 = decimals1 ?? (n1 % 1 !== 0 ? 1 : 0);
+  let animN1Text = dec1 > 0 
+    ? rawAnimN1.toFixed(dec1) 
     : Math.round(rawAnimN1).toLocaleString("vi-VN");
-  if (isN1Decimal && metricValue.includes(",")) {
+  if (dec1 > 0 && metricValue.includes(",")) {
     animN1Text = animN1Text.replace(".", ",");
   }
 
-  const isN2Decimal = n2 !== null && n2 % 1 !== 0;
-  let animN2Text = n2 !== null 
-    ? (isN2Decimal ? rawAnimN2.toFixed(1) : Math.round(rawAnimN2).toLocaleString("vi-VN")) 
+  const dec2 = decimals2 ?? (n2 !== null && n2 % 1 !== 0 ? 1 : 0);
+  let animN2Text = n2 !== null && rawAnimN2 !== null
+    ? (dec2 > 0 ? rawAnimN2.toFixed(dec2) : Math.round(rawAnimN2).toLocaleString("vi-VN")) 
     : "";
-  if (isN2Decimal && metricValue.includes(",")) {
+  if (n2 !== null && dec2 > 0 && metricValue.includes(",")) {
     animN2Text = animN2Text.replace(".", ",");
   }
 
@@ -423,9 +423,9 @@ export const MetricShowcaseHookMode: React.FC<ModeRendererProps> = ({
           <div style={{
             borderRadius: "14px",
             padding: "18px 24px",
-            background: "#080c14",
-            border: `1px solid ${accentColor}`,
-            boxShadow: `0 0 10px rgba(${rgb}, 0.15)`,
+            background: isLight ? `rgba(${rgb}, 0.08)` : "#080c14",
+            border: isLight ? `1.5px solid rgba(${rgb}, 0.2)` : `1px solid ${accentColor}`,
+            boxShadow: isLight ? "none" : `0 0 10px rgba(${rgb}, 0.15)`,
             fontFamily: "monospace",
             fontSize: "20px",
             fontWeight: 700,

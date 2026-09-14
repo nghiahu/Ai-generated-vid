@@ -3,6 +3,7 @@ const path = require('path');
 // Path to master theme config in my-video src
 const MASTER_THEMES_PATH = path.join(__dirname, '../../my-video/src/styles/vde_themes.json');
 
+// Trigger nodemon restart to reload retro_editorial theme
 let BUILTIN_STYLES = {};
 try {
   if (fs.existsSync(MASTER_THEMES_PATH)) {

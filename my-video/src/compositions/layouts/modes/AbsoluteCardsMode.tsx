@@ -962,9 +962,9 @@ export const AbsoluteCardsMode: React.FC<ModeRendererProps> = ({
         if (isMapPins) {
           const delays = [0.3, 1.83, 3.0]; // synced with path arrivals (frames 10, 55, 90)
           animConfig = { animation: "scale-in" as const, delay: delays[idx] || 0.5 };
-        }
-        const activeCardDescColor = isLight ? "rgba(0, 0, 0, 0.72)" : "rgba(255, 255, 255, 0.85)";
-
+        }        const activeCardDescColor = activeCardTextColor === "#ffffff" || activeCardTextColor?.toLowerCase() === "#fff" || activeCardTextColor?.startsWith("rgba(255")
+          ? "rgba(255, 255, 255, 0.8)"
+          : "rgba(0, 0, 0, 0.72)";
         if (isWindingRoadmap) {
           const delay = (10 + (idx / visibleComps.length) * 75) / fps;
           return (

@@ -209,6 +209,8 @@ export const SidebarConfig = ({ config = {}, onChange, onOpenPronunciationModal 
               <option value="Chill Lofi Beats">Chill Lofi Beats</option>
               <option value="Tech Ambient">Tech Ambient</option>
               <option value="Energy Beats">Energy Beats</option>
+              <option value="Rikkei Theme">Rikkei Theme</option>
+              <option value="Crown of Ashes">Crown of Ashes</option>
               <option value="None">None (No Background Music)</option>
             </select>
           </div>
@@ -220,14 +222,14 @@ export const SidebarConfig = ({ config = {}, onChange, onOpenPronunciationModal 
                   BGM Volume
                 </span>
                 <span style={{ fontFamily: "monospace", fontSize: "12px", fontWeight: "600", color: "#0f172a" }}>
-                  {((config.backgroundMusicVolume ?? 0.025) * 100).toFixed(1)}%
+                  {((config.backgroundMusicVolume ?? 0.025) * 100).toFixed(0)}%
                 </span>
               </div>
               <input
                 type="range"
                 min="0"
-                max="0.20"
-                step="0.005"
+                max="1.0"
+                step="0.01"
                 value={config.backgroundMusicVolume ?? 0.025}
                 onChange={(e) => handleConfigChange("backgroundMusicVolume", parseFloat(e.target.value))}
                 style={{ width: "100%", accentColor: "#000000", cursor: "pointer" }}

@@ -94,7 +94,7 @@ export const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   const isVertical = width < height;
   const resolvedPositions = resolvePositions(t.positions || [], width, height, isVertical, t.id);
 
-  const isLight = resolvedTheme === "claude" || resolvedTheme === "light" || resolvedTheme === "anime" || resolvedTheme === "rikkei";
+  const isLight = resolvedTheme === "claude" || resolvedTheme === "light" || resolvedTheme === "anime" || resolvedTheme === "rikkei" || resolvedTheme === "ba" || resolvedTheme === "retro_editorial";
 
   // Calculate a darker version of the accent color dynamically (75% for light themes, 45% for dark themes)
   const darkAccentColor = (() => {

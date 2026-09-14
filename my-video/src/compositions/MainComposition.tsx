@@ -8,6 +8,7 @@ import { SakuraOverlay } from "../components/overlays/SakuraOverlay";
 import { TechParticlesOverlay } from "../components/overlays/TechParticlesOverlay";
 import { DefaultBokehOverlay } from "../components/overlays/DefaultBokehOverlay";
 import { AIHubGridOverlay } from "../components/overlays/AIHubGridOverlay";
+import { Students2K9Overlay } from "../components/overlays/Students2K9Overlay";
 import { DynamicSubtitle, SubtitleWord } from "../components/DynamicSubtitle";
 import { EmberSparksOverlay } from "../components/overlays/EmberSparksOverlay";
 import { LightLeaksOverlay } from "../components/overlays/LightLeaksOverlay";
@@ -259,6 +260,10 @@ export const getBgmAsset = (bgmName: string) => {
       return staticFile("bgm/tech-ambient.mp3");
     case "Energy Beats":
       return staticFile("bgm/energy-beats.mp3");
+    case "Rikkei Theme":
+      return staticFile("bgm/rikkei-nhac-nen.mp3");
+    case "Crown of Ashes":
+      return staticFile("bgm/crown-of-ashes.mp3");
     default:
       return staticFile("bgm/chill-lofi.mp3");
   }
@@ -323,7 +328,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
     bgImage: config.bgImage ? getFullUrl(config.bgImage) : undefined
   } : undefined;
   const isRikkei = vdeStyle.includes("rikkei") || vdeStyle.includes("academic");
-  const isLightTheme = isRikkei || vdeStyle.includes("light") || vdeStyle.includes("claude") || vdeStyle === "minimal";
+  const isLightTheme = isRikkei || vdeStyle.includes("light") || vdeStyle.includes("claude") || vdeStyle === "minimal" || vdeStyle === "ba";
   const isFintechEdu = vdeStyle.includes("fintech");
   const hasOverlayEffects = !isLightTheme && vdeStyle !== "apple" && !isFintechEdu;
   const bgStyle = {
@@ -428,6 +433,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
               {hasOverlayEffects && scene.theme === "japan" && <SakuraOverlay />}
               {hasOverlayEffects && scene.theme === "tech" && <TechParticlesOverlay />}
               {hasOverlayEffects && (scene.theme === "ai_hub_grid" || vdeStyle === "ai_hub_grid") && <AIHubGridOverlay />}
+              {hasOverlayEffects && (scene.theme === "students_2k9" || vdeStyle === "students_2k9") && !bgImageUrl && !resolvedConfig?.bgImage && <Students2K9Overlay subtitles={scene.subtitlesJson || (scene as any).voiceoverTtsJson} />}
               {hasOverlayEffects && scene.theme === "default" && <DefaultBokehOverlay />}
 
               {/* Render component-based dynamic layout resolving constraints */}
@@ -455,7 +461,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                         durationSeconds={safeParseFloat(scene.duration)}
                         voiceoverDuration={scene.voiceoverDuration}
                         subtitlesJson={scene.subtitlesJson || (scene as any).voiceoverTtsJson}
-                        accentColor={vdeTokens.colors.accent}
+                        accentColor={scene.accentColor || vdeTokens.colors.accent}
                         visualStyle={vdeStyle}
                       />
                     </>
@@ -487,7 +493,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                         durationSeconds={safeParseFloat(scene.duration)}
                         voiceoverDuration={(scene as any).voiceoverDuration}
                         subtitlesJson={scene.subtitlesJson || (scene as any).voiceoverTtsJson}
-                        accentColor={vdeTokens.colors.accent}
+                        accentColor={scene.accentColor || vdeTokens.colors.accent}
                         visualStyle={vdeStyle}
                       />
                     </>
@@ -519,7 +525,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                       durationSeconds={safeParseFloat(scene.duration)}
                       voiceoverDuration={scene.voiceoverDuration}
                       subtitlesJson={scene.subtitlesJson}
-                      accentColor={vdeTokens.colors.accent}
+                      accentColor={scene.accentColor || vdeTokens.colors.accent}
                       visualStyle={vdeStyle}
                       customSubtitle={getLayoutById(layoutId)?.templateJson?.subtitle}
                     />

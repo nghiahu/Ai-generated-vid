@@ -24,8 +24,8 @@ import { loadFont as loadSpaceGrotesk } from "@remotion/google-fonts/SpaceGrotes
 
 // Be Vietnam Pro – heading chính cho nội dung tiếng Việt (thay Outfit vì Outfit không có Vietnamese subset)
 export const { fontFamily: fontBeVietnamPro } = loadBeVietnamPro("normal", {
-  weights: ["400", "500", "600", "700", "800"],
-  subsets: ["latin", "vietnamese"],
+    weights: ["400", "500", "600", "700", "800"],
+    subsets: ["latin", "vietnamese"],
 });
 
 // Alias fontOutfit => fontBeVietnamPro để không phải đổi code ở các file khác
@@ -33,41 +33,41 @@ export const fontOutfit = fontBeVietnamPro;
 
 // Inter – dùng cho body text, bullet points
 export const { fontFamily: fontInter } = loadInter("normal", {
-  weights: ["400", "500", "600"],
-  subsets: ["latin", "vietnamese"],
+    weights: ["400", "500", "600"],
+    subsets: ["latin", "vietnamese"],
 });
 
 // Montserrat – dùng cho Brutalist theme heading
 export const { fontFamily: fontMontserrat } = loadMontserrat("normal", {
-  weights: ["400", "500", "600", "700", "800", "900"],
-  subsets: ["latin", "vietnamese"],
+    weights: ["400", "500", "600", "700", "800", "900"],
+    subsets: ["latin", "vietnamese"],
 });
 
 // JetBrains Mono – dùng cho Cyberpunk theme & code blocks (latin only)
 export const { fontFamily: fontJetBrainsMono } = loadJetBrainsMono("normal", {
-  weights: ["400", "700"],
-  subsets: ["latin"],
+    weights: ["400", "700"],
+    subsets: ["latin"],
 });
 
 // Space Grotesk – dùng cho Minimal, Light, Anime themes
 export const { fontFamily: fontSpaceGrotesk } = loadSpaceGrotesk("normal", {
-  weights: ["400", "500", "600", "700"],
-  subsets: ["latin", "vietnamese"],
+    weights: ["400", "500", "600", "700"],
+    subsets: ["latin", "vietnamese"],
 });
 
 import { loadFont as loadLora } from "@remotion/google-fonts/Lora";
 
 // Lora - Serif font for Claude Editorial theme with 100% perfect Vietnamese diacritics support
 export const { fontFamily: fontPlayfairDisplay } = loadLora("normal", {
-  weights: ["400", "500", "600", "700"],
-  subsets: ["latin", "vietnamese"],
+    weights: ["400", "500", "600", "700"],
+    subsets: ["latin", "vietnamese"],
 });
 
 import { loadFont as loadChakraPetch } from "@remotion/google-fonts/ChakraPetch";
 
 // Chakra Petch - Futuristic square-angled font with Vietnamese support for HUST X RIKKEI ending layout
 export const { fontFamily: fontChakraPetch } = loadChakraPetch("normal", {
-  weights: ["400", "500", "600", "700"],
-  subsets: ["latin", "vietnamese"],
+    weights: ["400", "500", "600", "700"],
+    subsets: ["latin", "vietnamese"],
 });
 

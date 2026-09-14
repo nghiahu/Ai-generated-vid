@@ -2122,7 +2122,7 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
     }
     try {
       const absoluteAudioPath = path.join(__dirname, "../public", audioUrl);
-      subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, scene.voiceover, audioDuration);
+      subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), audioDuration);
       scene.subtitlesJson = subtitlesJson;
       scene.voiceoverTtsJson = subtitlesJson;
     } catch (alignErr) {

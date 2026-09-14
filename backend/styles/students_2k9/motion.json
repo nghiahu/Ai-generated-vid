@@ -1,0 +1,10 @@
+{
+  "energy": "medium",
+  "style": [
+    "slide-up",
+    "fade"
+  ],
+  "avoid": [
+    "glitch"
+  ]
+}

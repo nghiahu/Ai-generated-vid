@@ -96,6 +96,38 @@ const VDE_PRESET_STYLES = [
       shadow: "0 0 40px rgba(0, 200, 255, 0.4)",
       fontFamily: "Chakra Petch, sans-serif"
     }
+  },
+  {
+    id: "retro_editorial",
+    name: "Retro Editorial",
+    description: "Phong cách biên tập cổ điển, kết hợp hoàn hảo cho ảnh nền tạp chí xé dán. Sử dụng font có chân (Serif) báo giấy, viền Navy đậm, và các thẻ màu kem cổ điển.",
+    tokens: {
+      background: "#0B1E43",
+      cardBg: "linear-gradient(135deg, rgba(253, 248, 245, 0.96) 0%, rgba(247, 240, 232, 0.92) 100%)",
+      border: "2px solid #0B1E43",
+      text: "#0B1E43",
+      textSecondary: "rgba(11, 30, 67, 0.75)",
+      accent: "#0B1E43",
+      radius: "8px",
+      shadow: "4px 4px 0px rgba(11, 30, 67, 0.2)",
+      fontFamily: "Lora, Be Vietnam Pro, sans-serif"
+    }
+  },
+  {
+    id: "students_2k9",
+    name: "Students 2K9 — High Contrast",
+    description: "Thương hiệu dành cho học sinh thế hệ 2009 (2K9). Tông màu Deep Dark Navy chủ đạo kết hợp Midnight Navy, highlight Electric Cyan & Vibrant Yellow, font Montserrat & Inter.",
+    tokens: {
+      background: "linear-gradient(180deg, #0B192C 0%, #0F172A 50%, #1E293B 100%)",
+      cardBg: "linear-gradient(135deg, rgba(11, 25, 44, 0.85) 0%, rgba(15, 23, 42, 0.75) 100%)",
+      border: "1.5px solid rgba(56, 189, 248, 0.35)",
+      text: "#FFFFFF",
+      textSecondary: "#B7C8E2",
+      accent: "#00F2FE",
+      radius: "16px",
+      shadow: "0 10px 30px rgba(11, 25, 44, 0.25)",
+      fontFamily: "Montserrat, sans-serif"
+    }
   }
 ];
 

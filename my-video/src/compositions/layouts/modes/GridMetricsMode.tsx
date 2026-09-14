@@ -65,9 +65,9 @@ export const GridMetricsMode: React.FC<ModeRendererProps> = ({
       100% { box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2), 0 0 10px rgba(${rgb}, 0.1); }
     }
   `;
-
-  const activeCardDescColor = isLight ? "rgba(0, 0, 0, 0.72)" : "rgba(255, 255, 255, 0.85)";
-
+  const activeCardDescColor = activeCardTextColor === "#ffffff" || activeCardTextColor?.toLowerCase() === "#fff" || activeCardTextColor?.startsWith("rgba(255")
+    ? "rgba(255, 255, 255, 0.8)"
+    : "rgba(0, 0, 0, 0.72)";
   return (
     <div style={containerStyle}>
       <style>{animStyles}</style>

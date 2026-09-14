@@ -56,7 +56,7 @@ async function renderVideo(projectId, projectData) {
     const rawText = data.toString();
     const cleanText = rawText.replace(/\u001b\[[0-9;]*m/g, "");
     console.log(`[Remotion CLI]: ${cleanText.trim()}`);
-    
+
     // Parse frames e.g., "Rendering frame 45/300" or "Rendered 45/300"
     const frameMatch = cleanText.match(/(?:frame|rendered|\b)(\d+)\/(\d+)/i);
     if (frameMatch) {
@@ -84,7 +84,7 @@ async function renderVideo(projectId, projectData) {
 
   remotionProcess.on('close', (code) => {
     console.log(`Remotion render process exited with code ${code}`);
-    
+
     // Clean up temp file
     try {
       if (fs.existsSync(tempPropsFile)) {
@@ -116,7 +116,7 @@ async function renderVideo(projectId, projectData) {
             const timestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
             const logLine = `[${timestamp}] Video: "${project.title}" | Token prompt: ${usage.promptTokens} | Token completion: ${usage.completionTokens} | Tổng: ${usage.totalTokens}\n`;
-            
+
             // Path to project root video_token_usage.log
             const logFilePath = path.join(__dirname, '../../video_token_usage.log');
             fs.appendFileSync(logFilePath, logLine);

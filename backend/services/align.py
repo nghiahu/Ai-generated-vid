@@ -16,13 +16,70 @@ def clean_word(w):
         return ""
     # Lowercase and keep only alphanumeric characters
     cleaned = re.sub(r"[^\w\s]", "", w.lower().strip())
+    if cleaned == "hẩy":
+        cleaned = "phẩy"
     return cleaned
+
+def preprocess_chunks_for_vietnamese(orig_words, chunks):
+    """
+    Whisper models often transcribe the spoken word 'phẩy' as a comma ',' 
+    and 'chấm' as a dot '.', attaching them to the previous word.
+    If orig_words explicitly expects 'phẩy' or 'chấm', split the punctuation
+    from the host chunk so it receives its own timestamp.
+    """
+    has_comma_word = any(clean_word(w) in ['phẩy', 'phay'] for w in orig_words)
+    has_dot_word = any(clean_word(w) in ['chấm', 'cham'] for w in orig_words)
+
+    if not (has_comma_word or has_dot_word) or not chunks:
+        return chunks
+
+    expanded = []
+    for chunk in chunks:
+        text = chunk.get('text', '')
+        ts = chunk.get('timestamp')
+        if not ts or ts[0] is None or ts[1] is None:
+            expanded.append(chunk)
+            continue
+
+        start, end = float(ts[0]), float(ts[1])
+        dur = end - start
+
+        # Check for digits with comma e.g. "54,375" or "2,5"
+        if has_comma_word and re.search(r'(\d+),(\d+)', text) and dur >= 0.3:
+            parts = text.strip().split(',')
+            part1 = parts[0].strip()
+            part2 = parts[1].strip()
+            mid_dur = min(0.3, max(0.18, dur * 0.3))
+            left_dur = (dur - mid_dur) * 0.5
+            t1 = round(start + left_dur, 3)
+            t2 = round(t1 + mid_dur, 3)
+            expanded.append({'text': part1, 'timestamp': [start, t1]})
+            expanded.append({'text': 'phẩy', 'timestamp': [t1, t2]})
+            expanded.append({'text': part2, 'timestamp': [t2, end]})
+        # Check for trailing comma when orig_words has 'phẩy'
+        elif has_comma_word and re.search(r'[\w]+,\s*$', text) and dur >= 0.25:
+            word_part = re.sub(r',\s*$', '', text).strip()
+            split_dur = min(0.35, max(0.18, dur * 0.4))
+            split_point = round(end - split_dur, 3)
+            expanded.append({'text': word_part, 'timestamp': [start, split_point]})
+            expanded.append({'text': 'phẩy', 'timestamp': [split_point, end]})
+        # Check for trailing period when orig_words has 'chấm'
+        elif has_dot_word and re.search(r'[\w]+\.\s*$', text) and dur >= 0.25:
+            word_part = re.sub(r'\.\s*$', '', text).strip()
+            split_dur = min(0.35, max(0.18, dur * 0.4))
+            split_point = round(end - split_dur, 3)
+            expanded.append({'text': word_part, 'timestamp': [start, split_point]})
+            expanded.append({'text': 'chấm', 'timestamp': [split_point, end]})
+        else:
+            expanded.append(chunk)
+    return expanded
 
 def needleman_wunsch_align(orig_words, whisper_chunks):
     """
     Perform sequence alignment to match Whisper transcribed chunks to original words.
     Returns aligned timestamps for original words.
     """
+    whisper_chunks = preprocess_chunks_for_vietnamese(orig_words, whisper_chunks)
     N = len(orig_words)
     M = len(whisper_chunks)
     
@@ -170,8 +227,11 @@ def main():
             return_timestamps="word"
         )
         
-        # Run ASR transcription
-        result = pipe(audio_path)
+        # Run ASR transcription with Vietnamese language hint
+        try:
+            result = pipe(audio_path, generate_kwargs={"language": "vi", "task": "transcribe"})
+        except Exception:
+            result = pipe(audio_path)
         chunks = result.get("chunks", [])
         
         # Align chunks to original words

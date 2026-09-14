@@ -302,7 +302,10 @@ module.exports = {
     await initDb();
     const database = getDb();
 
-    const project = database.prepare('SELECT * FROM projects WHERE id = ?').get([id]);
+    const stmtProject = database.prepare('SELECT * FROM projects WHERE id = ?');
+    const project = stmtProject.get([id]);
+    stmtProject.finalize();
+
     if (!project) return null;
 
     const config = parseJSON(project.config, {});
@@ -319,7 +322,9 @@ module.exports = {
       };
     }
 
-    const scenes = database.prepare('SELECT * FROM scenes WHERE project_id = ? ORDER BY scene_index ASC').all([id]);
+    const stmtScenes = database.prepare('SELECT * FROM scenes WHERE project_id = ? ORDER BY scene_index ASC');
+    const scenes = stmtScenes.all([id]);
+    stmtScenes.finalize();
 
     return {
       id: project.id,
@@ -359,9 +364,7 @@ module.exports = {
       config: parseJSON(row.config, {}),
       scenes: []
     };
-  },
-
-  updateProjectConfig: async (id, config) => {
+  },  updateProjectConfig: async (id, config) => {
     await initDb();
     const database = getDb();
 
@@ -372,7 +375,17 @@ module.exports = {
     const mergedConfig = { ...currentConfig, ...config };
 
     database.prepare('UPDATE projects SET config = ? WHERE id = ?').run([JSON.stringify(mergedConfig), id]);
-    return database.prepare('SELECT * FROM projects WHERE id = ?').get([id]);
+    
+    const row = database.prepare('SELECT * FROM projects WHERE id = ?').get([id]);
+    if (!row) return null;
+    return {
+      id: row.id,
+      title: row.title,
+      status: row.status,
+      createdAt: row.created_at,
+      config: parseJSON(row.config, {}),
+      scenes: []
+    };
   },
 
   updateProjectScenes: async (id, scenes) => {
@@ -461,9 +474,14 @@ module.exports = {
 
     values.push(projectId, sceneId);
     const sql = `UPDATE scenes SET ${fields.join(', ')} WHERE project_id = ? AND id = ?`;
-    database.prepare(sql).run(values);
+    const stmtUpdate = database.prepare(sql);
+    stmtUpdate.run(values);
+    stmtUpdate.finalize();
 
-    const s = database.prepare('SELECT * FROM scenes WHERE project_id = ? AND id = ?').get([projectId, sceneId]);
+    const stmtSelect = database.prepare('SELECT * FROM scenes WHERE project_id = ? AND id = ?');
+    const s = stmtSelect.get([projectId, sceneId]);
+    stmtSelect.finalize();
+
     if (!s) return null;
     return mapScene(s);
   },
@@ -539,12 +557,14 @@ module.exports = {
     const database = getDb();
 
     const cleanTerm = term.toLowerCase().trim();
-    const row = database.prepare(`
+    const stmt = database.prepare(`
       SELECT c.* FROM phoneme_cache c
       LEFT JOIN phoneme_alias a ON a.phoneme_id = c.id
       WHERE LOWER(c.term) = ? OR LOWER(a.alias) = ?
       LIMIT 1
-    `).get([cleanTerm, cleanTerm]);
+    `);
+    const row = stmt.get([cleanTerm, cleanTerm]);
+    stmt.finalize();
     return row || null;
   },
 
@@ -565,30 +585,39 @@ module.exports = {
 
     return runTransaction(() => {
       // Insert or update (respect manual_override)
-      const existing = database.prepare('SELECT id, manual_override FROM phoneme_cache WHERE term = ?').get([cleanTerm]);
+      const stmtCheck = database.prepare('SELECT id, manual_override FROM phoneme_cache WHERE term = ?');
+      const existing = stmtCheck.get([cleanTerm]);
+      stmtCheck.finalize();
 
       let phonemeId;
       if (existing) {
         if (!existing.manual_override || manualOverride === 1) {
-          database.prepare(`
+          const stmtUpdate = database.prepare(`
             UPDATE phoneme_cache
             SET display_term = ?, phoneme = ?, phoneme_format = ?, language = ?, source = ?,
                 confidence = ?, manual_override = ?, review_required = ?, updated_at = datetime('now')
             WHERE id = ?
-          `).run([displayTerm, phoneme, phonemeFormat, language, source, confidence, manualOverride, reviewRequired, existing.id]);
+          `);
+          stmtUpdate.run([displayTerm, phoneme, phonemeFormat, language, source, confidence, manualOverride, reviewRequired, existing.id]);
+          stmtUpdate.finalize();
         }
         phonemeId = existing.id;
       } else {
-        const info = database.prepare(`
+        const stmtInsert = database.prepare(`
           INSERT INTO phoneme_cache (term, display_term, phoneme, phoneme_format, language, source, confidence, manual_override, review_required)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).run([cleanTerm, displayTerm, phoneme, phonemeFormat, language, source, confidence, manualOverride, reviewRequired]);
+        `);
+        const info = stmtInsert.run([cleanTerm, displayTerm, phoneme, phonemeFormat, language, source, confidence, manualOverride, reviewRequired]);
         phonemeId = info.lastInsertRowid;
+        stmtInsert.finalize();
       }
 
       // Handle aliases
       if (Array.isArray(item.aliases) && item.aliases.length > 0) {
-        database.prepare('DELETE FROM phoneme_alias WHERE phoneme_id = ?').run([phonemeId]);
+        const stmtDelAlias = database.prepare('DELETE FROM phoneme_alias WHERE phoneme_id = ?');
+        stmtDelAlias.run([phonemeId]);
+        stmtDelAlias.finalize();
+
         const insertAlias = database.prepare('INSERT OR IGNORE INTO phoneme_alias (phoneme_id, alias) VALUES (?, ?)');
         for (const alias of item.aliases) {
           const cleanAlias = alias.toLowerCase().trim();
@@ -673,12 +702,15 @@ module.exports = {
     await initDb();
     const database = getDb();
     try {
-      return database.prepare(`
+      const stmt = database.prepare(`
         SELECT id, term, display_term, phoneme 
         FROM phoneme_cache 
         WHERE manual_override = 1 AND source = 'manual'
         ORDER BY term ASC
-      `).all();
+      `);
+      const rows = stmt.all();
+      stmt.finalize();
+      return rows;
     } catch (err) {
       console.error("[db.js] Error getting custom phonemes:", err.message);
       return [];
@@ -690,7 +722,9 @@ module.exports = {
     const database = getDb();
     const cleanTerm = term.toLowerCase().trim();
     try {
-      database.prepare('DELETE FROM phoneme_cache WHERE term = ? AND manual_override = 1').run([cleanTerm]);
+      const stmt = database.prepare('DELETE FROM phoneme_cache WHERE term = ? AND manual_override = 1');
+      stmt.run([cleanTerm]);
+      stmt.finalize();
     } catch (err) {
       console.error("[db.js] Error deleting custom phoneme:", err.message);
     }

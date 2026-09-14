@@ -68,18 +68,25 @@ function isEnglishWord(word) {
   if (/[^\x00-\x7F]/.test(word)) return false;
   if (!/[a-zA-Z]/.test(word)) return false;
   const lower = word.toLowerCase();
+
   if (TECH_TERMS_TRANSLITERATION[lower]) return true;
   const isAllCaps = word === word.toUpperCase() && word.length >= 2;
   if (VIETNAMESE_STOP_WORDS.has(lower) && !isAllCaps) return false;
   if (TECH_TERMS_WHITELIST.has(lower)) return true;
   if (isAllCaps) return true;
-  const hasForeignChars = /[wfzj]/i.test(word);
-  const endsWithEnglishConsonant = /[rsldgbk]$/i.test(word) && word.length >= 3;
-  const hasEnglishPrefix = /^(cl|cr|fl|gl|gr|pl|pr|sl|sp|st|sh|str)/i.test(word);
-  const hasEnglishSuffix = /(rt|nd|ld|ck|ct|mp|lt|nt|rk|st)$/i.test(word);
-  if (hasForeignChars || endsWithEnglishConsonant || hasEnglishPrefix || hasEnglishSuffix) {
-    if (cmuDict.has(lower)) return true;
+
+  // Clean of trailing/leading non-alphabet characters to check CMU (e.g. "words." -> "words")
+  const cleanLower = lower.replace(/[^a-z]/g, '');
+  if (cmuDict.has(cleanLower)) return true;
+
+  // Handle hyphen/period separated words (e.g. "front-end", "well-known", "node.js")
+  if (lower.includes('-') || lower.includes('.')) {
+    const parts = lower.split(/[-.]/).filter(Boolean);
+    if (parts.length > 0 && parts.every(part => cmuDict.has(part) || TECH_TERMS_TRANSLITERATION[part] || TECH_TERMS_WHITELIST.has(part))) {
+      return true;
+    }
   }
+
   return false;
 }
 
@@ -249,9 +256,13 @@ async function getPhonemesForTerms(terms, projectId = null) {
   const mapping = {};
   if (!terms || terms.length === 0) return mapping;
 
+  // Chỉ xử lý các từ có chứa ít nhất một chữ cái tiếng Anh (a-z, A-Z), bỏ qua các từ chỉ có số/kí tự đặc biệt
+  const filteredTerms = terms.filter(t => /[a-zA-Z]/.test(t));
+  if (filteredTerms.length === 0) return mapping;
+
   const unknownTerms = [];
 
-  for (const term of terms) {
+  for (const term of filteredTerms) {
     const cleanTerm = term.toLowerCase().trim();
 
     // 1. Kiểm tra database cache có manual_override = 1 và source = 'manual' (Ưu tiên tuyệt đối từ người dùng)
@@ -435,6 +446,15 @@ async function getPhonemesForTerms(terms, projectId = null) {
   return mapping;
 }
 
+function getSpokenText(text) {
+  if (!text) return "";
+  const regex = /\s*\(?\s*(?:gợi\s*ý|goi\s*y|hint|suggestion|đáp\s*án|dap\s*an)\s*[:：-].*$/i;
+  let cleaned = text.replace(regex, "").trim();
+  // Tự động sửa lỗi gõ Telex phổ biến: 'hẩy' -> 'phẩy' (trượt phím p)
+  cleaned = cleaned.replace(/\bhẩy\b/gi, "phẩy");
+  return cleaned;
+}
+
 /**
  * Hàm tối ưu hóa chính: Nhận câu thoại gốc tiếng Việt và chèn các thẻ âm vị [PHONEME] cho tiếng Anh.
  */
@@ -442,8 +462,10 @@ async function optimizeTextForPhonemes(text, projectId = null) {
   if (!text) return "";
 
   try {
+    const spokenText = getSpokenText(text);
+
     // 1. Trích xuất thuật ngữ tiếng Anh bằng Gemini/AI
-    const aiTerms = await extractTerms(text, projectId);
+    const aiTerms = await extractTerms(spokenText, projectId);
 
     // 1.1. Tự động quét và thêm tất cả các từ khóa tĩnh trong TECH_TERMS_TRANSLITERATION xuất hiện trong văn bản
     const staticTerms = Object.keys(TECH_TERMS_TRANSLITERATION).filter(term => {
@@ -453,7 +475,7 @@ async function optimizeTextForPhonemes(text, projectId = null) {
       const searchPattern = isStopWordTerm ? term.toUpperCase() : term;
       const escaped = searchPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const regex = new RegExp(`(?<=^|\\s|[-.,!?;()'"""\\/\\\\*+={}\\[\\]])${escaped}(?=$|\\s|[-.,!?;()'"""\\/\\\\*+={}\\[\\]])`, isStopWordTerm ? "g" : "i");
-      return regex.test(text);
+      return regex.test(spokenText);
     });
 
     // 1.2. Tự động quét các từ khóa tự cấu hình của người dùng trong database
@@ -465,7 +487,7 @@ async function optimizeTextForPhonemes(text, projectId = null) {
         const searchPattern = isStopWordTerm ? term.toUpperCase() : term;
         const escaped = searchPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         const regex = new RegExp(`(?<=^|\\s|[-.,!?;()'"""\\/\\\\*+={}\\[\\]])${escaped}(?=$|\\s|[-.,!?;()'"""\\/\\\\*+={}\\[\\]])`, isStopWordTerm ? "g" : "i");
-        return regex.test(text);
+        return regex.test(spokenText);
       });
     } catch (err) {
       console.error("[Phoneme Agent] Lỗi quét custom terms từ DB:", err.message);
@@ -475,18 +497,20 @@ async function optimizeTextForPhonemes(text, projectId = null) {
     // (tránh double-replace khi 'AI' và 'ai' đều có trong danh sách)
     const seenLower = new Set();
     const terms = [...aiTerms, ...staticTerms, ...customTerms].filter(t => {
-      const lc = t.toLowerCase();
+      const lc = t.toLowerCase().trim();
+      // Bỏ qua các từ không chứa chữ cái tiếng Anh (ví dụ: chỉ chứa số như "1", "18", "2024"...)
+      if (!/[a-zA-Z]/.test(lc)) return false;
       if (seenLower.has(lc)) return false;
       seenLower.add(lc);
       return true;
     });
-    if (terms.length === 0) return text;
+    if (terms.length === 0) return spokenText;
 
     // 2. Tra cứu/dịch âm vị CMU
     const mapping = await getPhonemesForTerms(terms, projectId);
 
     // 3. Thực hiện thay thế từ tiếng Anh bằng từ phiên âm tiếng Việt tương đương
-    let optimizedText = text;
+    let optimizedText = spokenText;
 
     // Sắp xếp các từ theo độ dài giảm dần để thay thế từ dài trước (tránh lỗi thay thế chuỗi con trước, vd: "ReactJS" trước "React")
     const sortedTerms = Object.keys(mapping).sort((a, b) => b.length - a.length);
@@ -520,5 +544,7 @@ async function optimizeTextForPhonemes(text, projectId = null) {
 module.exports = {
   optimizeTextForPhonemes,
   extractTerms,
-  getPhonemesForTerms
+  getPhonemesForTerms,
+  getSpokenText
 };
+

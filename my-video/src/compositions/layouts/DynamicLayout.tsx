@@ -133,7 +133,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
 
     const tokens = getVDETokens(theme);
     const bgColor = tokens.colors?.background || "#090d1a";
-    const isLight = theme === "claude" || theme === "light" || theme === "anime" || theme === "rikkei";
+    const isLight = theme === "claude" || theme === "light" || theme === "anime" || theme === "rikkei" || theme === "ba" || theme === "retro_editorial";
 
     // Detect if layout is designed to show full-screen background image
     const isFullImageBg = layoutType.toLowerCase().includes("fullimage") ||
@@ -152,13 +152,16 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
         ? `linear-gradient(to bottom, rgba(${rgbStr}, 0.2) 0%, rgba(${rgbStr}, 0.6) 100%)`
         : "linear-gradient(to bottom, rgba(6, 8, 19, 0.35) 0%, rgba(6, 8, 19, 0.75) 100%)";
 
+    const isBA = theme === "ba";
     const imageOpacity = isRikkei
       ? 0.95
       : isFullImageBg
         ? 1.0
-        : isLight ? 0.45 : 0.4;
+        : isBA
+          ? 1.0
+          : isLight ? 0.45 : 0.4;
 
-    const imageFilter = isRikkei
+    const imageFilter = isRikkei || isBA
       ? "none"
       : isFullImageBg
         ? "grayscale(10%)"
@@ -199,7 +202,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
           }}
           alt="Scene Background"
         />
-        {layoutType.toLowerCase() !== "blank" && !isRikkei && (
+        {layoutType.toLowerCase() !== "blank" && !isRikkei && !isBA && (
           <AbsoluteFill style={{
             background: overlayGradient,
             zIndex: 1,

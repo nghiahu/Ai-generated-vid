@@ -137,7 +137,7 @@ app.get('/api/projects/:id', async (req, res) => {
     if (!project) {
       return res.status(404).json({ error: 'Project not found' });
     }
-    
+
     // Inject fully compiled VDE tokens into config
     if (project.config) {
       const visualStyle = project.config.visualStyle || 'minimal';
@@ -148,7 +148,7 @@ app.get('/api/projects/:id', async (req, res) => {
       }
       project.config.vdeTokens = vde.getStyle(visualStyle, activeTraits);
     }
-    
+
     res.json(project);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -165,13 +165,13 @@ app.get('/api/projects/:id/vde-style', async (req, res) => {
     }
     const visualStyle = project.config?.visualStyle || 'minimal';
     const traits = project.config?.traits || [];
-    
+
     // Automatically apply vertical_video trait contextually if ratio is 9:16
     const activeTraits = [...traits];
     if (project.config?.ratio === '9:16' && !activeTraits.includes('vertical_video')) {
       activeTraits.push('vertical_video');
     }
-    
+
     const compiledStyle = vde.getStyle(visualStyle, activeTraits);
     res.json(compiledStyle);
   } catch (error) {
@@ -202,7 +202,7 @@ app.put('/api/projects/:id/config', async (req, res) => {
     }
 
     const updatedProject = await db.updateProjectConfig(projectId, req.body);
-    
+
     // Check if voice config has changed
     const oldVoice = oldProject.config?.voice || 'omnivoice_duythanh';
     const oldCustomId = oldProject.config?.customVoiceId || '';
@@ -213,9 +213,9 @@ app.put('/api/projects/:id/config', async (req, res) => {
 
     if (voiceChanged) {
       console.log(`Voice configuration changed from "${oldVoice}" to "${newVoice}". Regenerating TTS for all scenes...`);
-      
+
       const voiceKey = newVoice === 'custom' && newCustomId ? newCustomId : newVoice;
-      
+
       // Regenerate TTS for all scenes in background to prevent blocking response
       (async () => {
         try {
@@ -225,14 +225,23 @@ app.put('/api/projects/:id/config', async (req, res) => {
             for (const scene of project.scenes) {
               if (scene.voiceover) {
                 console.log(`Regenerating TTS for project ${projectId} scene ${scene.id} with new voice ${voiceKey}...`);
-                const voiceoverText = scene.voiceoverTts || scene.voiceover;
+
+                // Recalculate phonemes using G2P if missing or empty (e.g. edited text)
+                let voiceoverTts = scene.voiceoverTts;
+                if (!voiceoverTts) {
+                  console.log(`[Background TTS] Phonetic cache missing for scene ${scene.id}. Running G2P optimization...`);
+                  voiceoverTts = await phoneme.optimizeTextForPhonemes(scene.voiceover, projectId);
+                }
+
+                const voiceoverText = voiceoverTts || phoneme.getSpokenText(scene.voiceover);
                 const ttsResult = await tts.generateTTS(voiceoverText, projectId, scene.id, voiceKey);
-                
+
                 const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
-                const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, scene.voiceover, ttsResult.duration);
+                const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration);
 
                 updatedScenes.push({
                   ...scene,
+                  voiceoverTts,
                   duration: ttsResult.duration,
                   voiceoverAudioUrl: ttsResult.url,
                   voiceoverDuration: ttsResult.duration,
@@ -305,7 +314,7 @@ app.post('/api/upload', async (req, res) => {
 
     const result = await uploadWithRetry(3);
     const secureUrl = result.secure_url;
-    
+
     // Only persist uploaded image in database as general media if it is NOT a watermark logo
     if (!isLogo) {
       await db.saveUploadedMedia(secureUrl);
@@ -486,14 +495,14 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
     // Step 1: Call Gemini to parse and split script text using VDE rules
     const rawScenes = await ai.generateStoryboard(projectId, scriptText, currentStyle, activeTraits, project.config.length);
 
-    storyboardProgressMap.set(projectId, { 
-      percent: 35, 
-      stage: `Đã phân tích ${rawScenes.length} phân cảnh. Đang xử lý âm thanh & hình ảnh...` 
+    storyboardProgressMap.set(projectId, {
+      percent: 35,
+      stage: `Đã phân tích ${rawScenes.length} phân cảnh. Đang xử lý âm thanh & hình ảnh...`
     });
 
     // Step 2: For each scene, fetch images and generate voiceover TTS
     const scenes = [];
-    
+
     // Find the Ending/CTA scene index (usually the last scene)
     let ctaSceneIndex = rawScenes.length - 1;
     for (let i = rawScenes.length - 1; i >= 0; i--) {
@@ -506,20 +515,20 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
 
     for (let i = 0; i < rawScenes.length; i++) {
       const scenePct = Math.round(35 + ((i + 1) / rawScenes.length) * 55);
-      storyboardProgressMap.set(projectId, { 
-        percent: scenePct, 
-        stage: `Đang tạo giọng đọc TTS & trích xuất hình ảnh cho phân cảnh ${i + 1}/${rawScenes.length}...` 
+      storyboardProgressMap.set(projectId, {
+        percent: scenePct,
+        stage: `Đang tạo giọng đọc TTS & trích xuất hình ảnh cho phân cảnh ${i + 1}/${rawScenes.length}...`
       });
       const scene = rawScenes[i];
       const sceneId = `scene_${projectId}_${i}_${Math.random().toString(36).substr(2, 4)}`;
-      
+
       let isCtaApplied = false;
       let ctaUrl = "";
       let isVideoCta = false;
       if (i === ctaSceneIndex && Array.isArray(selectedCtaMedia) && selectedCtaMedia.length > 0 && selectedCtaMedia[0]) {
         ctaUrl = selectedCtaMedia[0].trim();
-        isVideoCta = ctaUrl.toLowerCase().includes("/video/upload/") || 
-                     /\.(mp4|webm|ogg|mov|avi|flv|mkv)$/i.test(ctaUrl.toLowerCase());
+        isVideoCta = ctaUrl.toLowerCase().includes("/video/upload/") ||
+          /\.(mp4|webm|ogg|mov|avi|flv|mkv)$/i.test(ctaUrl.toLowerCase());
         isCtaApplied = true;
       }
 
@@ -547,14 +556,14 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       }
 
       // Generate TTS Voiceover audio
-      const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
-        ? project.config.customVoiceId 
+      const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId
+        ? project.config.customVoiceId
         : (project.config.voice || 'omnivoice_duythanh');
-      const voiceoverText = scene.voiceoverTts || scene.voiceover;
+      const voiceoverText = scene.voiceoverTts || phoneme.getSpokenText(scene.voiceover);
       const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
 
       const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
-      const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, scene.voiceover, ttsResult.duration);
+      const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration);
 
       scenes.push({
         id: sceneId,
@@ -595,9 +604,9 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
 
     storyboardProgressMap.set(projectId, { percent: 100, stage: "Hoàn tất kịch bản Storyboard!" });
 
-    res.json({ 
-      scenes: updatedProject.scenes, 
-      config: updatedProject.config 
+    res.json({
+      scenes: updatedProject.scenes,
+      config: updatedProject.config
     });
   } catch (error) {
     console.error("Storyboard generation error:", error);
@@ -650,17 +659,17 @@ app.post('/api/projects/:id/scenes/:sceneId/regenerate-tts', async (req, res) =>
     const voiceoverTts = await phoneme.optimizeTextForPhonemes(scene.voiceover, projectId);
 
     // 2. Get active voice configuration
-    const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId 
-      ? project.config.customVoiceId 
+    const voiceKey = project.config.voice === 'custom' && project.config.customVoiceId
+      ? project.config.customVoiceId
       : (project.config.voice || 'omnivoice_duythanh');
 
     console.log(`[Regenerate Scene TTS] Generating TTS for scene ${sceneId} using voice ${voiceKey}...`);
-    const voiceoverText = voiceoverTts || scene.voiceover;
+    const voiceoverText = voiceoverTts || phoneme.getSpokenText(scene.voiceover);
     const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
 
     // 3. Compute subtitles word timestamps
     const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
-    const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, scene.voiceover, ttsResult.duration);
+    const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration);
 
     // 4. Save updated scene to DB
     const updatedScene = await db.updateScene(projectId, sceneId, {
@@ -687,24 +696,33 @@ app.post('/api/projects/:id/regenerate-tts', async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    const voiceKey = project.config?.voice === 'custom' && project.config.customVoiceId 
-      ? project.config.customVoiceId 
+    const voiceKey = project.config?.voice === 'custom' && project.config.customVoiceId
+      ? project.config.customVoiceId
       : (project.config?.voice || 'omnivoice_duythanh');
 
     const updatedScenes = [];
-    
+
     // Regenerate TTS for each scene
     for (const scene of project.scenes) {
       if (scene.voiceover) {
-        console.log(`[Regenerate TTS] Generating TTS for scene ${scene.id} using previous voiceover text...`);
-        const voiceoverText = scene.voiceoverTts || scene.voiceover;
+        console.log(`[Regenerate TTS] Generating TTS for scene ${scene.id}...`);
+
+        // Recalculate phonemes using G2P if missing or empty (e.g. edited text)
+        let voiceoverTts = scene.voiceoverTts;
+        if (!voiceoverTts) {
+          console.log(`[Regenerate TTS] Phonetic cache missing for scene ${scene.id}. Running optimization...`);
+          voiceoverTts = await phoneme.optimizeTextForPhonemes(scene.voiceover, projectId);
+        }
+
+        const voiceoverText = voiceoverTts || phoneme.getSpokenText(scene.voiceover);
         const ttsResult = await tts.generateTTS(voiceoverText, projectId, scene.id, voiceKey);
-        
+
         const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
-        const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, scene.voiceover, ttsResult.duration);
+        const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration);
 
         updatedScenes.push({
           ...scene,
+          voiceoverTts,
           duration: ttsResult.duration,
           voiceoverAudioUrl: ttsResult.url,
           voiceoverDuration: ttsResult.duration,
@@ -735,6 +753,52 @@ app.post('/api/projects/:id/render', async (req, res) => {
 
     if (!project) {
       return res.status(404).json({ error: 'Project not found' });
+    }
+
+    let hasRegeneratedTts = false;
+    // Auto-regenerate missing audio files to prevent render 404 errors
+    for (const scene of project.scenes) {
+      if (scene.voiceover) {
+        const audioFileRelativePath = scene.voiceoverAudioUrl;
+        const absoluteAudioPath = audioFileRelativePath
+          ? path.join(__dirname, 'public', audioFileRelativePath)
+          : '';
+
+        const exists = absoluteAudioPath ? fs.existsSync(absoluteAudioPath) : false;
+        if (!audioFileRelativePath || !exists) {
+          console.log(`[Auto-Regenerate TTS on Render] Audio missing or invalid for scene ${scene.id}. Regenerating...`);
+
+          const voiceKey = project.config?.voice === 'custom' && project.config.customVoiceId
+            ? project.config.customVoiceId
+            : (project.config?.voice || 'omnivoice_duythanh');
+
+          // Recalculate phonemes using G2P if missing or empty
+          let voiceoverTts = scene.voiceoverTts;
+          if (!voiceoverTts) {
+            console.log(`[Auto-Regenerate TTS on Render] Phonetic cache missing for scene ${scene.id}. Optimizing...`);
+            voiceoverTts = await phoneme.optimizeTextForPhonemes(scene.voiceover, projectId);
+          }
+
+          const voiceoverText = voiceoverTts || phoneme.getSpokenText(scene.voiceover);
+          const ttsResult = await tts.generateTTS(voiceoverText, projectId, scene.id, voiceKey);
+
+          const newAbsoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
+          const subtitlesJson = await aligner.getWordTimestamps(newAbsoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration);
+
+          scene.voiceoverTts = voiceoverTts;
+          scene.voiceoverAudioUrl = ttsResult.url;
+          scene.voiceoverDuration = ttsResult.duration;
+          scene.duration = ttsResult.duration;
+          scene.subtitlesJson = subtitlesJson;
+
+          hasRegeneratedTts = true;
+        }
+      }
+    }
+
+    if (hasRegeneratedTts) {
+      console.log(`[Auto-Regenerate TTS on Render] Saving updated scenes to DB for project ${projectId}...`);
+      await db.updateProjectScenes(projectId, project.scenes);
     }
 
     // Inject fully compiled VDE tokens into config for rendering
@@ -902,7 +966,7 @@ if (process.env.ELECTRON_RUN_AS_NODE === '1') {
       console.log('[Backend] Parent process (Electron) has exited. Shutting down gracefully...');
       try {
         db.closeDb();
-      } catch (err) {}
+      } catch (err) { }
       process.exit(0);
     }
   }, 2000);
@@ -916,7 +980,7 @@ function gracefulShutdown(signal) {
   } catch (err) {
     console.error('Error closing database:', err.message);
   }
-  
+
   server.close(() => {
     console.log('HTTP server closed.');
     process.exit(0);

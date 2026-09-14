@@ -97,6 +97,15 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
       ? "1px solid rgba(255,255,255,0.50)"
       : "1px solid rgba(255,255,255,0.12)";
   };
+  // Dynamic contrast check for accent color
+  const getLuminance = (r: number, g: number, b: number): number => {
+    return 0.299 * r + 0.587 * g + 0.114 * b;
+  };
+  const isAccentLight = (() => {
+    const vals = rgb.split(',').map(n => parseInt(n.trim()));
+    return getLuminance(vals[0] || 11, vals[1] || 30, vals[2] || 67) > 180;
+  })();
+
   // Badge bg for non-first cards — visible on any background
   const getBadgeBg = (idx: number) => {
     if (idx === 0) return accentColor;
@@ -104,7 +113,7 @@ export const NumberedAgentPanelMode: React.FC<ModeRendererProps> = ({
   };
   // Badge text color
   const getBadgeColor = (idx: number) => {
-    if (idx === 0) return isLight ? "#000000" : "#ffffff";
+    if (idx === 0) return isAccentLight ? "#000000" : "#ffffff";
     return isLight ? accentColor : accentColor;
   };
 

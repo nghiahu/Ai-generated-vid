@@ -129,18 +129,18 @@ export function getVDETokens(styleName?: string): VDETokens {
     return {
       ...(tokens || VDE_TOKENS.ba),
       colors: {
-        background: "linear-gradient(135deg, #050a1a 0%, #0c1535 50%, #030612 100%)",
-        cardBg: "linear-gradient(135deg, rgba(8, 20, 52, 0.72) 0%, rgba(4, 10, 32, 0.55) 100%)",
-        border: "1.5px solid rgba(93, 200, 251, 0.35)",
-        accent: "#5DC8FB",
-        text: "#FFFFFF",
-        textSecondary: "#EAF8FF"
+        background: "#FFFFFF",
+        cardBg: "linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 246, 255, 0.8) 100%)",
+        border: "1.5px solid rgba(0, 103, 221, 0.15)",
+        accent: "#0067dd",
+        text: "#0067dd",
+        textSecondary: "#475569"
       },
       fonts: {
         title: "Be Vietnam Pro",
         body: "Be Vietnam Pro"
       },
-      shadow: "0 8px 32px rgba(2, 89, 233, 0.15)",
+      shadow: "0 8px 32px rgba(0, 103, 221, 0.08)",
       radius: "16px"
     };
   }
@@ -190,6 +190,46 @@ export function getVDETokens(styleName?: string): VDETokens {
         border: "2.2px solid rgba(255, 255, 255, 0.26)"
       },
       shadow: "none"
+    };
+  }
+
+  if (name.includes("retro_editorial") || name.includes("retro-editorial") || name.includes("editorial")) {
+    return {
+      ...(tokens || VDE_TOKENS.retro_editorial),
+      colors: {
+        background: "#0B1E43",
+        cardBg: "linear-gradient(135deg, rgba(253, 248, 245, 0.96) 0%, rgba(247, 240, 232, 0.92) 100%)",
+        border: "2px solid #0B1E43",
+        accent: "#0B1E43",
+        text: "#0B1E43",
+        textSecondary: "rgba(11, 30, 67, 0.75)"
+      },
+      fonts: {
+        title: "Lora",
+        body: "Be Vietnam Pro"
+      },
+      radius: "8px",
+      shadow: "4px 4px 0px rgba(11, 30, 67, 0.2)"
+    };
+  }
+
+  if (name.includes("students_2k9") || name.includes("students-2k9") || name.includes("2k9")) {
+    return {
+      ...(tokens || VDE_TOKENS.students_2k9),
+      colors: {
+        background: "linear-gradient(180deg, #0B192C 0%, #0F172A 50%, #1E293B 100%)",
+        cardBg: "linear-gradient(135deg, rgba(11, 25, 44, 0.85) 0%, rgba(15, 23, 42, 0.75) 100%)",
+        border: "1px solid rgba(56, 189, 248, 0.35)",
+        accent: "#00F2FE",
+        text: "#FFFFFF",
+        textSecondary: "#B7C8E2"
+      },
+      fonts: {
+        title: "Montserrat",
+        body: "Inter"
+      },
+      radius: "16px",
+      shadow: "0 10px 30px rgba(11, 25, 44, 0.25)"
     };
   }
 

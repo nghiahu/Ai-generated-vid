@@ -431,6 +431,38 @@ const VDE_PRESET_STYLES = [
       shadow: "0 0 40px rgba(0, 200, 255, 0.4)",
       fontFamily: "Chakra Petch, sans-serif"
     }
+  },
+  {
+    id: "retro_editorial",
+    name: "Retro Editorial",
+    description: "Phong cách biên tập cổ điển, kết hợp hoàn hảo cho ảnh nền tạp chí xé dán. Sử dụng font có chân (Serif) báo giấy, viền Navy đậm, và các thẻ màu kem cổ điển.",
+    tokens: {
+      background: "#0B1E43",
+      cardBg: "linear-gradient(135deg, rgba(253, 248, 245, 0.96) 0%, rgba(247, 240, 232, 0.92) 100%)",
+      border: "2px solid #0B1E43",
+      text: "#0B1E43",
+      textSecondary: "rgba(11, 30, 67, 0.75)",
+      accent: "#0B1E43",
+      radius: "8px",
+      shadow: "4px 4px 0px rgba(11, 30, 67, 0.2)",
+      fontFamily: "Lora, Be Vietnam Pro, sans-serif"
+    }
+  },
+  {
+    id: "students_2k9",
+    name: "Students 2K9 — High Contrast",
+    description: "Thương hiệu dành cho học sinh thế hệ 2009 (2K9). Tông màu Deep Dark Navy chủ đạo kết hợp Midnight Navy, highlight Electric Cyan & Vibrant Yellow, font Montserrat & Inter.",
+    tokens: {
+      background: "linear-gradient(180deg, #0B192C 0%, #0F172A 50%, #1E293B 100%)",
+      cardBg: "linear-gradient(135deg, rgba(11, 25, 44, 0.85) 0%, rgba(15, 23, 42, 0.75) 100%)",
+      border: "1.5px solid rgba(56, 189, 248, 0.35)",
+      text: "#FFFFFF",
+      textSecondary: "#B7C8E2",
+      accent: "#00F2FE",
+      radius: "16px",
+      shadow: "0 10px 30px rgba(11, 25, 44, 0.25)",
+      fontFamily: "Montserrat, sans-serif"
+    }
   }
 ];
 
@@ -874,7 +906,7 @@ export const StoryboardEditor = ({
 
   const handleRegenerateTtsClick = async (scene) => {
     const localVal = localTexts[`${scene.id}_voiceover`];
-    
+
     // Check if there is an unsaved text change
     if (localVal !== undefined && localVal !== scene.voiceover) {
       setSavingBeforeTtsId(scene.id);
@@ -892,7 +924,7 @@ export const StoryboardEditor = ({
       }
       setSavingBeforeTtsId(null);
     }
-    
+
     // Proceed to regenerate TTS
     onRegenerateSceneTts(scene.id);
   };
@@ -1105,11 +1137,11 @@ export const StoryboardEditor = ({
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <span style={{ fontSize: "20px" }}>🖼️</span>
               <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "700", color: "#0f172a" }}>
-                {mediaModalContext === 'project-content-list' 
-                  ? "Chọn Ảnh Nội Dung" 
-                  : (mediaModalContext === 'project-background-list' 
-                      ? "Chọn Ảnh Nền" 
-                      : (mediaModalContext === 'project-cta-list' ? "Chọn Ảnh/Video CTA" : "Chọn Ảnh/Video"))}
+                {mediaModalContext === 'project-content-list'
+                  ? "Chọn Ảnh Nội Dung"
+                  : (mediaModalContext === 'project-background-list'
+                    ? "Chọn Ảnh Nền"
+                    : (mediaModalContext === 'project-cta-list' ? "Chọn Ảnh/Video CTA" : "Chọn Ảnh/Video"))}
               </h3>
             </div>
 
@@ -1472,7 +1504,7 @@ export const StoryboardEditor = ({
                 {/* Loading skeleton */}
                 {aiGenerating && (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" }}>
-                    {[1,2,3,4].map(i => (
+                    {[1, 2, 3, 4].map(i => (
                       <div
                         key={i}
                         style={{
@@ -2726,7 +2758,9 @@ export const StoryboardEditor = ({
                             background: "none",
                             border: "none",
                             fontSize: "11px",
-                            color: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id || savingVoiceoverSceneId === scene.id) ? "#94a3b8" : "var(--color-primary, #2563eb)",
+                            color: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id || savingVoiceoverSceneId === scene.id)
+                              ? "#94a3b8"
+                              : (!scene.voiceoverAudioUrl ? "#d97706" : "var(--color-primary, #2563eb)"),
                             textDecoration: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id || savingVoiceoverSceneId === scene.id) ? "none" : "underline",
                             cursor: (regeneratingSceneId === scene.id || savingBeforeTtsId === scene.id || savingVoiceoverSceneId === scene.id) ? "not-allowed" : "pointer",
                             fontFamily: "Space Grotesk, sans-serif",
@@ -2764,7 +2798,7 @@ export const StoryboardEditor = ({
                               <span>⏳ Đang tạo giọng đọc...</span>
                             </>
                           ) : (
-                            "🔊 Tái tạo giọng đọc"
+                            !scene.voiceoverAudioUrl ? "⚠️ Chưa có giọng đọc - Tạo ngay" : "🔊 Tái tạo giọng đọc"
                           )}
                         </button>
                       )}
@@ -2841,154 +2875,154 @@ export const StoryboardEditor = ({
                         {/* 1. Content Media Search & Suggestion Panel */}
                         {supportsMockup && (
                           <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                        <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Content Media (mockup)</label>
-                        <button
-                          type="button"
-                          onClick={() => handleOpenContentMediaModal(scene.id)}
-                          disabled={uploadingScenes[scene.id]}
-                          style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
-                        >
-                          {uploadingScenes[scene.id] ? "⏳..." : "📁 Upload"}
-                        </button>
-                      </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                              <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Content Media (mockup)</label>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenContentMediaModal(scene.id)}
+                                disabled={uploadingScenes[scene.id]}
+                                style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
+                              >
+                                {uploadingScenes[scene.id] ? "⏳..." : "📁 Upload"}
+                              </button>
+                            </div>
 
 
 
-                      {/* Content Image Suggestions Grid */}
-                      <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
-                        <div
-                          onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", -1)}
-                          style={{
-                            width: "44px",
-                            height: "44px",
-                            flexShrink: 0,
-                            borderRadius: "4px",
-                            border: scene.selectedMediaIndex === -1 ? "3px solid #000000" : "1px solid #cccccc",
-                            background: "#e2e8f0",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "9px",
-                            fontWeight: "bold",
-                            color: "#475569",
-                            textAlign: "center",
-                            padding: "2px",
-                            fontFamily: "Space Grotesk, sans-serif",
-                            lineHeight: "1.1",
-                            boxSizing: "border-box"
-                          }}
-                        >
-                          Mặc định
-                        </div>
+                            {/* Content Image Suggestions Grid */}
+                            <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
+                              <div
+                                onClick={() => handleFieldChange(scene.id, "selectedMediaIndex", -1)}
+                                style={{
+                                  width: "44px",
+                                  height: "44px",
+                                  flexShrink: 0,
+                                  borderRadius: "4px",
+                                  border: scene.selectedMediaIndex === -1 ? "3px solid #000000" : "1px solid #cccccc",
+                                  background: "#e2e8f0",
+                                  cursor: "pointer",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "9px",
+                                  fontWeight: "bold",
+                                  color: "#475569",
+                                  textAlign: "center",
+                                  padding: "2px",
+                                  fontFamily: "Space Grotesk, sans-serif",
+                                  lineHeight: "1.1",
+                                  boxSizing: "border-box"
+                                }}
+                              >
+                                Mặc định
+                              </div>
 
-                        {getCombinedContentMediaPool(scene).map((imgUrl, imgIdx) => {
-                          const activeContentUrl = (scene.selectedMediaIndex !== -1 && scene.mediaList && scene.mediaList.length > 0) 
-                            ? scene.mediaList[scene.selectedMediaIndex] 
-                            : null;
-                          const isSelected = activeContentUrl === imgUrl;
-                          return (
+                              {getCombinedContentMediaPool(scene).map((imgUrl, imgIdx) => {
+                                const activeContentUrl = (scene.selectedMediaIndex !== -1 && scene.mediaList && scene.mediaList.length > 0)
+                                  ? scene.mediaList[scene.selectedMediaIndex]
+                                  : null;
+                                const isSelected = activeContentUrl === imgUrl;
+                                return (
+                                  <div
+                                    key={imgIdx}
+                                    onClick={() => handleSelectContentImage(scene.id, imgUrl)}
+                                    style={{
+                                      width: "44px",
+                                      height: "44px",
+                                      flexShrink: 0,
+                                      borderRadius: "4px",
+                                      border: isSelected ? "3px solid #000000" : "1px solid #cccccc",
+                                      overflow: "hidden",
+                                      cursor: "pointer"
+                                    }}
+                                  >
+                                    <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 2. Background Media Search & Suggestion Panel */}
+                        <div style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          borderLeft: supportsMockup ? "1.5px solid #000000" : "none",
+                          paddingLeft: supportsMockup ? "24px" : "0px",
+                          minWidth: 0
+                        }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                            <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Background (Nền cảnh)</label>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenBgMediaModal(scene.id)}
+                              disabled={uploadingScenes[scene.id]}
+                              style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
+                            >
+                              📁 Upload
+                            </button>
+                          </div>
+
+
+
+                          {/* Background Image Suggestions Grid */}
+                          <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
                             <div
-                              key={imgIdx}
-                              onClick={() => handleSelectContentImage(scene.id, imgUrl)}
+                              onClick={() => handleFieldChange(scene.id, "selectedBgMediaIndex", -1)}
                               style={{
                                 width: "44px",
                                 height: "44px",
                                 flexShrink: 0,
                                 borderRadius: "4px",
-                                border: isSelected ? "3px solid #000000" : "1px solid #cccccc",
-                                overflow: "hidden",
-                                cursor: "pointer"
+                                border: (scene.selectedBgMediaIndex ?? -1) === -1 ? "3px solid #000000" : "1px solid #cccccc",
+                                background: `linear-gradient(135deg, ${scene.accentColor || "#FFB7C5"}aa 0%, #060813 100%)`,
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "8px",
+                                fontWeight: "bold",
+                                color: "#ffffff",
+                                textAlign: "center",
+                                padding: "2px",
+                                fontFamily: "Space Grotesk, sans-serif",
+                                lineHeight: "1.1",
+                                boxSizing: "border-box"
                               }}
                             >
-                              <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="media option" />
+                              Mặc định
                             </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
 
-                  {/* 2. Background Media Search & Suggestion Panel */}
-                  <div style={{ 
-                    display: "flex", 
-                    flexDirection: "column", 
-                    borderLeft: supportsMockup ? "1.5px solid #000000" : "none", 
-                    paddingLeft: supportsMockup ? "24px" : "0px", 
-                    minWidth: 0 
-                  }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                        <label className="form-label-mono" style={{ fontSize: "11px", fontWeight: "bold", marginBottom: 0 }}>Background (Nền cảnh)</label>
-                        <button
-                          type="button"
-                          onClick={() => handleOpenBgMediaModal(scene.id)}
-                          disabled={uploadingScenes[scene.id]}
-                          style={{ background: "none", border: "none", fontSize: "11px", fontFamily: "Space Grotesk", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
-                        >
-                          📁 Upload
-                        </button>
-                      </div>
-
-
-
-                      {/* Background Image Suggestions Grid */}
-                      <div className="custom-scrollbar" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "5px" }}>
-                        <div
-                          onClick={() => handleFieldChange(scene.id, "selectedBgMediaIndex", -1)}
-                          style={{
-                            width: "44px",
-                            height: "44px",
-                            flexShrink: 0,
-                            borderRadius: "4px",
-                            border: (scene.selectedBgMediaIndex ?? -1) === -1 ? "3px solid #000000" : "1px solid #cccccc",
-                            background: `linear-gradient(135deg, ${scene.accentColor || "#FFB7C5"}aa 0%, #060813 100%)`,
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "8px",
-                            fontWeight: "bold",
-                            color: "#ffffff",
-                            textAlign: "center",
-                            padding: "2px",
-                            fontFamily: "Space Grotesk, sans-serif",
-                            lineHeight: "1.1",
-                            boxSizing: "border-box"
-                          }}
-                        >
-                          Mặc định
+                            {getCombinedBgMediaPool(scene).map((imgUrl, imgIdx) => {
+                              const activeBgUrl = (scene.selectedBgMediaIndex !== -1 && scene.bgMediaList && scene.bgMediaList.length > 0)
+                                ? scene.bgMediaList[scene.selectedBgMediaIndex]
+                                : null;
+                              const isSelected = activeBgUrl === imgUrl;
+                              return (
+                                <div
+                                  key={imgIdx}
+                                  onClick={() => handleSelectBgImage(scene.id, imgUrl)}
+                                  style={{
+                                    width: "44px",
+                                    height: "44px",
+                                    flexShrink: 0,
+                                    borderRadius: "4px",
+                                    border: isSelected ? "3px solid #000000" : "1px solid #cccccc",
+                                    overflow: "hidden",
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="bg option" />
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
-
-                        {getCombinedBgMediaPool(scene).map((imgUrl, imgIdx) => {
-                          const activeBgUrl = (scene.selectedBgMediaIndex !== -1 && scene.bgMediaList && scene.bgMediaList.length > 0) 
-                            ? scene.bgMediaList[scene.selectedBgMediaIndex] 
-                            : null;
-                          const isSelected = activeBgUrl === imgUrl;
-                          return (
-                            <div
-                              key={imgIdx}
-                              onClick={() => handleSelectBgImage(scene.id, imgUrl)}
-                              style={{
-                                width: "44px",
-                                height: "44px",
-                                flexShrink: 0,
-                                borderRadius: "4px",
-                                border: isSelected ? "3px solid #000000" : "1px solid #cccccc",
-                                overflow: "hidden",
-                                cursor: "pointer"
-                              }}
-                            >
-                              <img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="bg option" />
-                            </div>
-                          );
-                        })}
                       </div>
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
+                    );
+                  })()}
+                </div>
               </article>
             );
           })}

@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { optimizeTextForPhonemes } = require('../services/phoneme');
+const { optimizeTextForPhonemes, getSpokenText } = require('../services/phoneme');
 
 test('TTS Phoneme Case Sensitivity - clashing terms', async () => {
   // Test case 1: uppercase "AI" should be replaced
@@ -41,4 +41,25 @@ test('TTS Custom Phoneme Override', async () => {
   await db.deleteCustomPhoneme('hust');
 
   assert.match(result, /đại học bách khoa hà nội/);
+});
+
+test('TTS Phoneme - regular English words and whitelisted tech terms', async () => {
+  const input = "Tôi đang học cách deploy dự án react và node.js lên vercel.";
+  const result = await optimizeTextForPhonemes(input);
+  
+  assert.match(result, /đi-ploi/);
+  assert.match(result, /ri-ác/);
+  assert.match(result, /nốt-chây-ét/);
+  assert.match(result, /vơ-xen/);
+});
+
+test('TTS Phoneme - strip suggestion text', () => {
+  const case1 = "Câu 1: Từ khóa nào trong C báo Compiler không được tối ưu hóa biến trong ngắt? Gợi ý: V _ _ _ _ _ _ E.";
+  assert.strictEqual(getSpokenText(case1), "Câu 1: Từ khóa nào trong C báo Compiler không được tối ưu hóa biến trong ngắt?");
+
+  const case2 = "Đây là câu hỏi. (Gợi ý: XYZ)";
+  assert.strictEqual(getSpokenText(case2), "Đây là câu hỏi.");
+
+  const case3 = "Đâu là thủ đô của VN? Đáp án: Hà Nội";
+  assert.strictEqual(getSpokenText(case3), "Đâu là thủ đô của VN?");
 });

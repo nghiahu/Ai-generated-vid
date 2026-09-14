@@ -40,11 +40,11 @@ function getWordTimestamps(audioPath, originalText, audioDuration) {
           ...process.env,
           PYTHONUTF8: "1",
           PYTHONIOENCODING: "utf-8",
-          HF_ENDPOINT: "https://hf-mirror.com",
+          HF_ENDPOINT: process.env.HF_ENDPOINT || "https://huggingface.co",
           HF_HOME: process.env.HF_HOME || path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'hf_cache'),
-          HF_HUB_OFFLINE: "1",
-          TRANSFORMERS_OFFLINE: "1",
-          HF_DATASETS_OFFLINE: "1"
+          HF_HUB_OFFLINE: process.env.HF_HUB_OFFLINE || "0",
+          TRANSFORMERS_OFFLINE: process.env.HF_HUB_OFFLINE || "0",
+          HF_DATASETS_OFFLINE: process.env.HF_HUB_OFFLINE || "0"
         }
       },
       (error, stdout, stderr) => {
