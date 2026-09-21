@@ -2,6 +2,7 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const db = require('./db');
+const videoOptimizer = require('./videoOptimizer');
 
 const activeRenders = {};
 
@@ -27,9 +28,13 @@ async function renderVideo(projectId, projectData) {
     fs.mkdirSync(downloadsDir, { recursive: true });
   }
 
+  // Pre-optimize any video media files in scenes with All-Intra GOP=1 for 100% smooth frame seeking in Remotion
+  console.log(`[Render] Optimizing video assets for project ${projectId}...`);
+  const optimizedProjectData = await videoOptimizer.optimizeProjectVideos(projectData);
+
   // Create temporary props file to bypass windows command escaping issues
   const tempPropsFile = path.join(__dirname, `../public/temp_${projectId}.json`);
-  fs.writeFileSync(tempPropsFile, JSON.stringify(projectData, null, 2));
+  fs.writeFileSync(tempPropsFile, JSON.stringify(optimizedProjectData, null, 2));
 
   // Output paths - use absolute paths to prevent Windows shell resolution issues
   const absoluteProps = tempPropsFile;
@@ -95,6 +100,31 @@ async function renderVideo(projectId, projectData) {
     }
 
     if (code === 0) {
+      // Post-process: Swap Frame 0 with Frame at 1.0s (frame 30) so the exported MP4 video's
+      // very first frame is the complete visual from 1s, preventing a blank thumbnail on TikTok/FB/YouTube!
+      try {
+        const { execSync } = require('child_process');
+        const rawVideoPath = path.join(downloadsDir, `raw_output_${projectId}.mp4`);
+        if (fs.existsSync(absoluteOutput)) {
+          fs.renameSync(absoluteOutput, rawVideoPath);
+          console.log(`[Thumbnail Injection] Injecting 1.0s frame into Frame 0 of ${absoluteOutput}...`);
+          const swapCmd = `ffmpeg -y -i "${rawVideoPath}" -filter_complex "[0:v]trim=start_frame=30:end_frame=31,setpts=PTS-STARTPTS[f0];[0:v]trim=start_frame=1,setpts=PTS-STARTPTS[rest];[f0][rest]concat=n=2:v=1:a=0[outv]" -map "[outv]" -map 0:a? -c:v libx264 -preset veryfast -crf 18 -c:a copy "${absoluteOutput}"`;
+          execSync(swapCmd);
+          console.log(`[Thumbnail Injection] Successfully injected 1.0s frame into Frame 0!`);
+
+          if (fs.existsSync(rawVideoPath)) {
+            fs.unlinkSync(rawVideoPath);
+          }
+        }
+      } catch (injectErr) {
+        console.warn(`[Thumbnail Injection] Failed to inject frame 0:`, injectErr.message);
+        // Fallback: restore rawVideoPath if output was moved
+        const rawVideoPath = path.join(downloadsDir, `raw_output_${projectId}.mp4`);
+        if (!fs.existsSync(absoluteOutput) && fs.existsSync(rawVideoPath)) {
+          fs.renameSync(rawVideoPath, absoluteOutput);
+        }
+      }
+
       activeRenders[renderId].status = 'completed';
       activeRenders[renderId].progress = 1.0;
       activeRenders[renderId].videoUrl = `/downloads/output_${projectId}.mp4`;

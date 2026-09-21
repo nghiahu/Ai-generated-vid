@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
+import { AbsoluteFill, useCurrentFrame, interpolate, Img } from "remotion";
 import { parseSceneToComponents, adaptiveLayoutEngine } from "../../utils/layoutResolver";
 import {
   TitleBlock,
@@ -96,7 +96,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
     if (finalBgImage) {
       return (
         <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
-          <img
+          <Img
             src={finalBgImage}
             style={{
               position: "absolute",
@@ -170,7 +170,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
     return (
       <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
         {/* Blurred duplicate backdrop to cover screen gaps for non-9:16 images */}
-        <img
+        <Img
           src={bgImgUrl}
           style={{
             position: "absolute",
@@ -187,7 +187,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
         />
 
         {/* Sharp foreground image centered and fit perfectly */}
-        <img
+        <Img
           src={bgImgUrl}
           style={{
             position: "absolute",

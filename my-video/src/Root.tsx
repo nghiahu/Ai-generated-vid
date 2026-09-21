@@ -3,6 +3,8 @@ import React from "react";
 import { MainComposition, SceneData, MainCompositionProps, getSceneDurationFrames } from "./compositions/MainComposition";
 // Import font loader — bắt buộc để Remotion load Google Fonts đúng cách với subset Vietnamese
 import "./styles/fonts";
+import "./styles/fonts.css";
+
 
 
 export const RemotionRoot: React.FC = () => {
@@ -18,7 +20,7 @@ export const RemotionRoot: React.FC = () => {
           const fps = 30;
           const mainProps = props as unknown as MainCompositionProps;
           const scenes = mainProps.scenes || [];
-          
+
           const durationInFrames = scenes.reduce(
             (sum: number, scene: SceneData) => sum + getSceneDurationFrames(scene, fps),
             0

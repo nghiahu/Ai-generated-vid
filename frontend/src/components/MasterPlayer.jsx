@@ -2,14 +2,14 @@ import React from "react"; // trigger rebuild for pullquote layout template addi
 import { Player } from "@remotion/player";
 import { MainComposition, safeParseFloat, getSceneDurationFrames } from "../../../my-video/src/compositions/MainComposition";
 
-export const MasterPlayer = ({ 
-  scenes = [], 
-  config = {}, 
+export const MasterPlayer = ({
+  scenes = [],
+  config = {},
   projectTitle = "",
-  onRender, 
+  onRender,
   onCancelRender,
-  rendering, 
-  renderProgress, 
+  rendering,
+  renderProgress,
   renderedFrames,
   renderTotalFrames,
   videoUrl,
@@ -25,7 +25,7 @@ export const MasterPlayer = ({
   const handleDownloadVideo = async () => {
     if (!videoUrl) return;
     const fullUrl = `http://localhost:5000${videoUrl}`;
-    
+
     // Determine title for default filename
     const rawTitle = projectTitle || scenes[0]?.heading || "Video_kisafresh";
     // Sanitize title for valid OS filename
@@ -105,10 +105,10 @@ export const MasterPlayer = ({
       boxSizing: "border-box"
     }}>
       {/* Top Header */}
-      <div style={{ 
-        padding: "16px 24px", 
-        display: "flex", 
-        justifyContent: "space-between", 
+      <div style={{
+        padding: "16px 24px",
+        display: "flex",
+        justifyContent: "space-between",
         alignItems: "center",
         borderBottom: "1px solid rgba(15, 23, 42, 0.06)",
         height: "64px",
@@ -146,7 +146,7 @@ export const MasterPlayer = ({
         }} />
 
         {/* Portrait Phone Frame Player (Sleek light glass version) */}
-        <div 
+        <div
           style={{
             width: "100%",
             maxWidth: "280px",
@@ -209,34 +209,47 @@ export const MasterPlayer = ({
       }}>
         {rendering ? (
           /* Render progress bar styled in clean light glass style */
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontFamily: "var(--font-heading)", fontWeight: "800", marginBottom: "10px", color: "var(--text-primary)" }}>
-              <span>
-                {renderedFrames > 0 && renderTotalFrames > 0 
-                  ? `Đang xuất (Frame ${renderedFrames}/${renderTotalFrames})` 
-                  : "Đang nén video MP4..."}
-              </span>
-              <span>{renderProgress}%</span>
+          /* Active Rendering State */
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: "700", fontFamily: "var(--font-heading)" }}>
+              <span style={{ color: "var(--color-primary)" }}>ĐANG XUẤT VIDEO (REMOTION)...</span>
+              <span style={{ color: "var(--color-text-secondary)" }}>{renderProgress}%</span>
             </div>
-            <div style={{ height: "10px", backgroundColor: "rgba(15, 23, 42, 0.06)", borderRadius: "5px", overflow: "hidden" }}>
-              <div style={{
-                width: `${renderProgress}%`,
-                height: "100%",
-                background: "linear-gradient(90deg, var(--color-primary), var(--color-accent))",
-                borderRadius: "5px",
-                transition: "width 0.2s ease-out"
-              }} />
+
+            <div style={{
+              width: "100%",
+              height: "8px",
+              backgroundColor: "var(--color-card)",
+              borderRadius: "4px",
+              overflow: "hidden",
+              border: "1px solid var(--color-border)"
+            }}>
+              <div
+                style={{
+                  height: "100%",
+                  width: `${renderProgress}%`,
+                  background: "linear-gradient(90deg, var(--color-primary), #818cf8)",
+                  borderRadius: "4px",
+                  transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                }}
+              />
             </div>
+
+            {renderTotalFrames > 0 && (
+              <div style={{ fontSize: "10px", color: "var(--color-text-secondary)", textAlign: "center", fontVariantNumeric: "tabular-nums" }}>
+                Khung hình: {renderedFrames} / {renderTotalFrames}
+              </div>
+            )}
+
             {onCancelRender && (
-              <button 
+              <button
                 type="button"
                 onClick={onCancelRender}
                 style={{
-                  marginTop: "14px",
-                  width: "100%",
-                  padding: "10px",
+                  marginTop: "6px",
+                  padding: "8px 12px",
                   backgroundColor: "rgba(220, 38, 38, 0.08)",
-                  border: "1px solid rgba(220, 38, 38, 0.2)",
+                  border: "1px solid rgba(220, 38, 38, 0.3)",
                   borderRadius: "var(--radius-pill)",
                   color: "#dc2626",
                   fontSize: "12px",
@@ -257,18 +270,14 @@ export const MasterPlayer = ({
           </div>
         ) : videoUrl ? (
           /* Successfully Rendered State */
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ fontSize: "13px", color: "#10b981", fontWeight: "800", fontFamily: "var(--font-heading)", display: "flex", alignItems: "center", gap: "6px" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              KẾT XUẤT HOÀN TẤT!
-            </div>
-            <button 
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <button
               type="button"
-              className="primary" 
+              className="primary"
               onClick={handleDownloadVideo}
-              style={{ 
-                width: "100%", 
-                padding: "12px", 
+              style={{
+                width: "100%",
+                padding: "12px",
                 borderRadius: "var(--radius-pill)",
                 background: "linear-gradient(135deg, var(--color-secondary), #f97316)",
                 boxShadow: "0 4px 15px rgba(249, 115, 22, 0.25)",
@@ -280,20 +289,20 @@ export const MasterPlayer = ({
             <button className="secondary" style={{ width: "100%", padding: "10px", fontSize: "11px", borderRadius: "var(--radius-pill)" }} onClick={onRender}>
               Xuất lại video
             </button>
-            <button 
+            <button
               type="button"
-              className="secondary" 
-              style={{ 
-                width: "100%", 
-                padding: "10px", 
-                fontSize: "11px", 
+              className="secondary"
+              style={{
+                width: "100%",
+                padding: "10px",
+                fontSize: "11px",
                 borderRadius: "var(--radius-pill)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "6px",
                 cursor: regeneratingTts ? "not-allowed" : "pointer"
-              }} 
+              }}
               disabled={rendering || regeneratingTts}
               onClick={onRegenerateTts}
             >
@@ -303,13 +312,13 @@ export const MasterPlayer = ({
         ) : (
           /* Trigger Render State */
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <button 
+            <button
               type="button"
               className="secondary"
-              style={{ 
-                width: "100%", 
-                padding: "10px", 
-                fontSize: "12px", 
+              style={{
+                width: "100%",
+                padding: "10px",
+                fontSize: "12px",
                 borderRadius: "var(--radius-pill)",
                 display: "flex",
                 alignItems: "center",
@@ -322,8 +331,8 @@ export const MasterPlayer = ({
             >
               {regeneratingTts ? "🔄 Đang tái tạo..." : "🔄 Làm mới giọng đọc (TTS)"}
             </button>
-            <button 
-              className="primary" 
+            <button
+              className="primary"
               style={{ width: "100%", padding: "14px", fontSize: "12px", borderRadius: "var(--radius-pill)" }}
               disabled={scenes.length === 0}
               onClick={onRender}

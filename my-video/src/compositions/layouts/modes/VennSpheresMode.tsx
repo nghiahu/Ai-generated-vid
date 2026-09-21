@@ -18,9 +18,10 @@ export const VennSpheresMode: React.FC<ModeRendererProps> = ({
   const frame = useCurrentFrame();
 
   const bubbleItems = otherComps.slice(0, 3).map((comp) => {
-    if (!comp || !comp.data?.text?.trim()) return null;
+    const text = (comp?.data?.text || (Array.isArray(comp?.data?.badges) ? comp.data.badges.join(", ") : "") || comp?.data?.code || comp?.data?.value || "").trim();
+    if (!text) return null;
     return {
-      text: comp.data.text.trim(),
+      text,
       comp
     };
   }).filter(Boolean) as { text: string; comp: any }[];

@@ -18,7 +18,8 @@
       useCurrentFrame: () => 0,
       useVideoConfig: () => ({ width: 1080, height: 1920, fps: 30, durationInFrames: 120 }),
       spring: () => 1,
-      interpolate: () => 0
+      interpolate: () => 0,
+      Img: (props) => React.createElement('img', props)
     };
     window.LucideIcons = new Proxy({}, { get: () => () => React.createElement('div') });
 
@@ -41,7 +42,7 @@
           // Process and load compiled code dynamically via blob URL
           let rewrittenJS = code
             .replace(/import\s+([\s\S]*?)\s+from\s+['"]react['"];?/gi, "const React = window.React;")
-            .replace(/import\s+([\s\S]*?)\s+from\s+['"]remotion['"];?/gi, "const { useCurrentFrame, spring, interpolate } = window.Remotion;")
+            .replace(/import\s+([\s\S]*?)\s+from\s+['"]remotion['"];?/gi, "const { useCurrentFrame, spring, interpolate, Img } = window.Remotion;")
             .replace(/import\s+([\s\S]*?)\s+from\s+['"]lucide-react['"];?/gi, "const LucideIcons = window.LucideIcons;");
 
           const blob = new Blob([rewrittenJS], { type: 'application/javascript' });

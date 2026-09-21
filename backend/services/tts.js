@@ -311,20 +311,30 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
     let spawnExe = omnivoiceExe;
     let spawnArgs = args;
 
-    // Detect if we can run via python -m omnivoice.cli.infer to bypass broken wrapper exe
+    // Detect if we can run via python with robust sentence chunking
+    const customInferScript = path.join(__dirname, 'omnivoice_infer.py');
+    const inferScript = fs.existsSync(customInferScript) ? customInferScript : null;
+
     if (omnivoiceExe) {
       const parentDir = path.dirname(omnivoiceExe);
       const grandParentDir = path.dirname(parentDir);
       const pythonCandidates = [
         path.join(grandParentDir, 'python.exe'),
-        path.join(parentDir, 'python.exe')
-      ];
+        path.join(parentDir, 'python.exe'),
+        process.env.PYTHON_PATH,
+        path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'Python311', 'python.exe')
+      ].filter(Boolean);
       
       for (const candidate of pythonCandidates) {
         if (fs.existsSync(candidate)) {
           spawnExe = candidate;
-          spawnArgs = ["-m", "omnivoice.cli.infer", ...args];
-          console.log(`[TTS] Bypassing wrapper. Using python: "${candidate}"`);
+          if (inferScript) {
+            spawnArgs = [inferScript, ...args];
+            console.log(`[TTS] Using robust OmniVoice sentence chunker: "${inferScript}" via "${candidate}"`);
+          } else {
+            spawnArgs = ["-m", "omnivoice.cli.infer", ...args];
+            console.log(`[TTS] Bypassing wrapper. Using python: "${candidate}"`);
+          }
           break;
         }
       }

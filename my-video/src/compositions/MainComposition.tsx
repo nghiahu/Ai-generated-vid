@@ -477,7 +477,10 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
                   textSec: vdeTokens.colors.textSecondary,
                   radius: vdeTokens.radius,
                   shadow: vdeTokens.shadow,
-                  font: vdeTokens.fonts.body,
+                  font: vdeTokens.fonts?.body && (vdeTokens.fonts.body.includes("sans-serif") || vdeTokens.fonts.body.includes("serif") || vdeTokens.fonts.body.includes("monospace")) 
+                    ? vdeTokens.fonts.body 
+                    : `'${vdeTokens.fonts?.body || "Be Vietnam Pro"}', 'Inter', sans-serif`,
+
                   orange: "#f97316",
                   cyan: vdeTokens.colors.accent
                 };

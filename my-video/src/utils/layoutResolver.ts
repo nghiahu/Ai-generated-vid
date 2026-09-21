@@ -105,18 +105,17 @@ export const parseSceneToComponents = (
           type: "terminal",
           height: 220,
           priority: 85,
-          data: { code: text, animation, delay }
+          data: { text, code: text, animation, delay }
         });
         return;
       }
 
-      // B. Badges Row
+      // B. Badges Row (only when containing badge icons or explicit tags)
       const isBadges = text.includes(",") && (
         text.includes("⭐") || 
         text.includes("🔥") || 
         text.includes("sao") || 
-        text.includes("MIT") || 
-        text.split(",").every(part => part.trim().length > 0 && part.trim().length < 15)
+        text.includes("MIT")
       );
       if (isBadges) {
         list.push({
@@ -124,7 +123,7 @@ export const parseSceneToComponents = (
           type: "badge_row",
           height: 130,
           priority: 50,
-          data: { badges: text.split(",").map(b => b.trim()).filter(b => b.length > 0), animation, delay }
+          data: { text, badges: text.split(",").map(b => b.trim()).filter(b => b.length > 0), animation, delay }
         });
         return;
       }
@@ -152,7 +151,7 @@ export const parseSceneToComponents = (
           type: "hero_metric",
           height: 260,
           priority: 90,
-          data: { value, subtext, animation, delay }
+          data: { text, value, subtext, animation, delay }
         });
         return;
       }

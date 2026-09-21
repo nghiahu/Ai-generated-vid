@@ -443,7 +443,7 @@ function sanitizeTSXCode(code) {
 
   // 5. Ensure Remotion imports exist if useCurrentFrame / spring / interpolate are used
   if ((cleaned.includes("useCurrentFrame") || cleaned.includes("spring")) && !cleaned.includes("remotion")) {
-    cleaned = `import { useCurrentFrame, spring, interpolate } from "remotion";\n` + cleaned;
+    cleaned = `import { useCurrentFrame, spring, interpolate, Img } from "remotion";\n` + cleaned;
   }
 
   return cleaned;
@@ -1541,12 +1541,13 @@ ${designReferenceText}
 2. ALLOWED IMPORTS & NO ALIAS SYNTAX:
    Always start your TSX code with these exact import statements:
    import React from "react";
-   import { useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
+   import { useCurrentFrame, useVideoConfig, spring, interpolate, Img } from "remotion";
    import { Zap, Cpu, Shield, Sparkles, TrendingUp, Award, Layers, Terminal, Database, Activity, CheckCircle, Flame, Star, Rocket, Target, BarChart2 } from "lucide-react";
 
    Rules for imports:
    - Import icons using their exact exported names (e.g., Terminal, Zap, Shield). Never use import alias or renaming syntax.
    - You ARE ALLOWED and ENCOURAGED to use Lucide React icons! Place them inside glass cards, pills, badges, and metric counters (e.g. <Zap size={28} color={THEME.orange} /> or <Shield size={24} color={THEME.accent} />).
+   - ALWAYS use <Img src={...} /> from "remotion" instead of native <img> tags for images so Remotion can pause frame capturing via delayRender() until the image is 100% loaded.
    - Do NOT import any other unlisted external packages or local relative paths.
 
 3. Component Signature MUST be EXACTLY:

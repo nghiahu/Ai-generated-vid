@@ -1,4 +1,5 @@
 import React from "react";
+import { Img } from "remotion";
 import { ModeRendererProps } from "./LayoutModeTypes";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 
@@ -260,7 +261,7 @@ export const IntroMediaHeroMode: React.FC<ModeRendererProps> = ({
             justifyContent: "center"
           }}>
             {imageUrl && !isDefaultImage(imageUrl) ? (
-              <img 
+              <Img 
                 src={imageUrl} 
                 style={{ 
                   width: "100%", 

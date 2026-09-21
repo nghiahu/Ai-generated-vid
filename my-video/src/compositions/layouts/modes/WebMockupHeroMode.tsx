@@ -1,5 +1,5 @@
 import React from "react";
-import { useCurrentFrame, interpolate, Easing } from "remotion";
+import { useCurrentFrame, interpolate, Easing, Img } from "remotion";
 import { ModeRendererProps } from "./LayoutModeTypes";
 import { AnimatedBlock } from "../../../components/layout/AnimatedBlock";
 import { CategoryPill } from "../../../components/atoms/VideoAtoms";
@@ -245,7 +245,7 @@ export const WebMockupHeroMode: React.FC<ModeRendererProps> = ({
           {/* Client frame area (Display Image) */}
           <div style={{ flex: 1, position: "relative", overflow: "hidden", background: isLight ? "#f8fafc" : "#020617" }}>
             {imageUrl && !isDefaultImage(imageUrl) ? (
-              <img
+              <Img
                 src={imageUrl}
                 style={{
                   width: "100%",

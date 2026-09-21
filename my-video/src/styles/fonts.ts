@@ -23,51 +23,59 @@ import { loadFont as loadSpaceGrotesk } from "@remotion/google-fonts/SpaceGrotes
 
 
 // Be Vietnam Pro – heading chính cho nội dung tiếng Việt (thay Outfit vì Outfit không có Vietnamese subset)
-export const { fontFamily: fontBeVietnamPro } = loadBeVietnamPro("normal", {
+export const { fontFamily: rawBeVietnamPro } = loadBeVietnamPro("normal", {
     weights: ["400", "500", "600", "700", "800"],
     subsets: ["latin", "vietnamese"],
 });
+export const fontBeVietnamPro = `${rawBeVietnamPro}, "Be Vietnam Pro", sans-serif`;
 
 // Alias fontOutfit => fontBeVietnamPro để không phải đổi code ở các file khác
 export const fontOutfit = fontBeVietnamPro;
 
 // Inter – dùng cho body text, bullet points
-export const { fontFamily: fontInter } = loadInter("normal", {
+export const { fontFamily: rawInter } = loadInter("normal", {
     weights: ["400", "500", "600"],
     subsets: ["latin", "vietnamese"],
 });
+export const fontInter = `${rawInter}, "Inter", sans-serif`;
 
 // Montserrat – dùng cho Brutalist theme heading
-export const { fontFamily: fontMontserrat } = loadMontserrat("normal", {
+export const { fontFamily: rawMontserrat } = loadMontserrat("normal", {
     weights: ["400", "500", "600", "700", "800", "900"],
     subsets: ["latin", "vietnamese"],
 });
+export const fontMontserrat = `${rawMontserrat}, "Montserrat", sans-serif`;
 
 // JetBrains Mono – dùng cho Cyberpunk theme & code blocks (latin only)
-export const { fontFamily: fontJetBrainsMono } = loadJetBrainsMono("normal", {
+export const { fontFamily: rawJetBrainsMono } = loadJetBrainsMono("normal", {
     weights: ["400", "700"],
     subsets: ["latin"],
 });
+export const fontJetBrainsMono = `${rawJetBrainsMono}, "JetBrains Mono", monospace`;
 
 // Space Grotesk – dùng cho Minimal, Light, Anime themes
-export const { fontFamily: fontSpaceGrotesk } = loadSpaceGrotesk("normal", {
+export const { fontFamily: rawSpaceGrotesk } = loadSpaceGrotesk("normal", {
     weights: ["400", "500", "600", "700"],
     subsets: ["latin", "vietnamese"],
 });
+export const fontSpaceGrotesk = `${rawSpaceGrotesk}, "Space Grotesk", sans-serif`;
 
 import { loadFont as loadLora } from "@remotion/google-fonts/Lora";
 
 // Lora - Serif font for Claude Editorial theme with 100% perfect Vietnamese diacritics support
-export const { fontFamily: fontPlayfairDisplay } = loadLora("normal", {
+export const { fontFamily: rawLora } = loadLora("normal", {
     weights: ["400", "500", "600", "700"],
     subsets: ["latin", "vietnamese"],
 });
+export const fontPlayfairDisplay = `${rawLora}, "Lora", serif`;
 
 import { loadFont as loadChakraPetch } from "@remotion/google-fonts/ChakraPetch";
 
 // Chakra Petch - Futuristic square-angled font with Vietnamese support for HUST X RIKKEI ending layout
-export const { fontFamily: fontChakraPetch } = loadChakraPetch("normal", {
+export const { fontFamily: rawChakraPetch } = loadChakraPetch("normal", {
     weights: ["400", "500", "600", "700"],
     subsets: ["latin", "vietnamese"],
 });
+export const fontChakraPetch = `${rawChakraPetch}, "Chakra Petch", sans-serif`;
+
 
