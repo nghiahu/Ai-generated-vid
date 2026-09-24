@@ -202,15 +202,13 @@ export const SidebarConfig = ({ config = {}, onChange, onOpenPronunciationModal 
           <div style={{ position: "relative", marginBottom: config.backgroundMusic && config.backgroundMusic !== "None" ? "8px" : "0" }}>
             <select
               className="form-input-mono"
-              value={config.backgroundMusic || "Chill Lofi Beats"}
+              value={config.backgroundMusic || "Rikkei Theme"}
               onChange={(e) => handleConfigChange("backgroundMusic", e.target.value)}
               style={{ cursor: "pointer" }}
             >
-              <option value="Chill Lofi Beats">Chill Lofi Beats</option>
-              <option value="Tech Ambient">Tech Ambient</option>
-              <option value="Energy Beats">Energy Beats</option>
               <option value="Rikkei Theme">Rikkei Theme</option>
-              <option value="Crown of Ashes">Crown of Ashes</option>
+              <option value="Pop Energetic">Pop Energetic</option>
+              <option value="Upbeat Rock">Upbeat Rock</option>
               <option value="None">None (No Background Music)</option>
             </select>
           </div>

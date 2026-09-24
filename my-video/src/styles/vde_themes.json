@@ -208,5 +208,35 @@
       "style": ["slide-up", "fade"],
       "avoid": ["glitch"]
     }
+  },
+  "cyber_security": {
+    "extends": "ai_driven",
+    "name": "Cyber Security — Digital Grid & Neon Cyan",
+    "description": "Phong cách An ninh mạng & Quản trị hệ thống: Nền Deep Cyber Dark, lưới matrix đa tầng, dòng số nhị phân tuôn chảy, viền Neon Cyan phát sáng rực rỡ, bệ phóng holographic podium và thẻ kính mờ công nghệ cao.",
+    "dna": {
+      "philosophy": { "oneIdeaPerScene": true, "clarity": 0.95, "minimalism": 0.75 },
+      "tone": "cyber-security, system-admin, tech, neon-cyan, matrix-grid, holographic-hud"
+    },
+    "tokens": {
+      "colors": {
+        "background": "linear-gradient(180deg, #01080F 0%, #02121D 40%, #031E2B 75%, #010C14 100%)",
+        "cardBg": "linear-gradient(135deg, rgba(3, 24, 38, 0.85) 0%, rgba(2, 13, 22, 0.92) 100%)",
+        "border": "1.5px solid rgba(0, 176, 234, 0.7)",
+        "accent": "#00b0ea",
+        "text": "#66efff",
+        "textSecondary": "rgba(180, 235, 255, 0.85)"
+      },
+      "fonts": {
+        "title": "Chakra Petch",
+        "body": "Be Vietnam Pro"
+      },
+      "radius": "14px",
+      "shadow": "0 0 35px rgba(0, 176, 234, 0.35), 0 0 70px rgba(102, 239, 255, 0.15)"
+    },
+    "motion": {
+      "energy": "high",
+      "style": ["slide-up", "fade", "glow-pulse", "scanline"],
+      "avoid": ["bounce"]
+    }
   }
 }

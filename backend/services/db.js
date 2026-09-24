@@ -202,6 +202,31 @@ async function initDb() {
     });
     insertSeed.finalize();
 
+    // Seed custom pronunciations from backend/data/custom_pronunciations.json if available
+    const customJsonPath = path.join(__dirname, '../data/custom_pronunciations.json');
+    if (fs.existsSync(customJsonPath)) {
+      try {
+        const customData = JSON.parse(fs.readFileSync(customJsonPath, 'utf8'));
+        if (Array.isArray(customData) && customData.length > 0) {
+          const insertCustom = database.prepare(`
+            INSERT OR IGNORE INTO phoneme_cache (term, display_term, phoneme, source, confidence, manual_override)
+            VALUES (?, ?, ?, 'manual', 1.0, 1)
+          `);
+          runTransaction(() => {
+            for (const item of customData) {
+              if (item.term && item.phoneme) {
+                insertCustom.run([item.term.toLowerCase().trim(), item.display_term || item.term, item.phoneme.trim()]);
+              }
+            }
+          });
+          insertCustom.finalize();
+          console.log(`[DB Init] Loaded ${customData.length} custom pronunciations from custom_pronunciations.json`);
+        }
+      } catch (err) {
+        console.warn(`[DB Init] Warning loading custom_pronunciations.json:`, err.message);
+      }
+    }
+
     console.log('SQLite database initialized successfully at:', getDbPath());
   })();
 
@@ -347,7 +372,7 @@ module.exports = {
       language: "Vietnamese",
       voice: "vbee_ngochuyen",
       watermark: { enabled: true, text: "yupclip.com", position: "top-right", color: "#000000" },
-      backgroundMusic: "Chill Lofi Beats"
+      backgroundMusic: "Rikkei Theme"
     };
 
     database.prepare(`
@@ -628,6 +653,14 @@ module.exports = {
         insertAlias.finalize();
       }
 
+      if (manualOverride === 1 && source === 'manual') {
+        setTimeout(() => {
+          if (module.exports && module.exports.syncCustomPhonemesToJson) {
+            module.exports.syncCustomPhonemesToJson();
+          }
+        }, 50);
+      }
+
       return phonemeId;
     });
   },
@@ -698,6 +731,18 @@ module.exports = {
     }
   },
 
+  deleteUploadedMedia: async (url) => {
+    if (!url) return;
+    await initDb();
+    const database = getDb();
+
+    try {
+      database.prepare('DELETE FROM uploaded_media WHERE url = ?').run([url]);
+    } catch (err) {
+      console.error("[db.js] Error deleting uploaded media:", err.message);
+    }
+  },
+
   getAllCustomPhonemes: async () => {
     await initDb();
     const database = getDb();
@@ -725,8 +770,31 @@ module.exports = {
       const stmt = database.prepare('DELETE FROM phoneme_cache WHERE term = ? AND manual_override = 1');
       stmt.run([cleanTerm]);
       stmt.finalize();
+      await module.exports.syncCustomPhonemesToJson();
     } catch (err) {
       console.error("[db.js] Error deleting custom phoneme:", err.message);
+    }
+  },
+
+  syncCustomPhonemesToJson: async () => {
+    try {
+      const database = getDb();
+      const stmt = database.prepare(`
+        SELECT term, display_term, phoneme 
+        FROM phoneme_cache 
+        WHERE manual_override = 1 AND source = 'manual'
+        ORDER BY term ASC
+      `);
+      const rows = stmt.all();
+      stmt.finalize();
+
+      const customJsonPath = path.join(__dirname, '../data/custom_pronunciations.json');
+      const dir = path.dirname(customJsonPath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(customJsonPath, JSON.stringify(rows, null, 2), 'utf8');
+      console.log(`[db.js] Synced ${rows.length} custom pronunciations to ${customJsonPath}`);
+    } catch (err) {
+      console.error("[db.js] Error syncing custom phonemes to JSON:", err.message);
     }
   }
 };

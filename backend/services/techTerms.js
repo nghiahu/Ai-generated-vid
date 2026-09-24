@@ -103,7 +103,7 @@ const TECH_TERMS_TRANSLITERATION = {
   'course': 'cót',
   'cpar': 'si-pi-ei-a',
   'cplusplus': 'xi cộng cộng',
-  'cpu': 'xê-pi-diu',
+  'cpu': 'xê-bê-u',
   'cr': 'c-rờ',
   'credit': 'cờ-ré-đít',
   'csharp': 'xi sáp',

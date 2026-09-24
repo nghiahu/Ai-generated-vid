@@ -14,6 +14,7 @@ import { EmberSparksOverlay } from "../components/overlays/EmberSparksOverlay";
 import { LightLeaksOverlay } from "../components/overlays/LightLeaksOverlay";
 import { fontOutfit } from "../styles/fonts";
 import { getVDETokens, registerCompiledTokens } from "../styles/vdeTokens";
+import { CyberMatrixBg } from "../components/CyberMatrixBg";
 
 // Self-contained mockup components for common Lucide icons
 const LucideIconsMock: any = {
@@ -254,18 +255,13 @@ export const getThemeBgStyle = (themeName = "glassmorphism") => {
 
 export const getBgmAsset = (bgmName: string) => {
   switch (bgmName) {
-    case "Chill Lofi Beats":
-      return staticFile("bgm/chill-lofi.mp3");
-    case "Tech Ambient":
-      return staticFile("bgm/tech-ambient.mp3");
-    case "Energy Beats":
-      return staticFile("bgm/energy-beats.mp3");
+    case "Pop Energetic":
+      return staticFile("bgm/pop-energetic.mp3");
+    case "Upbeat Rock":
+      return staticFile("bgm/upbeat-rock.mp3");
     case "Rikkei Theme":
-      return staticFile("bgm/rikkei-nhac-nen.mp3");
-    case "Crown of Ashes":
-      return staticFile("bgm/crown-of-ashes.mp3");
     default:
-      return staticFile("bgm/chill-lofi.mp3");
+      return staticFile("bgm/rikkei-nhac-nen.mp3");
   }
 };
 
@@ -330,15 +326,20 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
   const isRikkei = vdeStyle.includes("rikkei") || vdeStyle.includes("academic");
   const isLightTheme = isRikkei || vdeStyle.includes("light") || vdeStyle.includes("claude") || vdeStyle === "minimal" || vdeStyle === "ba";
   const isFintechEdu = vdeStyle.includes("fintech");
-  const hasOverlayEffects = !isLightTheme && vdeStyle !== "apple" && !isFintechEdu;
+  const isCyberSecurity = vdeStyle.includes("cyber_security") || vdeStyle.includes("security") || vdeStyle.includes("cyber");
+  const hasOverlayEffects = !isLightTheme && vdeStyle !== "apple" && !isFintechEdu && !isCyberSecurity;
   const bgStyle = {
     background: vdeTokens.colors.background || (isLightTheme ? "linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)" : "#030712")
   };
 
   return (
     <AbsoluteFill style={{ ...bgStyle, overflow: "hidden" }}>
+      {/* Permanent Continuous Ambient Background Layer for Cyber Security */}
+      {isCyberSecurity && (
+        <CyberMatrixBg glowColor="#00b0ea" accentColor="#66efff" />
+      )}
       {/* Permanent Continuous Ambient Background Layer for Dark Themes (Zero Flash) */}
-      {!isLightTheme && !isFintechEdu && (
+      {!isLightTheme && !isFintechEdu && !isCyberSecurity && (
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
           <div style={{
             position: "absolute",

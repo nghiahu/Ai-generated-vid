@@ -59,15 +59,20 @@ export const getThemeStyles = (themeName: string, accentColor: string): ThemeSty
 
   // Title styles per VDE style
   const isSerif = tokens.fonts?.title.includes("Playfair") || tokens.fonts?.title.includes("Lora") || tokens.fonts?.title.includes("Georgia") || tokens.fonts?.title.includes("serif");
-  const isCyberpunk = themeName.includes("cyberpunk") || themeName.includes("neon") || themeName.includes("ai_driven") || themeName.includes("fintech_edu") || themeName.includes("students_2k9") || themeName.includes("2k9");
+  const isCyberpunk = themeName.includes("cyberpunk") || themeName.includes("neon") || themeName.includes("ai_driven") || themeName.includes("fintech_edu") || themeName.includes("students_2k9") || themeName.includes("2k9") || themeName.includes("cyber_security") || themeName.includes("security");
+  const isCyberSecurity = themeName.includes("cyber_security") || themeName.includes("security") || themeName.includes("cyber");
   const titleStyle: React.CSSProperties = {
-    color: tokens.colors?.text || "#ffffff",
+    color: isCyberSecurity ? undefined : (tokens.colors?.text || "#ffffff"),
+    background: isCyberSecurity ? "linear-gradient(135deg, #00b0ea 0%, #66efff 100%)" : undefined,
+    WebkitBackgroundClip: isCyberSecurity ? "text" : undefined,
+    WebkitTextFillColor: isCyberSecurity ? "transparent" : undefined,
     fontFamily,
     fontWeight: isSerif ? 700 : 900,
     textTransform: "uppercase",
     letterSpacing: "-0.01em",
     margin: 0,
-    textShadow: isCyberpunk && tokens.shadow && tokens.shadow !== "none"
+    filter: isCyberSecurity ? "drop-shadow(0 0 15px rgba(0, 176, 234, 0.45))" : undefined,
+    textShadow: !isCyberSecurity && isCyberpunk && tokens.shadow && tokens.shadow !== "none"
       ? `0 0 25px ${accentColor}aa, 0 0 10px ${accentColor}55`
       : "none"
   };

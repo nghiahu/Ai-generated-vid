@@ -16,6 +16,7 @@ import { getLayoutById } from "./index";
 import { getVDETokens } from "../../styles/vdeTokens";
 import { AICodeLayout } from "./modes/AICodeLayout";
 import { CircuitBoardBg } from "../../components/CircuitBoardBg";
+import { CyberMatrixBg } from "../../components/CyberMatrixBg";
 
 const hexToRgb = (hex: string): string => {
   let cleaned = hex.trim();
@@ -87,6 +88,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
     const isRikkei = theme === "rikkei";
     const isAiHubGrid = theme === "ai_hub_grid";
     const isFintechEdu = theme === "fintech_edu" || (theme && theme.includes("fintech"));
+    const isCyberSecurity = theme === "cyber_security" || (theme && theme.includes("cyber"));
 
     // Resolve final background image (scene-specific bgImageUrl or project-wide globalBgImage)
     const globalBgImage = config?.bgImage;
@@ -114,6 +116,14 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
 
 
     // Default generated background when NO user image is uploaded
+    if (isCyberSecurity) {
+      return (
+        <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
+          <CyberMatrixBg glowColor="#00b0ea" accentColor="#66efff" />
+        </AbsoluteFill>
+      );
+    }
+
     if (isFintechEdu) {
       return (
         <AbsoluteFill style={{ position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>

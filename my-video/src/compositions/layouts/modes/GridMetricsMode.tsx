@@ -93,7 +93,7 @@ export const GridMetricsMode: React.FC<ModeRendererProps> = ({
               }
           : {};
 
-        const isAIDriven = theme === "ai_driven" || theme?.includes("ai_driven");
+        const isAIDriven = theme === "ai_driven" || theme?.includes("ai_driven") || theme === "cyber_security" || theme?.includes("cyber");
         const cardStyle: React.CSSProperties = {
           borderRadius: itemStyleSetting.borderRadius || "28px",
           padding: resolvePadding(itemStyleSetting.padding || "28px", paddingScale),

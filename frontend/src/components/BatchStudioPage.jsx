@@ -128,6 +128,22 @@ const VDE_PRESET_STYLES = [
       shadow: "0 10px 30px rgba(11, 25, 44, 0.25)",
       fontFamily: "Montserrat, sans-serif"
     }
+  },
+  {
+    id: "cyber_security",
+    name: "Cyber Security — Digital Grid",
+    description: "Phong cách An ninh mạng & Quản trị hệ thống: Nền Deep Cyber Dark, lưới ma trận số 10101 tuôn chảy, viền Neon Cyan phát sáng rực rỡ và thẻ kính mờ công nghệ.",
+    tokens: {
+      background: "linear-gradient(180deg, #01080F 0%, #02121D 40%, #031E2B 75%, #010C14 100%)",
+      cardBg: "linear-gradient(135deg, rgba(3, 24, 38, 0.85) 0%, rgba(2, 13, 22, 0.92) 100%)",
+      border: "1.5px solid rgba(0, 176, 234, 0.7)",
+      text: "#66efff",
+      textSecondary: "rgba(180, 235, 255, 0.85)",
+      accent: "#00b0ea",
+      radius: "14px",
+      shadow: "0 0 35px rgba(0, 176, 234, 0.35)",
+      fontFamily: "Chakra Petch, sans-serif"
+    }
   }
 ];
 
@@ -185,6 +201,7 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onOpenPronunciat
   const [uploading, setUploading] = useState(false);
   const [activeSlotId, setActiveSlotId] = useState(null);
   const [mediaModalContext, setMediaModalContext] = useState("content"); // "content" | "background"
+  const [hoveredMedia, setHoveredMedia] = useState(null);
 
   // Fetch VDE Themes on mount
   useEffect(() => {
@@ -224,43 +241,73 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onOpenPronunciat
   const updateSlot = (id, updates) =>
     setSlots(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      setUploading(true);
-      try {
-        const res = await axios.post("http://localhost:5000/api/upload", { file: reader.result });
-        if (res.data && res.data.url) {
-          const uploadedUrl = res.data.url.trim();
-          
-          if (activeSlotId) {
-            setSlots(prev => prev.map(slot => {
-              if (slot.id !== activeSlotId) return slot;
-              if (mediaModalContext === "content") {
-                const list = slot.selectedMedia || [];
-                return { ...slot, selectedMedia: Array.from(new Set([...list, uploadedUrl])) };
-              } else if (mediaModalContext === "background") {
-                const list = slot.selectedBgMedia || [];
-                return { ...slot, selectedBgMedia: Array.from(new Set([...list, uploadedUrl])) };
-              } else {
-                return { ...slot, selectedCtaMedia: [uploadedUrl] };
-              }
-            }));
-          }
+  const handleFileUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    setUploading(true);
 
-          setPreviousMedia(prev => Array.from(new Set([uploadedUrl, ...prev])));
-          setMediaTab("YOUR_MEDIA");
+    const uploadedUrls = [];
+    try {
+      for (const file of files) {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        const res = await axios.post("http://localhost:5000/api/upload", {
+          file: base64,
+          filename: file.name
+        });
+
+        if (res.data && res.data.url) {
+          uploadedUrls.push(res.data.url.trim());
         }
-      } catch (err) {
-        console.error("Upload failed:", err);
-        alert("Không thể tải ảnh lên: " + (err.response?.data?.error || err.message));
-      } finally {
-        setUploading(false);
       }
-    };
-    reader.readAsDataURL(file);
+
+      if (uploadedUrls.length > 0) {
+        if (activeSlotId) {
+          setSlots(prev => prev.map(slot => {
+            if (slot.id !== activeSlotId) return slot;
+            if (mediaModalContext === "content") {
+              const list = slot.selectedMedia || [];
+              return { ...slot, selectedMedia: Array.from(new Set([...list, ...uploadedUrls])) };
+            } else if (mediaModalContext === "background") {
+              const list = slot.selectedBgMedia || [];
+              return { ...slot, selectedBgMedia: Array.from(new Set([...list, ...uploadedUrls])) };
+            } else {
+              return { ...slot, selectedCtaMedia: [uploadedUrls[uploadedUrls.length - 1]] };
+            }
+          }));
+        }
+
+        setPreviousMedia(prev => Array.from(new Set([...uploadedUrls, ...prev])));
+        setMediaTab("YOUR_MEDIA");
+      }
+    } catch (err) {
+      console.error("Local upload failed:", err);
+      alert("Không thể lưu ảnh vào máy: " + (err.response?.data?.error || err.message));
+    } finally {
+      setUploading(false);
+      if (e.target) e.target.value = "";
+    }
+  };
+
+  const handleDeleteMedia = async (url, e) => {
+    if (e) e.stopPropagation();
+    try {
+      setPreviousMedia(prev => prev.filter(item => item !== url));
+      setSlots(prev => prev.map(slot => ({
+        ...slot,
+        selectedMedia: (slot.selectedMedia || []).filter(u => u !== url),
+        selectedBgMedia: (slot.selectedBgMedia || []).filter(u => u !== url),
+        selectedCtaMedia: (slot.selectedCtaMedia || []).filter(u => u !== url)
+      })));
+      await axios.post("http://localhost:5000/api/media/delete", { url });
+    } catch (err) {
+      console.error("Failed to delete media:", err);
+    }
   };
 
   const handleStockSearch = async () => {
@@ -491,7 +538,23 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onOpenPronunciat
                     {previousMedia.map((url, idx) => {
                       const isSelected = activeMediaList.includes(url);
                       return (
-                        <div key={idx} onClick={() => handleToggleSelectMedia(url)} style={{ position: "relative", width: "100%", paddingTop: "100%", borderRadius: "12px", overflow: "hidden", cursor: "pointer", border: isSelected ? "3px solid #3b82f6" : "1px solid rgba(15,23,42,0.08)", boxShadow: isSelected ? "0 4px 12px rgba(59,130,246,0.15)" : "none", transition: "all 0.2s ease" }}>
+                        <div
+                          key={idx}
+                          onClick={() => handleToggleSelectMedia(url)}
+                          onMouseEnter={() => setHoveredMedia(url)}
+                          onMouseLeave={() => setHoveredMedia(null)}
+                          style={{
+                            position: "relative",
+                            width: "100%",
+                            paddingTop: "100%",
+                            borderRadius: "12px",
+                            overflow: "hidden",
+                            cursor: "pointer",
+                            border: isSelected ? "3px solid #3b82f6" : "1px solid rgba(15,23,42,0.08)",
+                            boxShadow: isSelected ? "0 4px 12px rgba(59,130,246,0.15)" : "none",
+                            transition: "all 0.2s ease"
+                          }}
+                        >
                           {url.toLowerCase().includes("/video/upload/") || /\.(mp4|webm|ogg|mov|avi|flv|mkv)$/i.test(url.toLowerCase()) ? (
                             <video
                               src={url.startsWith("http") ? url : `http://localhost:5000${url}`}
@@ -521,6 +584,38 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onOpenPronunciat
                               }}
                             />
                           )}
+                          {/* Hover Red X Delete Button */}
+                          {hoveredMedia === url && (
+                            <button
+                              type="button"
+                              title="Xóa ảnh khỏi kho"
+                              onClick={(e) => handleDeleteMedia(url, e)}
+                              style={{
+                                position: "absolute",
+                                top: "8px",
+                                left: "8px",
+                                width: "24px",
+                                height: "24px",
+                                borderRadius: "50%",
+                                backgroundColor: "#ef4444",
+                                color: "#ffffff",
+                                border: "none",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "12px",
+                                fontWeight: "bold",
+                                cursor: "pointer",
+                                boxShadow: "0 2px 6px rgba(239, 68, 68, 0.45)",
+                                zIndex: 10,
+                                transition: "transform 0.15s ease"
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.15)"}
+                              onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                            >
+                              ✕
+                            </button>
+                          )}
                           {isSelected && <div style={{ position: "absolute", top: "8px", right: "8px", backgroundColor: "#3b82f6", color: "#ffffff", borderRadius: "50%", width: "20px", height: "20px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "bold" }}>✓</div>}
                         </div>
                       );
@@ -533,20 +628,20 @@ export const BatchStudioPage = ({ sharedConfig, onConfigChange, onOpenPronunciat
             {mediaTab === "UPLOAD" && (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", minHeight: "300px" }}>
                 <div onClick={() => document.getElementById("media-modal-upload-input").click()} style={{ width: "100%", maxWidth: "500px", border: "2px dashed #cbd5e1", borderRadius: "16px", padding: "48px 24px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", backgroundColor: "#f8fafc", transition: "all 0.2s ease" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#3b82f6"; e.currentTarget.style.backgroundColor = "#f0f9ff"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#cbd5e1"; e.currentTarget.style.backgroundColor = "#f8fafc"; }}>
-                  <input type="file" id="media-modal-upload-input" accept={mediaModalContext === "cta" ? "image/*,video/*" : "image/*"} onChange={handleFileUpload} style={{ display: "none" }} />
+                  <input type="file" id="media-modal-upload-input" multiple accept={mediaModalContext === "cta" ? "image/*,video/*" : "image/*"} onChange={handleFileUpload} style={{ display: "none" }} />
                   {uploading ? (
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <div style={{ width: "30px", height: "30px", border: "3px solid #cbd5e1", borderTop: "3px solid #3b82f6", borderRadius: "50%", animation: "spin 1s linear infinite", marginBottom: "12px" }} />
                       <span style={{ fontSize: "14px", fontWeight: "600", color: "#64748b" }}>
-                        {mediaModalContext === "cta" ? "Đang tải file lên Cloudinary..." : "Đang tải ảnh lên Cloudinary..."}
+                        Đang lưu file vào máy tính...
                       </span>
                     </div>
                   ) : (
                     <div style={{ textAlign: "center" }}>
-                      <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>☁️</span>
-                      <span style={{ fontSize: "15px", fontWeight: "700", color: "#334155", display: "block", marginBottom: "4px" }}>Click to upload files</span>
+                      <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>💻</span>
+                      <span style={{ fontSize: "15px", fontWeight: "700", color: "#334155", display: "block", marginBottom: "4px" }}>Chọn file từ máy tính</span>
                       <span style={{ fontSize: "12px", color: "#64748b" }}>
-                        {mediaModalContext === "cta" ? "Supports JPG, PNG, GIF, MP4 up to 10MB" : "Supports JPG, PNG, GIF up to 5MB"}
+                        {mediaModalContext === "cta" ? "Hỗ trợ JPG, PNG, GIF, MP4 (chọn nhiều file)" : "Hỗ trợ JPG, PNG, GIF, WEBP (chọn nhiều file)"}
                       </span>
                     </div>
                   )}

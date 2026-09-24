@@ -50,7 +50,7 @@ export const RemotionRoot: React.FC = () => {
           ] as SceneData[],
           config: {
             voice: "rachel",
-            backgroundMusic: "Chill Lofi Beats",
+            backgroundMusic: "Rikkei Theme",
             backgroundMusicVolume: 0.025,
             watermark: { enabled: true, text: "yupclip.com", position: "top-right", color: "#000000" }
           }

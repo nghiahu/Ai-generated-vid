@@ -95,7 +95,7 @@ export const SplitHorizontalMode: React.FC<ModeRendererProps> = ({
       : (isLeft ? -2.2 : 2.2);
     const pos = resolvedPositions[cardIdx % resolvedPositions.length];
 
-    const isAIDriven = theme === "ai_driven" || theme?.includes("ai_driven");
+    const isAIDriven = theme === "ai_driven" || theme?.includes("ai_driven") || theme === "cyber_security" || theme?.includes("cyber");
     const cardStyle: React.CSSProperties = {
       minHeight: isVertical ? "340px" : "400px",
       borderRadius: itemStyleSetting.borderRadius || "34px",

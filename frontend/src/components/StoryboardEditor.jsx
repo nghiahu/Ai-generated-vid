@@ -463,6 +463,22 @@ const VDE_PRESET_STYLES = [
       shadow: "0 10px 30px rgba(11, 25, 44, 0.25)",
       fontFamily: "Montserrat, sans-serif"
     }
+  },
+  {
+    id: "cyber_security",
+    name: "Cyber Security — Digital Grid",
+    description: "Phong cách An ninh mạng & Quản trị hệ thống: Nền Deep Cyber Dark, lưới ma trận số 10101 tuôn chảy, viền Neon Cyan phát sáng rực rỡ và thẻ kính mờ công nghệ.",
+    tokens: {
+      background: "linear-gradient(180deg, #01080F 0%, #02121D 40%, #031E2B 75%, #010C14 100%)",
+      cardBg: "linear-gradient(135deg, rgba(3, 24, 38, 0.85) 0%, rgba(2, 13, 22, 0.92) 100%)",
+      border: "1.5px solid rgba(0, 176, 234, 0.7)",
+      text: "#66efff",
+      textSecondary: "rgba(180, 235, 255, 0.85)",
+      accent: "#00b0ea",
+      radius: "14px",
+      shadow: "0 0 35px rgba(0, 176, 234, 0.35)",
+      fontFamily: "Chakra Petch, sans-serif"
+    }
   }
 ];
 
@@ -688,6 +704,7 @@ export const StoryboardEditor = ({
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiGeneratedImages, setAiGeneratedImages] = useState([]);
   const [aiImageError, setAiImageError] = useState("");
+  const [hoveredMedia, setHoveredMedia] = useState(null);
 
 
   useEffect(() => {
@@ -837,6 +854,18 @@ export const StoryboardEditor = ({
     });
   };
 
+  const handleDeleteMedia = async (url, e) => {
+    if (e) e.stopPropagation();
+    try {
+      setPreviousMedia(prev => prev.filter(item => item !== url));
+      setModalSelectedMedia(prev => prev.filter(item => item !== url));
+      if (selectedCtaMedia === url) setSelectedCtaMedia(null);
+      await axios.post("http://localhost:5000/api/media/delete", { url });
+    } catch (err) {
+      console.error("Failed to delete media:", err);
+    }
+  };
+
   const handleStockSearch = async () => {
     if (!stockQuery.trim()) return;
     try {
@@ -847,32 +876,47 @@ export const StoryboardEditor = ({
     }
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      setUploading(true);
-      try {
-        const res = await axios.post("http://localhost:5000/api/upload", { file: reader.result });
+  const handleFileUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    setUploading(true);
+
+    const uploadedUrls = [];
+    try {
+      for (const file of files) {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        const res = await axios.post("http://localhost:5000/api/upload", {
+          file: base64,
+          filename: file.name
+        });
+
         if (res.data && res.data.url) {
-          const uploadedUrl = res.data.url.trim();
-          if (mediaModalContext === 'project-cta-list') {
-            setModalSelectedMedia([uploadedUrl]);
-          } else {
-            setModalSelectedMedia(prev => Array.from(new Set([...prev, uploadedUrl])));
-          }
-          setPreviousMedia(prev => Array.from(new Set([uploadedUrl, ...prev])));
-          setMediaTab("YOUR_MEDIA");
+          uploadedUrls.push(res.data.url.trim());
         }
-      } catch (err) {
-        console.error("Upload failed:", err);
-        alert("Không thể tải ảnh lên: " + (err.response?.data?.error || err.message));
-      } finally {
-        setUploading(false);
       }
-    };
-    reader.readAsDataURL(file);
+
+      if (uploadedUrls.length > 0) {
+        if (mediaModalContext === 'project-cta-list') {
+          setModalSelectedMedia([uploadedUrls[uploadedUrls.length - 1]]);
+        } else {
+          setModalSelectedMedia(prev => Array.from(new Set([...prev, ...uploadedUrls])));
+        }
+        setPreviousMedia(prev => Array.from(new Set([...uploadedUrls, ...prev])));
+        setMediaTab("YOUR_MEDIA");
+      }
+    } catch (err) {
+      console.error("Local upload failed:", err);
+      alert("Không thể lưu ảnh vào máy: " + (err.response?.data?.error || err.message));
+    } finally {
+      setUploading(false);
+      if (e.target) e.target.value = "";
+    }
   };
 
   const [searchQueries, setSearchQueries] = useState({});
@@ -1255,6 +1299,8 @@ export const StoryboardEditor = ({
                         <div
                           key={idx}
                           onClick={() => handleToggleSelectMedia(url)}
+                          onMouseEnter={() => setHoveredMedia(url)}
+                          onMouseLeave={() => setHoveredMedia(null)}
                           style={{
                             position: "relative",
                             width: "100%",
@@ -1295,6 +1341,38 @@ export const StoryboardEditor = ({
                                 objectFit: "cover"
                               }}
                             />
+                          )}
+                          {/* Hover Red X Delete Button */}
+                          {hoveredMedia === url && (
+                            <button
+                              type="button"
+                              title="Xóa ảnh khỏi kho"
+                              onClick={(e) => handleDeleteMedia(url, e)}
+                              style={{
+                                position: "absolute",
+                                top: "8px",
+                                left: "8px",
+                                width: "24px",
+                                height: "24px",
+                                borderRadius: "50%",
+                                backgroundColor: "#ef4444",
+                                color: "#ffffff",
+                                border: "none",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "12px",
+                                fontWeight: "bold",
+                                cursor: "pointer",
+                                boxShadow: "0 2px 6px rgba(239, 68, 68, 0.45)",
+                                zIndex: 10,
+                                transition: "transform 0.15s ease"
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.15)"}
+                              onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                            >
+                              ✕
+                            </button>
                           )}
                           {isSelected && (
                             <div style={{
@@ -1353,6 +1431,7 @@ export const StoryboardEditor = ({
                   <input
                     type="file"
                     id="media-modal-upload-input"
+                    multiple
                     accept={
                       mediaModalContext === 'project-cta-list' || mediaModalContext === 'cta'
                         ? "image/*,video/*"
@@ -1365,19 +1444,17 @@ export const StoryboardEditor = ({
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <div style={{ width: "30px", height: "30px", border: "3px solid #cbd5e1", borderTop: "3px solid #3b82f6", borderRadius: "50%", animation: "spin 1s linear infinite", marginBottom: "12px" }} />
                       <span style={{ fontSize: "14px", fontWeight: "600", color: "#64748b" }}>
-                        {mediaModalContext === 'project-cta-list' || mediaModalContext === 'cta'
-                          ? "Đang tải file lên Cloudinary..."
-                          : "Đang tải ảnh lên Cloudinary..."}
+                        Đang lưu file vào máy tính...
                       </span>
                     </div>
                   ) : (
                     <div style={{ textAlign: "center" }}>
-                      <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>☁️</span>
-                      <span style={{ fontSize: "15px", fontWeight: "700", color: "#334155", display: "block", marginBottom: "4px" }}>Click to upload files</span>
+                      <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>💻</span>
+                      <span style={{ fontSize: "15px", fontWeight: "700", color: "#334155", display: "block", marginBottom: "4px" }}>Chọn file từ máy tính</span>
                       <span style={{ fontSize: "12px", color: "#64748b" }}>
                         {mediaModalContext === 'project-cta-list' || mediaModalContext === 'cta'
-                          ? "Supports JPG, PNG, GIF, MP4 up to 10MB"
-                          : "Supports JPG, PNG, GIF up to 5MB"}
+                          ? "Hỗ trợ JPG, PNG, GIF, MP4 (chọn nhiều file)"
+                          : "Hỗ trợ JPG, PNG, GIF, WEBP (chọn nhiều file)"}
                       </span>
                     </div>
                   )}

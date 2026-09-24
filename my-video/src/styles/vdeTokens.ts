@@ -125,6 +125,26 @@ export function getVDETokens(styleName?: string): VDETokens {
     };
   }
 
+  if (name.includes("cyber_security") || name.includes("cyber-security") || name.includes("cyber_sec")) {
+    return {
+      ...(tokens || VDE_TOKENS.cyber_security),
+      colors: {
+        background: "linear-gradient(180deg, #01080F 0%, #02121D 40%, #031E2B 75%, #010C14 100%)",
+        cardBg: "linear-gradient(135deg, rgba(3, 24, 38, 0.85) 0%, rgba(2, 13, 22, 0.92) 100%)",
+        border: "1.5px solid rgba(0, 176, 234, 0.7)",
+        accent: "#00b0ea",
+        text: "#66efff",
+        textSecondary: "rgba(180, 235, 255, 0.85)"
+      },
+      fonts: {
+        title: "Chakra Petch",
+        body: "Be Vietnam Pro"
+      },
+      shadow: "0 0 35px rgba(0, 176, 234, 0.35), 0 0 70px rgba(102, 239, 255, 0.15)",
+      radius: "14px"
+    };
+  }
+
   if (name.includes("ba")) {
     return {
       ...(tokens || VDE_TOKENS.ba),

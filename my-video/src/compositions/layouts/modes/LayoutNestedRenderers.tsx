@@ -59,7 +59,7 @@ export const resolveItemColors = ({
   theme
 }: ColorResolutionParams & { theme?: string }) => {
   const isAccent = item?.useAccentBg;
-  const isAIDriven = theme === "ai_driven" || theme?.includes("ai_driven");
+  const isAIDriven = theme === "ai_driven" || theme?.includes("ai_driven") || theme === "cyber_security" || theme?.includes("cyber");
   const fallbackBg = isAccent
     ? (isAIDriven
         ? "linear-gradient(135deg, rgba(0, 15, 60, 0.85) 0%, rgba(0, 8, 36, 0.95) 100%)"

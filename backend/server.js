@@ -41,9 +41,18 @@ const PORT = process.env.PORT || 5000;
 // Enable CORS for frontend requests
 app.use(cors());
 
-// Parse JSON request bodies with increased limit for base64 images
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+// Parse JSON request bodies with increased limit for base64 local images and videos
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Local storage paths
+const UPLOADS_DIR = path.join(__dirname, 'public/uploads');
+const LOCAL_MEDIA_DIR = path.join(__dirname, '../media_local');
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+if (!fs.existsSync(LOCAL_MEDIA_DIR)) fs.mkdirSync(LOCAL_MEDIA_DIR, { recursive: true });
+
+app.use('/uploads', express.static(UPLOADS_DIR));
+app.use('/media_local', express.static(LOCAL_MEDIA_DIR));
 
 // Serve downloads directory with optional forced download parameter (?download=1)
 app.get('/downloads/:filename', (req, res) => {
@@ -281,61 +290,152 @@ app.get('/api/media/search', async (req, res) => {
   res.json([]);
 });
 
-// 5b. POST /api/upload: Upload base64 image to Cloudinary
+// 5b. POST /api/upload: Upload media directly to local storage (100% offline, zero cloud dependency)
 app.post('/api/upload', async (req, res) => {
   try {
-    const { file, isLogo } = req.body;
+    const { file, isLogo, filename: requestedName } = req.body;
     if (!file) {
-      return res.status(400).json({ error: 'Data URL image string is required' });
+      return res.status(400).json({ error: 'Data URL image/video string is required' });
     }
 
-    // Retry helper with exponential backoff for transient network errors (ECONNRESET, etc.)
-    const uploadWithRetry = async (maxAttempts = 3) => {
-      let lastError;
-      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        try {
-          const result = await cloudinary.uploader.upload(file, {
-            folder: 'ai-video-storyboards',
-            resource_type: 'auto',
-            timeout: 120000 // 2 min timeout
-          });
-          return result;
-        } catch (err) {
-          lastError = err;
-          const isRetryable = err.code === 'ECONNRESET' || err.code === 'ETIMEDOUT' || err.code === 'ECONNREFUSED' || err.message?.includes('socket hang up');
-          if (!isRetryable || attempt === maxAttempts) throw err;
-          const delay = attempt * 1500; // 1.5s, 3s
-          console.warn(`[Cloudinary] Attempt ${attempt} failed (${err.code}), retrying in ${delay}ms...`);
-          await new Promise(resolve => setTimeout(resolve, delay));
-        }
-      }
-      throw lastError;
-    };
+    // Parse data URL: data:image/png;base64,iVBORw... or data:video/mp4;base64,...
+    const matches = file.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    let buffer;
+    let ext = 'jpg';
 
-    const result = await uploadWithRetry(3);
-    const secureUrl = result.secure_url;
+    if (matches && matches.length === 3) {
+      const mimeType = matches[1].toLowerCase();
+      buffer = Buffer.from(matches[2], 'base64');
+      if (mimeType.includes('png')) ext = 'png';
+      else if (mimeType.includes('gif')) ext = 'gif';
+      else if (mimeType.includes('webp')) ext = 'webp';
+      else if (mimeType.includes('mp4')) ext = 'mp4';
+      else if (mimeType.includes('quicktime') || mimeType.includes('mov')) ext = 'mov';
+      else if (mimeType.includes('webm')) ext = 'webm';
+      else if (mimeType.includes('svg')) ext = 'svg';
+      else if (mimeType.includes('jpeg') || mimeType.includes('jpg')) ext = 'jpg';
+    } else {
+      buffer = Buffer.from(file, 'base64');
+    }
+
+    const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    let finalFilename;
+    if (requestedName) {
+      const baseClean = path.basename(requestedName).replace(/[^a-zA-Z0-9._-]/g, '_');
+      finalFilename = `${Date.now()}_${baseClean}`;
+    } else {
+      finalFilename = `media_${uniqueId}.${ext}`;
+    }
+
+    const targetPath = path.join(UPLOADS_DIR, finalFilename);
+    fs.writeFileSync(targetPath, buffer);
+    console.log(`[Local Upload] Saved file to local disk: ${targetPath} (${(buffer.length / 1024).toFixed(1)} KB)`);
+
+    const localUrl = `http://localhost:5000/uploads/${finalFilename}`;
 
     // Only persist uploaded image in database as general media if it is NOT a watermark logo
     if (!isLogo) {
-      await db.saveUploadedMedia(secureUrl);
+      await db.saveUploadedMedia(localUrl);
     }
 
-    res.json({ url: secureUrl });
+    res.json({ url: localUrl });
   } catch (error) {
-    console.error('Cloudinary upload failure:', error);
-    res.status(500).json({ error: `Cloudinary upload failed: ${error.message}` });
+    console.error('Local upload failure:', error);
+    res.status(500).json({ error: `Local upload failed: ${error.message}` });
   }
 });
 
-// 5c. GET /api/media/previous: Retrieve all user-uploaded media
+// 5c. GET /api/media/previous: Retrieve all user media from local disk folders and database
 app.get('/api/media/previous', async (req, res) => {
   try {
-    const uploadedMedia = await db.getUploadedMedia();
-    const urls = uploadedMedia
+    const mediaSet = new Set();
+    const mediaWithStats = [];
+
+    // Helper to scan a directory for images & videos
+    const scanDir = (dirPath, urlPrefix) => {
+      if (!fs.existsSync(dirPath)) return;
+      try {
+        const files = fs.readdirSync(dirPath);
+        const validExts = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.mp4', '.mov', '.webm']);
+        files.forEach(file => {
+          const ext = path.extname(file).toLowerCase();
+          if (validExts.has(ext)) {
+            const fullPath = path.join(dirPath, file);
+            try {
+              const stat = fs.statSync(fullPath);
+              if (stat.isFile()) {
+                const url = `${urlPrefix}/${file}`;
+                mediaWithStats.push({ url, mtime: stat.mtimeMs });
+              }
+            } catch (e) {}
+          }
+        });
+      } catch (err) {
+        console.warn(`[Local Media] Warning reading directory ${dirPath}:`, err.message);
+      }
+    };
+
+    // 1. Scan backend/public/uploads
+    scanDir(UPLOADS_DIR, 'http://localhost:5000/uploads');
+
+    // 2. Scan project root media_local/
+    scanDir(LOCAL_MEDIA_DIR, 'http://localhost:5000/media_local');
+
+    // Sort scanned local files by newest first
+    mediaWithStats.sort((a, b) => b.mtime - a.mtime);
+    mediaWithStats.forEach(item => mediaSet.add(item.url));
+
+    // 3. Merge with database-tracked media
+    const dbMedia = await db.getUploadedMedia();
+    dbMedia
       .filter(url => url && typeof url === 'string')
-      .map(url => url.trim());
-    res.json(Array.from(new Set(urls)));
+      .map(url => url.trim())
+      .forEach(url => mediaSet.add(url));
+
+    res.json(Array.from(mediaSet));
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 5c2. POST /api/media/delete: Delete media from database and remove physical file if stored locally
+app.post('/api/media/delete', async (req, res) => {
+  try {
+    const { url } = req.body;
+    if (!url) {
+      return res.status(400).json({ error: 'Media URL is required' });
+    }
+
+    // 1. Remove from database
+    await db.deleteUploadedMedia(url);
+
+    // 2. If it's a local file in UPLOADS_DIR or LOCAL_MEDIA_DIR, delete it from disk
+    try {
+      const parsed = new URL(url.startsWith('http') ? url : `http://localhost:5000${url}`);
+      const pathname = parsed.pathname; // e.g. /uploads/filename.jpg or /media_local/filename.jpg
+      
+      if (pathname.startsWith('/uploads/')) {
+        const filename = path.basename(pathname);
+        const targetPath = path.join(UPLOADS_DIR, filename);
+        if (fs.existsSync(targetPath)) {
+          fs.unlinkSync(targetPath);
+          console.log(`[Media Delete] Deleted local file from uploads: ${targetPath}`);
+        }
+      } else if (pathname.startsWith('/media_local/')) {
+        const filename = path.basename(pathname);
+        const targetPath = path.join(LOCAL_MEDIA_DIR, filename);
+        if (fs.existsSync(targetPath)) {
+          fs.unlinkSync(targetPath);
+          console.log(`[Media Delete] Deleted local file from media_local: ${targetPath}`);
+        }
+      }
+    } catch (parseErr) {
+      console.warn('[Media Delete] Could not parse URL or delete disk file:', parseErr.message);
+    }
+
+    res.json({ success: true, url });
+  } catch (error) {
+    console.error('[Media Delete] Error:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
@@ -374,20 +474,22 @@ app.post('/api/media/generate-ai-image', async (req, res) => {
       return imagePart.inlineData;
     };
 
-    // Generate sequentially to avoid quota burst
+    // Generate sequentially to avoid quota burst, save directly to local disk
     const uploadedUrls = [];
     for (let i = 0; i < imageCount; i++) {
       try {
         const inlineData = await generateOne();
         const { data: b64, mimeType } = inlineData;
-        const dataUrl = `data:${mimeType || 'image/png'};base64,${b64}`;
-        const uploadResult = await cloudinary.uploader.upload(dataUrl, {
-          folder: 'ai-generated-images',
-          resource_type: 'image'
-        });
-        await db.saveUploadedMedia(uploadResult.secure_url);
-        uploadedUrls.push(uploadResult.secure_url);
-        console.log(`[AI Image] Generated image ${i + 1}/${imageCount}`);
+        const ext = (mimeType && mimeType.includes('jpeg')) ? 'jpg' : 'png';
+        const buffer = Buffer.from(b64, 'base64');
+        const filename = `ai_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+        const targetPath = path.join(UPLOADS_DIR, filename);
+        fs.writeFileSync(targetPath, buffer);
+
+        const localUrl = `http://localhost:5000/uploads/${filename}`;
+        await db.saveUploadedMedia(localUrl);
+        uploadedUrls.push(localUrl);
+        console.log(`[AI Image] Saved local image ${i + 1}/${imageCount} to ${targetPath}`);
       } catch (err) {
         console.warn(`[AI Image] Image ${i + 1} failed:`, err.message);
         // Stop if quota exceeded

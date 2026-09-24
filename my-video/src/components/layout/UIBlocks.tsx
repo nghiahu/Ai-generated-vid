@@ -27,6 +27,28 @@ export const highlightHeadingText = (text: string, accentColor: string, theme?: 
   return parts.map((part, index) => {
     const isMatch = sortedKeywords.some(k => k.toLowerCase() === part.toLowerCase());
     if (isMatch) {
+      if (theme === "cyber_security" || theme?.includes("cyber")) {
+        return (
+          <span 
+            key={index} 
+            style={{ 
+              background: "linear-gradient(135deg, #00b0ea 0%, #66efff 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              filter: "drop-shadow(0 0 12px rgba(0, 176, 234, 0.45))",
+              fontWeight: 900,
+              display: "inline-block",
+              paddingTop: "0.15em",
+              marginTop: "-0.15em",
+              paddingBottom: "0.05em",
+              marginBottom: "-0.05em",
+              verticalAlign: "bottom"
+            }}
+          >
+            {part}
+          </span>
+        );
+      }
       if (theme === "ai_driven" || theme === "fintech_edu" || theme?.includes("fintech")) {
         const glowColor = theme === "ai_driven" ? "#00C8FF" : "#00e5ff";
         return (

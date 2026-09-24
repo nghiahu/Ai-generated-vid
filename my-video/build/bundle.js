@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 6820
+/***/ 9484
 (__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2194,7 +2194,7 @@ const { fontFamily: rawChakraPetch } = ChakraPetch_loadFont("normal", {
 const fontChakraPetch = `${rawChakraPetch}, "Chakra Petch", sans-serif`;
 
 ;// ./src/styles/vde_themes.json
-const vde_themes_namespaceObject = /*#__PURE__*/JSON.parse('{"rikkei":{"extends":"minimal","name":"Rikkei Academic Premium","description":"Phong cách nhận diện Rikkei Edu: Nền trắng hồng hạt siêu sạch, viền đỏ Crimson, thẻ học tập 3D bo góc 16px, khung tiêu đề Brackets.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"professional, educational, academic, clean, corporate, structured"},"tokens":{"colors":{"background":"linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)","cardBg":"linear-gradient(135deg, #FFFFFF 0%, #FFF8F8 100%)","border":"1.5px solid rgba(168, 35, 42, 0.18)","accent":"#A8232A","text":"#191919","textSecondary":"#595959"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 10px 30px rgba(168, 35, 42, 0.08)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["bounce"]}},"fintech_edu":{"extends":"ai_hub_grid","name":"FinTech Edu — Deep Blue AI","description":"Deep Royal Blue Navy gradient, circuit board SVG texture, Electric Cyan glow, Gold CTA. Phong cách RKKEIEdu AI tech poster.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.92,"minimalism":0.7},"tone":"tech, futuristic, education, glow, circuit, deep-blue"},"tokens":{"colors":{"background":"linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)","cardBg":"linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(0, 100, 240, 0.35) 100%)","border":"1.5px solid rgba(0, 229, 255, 0.6)","accent":"#00e5ff","text":"#FFFFFF","textSecondary":"rgba(255, 255, 255, 0.95)"},"fonts":{"title":"Chakra Petch","body":"Be Vietnam Pro"},"radius":"12px","shadow":"0 0 30px rgba(0, 212, 255, 0.35), 0 0 60px rgba(0, 212, 255, 0.1)"},"motion":{"energy":"high","style":["slide-up","fade","glow-pulse"],"avoid":["bounce","glitch"]}},"ai_hub_grid":{"extends":"minimal","name":"AI Hub Grid","description":"Nền chàm tối với lưới tọa độ kỹ thuật số, quầng sáng xanh dương và các thẻ kính mờ phát sáng viền cyan.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"tech, futuristic, ambient grid, glow glassmorphism"},"tokens":{"colors":{"background":"#030712","cardBg":"linear-gradient(135deg, rgba(8, 17, 37, 0.7) 0%, rgba(3, 7, 18, 0.4) 100%)","border":"1px solid rgba(59, 130, 246, 0.35)","accent":"#3b82f6","text":"#ffffff","textSecondary":"rgba(255, 255, 255, 0.65)"},"fonts":{"title":"Be Vietnam Pro, sans-serif","body":"Be Vietnam Pro, sans-serif"},"radius":"16px","shadow":"0 0 25px rgba(59, 130, 246, 0.15)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}},"ai_driven":{"extends":"fintech_edu","name":"AI-Driven — Electric Blue Sci-Fi","description":"Phong cách poster AI-DRIVEN SOFTWARE DEVELOPMENT của Rikkei Academy. Nền Navy-to-Midnight gradient sâu thẳm, particle dots xanh, hào quang trung tâm Cyan-White, viền Electric Cyan glow, thẻ kính mờ Navy. Font Chakra Petch heading + Be Vietnam Pro body.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.93,"minimalism":0.65},"tone":"tech, futuristic, educational, electric-blue, cyberpunk-edu, glow-particle, sci-fi"},"tokens":{"colors":{"background":"linear-gradient(180deg, #000A3A 0%, #001060 40%, #0026A8 80%, #0015C0 100%)","cardBg":"linear-gradient(135deg, rgba(0, 30, 100, 0.55) 0%, rgba(0, 10, 58, 0.75) 100%)","border":"1.5px solid rgba(0, 200, 255, 0.55)","accent":"#00C8FF","text":"#FFFFFF","textSecondary":"rgba(200, 230, 255, 0.85)"},"fonts":{"title":"Chakra Petch","body":"Be Vietnam Pro"},"radius":"12px","shadow":"0 0 40px rgba(0, 200, 255, 0.4), 0 0 80px rgba(27, 111, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)"},"motion":{"energy":"high","style":["slide-up","fade","glow-pulse","particle-stream"],"avoid":["bounce","glitch"]}},"ba":{"extends":"minimal","name":"Ba — Modern Corporate","description":"Theme Ba: Phong cách doanh nghiệp hiện đại. Nền sáng với màu chữ xanh dương đậm, thẻ nội dung mờ nhẹ để đọc chữ tối ưu.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"corporate, finance, professional, modern, clean, trust"},"tokens":{"colors":{"background":"#FFFFFF","cardBg":"linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 246, 255, 0.8) 100%)","border":"1.5px solid rgba(0, 103, 221, 0.15)","accent":"#0067dd","text":"#0067dd","textSecondary":"#475569"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 8px 32px rgba(0, 103, 221, 0.08)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}},"retro_editorial":{"extends":"minimal","name":"Retro Editorial Zine","description":"Phong cách biên tập cổ điển, kết hợp hoàn hảo cho ảnh nền tạp chí xé dán. Sử dụng font có chân (Serif) báo giấy, viền Navy đậm, và các thẻ màu kem cổ điển.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.75},"tone":"editorial, vintage, retro, media, knowledge, academic"},"tokens":{"colors":{"background":"#0B1E43","cardBg":"linear-gradient(135deg, rgba(253, 248, 245, 0.96) 0%, rgba(247, 240, 232, 0.92) 100%)","border":"2px solid #0B1E43","accent":"#0B1E43","text":"#0B1E43","textSecondary":"rgba(11, 30, 67, 0.75)"},"fonts":{"title":"Lora","body":"Be Vietnam Pro"},"radius":"8px","shadow":"4px 4px 0px rgba(11, 30, 67, 0.2)"},"motion":{"energy":"low","style":["slide-up","fade"],"avoid":["glitch","bounce"]}},"students_2k9":{"extends":"minimal","name":"Students 2K9 — High Contrast","description":"Thương hiệu dành cho học sinh thế hệ 2009 (2K9). Tông màu Deep Dark Navy chủ đạo kết hợp Midnight Navy, highlight Electric Cyan & Vibrant Yellow, font Montserrat & Inter.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"modern, high-contrast, academic, young, structured"},"tokens":{"colors":{"background":"linear-gradient(180deg, #0B192C 0%, #0F172A 50%, #1E293B 100%)","cardBg":"linear-gradient(135deg, rgba(11, 25, 44, 0.85) 0%, rgba(15, 23, 42, 0.75) 100%)","border":"1px solid rgba(56, 189, 248, 0.35)","accent":"#00F2FE","text":"#FFFFFF","textSecondary":"#B7C8E2"},"fonts":{"title":"Montserrat","body":"Inter"},"radius":"16px","shadow":"0 10px 30px rgba(11, 25, 44, 0.25)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}}}');
+const vde_themes_namespaceObject = /*#__PURE__*/JSON.parse('{"rikkei":{"extends":"minimal","name":"Rikkei Academic Premium","description":"Phong cách nhận diện Rikkei Edu: Nền trắng hồng hạt siêu sạch, viền đỏ Crimson, thẻ học tập 3D bo góc 16px, khung tiêu đề Brackets.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"professional, educational, academic, clean, corporate, structured"},"tokens":{"colors":{"background":"linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)","cardBg":"linear-gradient(135deg, #FFFFFF 0%, #FFF8F8 100%)","border":"1.5px solid rgba(168, 35, 42, 0.18)","accent":"#A8232A","text":"#191919","textSecondary":"#595959"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 10px 30px rgba(168, 35, 42, 0.08)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["bounce"]}},"fintech_edu":{"extends":"ai_hub_grid","name":"FinTech Edu — Deep Blue AI","description":"Deep Royal Blue Navy gradient, circuit board SVG texture, Electric Cyan glow, Gold CTA. Phong cách RKKEIEdu AI tech poster.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.92,"minimalism":0.7},"tone":"tech, futuristic, education, glow, circuit, deep-blue"},"tokens":{"colors":{"background":"linear-gradient(160deg, #0028a0 0%, #001060 50%, #000A3A 100%)","cardBg":"linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(0, 100, 240, 0.35) 100%)","border":"1.5px solid rgba(0, 229, 255, 0.6)","accent":"#00e5ff","text":"#FFFFFF","textSecondary":"rgba(255, 255, 255, 0.95)"},"fonts":{"title":"Chakra Petch","body":"Be Vietnam Pro"},"radius":"12px","shadow":"0 0 30px rgba(0, 212, 255, 0.35), 0 0 60px rgba(0, 212, 255, 0.1)"},"motion":{"energy":"high","style":["slide-up","fade","glow-pulse"],"avoid":["bounce","glitch"]}},"ai_hub_grid":{"extends":"minimal","name":"AI Hub Grid","description":"Nền chàm tối với lưới tọa độ kỹ thuật số, quầng sáng xanh dương và các thẻ kính mờ phát sáng viền cyan.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"tech, futuristic, ambient grid, glow glassmorphism"},"tokens":{"colors":{"background":"#030712","cardBg":"linear-gradient(135deg, rgba(8, 17, 37, 0.7) 0%, rgba(3, 7, 18, 0.4) 100%)","border":"1px solid rgba(59, 130, 246, 0.35)","accent":"#3b82f6","text":"#ffffff","textSecondary":"rgba(255, 255, 255, 0.65)"},"fonts":{"title":"Be Vietnam Pro, sans-serif","body":"Be Vietnam Pro, sans-serif"},"radius":"16px","shadow":"0 0 25px rgba(59, 130, 246, 0.15)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}},"ai_driven":{"extends":"fintech_edu","name":"AI-Driven — Electric Blue Sci-Fi","description":"Phong cách poster AI-DRIVEN SOFTWARE DEVELOPMENT của Rikkei Academy. Nền Navy-to-Midnight gradient sâu thẳm, particle dots xanh, hào quang trung tâm Cyan-White, viền Electric Cyan glow, thẻ kính mờ Navy. Font Chakra Petch heading + Be Vietnam Pro body.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.93,"minimalism":0.65},"tone":"tech, futuristic, educational, electric-blue, cyberpunk-edu, glow-particle, sci-fi"},"tokens":{"colors":{"background":"linear-gradient(180deg, #000A3A 0%, #001060 40%, #0026A8 80%, #0015C0 100%)","cardBg":"linear-gradient(135deg, rgba(0, 30, 100, 0.55) 0%, rgba(0, 10, 58, 0.75) 100%)","border":"1.5px solid rgba(0, 200, 255, 0.55)","accent":"#00C8FF","text":"#FFFFFF","textSecondary":"rgba(200, 230, 255, 0.85)"},"fonts":{"title":"Chakra Petch","body":"Be Vietnam Pro"},"radius":"12px","shadow":"0 0 40px rgba(0, 200, 255, 0.4), 0 0 80px rgba(27, 111, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)"},"motion":{"energy":"high","style":["slide-up","fade","glow-pulse","particle-stream"],"avoid":["bounce","glitch"]}},"ba":{"extends":"minimal","name":"Ba — Modern Corporate","description":"Theme Ba: Phong cách doanh nghiệp hiện đại. Nền sáng với màu chữ xanh dương đậm, thẻ nội dung mờ nhẹ để đọc chữ tối ưu.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"corporate, finance, professional, modern, clean, trust"},"tokens":{"colors":{"background":"#FFFFFF","cardBg":"linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 246, 255, 0.8) 100%)","border":"1.5px solid rgba(0, 103, 221, 0.15)","accent":"#0067dd","text":"#0067dd","textSecondary":"#475569"},"fonts":{"title":"Be Vietnam Pro","body":"Be Vietnam Pro"},"radius":"16px","shadow":"0 8px 32px rgba(0, 103, 221, 0.08)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}},"retro_editorial":{"extends":"minimal","name":"Retro Editorial Zine","description":"Phong cách biên tập cổ điển, kết hợp hoàn hảo cho ảnh nền tạp chí xé dán. Sử dụng font có chân (Serif) báo giấy, viền Navy đậm, và các thẻ màu kem cổ điển.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.75},"tone":"editorial, vintage, retro, media, knowledge, academic"},"tokens":{"colors":{"background":"#0B1E43","cardBg":"linear-gradient(135deg, rgba(253, 248, 245, 0.96) 0%, rgba(247, 240, 232, 0.92) 100%)","border":"2px solid #0B1E43","accent":"#0B1E43","text":"#0B1E43","textSecondary":"rgba(11, 30, 67, 0.75)"},"fonts":{"title":"Lora","body":"Be Vietnam Pro"},"radius":"8px","shadow":"4px 4px 0px rgba(11, 30, 67, 0.2)"},"motion":{"energy":"low","style":["slide-up","fade"],"avoid":["glitch","bounce"]}},"students_2k9":{"extends":"minimal","name":"Students 2K9 — High Contrast","description":"Thương hiệu dành cho học sinh thế hệ 2009 (2K9). Tông màu Deep Dark Navy chủ đạo kết hợp Midnight Navy, highlight Electric Cyan & Vibrant Yellow, font Montserrat & Inter.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.8},"tone":"modern, high-contrast, academic, young, structured"},"tokens":{"colors":{"background":"linear-gradient(180deg, #0B192C 0%, #0F172A 50%, #1E293B 100%)","cardBg":"linear-gradient(135deg, rgba(11, 25, 44, 0.85) 0%, rgba(15, 23, 42, 0.75) 100%)","border":"1px solid rgba(56, 189, 248, 0.35)","accent":"#00F2FE","text":"#FFFFFF","textSecondary":"#B7C8E2"},"fonts":{"title":"Montserrat","body":"Inter"},"radius":"16px","shadow":"0 10px 30px rgba(11, 25, 44, 0.25)"},"motion":{"energy":"medium","style":["slide-up","fade"],"avoid":["glitch"]}},"cyber_security":{"extends":"ai_driven","name":"Cyber Security — Digital Grid & Neon Cyan","description":"Phong cách An ninh mạng & Quản trị hệ thống: Nền Deep Cyber Dark, lưới matrix đa tầng, dòng số nhị phân tuôn chảy, viền Neon Cyan phát sáng rực rỡ, bệ phóng holographic podium và thẻ kính mờ công nghệ cao.","dna":{"philosophy":{"oneIdeaPerScene":true,"clarity":0.95,"minimalism":0.75},"tone":"cyber-security, system-admin, tech, neon-cyan, matrix-grid, holographic-hud"},"tokens":{"colors":{"background":"linear-gradient(180deg, #01080F 0%, #02121D 40%, #031E2B 75%, #010C14 100%)","cardBg":"linear-gradient(135deg, rgba(3, 24, 38, 0.85) 0%, rgba(2, 13, 22, 0.92) 100%)","border":"1.5px solid rgba(0, 176, 234, 0.7)","accent":"#00b0ea","text":"#66efff","textSecondary":"rgba(180, 235, 255, 0.85)"},"fonts":{"title":"Chakra Petch","body":"Be Vietnam Pro"},"radius":"14px","shadow":"0 0 35px rgba(0, 176, 234, 0.35), 0 0 70px rgba(102, 239, 255, 0.15)"},"motion":{"energy":"high","style":["slide-up","fade","glow-pulse","scanline"],"avoid":["bounce"]}}}');
 ;// ./src/styles/vdeTokens.ts
 
 
@@ -2291,6 +2291,25 @@ function getVDETokens(styleName) {
       },
       shadow: "0 0 40px rgba(0, 200, 255, 0.4), 0 0 80px rgba(27, 111, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
       radius: "12px"
+    };
+  }
+  if (name.includes("cyber_security") || name.includes("cyber-security") || name.includes("cyber_sec")) {
+    return {
+      ...tokens || VDE_TOKENS.cyber_security,
+      colors: {
+        background: "linear-gradient(180deg, #01080F 0%, #02121D 40%, #031E2B 75%, #010C14 100%)",
+        cardBg: "linear-gradient(135deg, rgba(3, 24, 38, 0.85) 0%, rgba(2, 13, 22, 0.92) 100%)",
+        border: "1.5px solid rgba(0, 176, 234, 0.7)",
+        accent: "#00b0ea",
+        text: "#66efff",
+        textSecondary: "rgba(180, 235, 255, 0.85)"
+      },
+      fonts: {
+        title: "Chakra Petch",
+        body: "Be Vietnam Pro"
+      },
+      shadow: "0 0 35px rgba(0, 176, 234, 0.35), 0 0 70px rgba(102, 239, 255, 0.15)",
+      radius: "14px"
     };
   }
   if (name.includes("ba")) {
@@ -2448,15 +2467,20 @@ const getThemeStyles = (themeName, accentColor) => {
     color: ((_f = tokens.colors) == null ? void 0 : _f.text) || "#ffffff"
   };
   const isSerif = ((_g = tokens.fonts) == null ? void 0 : _g.title.includes("Playfair")) || ((_h = tokens.fonts) == null ? void 0 : _h.title.includes("Lora")) || ((_i = tokens.fonts) == null ? void 0 : _i.title.includes("Georgia")) || ((_j = tokens.fonts) == null ? void 0 : _j.title.includes("serif"));
-  const isCyberpunk = themeName.includes("cyberpunk") || themeName.includes("neon") || themeName.includes("ai_driven") || themeName.includes("fintech_edu") || themeName.includes("students_2k9") || themeName.includes("2k9");
+  const isCyberpunk = themeName.includes("cyberpunk") || themeName.includes("neon") || themeName.includes("ai_driven") || themeName.includes("fintech_edu") || themeName.includes("students_2k9") || themeName.includes("2k9") || themeName.includes("cyber_security") || themeName.includes("security");
+  const isCyberSecurity = themeName.includes("cyber_security") || themeName.includes("security") || themeName.includes("cyber");
   const titleStyle = {
-    color: ((_k = tokens.colors) == null ? void 0 : _k.text) || "#ffffff",
+    color: isCyberSecurity ? void 0 : ((_k = tokens.colors) == null ? void 0 : _k.text) || "#ffffff",
+    background: isCyberSecurity ? "linear-gradient(135deg, #00b0ea 0%, #66efff 100%)" : void 0,
+    WebkitBackgroundClip: isCyberSecurity ? "text" : void 0,
+    WebkitTextFillColor: isCyberSecurity ? "transparent" : void 0,
     fontFamily,
     fontWeight: isSerif ? 700 : 900,
     textTransform: "uppercase",
     letterSpacing: "-0.01em",
     margin: 0,
-    textShadow: isCyberpunk && tokens.shadow && tokens.shadow !== "none" ? `0 0 25px ${accentColor}aa, 0 0 10px ${accentColor}55` : "none"
+    filter: isCyberSecurity ? "drop-shadow(0 0 15px rgba(0, 176, 234, 0.45))" : void 0,
+    textShadow: !isCyberSecurity && isCyberpunk && tokens.shadow && tokens.shadow !== "none" ? `0 0 25px ${accentColor}aa, 0 0 10px ${accentColor}55` : "none"
   };
   const badgeStyle = {
     fontSize: "22px",
@@ -2517,6 +2541,28 @@ const highlightHeadingText = (text, accentColor, theme, highlightWords) => {
   return parts.map((part, index) => {
     const isMatch = sortedKeywords.some((k) => k.toLowerCase() === part.toLowerCase());
     if (isMatch) {
+      if (theme === "cyber_security" || (theme == null ? void 0 : theme.includes("cyber"))) {
+        return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "span",
+          {
+            style: {
+              background: "linear-gradient(135deg, #00b0ea 0%, #66efff 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              filter: "drop-shadow(0 0 12px rgba(0, 176, 234, 0.45))",
+              fontWeight: 900,
+              display: "inline-block",
+              paddingTop: "0.15em",
+              marginTop: "-0.15em",
+              paddingBottom: "0.05em",
+              marginBottom: "-0.05em",
+              verticalAlign: "bottom"
+            },
+            children: part
+          },
+          index
+        );
+      }
       if (theme === "ai_driven" || theme === "fintech_edu" || (theme == null ? void 0 : theme.includes("fintech"))) {
         const glowColor = theme === "ai_driven" ? "#00C8FF" : "#00e5ff";
         return /* @__PURE__ */ (0,jsx_runtime.jsx)(
@@ -3504,7 +3550,7 @@ const resolveItemColors = ({
   theme
 }) => {
   const isAccent = item == null ? void 0 : item.useAccentBg;
-  const isAIDriven = theme === "ai_driven" || (theme == null ? void 0 : theme.includes("ai_driven"));
+  const isAIDriven = theme === "ai_driven" || (theme == null ? void 0 : theme.includes("ai_driven")) || theme === "cyber_security" || (theme == null ? void 0 : theme.includes("cyber"));
   const fallbackBg = isAccent ? isAIDriven ? "linear-gradient(135deg, rgba(0, 15, 60, 0.85) 0%, rgba(0, 8, 36, 0.95) 100%)" : `linear-gradient(135deg, ${accentColor}, ${darkAccentColor})` : styles.cardStyle.backgroundColor || styles.cardStyle.background || `rgba(2, 6, 23, 0.48)`;
   const fallbackBorder = isAccent ? isAIDriven ? "1.5px solid rgba(0, 200, 255, 0.55)" : "none" : styles.cardStyle.border || `1px solid rgba(${rgb}, 0.22)`;
   const fallbackBadge = accentColor;
@@ -4750,7 +4796,7 @@ const SplitHorizontalMode = ({
     const sideAccentColor = isLeft ? accentColor || "#EF4444" : "#F59E0B";
     const rotation = t.items.rotations && t.items.rotations[cardIdx % t.items.rotations.length] !== void 0 ? t.items.rotations[cardIdx % t.items.rotations.length] : isLeft ? -2.2 : 2.2;
     const pos = resolvedPositions[cardIdx % resolvedPositions.length];
-    const isAIDriven = theme === "ai_driven" || (theme == null ? void 0 : theme.includes("ai_driven"));
+    const isAIDriven = theme === "ai_driven" || (theme == null ? void 0 : theme.includes("ai_driven")) || theme === "cyber_security" || (theme == null ? void 0 : theme.includes("cyber"));
     const cardStyle = {
       minHeight: isVertical ? "340px" : "400px",
       borderRadius: itemStyleSetting.borderRadius || "34px",
@@ -5835,7 +5881,7 @@ const GridMetricsMode = ({
         gridColumn: isVertical ? "span 1" : "2",
         minHeight: isVertical ? "150px" : "180px"
       } : {};
-      const isAIDriven = theme === "ai_driven" || (theme == null ? void 0 : theme.includes("ai_driven"));
+      const isAIDriven = theme === "ai_driven" || (theme == null ? void 0 : theme.includes("ai_driven")) || theme === "cyber_security" || (theme == null ? void 0 : theme.includes("cyber"));
       const cardStyle = {
         borderRadius: itemStyleSetting.borderRadius || "28px",
         padding: resolvePadding(itemStyleSetting.padding || "28px", paddingScale),
@@ -8510,7 +8556,7 @@ const IntroCutoutHeadlineMode = ({
         }, children: card.text })
       ] }) }) }) }, idx);
     }) }),
-    /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.08, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimatedBlock, { animation: "slide-up", delaySeconds: 0.5, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: {
       display: "grid",
       gap: "20px",
       width: "100%",
@@ -15661,7 +15707,239 @@ const AICodeLayout = ({
   ] });
 };
 
+;// ./src/components/CyberMatrixBg.tsx
+
+
+
+
+const CyberMatrixBg = ({
+  glowColor = "#00b0ea",
+  accentColor = "#66efff",
+  streamOpacity = 0.85
+}) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps, height, width } = (0,esm.useVideoConfig)();
+  const pulse = Math.sin(frame / fps * Math.PI) * 0.2 + 0.8;
+  const beamFlicker = 0.85 + Math.sin(frame * 0.15) * 0.15;
+  const columns = (0,react.useMemo)(() => {
+    const cols = [
+      // Cánh trái (Server rack / data stream)
+      { id: 1, leftPercent: 3, speed: 7, fontSize: 20, opacity: 0.85, length: 24, seed: 11 },
+      { id: 2, leftPercent: 7, speed: 11, fontSize: 18, opacity: 0.7, length: 28, seed: 23 },
+      { id: 3, leftPercent: 12, speed: 6, fontSize: 22, opacity: 0.9, length: 22, seed: 37 },
+      { id: 4, leftPercent: 17, speed: 9, fontSize: 19, opacity: 0.75, length: 26, seed: 49 },
+      { id: 5, leftPercent: 22, speed: 5, fontSize: 17, opacity: 0.5, length: 20, seed: 53 },
+      // Trung tâm (rất mờ để không cản trở chữ trên thẻ nội dung)
+      { id: 6, leftPercent: 32, speed: 4, fontSize: 16, opacity: 0.2, length: 18, seed: 67 },
+      { id: 7, leftPercent: 48, speed: 5, fontSize: 16, opacity: 0.15, length: 16, seed: 79 },
+      { id: 8, leftPercent: 64, speed: 4, fontSize: 16, opacity: 0.2, length: 18, seed: 89 },
+      // Cánh phải (Server rack / data stream)
+      { id: 9, leftPercent: 77, speed: 6, fontSize: 18, opacity: 0.55, length: 22, seed: 101 },
+      { id: 10, leftPercent: 82, speed: 9, fontSize: 21, opacity: 0.8, length: 26, seed: 113 },
+      { id: 11, leftPercent: 87, speed: 7, fontSize: 19, opacity: 0.75, length: 25, seed: 127 },
+      { id: 12, leftPercent: 92, speed: 12, fontSize: 18, opacity: 0.85, length: 28, seed: 139 },
+      { id: 13, leftPercent: 96, speed: 8, fontSize: 22, opacity: 0.9, length: 24, seed: 151 }
+    ];
+    return cols;
+  }, []);
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        inset: 0,
+        overflow: "hidden",
+        zIndex: 0,
+        backgroundColor: "#020B14"
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(180deg, #01080F 0%, #02121D 40%, #031E2B 75%, #010C14 100%)"
+            }
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              inset: 0,
+              opacity: 0.22,
+              backgroundImage: `
+            linear-gradient(to right, rgba(0, 240, 255, 0.25) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0, 240, 255, 0.25) 1px, transparent 1px)
+          `,
+              backgroundSize: "60px 60px",
+              maskImage: "radial-gradient(ellipse 90% 80% at 50% 50%, black 20%, transparent 85%)",
+              WebkitMaskImage: "radial-gradient(ellipse 90% 80% at 50% 50%, black 20%, transparent 85%)",
+              pointerEvents: "none"
+            }
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              inset: 0,
+              opacity: streamOpacity,
+              pointerEvents: "none",
+              fontFamily: "'JetBrains Mono', 'Consolas', monospace"
+            },
+            children: columns.map((col) => {
+              const charHeight = col.fontSize * 1.35;
+              const totalStreamHeight = col.length * charHeight;
+              const cycleHeight = height + totalStreamHeight;
+              const currentY = (frame * col.speed + col.seed * 37) % cycleHeight - totalStreamHeight;
+              return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    position: "absolute",
+                    left: `${col.leftPercent}%`,
+                    top: 0,
+                    transform: `translateY(${currentY}px)`,
+                    fontSize: `${col.fontSize}px`,
+                    lineHeight: `${charHeight}px`,
+                    textAlign: "center",
+                    opacity: col.opacity,
+                    letterSpacing: "2px",
+                    fontWeight: 700,
+                    userSelect: "none"
+                  },
+                  children: Array.from({ length: col.length }).map((_, charIdx) => {
+                    const isOne = Math.sin(frame * 0.2 + col.seed + charIdx * 17) > 0.1;
+                    const char = isOne ? "1" : "0";
+                    const isHead = charIdx === col.length - 1;
+                    const isNearHead = charIdx >= col.length - 3;
+                    const fadeFactor = (charIdx + 1) / col.length;
+                    let charColor = `rgba(0, 240, 255, ${Math.max(0.12, fadeFactor * 0.75)})`;
+                    let charShadow = "none";
+                    if (isHead) {
+                      charColor = "#FFFFFF";
+                      charShadow = `0 0 12px ${glowColor}, 0 0 24px ${accentColor}`;
+                    } else if (isNearHead) {
+                      charColor = accentColor;
+                      charShadow = `0 0 8px ${glowColor}`;
+                    }
+                    return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                      "div",
+                      {
+                        style: {
+                          color: charColor,
+                          textShadow: charShadow,
+                          transition: "color 0.1s ease"
+                        },
+                        children: char
+                      },
+                      charIdx
+                    );
+                  })
+                },
+                col.id
+              );
+            })
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              bottom: "40px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "550px",
+              height: "500px",
+              background: `radial-gradient(ellipse at 50% 100%, rgba(0, 240, 255, ${0.28 * beamFlicker}) 0%, rgba(0, 245, 212, ${0.12 * beamFlicker}) 40%, transparent 80%)`,
+              filter: "blur(25px)",
+              pointerEvents: "none"
+            }
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              bottom: "35px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "650px",
+              height: "170px",
+              pointerEvents: "none"
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    position: "absolute",
+                    inset: 0,
+                    borderRadius: "50%",
+                    border: `2px solid rgba(0, 240, 255, ${0.65 * pulse})`,
+                    boxShadow: `0 0 35px rgba(0, 240, 255, ${0.45 * pulse}), inset 0 0 25px rgba(0, 245, 212, ${0.3 * pulse})`,
+                    background: "radial-gradient(ellipse at center, rgba(0, 240, 255, 0.12) 0%, transparent 75%)"
+                  }
+                }
+              ),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    position: "absolute",
+                    top: "22px",
+                    bottom: "22px",
+                    left: "55px",
+                    right: "55px",
+                    borderRadius: "50%",
+                    border: `1.5px solid rgba(0, 245, 212, ${0.85 * pulse})`,
+                    boxShadow: `0 0 20px rgba(0, 245, 212, ${0.5 * pulse})`
+                  }
+                }
+              ),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    position: "absolute",
+                    top: "44px",
+                    bottom: "44px",
+                    left: "140px",
+                    right: "140px",
+                    borderRadius: "50%",
+                    border: `2px solid #FFFFFF`,
+                    boxShadow: `0 0 25px #00F0FF, 0 0 50px ${accentColor}`,
+                    background: "radial-gradient(ellipse at center, rgba(255, 255, 255, 0.4) 0%, rgba(0, 240, 255, 0.25) 50%, transparent 100%)"
+                  }
+                }
+              )
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              inset: 0,
+              background: "radial-gradient(ellipse 110% 100% at 50% 50%, transparent 45%, rgba(1, 8, 15, 0.75) 100%)",
+              pointerEvents: "none"
+            }
+          }
+        )
+      ]
+    }
+  );
+};
+
 ;// ./src/compositions/layouts/DynamicLayout.tsx
+
 
 
 
@@ -15721,6 +15999,7 @@ const DynamicLayout = ({
     const isRikkei = theme === "rikkei";
     const isAiHubGrid = theme === "ai_hub_grid";
     const isFintechEdu = theme === "fintech_edu" || theme && theme.includes("fintech");
+    const isCyberSecurity = theme === "cyber_security" || theme && theme.includes("cyber");
     const globalBgImage = config == null ? void 0 : config.bgImage;
     const finalBgImage = bgImageUrl || globalBgImage;
     if (finalBgImage) {
@@ -15739,6 +16018,9 @@ const DynamicLayout = ({
           alt: "Video Background"
         }
       ) });
+    }
+    if (isCyberSecurity) {
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(CyberMatrixBg, { glowColor: "#00b0ea", accentColor: "#66efff" }) });
     }
     if (isFintechEdu) {
       return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(CircuitBoardBg, { glowColor: "#00d4ff", circuitOpacity: 0.25 }) });
@@ -16817,6 +17099,7 @@ const LightLeaksOverlay = () => {
 
 
 
+
 const LucideIconsMock = {
   Sparkles: (props) => /* @__PURE__ */ (0,jsx_runtime.jsx)("svg", { viewBox: "0 0 24 24", width: "24", height: "24", stroke: "currentColor", strokeWidth: "2", fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z" }) }),
   Zap: (props) => /* @__PURE__ */ (0,jsx_runtime.jsx)("svg", { viewBox: "0 0 24 24", width: "24", height: "24", stroke: "currentColor", strokeWidth: "2", fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("polygon", { points: "13 2 3 14 12 14 11 22 21 10 12 10 13 2" }) })
@@ -16954,18 +17237,13 @@ const MainComposition_getThemeBgStyle = (themeName = "glassmorphism") => {
 };
 const getBgmAsset = (bgmName) => {
   switch (bgmName) {
-    case "Chill Lofi Beats":
-      return (0,esm.staticFile)("bgm/chill-lofi.mp3");
-    case "Tech Ambient":
-      return (0,esm.staticFile)("bgm/tech-ambient.mp3");
-    case "Energy Beats":
-      return (0,esm.staticFile)("bgm/energy-beats.mp3");
+    case "Pop Energetic":
+      return (0,esm.staticFile)("bgm/pop-energetic.mp3");
+    case "Upbeat Rock":
+      return (0,esm.staticFile)("bgm/upbeat-rock.mp3");
     case "Rikkei Theme":
-      return (0,esm.staticFile)("bgm/rikkei-nhac-nen.mp3");
-    case "Crown of Ashes":
-      return (0,esm.staticFile)("bgm/crown-of-ashes.mp3");
     default:
-      return (0,esm.staticFile)("bgm/chill-lofi.mp3");
+      return (0,esm.staticFile)("bgm/rikkei-nhac-nen.mp3");
   }
 };
 const MainComposition = ({
@@ -17015,12 +17293,14 @@ const MainComposition = ({
   const isRikkei = vdeStyle.includes("rikkei") || vdeStyle.includes("academic");
   const isLightTheme = isRikkei || vdeStyle.includes("light") || vdeStyle.includes("claude") || vdeStyle === "minimal" || vdeStyle === "ba";
   const isFintechEdu = vdeStyle.includes("fintech");
-  const hasOverlayEffects = !isLightTheme && vdeStyle !== "apple" && !isFintechEdu;
+  const isCyberSecurity = vdeStyle.includes("cyber_security") || vdeStyle.includes("security") || vdeStyle.includes("cyber");
+  const hasOverlayEffects = !isLightTheme && vdeStyle !== "apple" && !isFintechEdu && !isCyberSecurity;
   const bgStyle = {
     background: vdeTokens.colors.background || (isLightTheme ? "linear-gradient(135deg, #FFFFFF 0%, #FFF2F4 50%, #FFE6E9 100%)" : "#030712")
   };
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { ...bgStyle, overflow: "hidden" }, children: [
-    !isLightTheme && !isFintechEdu && /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }, children: [
+    isCyberSecurity && /* @__PURE__ */ (0,jsx_runtime.jsx)(CyberMatrixBg, { glowColor: "#00b0ea", accentColor: "#66efff" }),
+    !isLightTheme && !isFintechEdu && !isCyberSecurity && /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }, children: [
       /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: {
         position: "absolute",
         inset: 0,
@@ -17399,7 +17679,7 @@ const RemotionRoot = () => {
         ],
         config: {
           voice: "rachel",
-          backgroundMusic: "Chill Lofi Beats",
+          backgroundMusic: "Rikkei Theme",
           backgroundMusicVolume: 0.025,
           watermark: { enabled: true, text: "yupclip.com", position: "top-right", color: "#000000" }
         }
@@ -56275,7 +56555,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"TimelineChapters","name":"Timel
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
 /******/ 	__webpack_require__(6507);
-/******/ 	__webpack_require__(6820);
+/******/ 	__webpack_require__(9484);
 /******/ 	__webpack_require__(3610);
 /******/ 	var __webpack_exports__ = __webpack_require__(3482);
 /******/ 	

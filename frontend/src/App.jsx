@@ -29,7 +29,7 @@ const INITIAL_DRAFT_CONFIG = {
   language: "Vietnamese",
   voice: "rachel",
   watermark: { enabled: true, text: "yupclip.com", position: "top-right", color: "#000000" },
-  backgroundMusic: "Chill Lofi Beats",
+  backgroundMusic: "Rikkei Theme",
   backgroundMusicVolume: 0.025
 };
 

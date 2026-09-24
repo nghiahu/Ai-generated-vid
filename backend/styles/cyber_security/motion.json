@@ -1,0 +1,12 @@
+{
+  "energy": "high",
+  "style": [
+    "slide-up",
+    "fade",
+    "glow-pulse",
+    "scanline"
+  ],
+  "avoid": [
+    "bounce"
+  ]
+}

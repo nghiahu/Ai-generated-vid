@@ -1,0 +1,2032 @@
+[
+  {
+    "term": "3nf",
+    "display_term": "3NF",
+    "phoneme": "THIRD NORMAL FORM"
+  },
+  {
+    "term": "5 whys",
+    "display_term": "5 WHYS",
+    "phoneme": "năm oai"
+  },
+  {
+    "term": "aarrr",
+    "display_term": "AARRR",
+    "phoneme": "ây,ây,a,a,a"
+  },
+  {
+    "term": "ac",
+    "display_term": "AC",
+    "phoneme": "ê-si"
+  },
+  {
+    "term": "acceptance criteria",
+    "display_term": "ACCEPTANCE CRITERIA",
+    "phoneme": "ạc-sép-tần cờ-rai-ti-ri-a"
+  },
+  {
+    "term": "acid",
+    "display_term": "ACID",
+    "phoneme": "ơ-sít"
+  },
+  {
+    "term": "agent",
+    "display_term": "AGENT",
+    "phoneme": "ê-dần"
+  },
+  {
+    "term": "agentic ai",
+    "display_term": "AGENTIC AI",
+    "phoneme": "ê-giần-tích ây-ai"
+  },
+  {
+    "term": "agentic-ai",
+    "display_term": "Agentic-AI",
+    "phoneme": "ây-gen-tíc-ây-ai"
+  },
+  {
+    "term": "agile",
+    "display_term": "Agile",
+    "phoneme": "ơ-jai"
+  },
+  {
+    "term": "agile-scrum",
+    "display_term": "Agile-Scrum",
+    "phoneme": "ơ-giai-Scrum"
+  },
+  {
+    "term": "ai",
+    "display_term": "AI",
+    "phoneme": "ây-ai"
+  },
+  {
+    "term": "ai-agent",
+    "display_term": "AI-AGENT",
+    "phoneme": "ây-ai-ây-gừn"
+  },
+  {
+    "term": "ai-augmented ba",
+    "display_term": "AI-AUGMENTED BA",
+    "phoneme": "ây-ai oóc-men-tịt bi-ây"
+  },
+  {
+    "term": "all",
+    "display_term": "ALL",
+    "phoneme": "ôn"
+  },
+  {
+    "term": "amazon",
+    "display_term": "Amazon",
+    "phoneme": "A ma zon"
+  },
+  {
+    "term": "antigravity ide",
+    "display_term": "ANTIGRAVITY IDE",
+    "phoneme": "an-ti-gra-vi-ti ai-đi-i"
+  },
+  {
+    "term": "api",
+    "display_term": "API",
+    "phoneme": "ây-pi-ai"
+  },
+  {
+    "term": "app store",
+    "display_term": "APP STORE",
+    "phoneme": "áp sờ-to"
+  },
+  {
+    "term": "arduino",
+    "display_term": "Arduino",
+    "phoneme": "A-đu-y-nô"
+  },
+  {
+    "term": "arm",
+    "display_term": "ARM",
+    "phoneme": "A rờ mờ"
+  },
+  {
+    "term": "as-is",
+    "display_term": "AS-IS",
+    "phoneme": "ét-i"
+  },
+  {
+    "term": "attention",
+    "display_term": "Attention",
+    "phoneme": "ất-ten-sừn"
+  },
+  {
+    "term": "audio",
+    "display_term": "Audio",
+    "phoneme": "au-đi-ô"
+  },
+  {
+    "term": "audit log",
+    "display_term": "AUDIT LOG",
+    "phoneme": "o-đít lốc"
+  },
+  {
+    "term": "auto-reversal",
+    "display_term": "AUTO-REVERSAL",
+    "phoneme": "rì-vơ-sồ tự động"
+  },
+  {
+    "term": "autogen",
+    "display_term": "AutoGen",
+    "phoneme": "au-tu-gen"
+  },
+  {
+    "term": "automotive",
+    "display_term": "Automotive",
+    "phoneme": "au-tô-mô-típ"
+  },
+  {
+    "term": "avg",
+    "display_term": "AVG",
+    "phoneme": "a vê gờ"
+  },
+  {
+    "term": "aws",
+    "display_term": "AWS",
+    "phoneme": "a đáp lưu ét"
+  },
+  {
+    "term": "azure",
+    "display_term": "Azure",
+    "phoneme": "a rờ"
+  },
+  {
+    "term": "b2b",
+    "display_term": "B2B",
+    "phoneme": "bi tu bi"
+  },
+  {
+    "term": "b2b2c",
+    "display_term": "B2B2C",
+    "phoneme": "bi tu bi tu xi"
+  },
+  {
+    "term": "b2c",
+    "display_term": "B2C",
+    "phoneme": "bi tu xi"
+  },
+  {
+    "term": "ba",
+    "display_term": "BA",
+    "phoneme": "bi-ây"
+  },
+  {
+    "term": "backend",
+    "display_term": "BACKEND",
+    "phoneme": "bách-en"
+  },
+  {
+    "term": "backlog",
+    "display_term": "BACKLOG",
+    "phoneme": "bách-lốc"
+  },
+  {
+    "term": "banker",
+    "display_term": "Banker",
+    "phoneme": "Banh-cơ"
+  },
+  {
+    "term": "banking",
+    "display_term": "Banking",
+    "phoneme": "Banh-king"
+  },
+  {
+    "term": "blameless",
+    "display_term": "Blameless",
+    "phoneme": "bờ-lêm-lét"
+  },
+  {
+    "term": "boolean",
+    "display_term": "boolean",
+    "phoneme": "bu-lần"
+  },
+  {
+    "term": "bootloader",
+    "display_term": "Bootloader",
+    "phoneme": "bút-loát-đơ"
+  },
+  {
+    "term": "bot",
+    "display_term": "Bot",
+    "phoneme": "pót"
+  },
+  {
+    "term": "bpmn",
+    "display_term": "BPMN",
+    "phoneme": "b-p-m-n"
+  },
+  {
+    "term": "bpmn 2.0",
+    "display_term": "BPMN 2.0",
+    "phoneme": "bê-pê-em-en hai chấm không"
+  },
+  {
+    "term": "brainstorming",
+    "display_term": "BRAINSTORMING",
+    "phoneme": "bờ-rên-stơ-ming"
+  },
+  {
+    "term": "brd",
+    "display_term": "BRD",
+    "phoneme": "bê-rờ-đê"
+  },
+  {
+    "term": "bridge se",
+    "display_term": "BRIDGE SE",
+    "phoneme": "bờ-rờ-ét-e"
+  },
+  {
+    "term": "brse",
+    "display_term": "BrSE",
+    "phoneme": "Bridge Software Engineer"
+  },
+  {
+    "term": "budget",
+    "display_term": "Budget",
+    "phoneme": "bướt-gét"
+  },
+  {
+    "term": "bug",
+    "display_term": "BUG",
+    "phoneme": "bấc"
+  },
+  {
+    "term": "burndown chart",
+    "display_term": "BURNDOWN CHART",
+    "phoneme": "bơn-đao chạt"
+  },
+  {
+    "term": "business",
+    "display_term": "Business",
+    "phoneme": "bi-ri-lít"
+  },
+  {
+    "term": "business analyst",
+    "display_term": "BUSINESS ANALYST",
+    "phoneme": "bi-di-nít a-na-lít"
+  },
+  {
+    "term": "byte",
+    "display_term": "byte",
+    "phoneme": "bai"
+  },
+  {
+    "term": "c-level",
+    "display_term": "C-LEVEL",
+    "phoneme": "xi lê-vồ"
+  },
+  {
+    "term": "caching",
+    "display_term": "Caching",
+    "phoneme": "két-chinh"
+  },
+  {
+    "term": "case",
+    "display_term": "Case",
+    "phoneme": "cây"
+  },
+  {
+    "term": "cbap",
+    "display_term": "CBAP",
+    "phoneme": "c-b-a-p"
+  },
+  {
+    "term": "ccba",
+    "display_term": "CCBA",
+    "phoneme": "c-c-b-a"
+  },
+  {
+    "term": "cccd",
+    "display_term": "CCCD",
+    "phoneme": "căn cước công dân"
+  },
+  {
+    "term": "cd",
+    "display_term": "CD",
+    "phoneme": "si-ai si-đi"
+  },
+  {
+    "term": "cell",
+    "display_term": "Cell",
+    "phoneme": "seo"
+  },
+  {
+    "term": "change request",
+    "display_term": "CHANGE REQUEST",
+    "phoneme": "chên rì-quét"
+  },
+  {
+    "term": "character",
+    "display_term": "Character",
+    "phoneme": "cha-rách-tơ"
+  },
+  {
+    "term": "chatgpt",
+    "display_term": "CHATGPT",
+    "phoneme": "chát g-p-t"
+  },
+  {
+    "term": "checker",
+    "display_term": "Checker",
+    "phoneme": "trếch-cơ"
+  },
+  {
+    "term": "ci",
+    "display_term": "CI",
+    "phoneme": "si-ai si-đi"
+  },
+  {
+    "term": "claude",
+    "display_term": "CLAUDE",
+    "phoneme": "cờ-lốt"
+  },
+  {
+    "term": "claude ai",
+    "display_term": "CLAUDE AI",
+    "phoneme": "cờ-lốt ai"
+  },
+  {
+    "term": "cloud",
+    "display_term": "CLOUD",
+    "phoneme": "cờ-lao"
+  },
+  {
+    "term": "cntt",
+    "display_term": "CNTT",
+    "phoneme": "công nghệ thông tin"
+  },
+  {
+    "term": "codex",
+    "display_term": "CODEX",
+    "phoneme": "cô-đếch"
+  },
+  {
+    "term": "cogvideox",
+    "display_term": "CogVideoX",
+    "phoneme": "co-vi-deo-ích"
+  },
+  {
+    "term": "confidence",
+    "display_term": "Confidence",
+    "phoneme": "Con-phi-đừn-si"
+  },
+  {
+    "term": "confluence",
+    "display_term": "CONFLUENCE",
+    "phoneme": "con-phơ-lu-ơn"
+  },
+  {
+    "term": "consent",
+    "display_term": "CONSENT",
+    "phoneme": "cơn-xen"
+  },
+  {
+    "term": "const",
+    "display_term": "const",
+    "phoneme": "con"
+  },
+  {
+    "term": "continue",
+    "display_term": "Continue",
+    "phoneme": "Con ty niu"
+  },
+  {
+    "term": "conversion",
+    "display_term": "Conversion",
+    "phoneme": "con-vơ-sừn"
+  },
+  {
+    "term": "copilot",
+    "display_term": "COPILOT",
+    "phoneme": "cô-pai-lợt"
+  },
+  {
+    "term": "core banking",
+    "display_term": "CORE BANKING",
+    "phoneme": "co-banh-king"
+  },
+  {
+    "term": "count",
+    "display_term": "COUNT",
+    "phoneme": "cao"
+  },
+  {
+    "term": "coupon",
+    "display_term": "COUPON",
+    "phoneme": "cu-pon"
+  },
+  {
+    "term": "cpar",
+    "display_term": "CPAR",
+    "phoneme": "si-pi-ei-a"
+  },
+  {
+    "term": "cpu",
+    "display_term": "CPU",
+    "phoneme": "Cê bê U"
+  },
+  {
+    "term": "cr",
+    "display_term": "CR",
+    "phoneme": "c-rờ"
+  },
+  {
+    "term": "credit",
+    "display_term": "CREDIT",
+    "phoneme": "cờ-ré-đít"
+  },
+  {
+    "term": "credits",
+    "display_term": "Credits",
+    "phoneme": "cờ-re-đít"
+  },
+  {
+    "term": "cskh",
+    "display_term": "CSKH",
+    "phoneme": "chăm sóc khách hàng"
+  },
+  {
+    "term": "css",
+    "display_term": "CSS",
+    "phoneme": "c-s-s"
+  },
+  {
+    "term": "cte",
+    "display_term": "CTE",
+    "phoneme": "ci-ty e"
+  },
+  {
+    "term": "cubeide",
+    "display_term": "CubeIDE",
+    "phoneme": "kiu-ai-đi-y"
+  },
+  {
+    "term": "daily scrum",
+    "display_term": "DAILY SCRUM",
+    "phoneme": "đây-li sờ-cờ-răm"
+  },
+  {
+    "term": "dance",
+    "display_term": "Dance",
+    "phoneme": "Đen"
+  },
+  {
+    "term": "dashboard",
+    "display_term": "DASHBOARD",
+    "phoneme": "đát-bo"
+  },
+  {
+    "term": "data anonymization",
+    "display_term": "DATA ANONYMIZATION",
+    "phoneme": "đa-ta ơ-non-ni-mai-zây-sần"
+  },
+  {
+    "term": "data reconciliation",
+    "display_term": "DATA RECONCILIATION",
+    "phoneme": "đa-ta rê-cơn-xi-li-ây-sần"
+  },
+  {
+    "term": "database",
+    "display_term": "DATABASE",
+    "phoneme": "đa-ta-bây-xơ"
+  },
+  {
+    "term": "database index",
+    "display_term": "DATABASE INDEX",
+    "phoneme": "đây-ta-bây in-đếch"
+  },
+  {
+    "term": "date range",
+    "display_term": "DATE RANGE",
+    "phoneme": "đết rên"
+  },
+  {
+    "term": "db",
+    "display_term": "DB",
+    "phoneme": "đa-ta-bây"
+  },
+  {
+    "term": "de",
+    "display_term": "DE",
+    "phoneme": "đi-e"
+  },
+  {
+    "term": "debit",
+    "display_term": "DEBIT",
+    "phoneme": "đê-bít"
+  },
+  {
+    "term": "deep work",
+    "display_term": "DEEP WORK",
+    "phoneme": "đíp uốc"
+  },
+  {
+    "term": "deepseek r1",
+    "display_term": "DEEPSEEK R1",
+    "phoneme": "đíp-xích ar-một"
+  },
+  {
+    "term": "definition of done",
+    "display_term": "DEFINITION OF DONE",
+    "phoneme": "đê-ô-đê"
+  },
+  {
+    "term": "definition of ready",
+    "display_term": "DEFINITION OF READY",
+    "phoneme": "đê-ô-ar"
+  },
+  {
+    "term": "dev",
+    "display_term": "DEV",
+    "phoneme": "đép"
+  },
+  {
+    "term": "developer",
+    "display_term": "DEVELOPER",
+    "phoneme": "đê-vê-lốp-pơ"
+  },
+  {
+    "term": "dfd",
+    "display_term": "DFD",
+    "phoneme": "đi-ép-đi"
+  },
+  {
+    "term": "docker",
+    "display_term": "DOCKER",
+    "phoneme": "đốc-kơ"
+  },
+  {
+    "term": "documenter & supporter",
+    "display_term": "DOCUMENTER & SUPPORTER",
+    "phoneme": "đô-kiu-men-tơ & sắp-po-tơ"
+  },
+  {
+    "term": "dod",
+    "display_term": "DOD",
+    "phoneme": "đê-ô-đê"
+  },
+  {
+    "term": "dor",
+    "display_term": "DOR",
+    "phoneme": "đê-ô-ar"
+  },
+  {
+    "term": "downtime",
+    "display_term": "Downtime",
+    "phoneme": "Down-tham"
+  },
+  {
+    "term": "draw.io",
+    "display_term": "DRAW.IO",
+    "phoneme": "đờ-rô-ai-ô"
+  },
+  {
+    "term": "dropdown",
+    "display_term": "DROPDOWN",
+    "phoneme": "đờ-róp-đao"
+  },
+  {
+    "term": "dss",
+    "display_term": "DSS",
+    "phoneme": "đê-ét-ét"
+  },
+  {
+    "term": "duplicates",
+    "display_term": "Duplicates",
+    "phoneme": "đúp-ly-kết"
+  },
+  {
+    "term": "dynamic qr",
+    "display_term": "DYNAMIC QR",
+    "phoneme": "quy-rờ động"
+  },
+  {
+    "term": "e-commerce",
+    "display_term": "E-COMMERCE",
+    "phoneme": "í-com-mợt"
+  },
+  {
+    "term": "earendil-works",
+    "display_term": "earendil-works",
+    "phoneme": "y-ren-đi-work"
+  },
+  {
+    "term": "ebook",
+    "display_term": "Ebook",
+    "phoneme": "e-búc"
+  },
+  {
+    "term": "ecba",
+    "display_term": "ECBA",
+    "phoneme": "e-c-b-a"
+  },
+  {
+    "term": "edge cases",
+    "display_term": "EDGE CASES",
+    "phoneme": "éc kê-sịt"
+  },
+  {
+    "term": "edu",
+    "display_term": "Edu",
+    "phoneme": "ê-đu"
+  },
+  {
+    "term": "efficiency",
+    "display_term": "Efficiency",
+    "phoneme": "E-phic-sừn-si"
+  },
+  {
+    "term": "ehr",
+    "display_term": "EHR",
+    "phoneme": "e-h-r"
+  },
+  {
+    "term": "ekyc",
+    "display_term": "EKYC",
+    "phoneme": "e-k-y-c"
+  },
+  {
+    "term": "elicitation",
+    "display_term": "ELICITATION",
+    "phoneme": "ê-li-si-tây-sần"
+  },
+  {
+    "term": "elo",
+    "display_term": "ELO",
+    "phoneme": "eo-lô"
+  },
+  {
+    "term": "emr",
+    "display_term": "EMR",
+    "phoneme": "e-m-r"
+  },
+  {
+    "term": "emvco",
+    "display_term": "EMVCO",
+    "phoneme": "e-m-v-co"
+  },
+  {
+    "term": "erd",
+    "display_term": "ERD",
+    "phoneme": "e-rờ-đê"
+  },
+  {
+    "term": "esp-idf",
+    "display_term": "ESP-IDF",
+    "phoneme": "e-ét-bi ai-đi-ép"
+  },
+  {
+    "term": "etl",
+    "display_term": "ETL",
+    "phoneme": "y-ty-eo"
+  },
+  {
+    "term": "excel",
+    "display_term": "Excel",
+    "phoneme": "ích-seo"
+  },
+  {
+    "term": "execute",
+    "display_term": "Execute",
+    "phoneme": "ích-kiu"
+  },
+  {
+    "term": "explain",
+    "display_term": "EXPLAIN",
+    "phoneme": "ích plan"
+  },
+  {
+    "term": "face",
+    "display_term": "Face",
+    "phoneme": "phây"
+  },
+  {
+    "term": "faceid",
+    "display_term": "FACEID",
+    "phoneme": "fe-ai-đi"
+  },
+  {
+    "term": "fallback",
+    "display_term": "FALLBACK",
+    "phoneme": "pho-bách"
+  },
+  {
+    "term": "figma",
+    "display_term": "FIGMA",
+    "phoneme": "pích-ma"
+  },
+  {
+    "term": "fintech",
+    "display_term": "FINTECH",
+    "phoneme": "fin-tếch"
+  },
+  {
+    "term": "firecracker",
+    "display_term": "Firecracker",
+    "phoneme": "phai-cờ-rách"
+  },
+  {
+    "term": "fix bug",
+    "display_term": "FIX BUG",
+    "phoneme": "phích bấc"
+  },
+  {
+    "term": "flash",
+    "display_term": "Flash",
+    "phoneme": "phờ-lát"
+  },
+  {
+    "term": "flash sale",
+    "display_term": "FLASH SALE",
+    "phoneme": "pờ-lát siu"
+  },
+  {
+    "term": "flowchart",
+    "display_term": "FLOWCHART",
+    "phoneme": "pờ-lâu-chạt"
+  },
+  {
+    "term": "flux.1",
+    "display_term": "FLUX.1",
+    "phoneme": "phờ-lắc-one"
+  },
+  {
+    "term": "fresher",
+    "display_term": "Fresher",
+    "phoneme": "phét-sơ"
+  },
+  {
+    "term": "fresher ba",
+    "display_term": "FRESHER BA",
+    "phoneme": "phơ-rét-shơ bi-ây"
+  },
+  {
+    "term": "frontend",
+    "display_term": "Frontend",
+    "phoneme": "phon-en"
+  },
+  {
+    "term": "fullstack",
+    "display_term": "FULLSTACK",
+    "phoneme": "phun-xtắc"
+  },
+  {
+    "term": "gap analysis",
+    "display_term": "GAP ANALYSIS",
+    "phoneme": "gáp a-na-ly-sít"
+  },
+  {
+    "term": "gd&đt",
+    "display_term": "GD&ĐT",
+    "phoneme": "Giáo dục và đào tạo"
+  },
+  {
+    "term": "gemini",
+    "display_term": "GEMINI",
+    "phoneme": "ge-mi-ni"
+  },
+  {
+    "term": "github",
+    "display_term": "GITHUB",
+    "phoneme": "gít-hắp"
+  },
+  {
+    "term": "given - when - then",
+    "display_term": "GIVEN - WHEN - THEN",
+    "phoneme": "ghi-vần - oen - đen"
+  },
+  {
+    "term": "google play",
+    "display_term": "GOOGLE PLAY",
+    "phoneme": "gút-gồ pờ-lay"
+  },
+  {
+    "term": "gpt-4o",
+    "display_term": "GPT-4o",
+    "phoneme": "ri-pi-ty-bốn-ô"
+  },
+  {
+    "term": "gpu",
+    "display_term": "GPU",
+    "phoneme": "gờ-bi-u"
+  },
+  {
+    "term": "hal",
+    "display_term": "HAL",
+    "phoneme": "hắt-ây-eo"
+  },
+  {
+    "term": "hardware",
+    "display_term": "Hardware",
+    "phoneme": "hát-woe"
+  },
+  {
+    "term": "headhunter",
+    "display_term": "HEADHUNTER",
+    "phoneme": "hét-hăn-tơ"
+  },
+  {
+    "term": "healthtech",
+    "display_term": "HEALTHTECH",
+    "phoneme": "heo-tếch"
+  },
+  {
+    "term": "hipaa",
+    "display_term": "HIPAA",
+    "phoneme": "híp-pa"
+  },
+  {
+    "term": "hl7 fhir",
+    "display_term": "HL7 FHIR",
+    "phoneme": "h-l-7 phơ"
+  },
+  {
+    "term": "hold balance",
+    "display_term": "HOLD BALANCE",
+    "phoneme": "hâu ba-lần"
+  },
+  {
+    "term": "hotfix",
+    "display_term": "HOTFIX",
+    "phoneme": "hót-phích"
+  },
+  {
+    "term": "hr",
+    "display_term": "HR",
+    "phoneme": "hắt-rờ"
+  },
+  {
+    "term": "hsa",
+    "display_term": "HSA",
+    "phoneme": "hắt ét a"
+  },
+  {
+    "term": "html",
+    "display_term": "HTML",
+    "phoneme": "hát-tê-mờ-lờ"
+  },
+  {
+    "term": "hugging",
+    "display_term": "Hugging",
+    "phoneme": "Hắc-ing"
+  },
+  {
+    "term": "humaneval",
+    "display_term": "HumanEval",
+    "phoneme": "Hiu-mần-y-van"
+  },
+  {
+    "term": "icd-10",
+    "display_term": "ICD-10",
+    "phoneme": "i-c-d-10"
+  },
+  {
+    "term": "iiba",
+    "display_term": "IIBA",
+    "phoneme": "i-i-b-a"
+  },
+  {
+    "term": "impact",
+    "display_term": "Impact",
+    "phoneme": "im-bắc"
+  },
+  {
+    "term": "impact assessment",
+    "display_term": "IMPACT ASSESSMENT",
+    "phoneme": "im-pắc ơ-sét-mơn"
+  },
+  {
+    "term": "imu",
+    "display_term": "IMU",
+    "phoneme": "Y Em U"
+  },
+  {
+    "term": "in-scope",
+    "display_term": "IN-SCOPE",
+    "phoneme": "in-sờ-cốp"
+  },
+  {
+    "term": "index",
+    "display_term": "Index",
+    "phoneme": "in đếch"
+  },
+  {
+    "term": "intelligence",
+    "display_term": "Intelligence",
+    "phoneme": "in-tơ-ly-dừn"
+  },
+  {
+    "term": "ironwood",
+    "display_term": "Ironwood",
+    "phoneme": "ai-rừn-wut"
+  },
+  {
+    "term": "issue",
+    "display_term": "Issue",
+    "phoneme": "y sùa"
+  },
+  {
+    "term": "it",
+    "display_term": "IT",
+    "phoneme": "ai-ti"
+  },
+  {
+    "term": "jira",
+    "display_term": "JIRA",
+    "phoneme": "ji-ra"
+  },
+  {
+    "term": "join",
+    "display_term": "Join",
+    "phoneme": "Joi"
+  },
+  {
+    "term": "json",
+    "display_term": "JSON",
+    "phoneme": "giê-sơn"
+  },
+  {
+    "term": "junior ba",
+    "display_term": "JUNIOR BA",
+    "phoneme": "giu-ni-ơ bi-ây"
+  },
+  {
+    "term": "kpi",
+    "display_term": "KPI",
+    "phoneme": "kê-pi-ai"
+  },
+  {
+    "term": "langchain",
+    "display_term": "LANGCHAIN",
+    "phoneme": "lang-chên"
+  },
+  {
+    "term": "lead ba",
+    "display_term": "LEAD BA",
+    "phoneme": "lít bi-ây"
+  },
+  {
+    "term": "leaderboard",
+    "display_term": "Leaderboard",
+    "phoneme": "lít-đờ-bờ-roát"
+  },
+  {
+    "term": "listening",
+    "display_term": "Listening",
+    "phoneme": "lít-sừn-ing"
+  },
+  {
+    "term": "livecodebench",
+    "display_term": "LiveCodeBench",
+    "phoneme": "lai-cốt-ben"
+  },
+  {
+    "term": "llama",
+    "display_term": "LLAMA",
+    "phoneme": "la-ma"
+  },
+  {
+    "term": "llm",
+    "display_term": "LLM",
+    "phoneme": "lờ-lờ-mờ"
+  },
+  {
+    "term": "lm",
+    "display_term": "LM",
+    "phoneme": "eo-em"
+  },
+  {
+    "term": "log",
+    "display_term": "LOG",
+    "phoneme": "lốc"
+  },
+  {
+    "term": "low",
+    "display_term": "LOW",
+    "phoneme": "lâu"
+  },
+  {
+    "term": "low-code",
+    "display_term": "LOW-CODE",
+    "phoneme": "lâu-cốt"
+  },
+  {
+    "term": "lsi",
+    "display_term": "LSI",
+    "phoneme": "eo-ét-ai"
+  },
+  {
+    "term": "maker",
+    "display_term": "Maker",
+    "phoneme": "mếch-cơ"
+  },
+  {
+    "term": "management",
+    "display_term": "Management",
+    "phoneme": "Mana-giơ-mần"
+  },
+  {
+    "term": "markdown",
+    "display_term": "Markdown",
+    "phoneme": "mắc đao"
+  },
+  {
+    "term": "mastering",
+    "display_term": "Mastering",
+    "phoneme": "mát-tơ-ring"
+  },
+  {
+    "term": "meeting minutes",
+    "display_term": "MEETING MINUTES",
+    "phoneme": "mít-tinh mi-nút"
+  },
+  {
+    "term": "meiwaku",
+    "display_term": "Meiwaku",
+    "phoneme": "Me-wa-ku"
+  },
+  {
+    "term": "memmanage",
+    "display_term": "MemManage",
+    "phoneme": "mem-ma-na-rơ"
+  },
+  {
+    "term": "memory leak",
+    "display_term": "MEMORY LEAK",
+    "phoneme": "me-mo-ri lích"
+  },
+  {
+    "term": "mentor",
+    "display_term": "MENTOR",
+    "phoneme": "men-tơ"
+  },
+  {
+    "term": "mermaid",
+    "display_term": "MERMAID",
+    "phoneme": "mơ-mết"
+  },
+  {
+    "term": "microservices",
+    "display_term": "MICROSERVICES",
+    "phoneme": "mai-crô-xơ-vít"
+  },
+  {
+    "term": "microvm",
+    "display_term": "MicroVM",
+    "phoneme": "mai-cờ-rô-vi-em"
+  },
+  {
+    "term": "miro",
+    "display_term": "MIRO",
+    "phoneme": "mi-rô"
+  },
+  {
+    "term": "mixture-of-depths",
+    "display_term": "Mixture-of-Depths",
+    "phoneme": "mít-trờ-ợp-đíp"
+  },
+  {
+    "term": "mockup",
+    "display_term": "MOCKUP",
+    "phoneme": "móc-ắp"
+  },
+  {
+    "term": "model",
+    "display_term": "Model",
+    "phoneme": "mo-đồ"
+  },
+  {
+    "term": "models",
+    "display_term": "Models",
+    "phoneme": "mo-đồ"
+  },
+  {
+    "term": "moscow",
+    "display_term": "MOSCOW",
+    "phoneme": "mót-câu"
+  },
+  {
+    "term": "ms",
+    "display_term": "ms",
+    "phoneme": "mini giây"
+  },
+  {
+    "term": "mvp",
+    "display_term": "MVP",
+    "phoneme": "em-vi-pi"
+  },
+  {
+    "term": "mysql",
+    "display_term": "MySQL",
+    "phoneme": "mai-ét-quy-eo"
+  },
+  {
+    "term": "napas",
+    "display_term": "NAPAS",
+    "phoneme": "na-pát"
+  },
+  {
+    "term": "nda",
+    "display_term": "NDA",
+    "phoneme": "n-d-a"
+  },
+  {
+    "term": "never",
+    "display_term": "never",
+    "phoneme": "le-vờ"
+  },
+  {
+    "term": "no-code",
+    "display_term": "NO-CODE",
+    "phoneme": "nô-cốt"
+  },
+  {
+    "term": "non-it",
+    "display_term": "NON-IT",
+    "phoneme": "non ai-ti"
+  },
+  {
+    "term": "notion",
+    "display_term": "NOTION",
+    "phoneme": "nô-sần"
+  },
+  {
+    "term": "npx",
+    "display_term": "npx",
+    "phoneme": "em-bi-ích"
+  },
+  {
+    "term": "null",
+    "display_term": "NULL",
+    "phoneme": "lun"
+  },
+  {
+    "term": "nvs_get_str",
+    "display_term": "nvs_get_str",
+    "phoneme": "en-vi-ét-gét-trinh"
+  },
+  {
+    "term": "nvs_set_str",
+    "display_term": "nvs_set_str",
+    "phoneme": "en-vi-ét-sét-trinh"
+  },
+  {
+    "term": "obsidian",
+    "display_term": "OBSIDIAN",
+    "phoneme": "ốp-si-đi-ần"
+  },
+  {
+    "term": "online",
+    "display_term": "Online",
+    "phoneme": "on lai"
+  },
+  {
+    "term": "openapi",
+    "display_term": "OpenAPI",
+    "phoneme": "âu-pừn-ây-pi-ai"
+  },
+  {
+    "term": "order-taker",
+    "display_term": "ORDER-TAKER",
+    "phoneme": "o-đơ tây-kơ"
+  },
+  {
+    "term": "otp",
+    "display_term": "OTP",
+    "phoneme": "ô-tê-pê"
+  },
+  {
+    "term": "out-of-scope",
+    "display_term": "OUT-OF-SCOPE",
+    "phoneme": "ao-ốp-sờ-cốp"
+  },
+  {
+    "term": "pagedattention",
+    "display_term": "PagedAttention",
+    "phoneme": "bết a ten sừn"
+  },
+  {
+    "term": "paraphrase",
+    "display_term": "Paraphrase",
+    "phoneme": "ba-ra-phây"
+  },
+  {
+    "term": "parsing",
+    "display_term": "PARSING",
+    "phoneme": "pạt-xinh"
+  },
+  {
+    "term": "payload",
+    "display_term": "PAYLOAD",
+    "phoneme": "pây-lốt"
+  },
+  {
+    "term": "payment gateway",
+    "display_term": "PAYMENT GATEWAY",
+    "phoneme": "pây-mơn gết-uê"
+  },
+  {
+    "term": "pci dss",
+    "display_term": "PCI DSS",
+    "phoneme": "pi-xi-ai đi-es-es"
+  },
+  {
+    "term": "pdf",
+    "display_term": "PDF",
+    "phoneme": "bi đi ép"
+  },
+  {
+    "term": "persona",
+    "display_term": "PERSONA",
+    "phoneme": "pơ-xô-na"
+  },
+  {
+    "term": "pet project",
+    "display_term": "PET PROJECT",
+    "phoneme": "pét pờ-rô-giếch"
+  },
+  {
+    "term": "pm",
+    "display_term": "PM",
+    "phoneme": "pi-em"
+  },
+  {
+    "term": "pmi-pba",
+    "display_term": "PMI-PBA",
+    "phoneme": "p-m-i p-b-a"
+  },
+  {
+    "term": "po",
+    "display_term": "PO",
+    "phoneme": "pi-ô"
+  },
+  {
+    "term": "poc",
+    "display_term": "POC",
+    "phoneme": "pi-ô-si"
+  },
+  {
+    "term": "popup",
+    "display_term": "POPUP",
+    "phoneme": "póp-ắp"
+  },
+  {
+    "term": "pos",
+    "display_term": "POS",
+    "phoneme": "p-o-s"
+  },
+  {
+    "term": "post-mortem meeting",
+    "display_term": "POST-MORTEM MEETING",
+    "phoneme": "pốt mo-tơm mít-tinh"
+  },
+  {
+    "term": "postgresql",
+    "display_term": "PostgreSQL",
+    "phoneme": "bót-ghét-ét-quy-eo"
+  },
+  {
+    "term": "postman",
+    "display_term": "POSTMAN",
+    "phoneme": "pốt-mên"
+  },
+  {
+    "term": "powerpoint",
+    "display_term": "POWERPOINT",
+    "phoneme": "pao-ơ-poi"
+  },
+  {
+    "term": "prd",
+    "display_term": "PRD",
+    "phoneme": "pi-rờ-đê"
+  },
+  {
+    "term": "principal ba",
+    "display_term": "PRINCIPAL BA",
+    "phoneme": "pờ-rin-xi-pồ bi-ây"
+  },
+  {
+    "term": "problem-solver",
+    "display_term": "PROBLEM-SOLVER",
+    "phoneme": "pờ-rốp-lem xon-vơ"
+  },
+  {
+    "term": "product",
+    "display_term": "Product",
+    "phoneme": "bờ-rô-đắc"
+  },
+  {
+    "term": "product ba",
+    "display_term": "PRODUCT BA",
+    "phoneme": "pờ-rô-đắc bi-ây"
+  },
+  {
+    "term": "product backlog",
+    "display_term": "PRODUCT BACKLOG",
+    "phoneme": "pờ-rô-đắc bách-lốc"
+  },
+  {
+    "term": "product grooming",
+    "display_term": "PRODUCT GROOMING",
+    "phoneme": "pờ-rô-đắc gờ-ru-ming"
+  },
+  {
+    "term": "product owner",
+    "display_term": "PRODUCT OWNER",
+    "phoneme": "pờ-rô-đắc ô-nơ"
+  },
+  {
+    "term": "project manager",
+    "display_term": "PROJECT MANAGER",
+    "phoneme": "pờ-rô-giếch mê-ni-giơ"
+  },
+  {
+    "term": "prompt",
+    "display_term": "PROMPT",
+    "phoneme": "pờ-rôm"
+  },
+  {
+    "term": "prompting",
+    "display_term": "PROMPTING",
+    "phoneme": "pờ-rôm-tinh"
+  },
+  {
+    "term": "prototype",
+    "display_term": "PROTOTYPE",
+    "phoneme": "pờ-rô-tô-típ"
+  },
+  {
+    "term": "psm",
+    "display_term": "PSM",
+    "phoneme": "p-s-m"
+  },
+  {
+    "term": "psnr",
+    "display_term": "PSNR",
+    "phoneme": "Peak Signal-to-Noise Ratio"
+  },
+  {
+    "term": "pspo",
+    "display_term": "PSPO",
+    "phoneme": "p-s-p-o"
+  },
+  {
+    "term": "qa",
+    "display_term": "QA",
+    "phoneme": "ki-u-ê"
+  },
+  {
+    "term": "qc",
+    "display_term": "QC",
+    "phoneme": "ki-u-si"
+  },
+  {
+    "term": "qr",
+    "display_term": "QR",
+    "phoneme": "quy-rờ"
+  },
+  {
+    "term": "qr code",
+    "display_term": "QR CODE",
+    "phoneme": "quy-rờ cốt"
+  },
+  {
+    "term": "query",
+    "display_term": "query",
+    "phoneme": "que-ry"
+  },
+  {
+    "term": "quiz",
+    "display_term": "Quiz",
+    "phoneme": "quýt"
+  },
+  {
+    "term": "rbac",
+    "display_term": "RBAC",
+    "phoneme": "r-b-a-c"
+  },
+  {
+    "term": "read",
+    "display_term": "read",
+    "phoneme": "rít"
+  },
+  {
+    "term": "read replica",
+    "display_term": "READ REPLICA",
+    "phoneme": "rít rép-li-ca"
+  },
+  {
+    "term": "realtime",
+    "display_term": "realtime",
+    "phoneme": "real-tham"
+  },
+  {
+    "term": "redundancy",
+    "display_term": "Redundancy",
+    "phoneme": "ri-đăn-đan-xi"
+  },
+  {
+    "term": "refactoring",
+    "display_term": "REFACTORING",
+    "phoneme": "ri-phắc-tơ-ring"
+  },
+  {
+    "term": "release",
+    "display_term": "RELEASE",
+    "phoneme": "rì-lít"
+  },
+  {
+    "term": "requirement",
+    "display_term": "REQUIREMENT",
+    "phoneme": "rì-quai-mơn"
+  },
+  {
+    "term": "retrospective",
+    "display_term": "RETROSPECTIVE",
+    "phoneme": "rê-tờ-rô-sờ-péc-típ"
+  },
+  {
+    "term": "rfp",
+    "display_term": "RFP",
+    "phoneme": "ar-ép-pi"
+  },
+  {
+    "term": "rice scoring",
+    "display_term": "RICE SCORING",
+    "phoneme": "rai-xơ sờ-co-ring"
+  },
+  {
+    "term": "rikkei education",
+    "display_term": "RIKKEI EDUCATION",
+    "phoneme": "rík-kei e-đu-cay-sần"
+  },
+  {
+    "term": "rikkeisoft",
+    "display_term": "RIKKEISOFT",
+    "phoneme": "rík-kei-xốp"
+  },
+  {
+    "term": "roadmap",
+    "display_term": "ROADMAP",
+    "phoneme": "rốt-mép"
+  },
+  {
+    "term": "roi",
+    "display_term": "ROI",
+    "phoneme": "rờ-o-ai"
+  },
+  {
+    "term": "rollback",
+    "display_term": "Rollback",
+    "phoneme": "rôn-bách"
+  },
+  {
+    "term": "root cause",
+    "display_term": "ROOT CAUSE",
+    "phoneme": "rút cooc-zơ"
+  },
+  {
+    "term": "rtos",
+    "display_term": "RTOS",
+    "phoneme": "a tót"
+  },
+  {
+    "term": "rule",
+    "display_term": "Rule",
+    "phoneme": "Ru"
+  },
+  {
+    "term": "run",
+    "display_term": "Run",
+    "phoneme": "răn"
+  },
+  {
+    "term": "saas",
+    "display_term": "SAAS",
+    "phoneme": "xát"
+  },
+  {
+    "term": "sale",
+    "display_term": "Sale",
+    "phoneme": "sêu"
+  },
+  {
+    "term": "sat",
+    "display_term": "SAT",
+    "phoneme": "sát"
+  },
+  {
+    "term": "scanning",
+    "display_term": "Scanning",
+    "phoneme": "sờ-can-ning"
+  },
+  {
+    "term": "scope",
+    "display_term": "SCOPE",
+    "phoneme": "sờ-cốp"
+  },
+  {
+    "term": "script",
+    "display_term": "script",
+    "phoneme": "sờ-crip"
+  },
+  {
+    "term": "scrum",
+    "display_term": "SCRUM",
+    "phoneme": "sờ-cờ-răm"
+  },
+  {
+    "term": "scrum master",
+    "display_term": "SCRUM MASTER",
+    "phoneme": "sờ-cờ-răm mát-xtơ"
+  },
+  {
+    "term": "sda",
+    "display_term": "SDA",
+    "phoneme": "ét-đi-ây"
+  },
+  {
+    "term": "seldom",
+    "display_term": "seldom",
+    "phoneme": "seo-đừm"
+  },
+  {
+    "term": "select",
+    "display_term": "SELECT",
+    "phoneme": "se-lếch"
+  },
+  {
+    "term": "senior ba",
+    "display_term": "SENIOR BA",
+    "phoneme": "se-ni-ơ bi-ây"
+  },
+  {
+    "term": "server",
+    "display_term": "SERVER",
+    "phoneme": "sơ-vơ"
+  },
+  {
+    "term": "sglang",
+    "display_term": "SGLang",
+    "phoneme": "ét-di-lang"
+  },
+  {
+    "term": "silicon",
+    "display_term": "Silicon",
+    "phoneme": "si-li-con"
+  },
+  {
+    "term": "skimming",
+    "display_term": "Skimming",
+    "phoneme": "sừ-kim-ming"
+  },
+  {
+    "term": "sms",
+    "display_term": "SMS",
+    "phoneme": "ét-em-ét"
+  },
+  {
+    "term": "sms gateway",
+    "display_term": "SMS GATEWAY",
+    "phoneme": "ét-em-ét ghết-oây"
+  },
+  {
+    "term": "soc",
+    "display_term": "SoC",
+    "phoneme": "ét-ô-xi"
+  },
+  {
+    "term": "soh",
+    "display_term": "SoH",
+    "phoneme": "et-ô-hắt"
+  },
+  {
+    "term": "solution analyst",
+    "display_term": "SOLUTION ANALYST",
+    "phoneme": "sô-lu-sần a-na-lít"
+  },
+  {
+    "term": "solution architect",
+    "display_term": "SOLUTION ARCHITECT",
+    "phoneme": "sô-lu-sần a-ki-tếch"
+  },
+  {
+    "term": "source",
+    "display_term": "source",
+    "phoneme": "suộc"
+  },
+  {
+    "term": "sow",
+    "display_term": "SOW",
+    "phoneme": "es-o-đắp-liêu"
+  },
+  {
+    "term": "spaghetti",
+    "display_term": "Spaghetti",
+    "phoneme": "spa-gét-ty"
+  },
+  {
+    "term": "speech",
+    "display_term": "Speech",
+    "phoneme": "sừ-pít"
+  },
+  {
+    "term": "spillover",
+    "display_term": "SPILLOVER",
+    "phoneme": "sờ-pin-âu-vơ"
+  },
+  {
+    "term": "sprint",
+    "display_term": "SPRINT",
+    "phoneme": "sờ-prin"
+  },
+  {
+    "term": "sprint backlog",
+    "display_term": "SPRINT BACKLOG",
+    "phoneme": "sờ-prin bách-lốc"
+  },
+  {
+    "term": "sprint planning",
+    "display_term": "SPRINT PLANNING",
+    "phoneme": "sờ-prin pờ-lan-ning"
+  },
+  {
+    "term": "sql",
+    "display_term": "SQL",
+    "phoneme": "ét-quy-eo"
+  },
+  {
+    "term": "srs",
+    "display_term": "SRS",
+    "phoneme": "ét-rờ-ét"
+  },
+  {
+    "term": "stakeholder",
+    "display_term": "STAKEHOLDER",
+    "phoneme": "xờ-tếch-hâu-đơ"
+  },
+  {
+    "term": "star",
+    "display_term": "STAR",
+    "phoneme": "sờ-ta"
+  },
+  {
+    "term": "starter",
+    "display_term": "STARTER",
+    "phoneme": "Sờ-tát-tơ"
+  },
+  {
+    "term": "static qr",
+    "display_term": "STATIC QR",
+    "phoneme": "quy-rờ tĩnh"
+  },
+  {
+    "term": "storage",
+    "display_term": "Storage",
+    "phoneme": "sừ-to-grate"
+  },
+  {
+    "term": "subqueries",
+    "display_term": "Subqueries",
+    "phoneme": "sắp-que-ry"
+  },
+  {
+    "term": "subsystem",
+    "display_term": "Subsystem",
+    "phoneme": "sắp-sít-từm"
+  },
+  {
+    "term": "swagger",
+    "display_term": "SWAGGER",
+    "phoneme": "sờ-goác-gơ"
+  },
+  {
+    "term": "swe",
+    "display_term": "SWE",
+    "phoneme": "ét-đáp-lưu-y"
+  },
+  {
+    "term": "swe-bench",
+    "display_term": "SWE-bench",
+    "phoneme": "ét-đáp-lưu-y-ben"
+  },
+  {
+    "term": "swebench",
+    "display_term": "swebench",
+    "phoneme": "ét-đáp-lưu-y-ben"
+  },
+  {
+    "term": "swot analysis",
+    "display_term": "SWOT ANALYSIS",
+    "phoneme": "xoát a-na-ly-sít"
+  },
+  {
+    "term": "tailwind css",
+    "display_term": "TAILWIND CSS",
+    "phoneme": "tên-uynh c-s-s"
+  },
+  {
+    "term": "tech lead",
+    "display_term": "TECH LEAD",
+    "phoneme": "tếch lít"
+  },
+  {
+    "term": "technical ba",
+    "display_term": "TECHNICAL BA",
+    "phoneme": "tếch-ni-cồ bi-ây"
+  },
+  {
+    "term": "technical debt",
+    "display_term": "TECHNICAL DEBT",
+    "phoneme": "tếch-ni-cồ đét"
+  },
+  {
+    "term": "technology",
+    "display_term": "Technology",
+    "phoneme": "tếch-lo-lo-ri"
+  },
+  {
+    "term": "telemedicine",
+    "display_term": "Telemedicine",
+    "phoneme": "Te-le-me-đi-sừn"
+  },
+  {
+    "term": "terminal",
+    "display_term": "Terminal",
+    "phoneme": "tơ my nồ"
+  },
+  {
+    "term": "tester",
+    "display_term": "TESTER",
+    "phoneme": "tét-tơ"
+  },
+  {
+    "term": "text",
+    "display_term": "Text",
+    "phoneme": "tếch"
+  },
+  {
+    "term": "the",
+    "display_term": "The",
+    "phoneme": "dơ"
+  },
+  {
+    "term": "thinking",
+    "display_term": "Thinking",
+    "phoneme": "thinh-kinh"
+  },
+  {
+    "term": "thpt",
+    "display_term": "THPT",
+    "phoneme": "trung học phổ thông"
+  },
+  {
+    "term": "thptqg",
+    "display_term": "THPTQG",
+    "phoneme": "Trung học phổ thông quốc gia"
+  },
+  {
+    "term": "timer",
+    "display_term": "Timer",
+    "phoneme": "Tham mơ"
+  },
+  {
+    "term": "timezone",
+    "display_term": "TIMEZONE",
+    "phoneme": "u-tê-xê"
+  },
+  {
+    "term": "to-be",
+    "display_term": "TO-BE",
+    "phoneme": "tu-bi"
+  },
+  {
+    "term": "today",
+    "display_term": "Today",
+    "phoneme": "tu-đây"
+  },
+  {
+    "term": "traceability matrix",
+    "display_term": "TRACEABILITY MATRIX",
+    "phoneme": "tờ-rây-xa-bi-li-ti mê-trích"
+  },
+  {
+    "term": "trade-off",
+    "display_term": "TRADE-OFF",
+    "phoneme": "tờ-rết-ọp"
+  },
+  {
+    "term": "transformers",
+    "display_term": "Transformers",
+    "phoneme": "tran-phom-mơ"
+  },
+  {
+    "term": "truth",
+    "display_term": "truth",
+    "phoneme": "trớt"
+  },
+  {
+    "term": "tsa",
+    "display_term": "TSA",
+    "phoneme": "tê ét a"
+  },
+  {
+    "term": "typescript",
+    "display_term": "TYPESCRIPT",
+    "phoneme": "tai-sờ-cơ-ríp"
+  },
+  {
+    "term": "uat",
+    "display_term": "UAT",
+    "phoneme": "u-a-tê"
+  },
+  {
+    "term": "ui",
+    "display_term": "UI",
+    "phoneme": "u-ai"
+  },
+  {
+    "term": "uif",
+    "display_term": "UIF",
+    "phoneme": "iu-ai-ép"
+  },
+  {
+    "term": "unikey",
+    "display_term": "Unikey",
+    "phoneme": "ui ny ky"
+  },
+  {
+    "term": "unreal",
+    "display_term": "Unreal",
+    "phoneme": "ăn-riu"
+  },
+  {
+    "term": "until",
+    "display_term": "until",
+    "phoneme": "ăn-tiu"
+  },
+  {
+    "term": "uom",
+    "display_term": "UOM",
+    "phoneme": "Unit Of Measure"
+  },
+  {
+    "term": "update",
+    "display_term": "UPDATE",
+    "phoneme": "úp-date"
+  },
+  {
+    "term": "usd",
+    "display_term": "USD",
+    "phoneme": "U ét Đê"
+  },
+  {
+    "term": "use case",
+    "display_term": "USE CASE",
+    "phoneme": "yêu-kết"
+  },
+  {
+    "term": "use-case",
+    "display_term": "USE-CASE",
+    "phoneme": "yêu-kết"
+  },
+  {
+    "term": "user",
+    "display_term": "User",
+    "phoneme": "iu-dơ"
+  },
+  {
+    "term": "user journey map",
+    "display_term": "USER JOURNEY MAP",
+    "phoneme": "yiu-dơ gơ-ni mép"
+  },
+  {
+    "term": "user story",
+    "display_term": "USER STORY",
+    "phoneme": "yiu-dơ sờ-to-ri"
+  },
+  {
+    "term": "user story mapping",
+    "display_term": "USER STORY MAPPING",
+    "phoneme": "yiu-dơ sờ-to-ri mép-ping"
+  },
+  {
+    "term": "utc",
+    "display_term": "UTC",
+    "phoneme": "u-t-c"
+  },
+  {
+    "term": "ux",
+    "display_term": "UX",
+    "phoneme": "u-ích"
+  },
+  {
+    "term": "v6e",
+    "display_term": "v6e",
+    "phoneme": "vi-síc-ai"
+  },
+  {
+    "term": "value",
+    "display_term": "Value",
+    "phoneme": "va lưu"
+  },
+  {
+    "term": "velocity",
+    "display_term": "VELOCITY",
+    "phoneme": "vê-lo-xi-ti"
+  },
+  {
+    "term": "vercel",
+    "display_term": "VERCEL",
+    "phoneme": "vơ-xen"
+  },
+  {
+    "term": "vibe coding",
+    "display_term": "VIBE CODING",
+    "phoneme": "vai-bơ cốt-đinh"
+  },
+  {
+    "term": "video",
+    "display_term": "video",
+    "phoneme": "vi-deo"
+  },
+  {
+    "term": "vietqr",
+    "display_term": "VIETQR",
+    "phoneme": "viết-quy-rờ"
+  },
+  {
+    "term": "vinfast",
+    "display_term": "VinFast",
+    "phoneme": "vin-phát"
+  },
+  {
+    "term": "vneid",
+    "display_term": "VNEID",
+    "phoneme": "v-n-e-i-d"
+  },
+  {
+    "term": "voucher",
+    "display_term": "VOUCHER",
+    "phoneme": "vao-chơ"
+  },
+  {
+    "term": "webhook",
+    "display_term": "WEBHOOK",
+    "phoneme": "oép-húc"
+  },
+  {
+    "term": "window",
+    "display_term": "Window",
+    "phoneme": "uyn đâu"
+  },
+  {
+    "term": "wireframe",
+    "display_term": "WIREFRAME",
+    "phoneme": "oai-phờ-rem"
+  },
+  {
+    "term": "word",
+    "display_term": "WORD",
+    "phoneme": "uất"
+  },
+  {
+    "term": "write",
+    "display_term": "write",
+    "phoneme": "woai"
+  },
+  {
+    "term": "xtaskcreatepinnedtocore",
+    "display_term": "xTaskCreatePinnedToCore",
+    "phoneme": "x Task Create Pinned To Core"
+  },
+  {
+    "term": "xtensa",
+    "display_term": "Xtensa",
+    "phoneme": "ích-ten-sa"
+  },
+  {
+    "term": "yarn",
+    "display_term": "YaRN",
+    "phoneme": "yan"
+  },
+  {
+    "term": "yesterday",
+    "display_term": "yesterday",
+    "phoneme": "yes-tơ-đây"
+  },
+  {
+    "term": "đgnl",
+    "display_term": "ĐGNL",
+    "phoneme": "Đánh giá năng lực"
+  },
+  {
+    "term": "đh",
+    "display_term": "ĐH",
+    "phoneme": "Đại học"
+  }
+]
