@@ -1,5 +1,15 @@
 [
   {
+    "term": "*",
+    "display_term": "*",
+    "phoneme": "sao"
+  },
+  {
+    "term": "1-wire",
+    "display_term": "1-WIRE",
+    "phoneme": "woan-woai"
+  },
+  {
     "term": "3nf",
     "display_term": "3NF",
     "phoneme": "THIRD NORMAL FORM"
@@ -30,6 +40,11 @@
     "phoneme": "ơ-sít"
   },
   {
+    "term": "adc",
+    "display_term": "ADC",
+    "phoneme": "a-đê-xê"
+  },
+  {
     "term": "agent",
     "display_term": "AGENT",
     "phoneme": "ê-dần"
@@ -55,9 +70,19 @@
     "phoneme": "ơ-giai-Scrum"
   },
   {
+    "term": "ahb",
+    "display_term": "AHB",
+    "phoneme": "a-hắt-bê"
+  },
+  {
     "term": "ai",
     "display_term": "AI",
     "phoneme": "ây-ai"
+  },
+  {
+    "term": "ai engineer",
+    "display_term": "AI Engineer",
+    "phoneme": "ây-ai en-ri-nia"
   },
   {
     "term": "ai-agent",
@@ -68,6 +93,11 @@
     "term": "ai-augmented ba",
     "display_term": "AI-AUGMENTED BA",
     "phoneme": "ây-ai oóc-men-tịt bi-ây"
+  },
+  {
+    "term": "algorithmic trading",
+    "display_term": "ALGORITHMIC TRADING",
+    "phoneme": "a-go-rit-míc-trết-đing"
   },
   {
     "term": "all",
@@ -83,6 +113,21 @@
     "term": "antigravity ide",
     "display_term": "ANTIGRAVITY IDE",
     "phoneme": "an-ti-gra-vi-ti ai-đi-i"
+  },
+  {
+    "term": "apb",
+    "display_term": "APB",
+    "phoneme": "a-pê-bê"
+  },
+  {
+    "term": "apb1",
+    "display_term": "APB1",
+    "phoneme": "a-pê-bê một"
+  },
+  {
+    "term": "apb2",
+    "display_term": "APB2",
+    "phoneme": "a-pê-bê hai"
   },
   {
     "term": "api",
@@ -145,6 +190,11 @@
     "phoneme": "a vê gờ"
   },
   {
+    "term": "avg(coalesce(diem_kpi, 0))",
+    "display_term": "AVG(COALESCE(Diem_KPI, 0))",
+    "phoneme": "a-vê-gờ-co-a-lếch-điểm-cây-bi-ai-fẩy-không"
+  },
+  {
     "term": "aws",
     "display_term": "AWS",
     "phoneme": "a đáp lưu ét"
@@ -153,6 +203,11 @@
     "term": "azure",
     "display_term": "Azure",
     "phoneme": "a rờ"
+  },
+  {
+    "term": "b1.58",
+    "display_term": "b1.58",
+    "phoneme": "bê-một-chấm-năm-tám"
   },
   {
     "term": "b2b",
@@ -195,6 +250,11 @@
     "phoneme": "Banh-king"
   },
   {
+    "term": "batch",
+    "display_term": "BATCH",
+    "phoneme": "Bát"
+  },
+  {
     "term": "blameless",
     "display_term": "Blameless",
     "phoneme": "bờ-lêm-lét"
@@ -212,7 +272,12 @@
   {
     "term": "bot",
     "display_term": "Bot",
-    "phoneme": "pót"
+    "phoneme": "bót"
+  },
+  {
+    "term": "bot trading",
+    "display_term": "BOT TRADING",
+    "phoneme": "bót-trết-đinh"
   },
   {
     "term": "bpmn",
@@ -285,6 +350,11 @@
     "phoneme": "két-chinh"
   },
   {
+    "term": "calendarauto",
+    "display_term": "CALENDARAUTO",
+    "phoneme": "ca-len-đờ-au-tu"
+  },
+  {
     "term": "case",
     "display_term": "Case",
     "phoneme": "cây"
@@ -313,6 +383,11 @@
     "term": "cell",
     "display_term": "Cell",
     "phoneme": "seo"
+  },
+  {
+    "term": "ceo",
+    "display_term": "CEO",
+    "phoneme": "si-y-âu"
   },
   {
     "term": "change request",
@@ -410,6 +485,11 @@
     "phoneme": "co-banh-king"
   },
   {
+    "term": "cost",
+    "display_term": "Cost",
+    "phoneme": "cót"
+  },
+  {
     "term": "count",
     "display_term": "COUNT",
     "phoneme": "cao"
@@ -463,6 +543,11 @@
     "term": "cubeide",
     "display_term": "CubeIDE",
     "phoneme": "kiu-ai-đi-y"
+  },
+  {
+    "term": "dac",
+    "display_term": "DAC",
+    "phoneme": "đa-cơ"
   },
   {
     "term": "daily scrum",
@@ -555,6 +640,16 @@
     "phoneme": "đi-ép-đi"
   },
   {
+    "term": "diem_kpi",
+    "display_term": "Diem_KPI",
+    "phoneme": "điểm-cây-bi-ai"
+  },
+  {
+    "term": "dma",
+    "display_term": "DMA",
+    "phoneme": "đê-em-ây"
+  },
+  {
     "term": "docker",
     "display_term": "DOCKER",
     "phoneme": "đốc-kơ"
@@ -581,8 +676,8 @@
   },
   {
     "term": "draw.io",
-    "display_term": "DRAW.IO",
-    "phoneme": "đờ-rô-ai-ô"
+    "display_term": "Draw.io",
+    "phoneme": "Đờ-ra-chấm-ai-ô"
   },
   {
     "term": "dropdown",
@@ -680,6 +775,11 @@
     "phoneme": "e-ét-bi ai-đi-ép"
   },
   {
+    "term": "ethernet",
+    "display_term": "Ethernet",
+    "phoneme": "e-thơ-nét"
+  },
+  {
     "term": "etl",
     "display_term": "ETL",
     "phoneme": "y-ty-eo"
@@ -705,6 +805,11 @@
     "phoneme": "phây"
   },
   {
+    "term": "facebook",
+    "display_term": "Facebook",
+    "phoneme": "phây-búc"
+  },
+  {
     "term": "faceid",
     "display_term": "FACEID",
     "phoneme": "fe-ai-đi"
@@ -713,6 +818,11 @@
     "term": "fallback",
     "display_term": "FALLBACK",
     "phoneme": "pho-bách"
+  },
+  {
+    "term": "fastapi",
+    "display_term": "FastAPI",
+    "phoneme": "phát-ây-bi-ai"
   },
   {
     "term": "figma",
@@ -741,13 +851,13 @@
   },
   {
     "term": "flash sale",
-    "display_term": "FLASH SALE",
-    "phoneme": "pờ-lát siu"
+    "display_term": "Flash Sale",
+    "phoneme": "phờ-lát-sêu"
   },
   {
     "term": "flowchart",
-    "display_term": "FLOWCHART",
-    "phoneme": "pờ-lâu-chạt"
+    "display_term": "Flowchart",
+    "phoneme": "phờ-lâu-chạc"
   },
   {
     "term": "flux.1",
@@ -762,7 +872,7 @@
   {
     "term": "fresher ba",
     "display_term": "FRESHER BA",
-    "phoneme": "phơ-rét-shơ bi-ây"
+    "phoneme": "phét-sơ-bi-ây"
   },
   {
     "term": "frontend",
@@ -771,8 +881,8 @@
   },
   {
     "term": "fullstack",
-    "display_term": "FULLSTACK",
-    "phoneme": "phun-xtắc"
+    "display_term": "Fullstack",
+    "phoneme": "phun-stack"
   },
   {
     "term": "gap analysis",
@@ -795,14 +905,29 @@
     "phoneme": "gít-hắp"
   },
   {
+    "term": "github trending",
+    "display_term": "GitHub Trending",
+    "phoneme": "ghít-hắp-chen-đinh"
+  },
+  {
     "term": "given - when - then",
     "display_term": "GIVEN - WHEN - THEN",
     "phoneme": "ghi-vần - oen - đen"
   },
   {
+    "term": "global success 12 unit 1",
+    "display_term": "Global Success 12 Unit 1",
+    "phoneme": "gờ-lâu-bồ-sắc-sét-mười-hai-u-lít-một"
+  },
+  {
     "term": "google play",
     "display_term": "GOOGLE PLAY",
     "phoneme": "gút-gồ pờ-lay"
+  },
+  {
+    "term": "gpio",
+    "display_term": "GPIO",
+    "phoneme": "gờ-pi-ai-ô"
   },
   {
     "term": "gpt-4o",
@@ -865,6 +990,11 @@
     "phoneme": "hắt ét a"
   },
   {
+    "term": "hse",
+    "display_term": "HSE",
+    "phoneme": "hắt-ét-y"
+  },
+  {
     "term": "html",
     "display_term": "HTML",
     "phoneme": "hát-tê-mờ-lờ"
@@ -880,9 +1010,19 @@
     "phoneme": "Hiu-mần-y-van"
   },
   {
+    "term": "i2c",
+    "display_term": "I2C",
+    "phoneme": "ai-tu-xi"
+  },
+  {
     "term": "icd-10",
     "display_term": "ICD-10",
     "phoneme": "i-c-d-10"
+  },
+  {
+    "term": "ifnull",
+    "display_term": "IFNULL",
+    "phoneme": "íp-lun"
   },
   {
     "term": "iiba",
@@ -920,6 +1060,11 @@
     "phoneme": "in-tơ-ly-dừn"
   },
   {
+    "term": "ip",
+    "display_term": "ip",
+    "phoneme": "ai-bi"
+  },
+  {
     "term": "ironwood",
     "display_term": "Ironwood",
     "phoneme": "ai-rừn-wut"
@@ -955,6 +1100,16 @@
     "phoneme": "giu-ni-ơ bi-ây"
   },
   {
+    "term": "khachhang",
+    "display_term": "KhachHang",
+    "phoneme": "khách hàng"
+  },
+  {
+    "term": "kill",
+    "display_term": "KILL",
+    "phoneme": "kiu"
+  },
+  {
     "term": "kpi",
     "display_term": "KPI",
     "phoneme": "kê-pi-ai"
@@ -983,6 +1138,11 @@
     "term": "livecodebench",
     "display_term": "LiveCodeBench",
     "phoneme": "lai-cốt-ben"
+  },
+  {
+    "term": "livestream",
+    "display_term": "livestream",
+    "phoneme": "lai-trim"
   },
   {
     "term": "llama",
@@ -1023,6 +1183,11 @@
     "term": "maker",
     "display_term": "Maker",
     "phoneme": "mếch-cơ"
+  },
+  {
+    "term": "makh",
+    "display_term": "MaKH",
+    "phoneme": "mã khách hàng"
   },
   {
     "term": "management",
@@ -1080,14 +1245,29 @@
     "phoneme": "mai-cờ-rô-vi-em"
   },
   {
+    "term": "minimum viable product",
+    "display_term": "Minimum Viable Product",
+    "phoneme": "mi-ni-mừm-vai-bồ-bồ-đắc"
+  },
+  {
     "term": "miro",
     "display_term": "MIRO",
     "phoneme": "mi-rô"
   },
   {
+    "term": "missing value",
+    "display_term": "Missing Value",
+    "phoneme": "mít-sing-va-lưu"
+  },
+  {
     "term": "mixture-of-depths",
     "display_term": "Mixture-of-Depths",
     "phoneme": "mít-trờ-ợp-đíp"
+  },
+  {
+    "term": "mkt",
+    "display_term": "MKT",
+    "phoneme": "ma-két-ting"
   },
   {
     "term": "mockup",
@@ -1135,9 +1315,19 @@
     "phoneme": "n-d-a"
   },
   {
+    "term": "negative response",
+    "display_term": "Negative Response",
+    "phoneme": "nê-ga-típ-rét-bon"
+  },
+  {
     "term": "never",
     "display_term": "never",
     "phoneme": "le-vờ"
+  },
+  {
+    "term": "next-gen",
+    "display_term": "Next-Gen",
+    "phoneme": "lếch-ren"
   },
   {
     "term": "no-code",
@@ -1163,6 +1353,11 @@
     "term": "null",
     "display_term": "NULL",
     "phoneme": "lun"
+  },
+  {
+    "term": "nvic",
+    "display_term": "NVIC",
+    "phoneme": "en-vích"
   },
   {
     "term": "nvs_get_str",
@@ -1193,6 +1388,11 @@
     "term": "order-taker",
     "display_term": "ORDER-TAKER",
     "phoneme": "o-đơ tây-kơ"
+  },
+  {
+    "term": "osworld",
+    "display_term": "OSWorld",
+    "phoneme": "ô-ét-world"
   },
   {
     "term": "otp",
@@ -1240,6 +1440,11 @@
     "phoneme": "bi đi ép"
   },
   {
+    "term": "peer-to-peer",
+    "display_term": "Peer-to-Peer",
+    "phoneme": "bia-tu-bia"
+  },
+  {
     "term": "persona",
     "display_term": "PERSONA",
     "phoneme": "pơ-xô-na"
@@ -1248,6 +1453,11 @@
     "term": "pet project",
     "display_term": "PET PROJECT",
     "phoneme": "pét pờ-rô-giếch"
+  },
+  {
+    "term": "pll",
+    "display_term": "PLL",
+    "phoneme": "bi-eo-eo"
   },
   {
     "term": "pm",
@@ -1280,6 +1490,16 @@
     "phoneme": "p-o-s"
   },
   {
+    "term": "positive",
+    "display_term": "Positive",
+    "phoneme": "bo-si-típ"
+  },
+  {
+    "term": "positive response",
+    "display_term": "Positive Response",
+    "phoneme": "bô-si-típ-rét-bon"
+  },
+  {
     "term": "post-mortem meeting",
     "display_term": "POST-MORTEM MEETING",
     "phoneme": "pốt mo-tơm mít-tinh"
@@ -1303,6 +1523,11 @@
     "term": "prd",
     "display_term": "PRD",
     "phoneme": "pi-rờ-đê"
+  },
+  {
+    "term": "prescaler",
+    "display_term": "Prescaler",
+    "phoneme": "bi-keo-lơ"
   },
   {
     "term": "principal ba",
@@ -1410,6 +1635,11 @@
     "phoneme": "r-b-a-c"
   },
   {
+    "term": "rcc",
+    "display_term": "RCC",
+    "phoneme": "rờ-xê-xê"
+  },
+  {
     "term": "read",
     "display_term": "read",
     "phoneme": "rít"
@@ -1443,6 +1673,11 @@
     "term": "requirement",
     "display_term": "REQUIREMENT",
     "phoneme": "rì-quai-mơn"
+  },
+  {
+    "term": "response",
+    "display_term": "Response",
+    "phoneme": "re-pon"
   },
   {
     "term": "retrospective",
@@ -1490,6 +1725,11 @@
     "phoneme": "rút cooc-zơ"
   },
   {
+    "term": "rows",
+    "display_term": "Rows",
+    "phoneme": "Râu"
+  },
+  {
     "term": "rtos",
     "display_term": "RTOS",
     "phoneme": "a tót"
@@ -1513,6 +1753,11 @@
     "term": "sale",
     "display_term": "Sale",
     "phoneme": "sêu"
+  },
+  {
+    "term": "sanpham",
+    "display_term": "SanPham",
+    "phoneme": "sản phẩm"
   },
   {
     "term": "sat",
@@ -1565,9 +1810,19 @@
     "phoneme": "se-ni-ơ bi-ây"
   },
   {
+    "term": "seo",
+    "display_term": "SEO",
+    "phoneme": "seo"
+  },
+  {
     "term": "server",
     "display_term": "SERVER",
     "phoneme": "sơ-vơ"
+  },
+  {
+    "term": "services",
+    "display_term": "Services",
+    "phoneme": "xơ-vít"
   },
   {
     "term": "sglang",
@@ -1635,6 +1890,11 @@
     "phoneme": "sừ-pít"
   },
   {
+    "term": "spi",
+    "display_term": "SPI",
+    "phoneme": "ét-pi-ai"
+  },
+  {
     "term": "spillover",
     "display_term": "SPILLOVER",
     "phoneme": "sờ-pin-âu-vơ"
@@ -1685,13 +1945,33 @@
     "phoneme": "quy-rờ tĩnh"
   },
   {
+    "term": "stm32",
+    "display_term": "STM32",
+    "phoneme": "ét-ty-em-ba-hai"
+  },
+  {
+    "term": "stm32f4",
+    "display_term": "STM32F4",
+    "phoneme": "STM ba mươi hai F4"
+  },
+  {
     "term": "storage",
     "display_term": "Storage",
     "phoneme": "sừ-to-grate"
   },
   {
+    "term": "story point",
+    "display_term": "Story Point",
+    "phoneme": "Sờ-to-ry-boi"
+  },
+  {
     "term": "subqueries",
     "display_term": "Subqueries",
+    "phoneme": "sắp-que-ry"
+  },
+  {
+    "term": "subquery",
+    "display_term": "SUBQUERY",
     "phoneme": "sắp-que-ry"
   },
   {
@@ -1718,6 +1998,11 @@
     "term": "swebench",
     "display_term": "swebench",
     "phoneme": "ét-đáp-lưu-y-ben"
+  },
+  {
+    "term": "swebench.com",
+    "display_term": "swebench.com",
+    "phoneme": "ét-đáp-lưu-y-ben-chấm-com"
   },
   {
     "term": "swot analysis",
@@ -1810,6 +2095,11 @@
     "phoneme": "tu-đây"
   },
   {
+    "term": "trace",
+    "display_term": "Trace",
+    "phoneme": "truết"
+  },
+  {
     "term": "traceability matrix",
     "display_term": "TRACEABILITY MATRIX",
     "phoneme": "tờ-rây-xa-bi-li-ti mê-trích"
@@ -1840,6 +2130,11 @@
     "phoneme": "tai-sờ-cơ-ríp"
   },
   {
+    "term": "uart",
+    "display_term": "UART",
+    "phoneme": "U-A-rờ-tê"
+  },
+  {
     "term": "uat",
     "display_term": "UAT",
     "phoneme": "u-a-tê"
@@ -1850,9 +2145,19 @@
     "phoneme": "u-ai"
   },
   {
+    "term": "ui-tars",
+    "display_term": "UI-TARS",
+    "phoneme": "iu-ai-tác"
+  },
+  {
     "term": "uif",
     "display_term": "UIF",
     "phoneme": "iu-ai-ép"
+  },
+  {
+    "term": "uml",
+    "display_term": "UML",
+    "phoneme": "u-mờ-lờ"
   },
   {
     "term": "unikey",
@@ -1880,6 +2185,11 @@
     "phoneme": "úp-date"
   },
   {
+    "term": "usart",
+    "display_term": "USART",
+    "phoneme": "u-sạt"
+  },
+  {
     "term": "usd",
     "display_term": "USD",
     "phoneme": "U ét Đê"
@@ -1888,6 +2198,11 @@
     "term": "use case",
     "display_term": "USE CASE",
     "phoneme": "yêu-kết"
+  },
+  {
+    "term": "use case diagram",
+    "display_term": "Use Case Diagram",
+    "phoneme": "iu-cây-đai-a-ram"
   },
   {
     "term": "use-case",
@@ -1965,6 +2280,11 @@
     "phoneme": "vin-phát"
   },
   {
+    "term": "visual",
+    "display_term": "Visual",
+    "phoneme": "vi-dùa"
+  },
+  {
     "term": "vneid",
     "display_term": "VNEID",
     "phoneme": "v-n-e-i-d"
@@ -1973,6 +2293,11 @@
     "term": "voucher",
     "display_term": "VOUCHER",
     "phoneme": "vao-chơ"
+  },
+  {
+    "term": "watchpoint",
+    "display_term": "Watchpoint",
+    "phoneme": "what-boi"
   },
   {
     "term": "webhook",
@@ -2018,6 +2343,11 @@
     "term": "yesterday",
     "display_term": "yesterday",
     "phoneme": "yes-tơ-đây"
+  },
+  {
+    "term": "zero-etl",
+    "display_term": "Zero-ETL",
+    "phoneme": "Zero-eo-ty-en"
   },
   {
     "term": "đgnl",

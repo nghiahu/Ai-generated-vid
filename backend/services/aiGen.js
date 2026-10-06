@@ -2122,8 +2122,8 @@ async function generateSingleSceneCode({ scene, index, theme, bgImage, refImages
       scene.duration = (scene.durationFrames / 30).toFixed(2);
     }
     try {
-      const absoluteAudioPath = path.join(__dirname, "../public", audioUrl);
-      subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), audioDuration);
+      const spokenText = textToRead || scene.voiceoverTts || phoneme.getSpokenText(scene.voiceover);
+      subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), audioDuration, spokenText);
       scene.subtitlesJson = subtitlesJson;
       scene.voiceoverTtsJson = subtitlesJson;
     } catch (alignErr) {

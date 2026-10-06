@@ -7,6 +7,7 @@
 | 5. End-to-End Verification | [x] | Verified upload, file unlinking, database deletion, and frontend build |
 | 6. Export 406 Custom Pronunciations to JSON | [x] | Exported current phoneme_cache to backend/data/custom_pronunciations.json |
 | 7. Auto-seed SQLite from JSON on DB init | [x] | In db.js initDb(), load entries from custom_pronunciations.json so any new clone gets all terms |
-| 8. Keep JSON synced on POST and DELETE | [x] | Whenever terms are added or removed, write updated list to custom_pronunciations.json |
-| 9. Verification | [x] | Verified export, auto-import on fresh DB, two-way sync, and git status |
+| 10. Pass spokenText/voiceoverTts to getWordTimestamps in backend | [x] | Update server.js, aiGen.js, and aligner.js to pass spokenText/voiceoverTts |
+| 11. Enhance align.py for Spoken/Original Text Mapping & Multi-Syllable English Matching | [x] | Update align.py to support spokenText alignment and 1-to-N syllable chunk mapping |
+| 12. Verification & Testing | [x] | Verified forced alignment module with spokenText mapping support |
 

@@ -246,7 +246,7 @@ app.put('/api/projects/:id/config', async (req, res) => {
                 const ttsResult = await tts.generateTTS(voiceoverText, projectId, scene.id, voiceKey);
 
                 const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
-                const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration);
+                const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration, voiceoverText);
 
                 updatedScenes.push({
                   ...scene,
@@ -665,7 +665,7 @@ app.post('/api/projects/:id/generate-storyboard', async (req, res) => {
       const ttsResult = await tts.generateTTS(voiceoverText, projectId, sceneId, voiceKey);
 
       const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
-      const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration);
+      const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration, voiceoverText);
 
       scenes.push({
         id: sceneId,
@@ -771,7 +771,7 @@ app.post('/api/projects/:id/scenes/:sceneId/regenerate-tts', async (req, res) =>
 
     // 3. Compute subtitles word timestamps
     const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
-    const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration);
+    const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration, voiceoverText);
 
     // 4. Save updated scene to DB
     const updatedScene = await db.updateScene(projectId, sceneId, {
@@ -820,7 +820,7 @@ app.post('/api/projects/:id/regenerate-tts', async (req, res) => {
         const ttsResult = await tts.generateTTS(voiceoverText, projectId, scene.id, voiceKey);
 
         const absoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
-        const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration);
+        const subtitlesJson = await aligner.getWordTimestamps(absoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration, voiceoverText);
 
         updatedScenes.push({
           ...scene,
@@ -885,7 +885,7 @@ app.post('/api/projects/:id/render', async (req, res) => {
           const ttsResult = await tts.generateTTS(voiceoverText, projectId, scene.id, voiceKey);
 
           const newAbsoluteAudioPath = path.join(__dirname, 'public', ttsResult.url);
-          const subtitlesJson = await aligner.getWordTimestamps(newAbsoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration);
+          const subtitlesJson = await aligner.getWordTimestamps(newAbsoluteAudioPath, phoneme.getSpokenText(scene.voiceover), ttsResult.duration, voiceoverText);
 
           scene.voiceoverTts = voiceoverTts;
           scene.voiceoverAudioUrl = ttsResult.url;

@@ -22,18 +22,22 @@ function getPythonExecutable() {
  * Get word-level timestamps by running the local Python forced aligner.
  * Falls back to linear timestamps if aligner fails.
  */
-function getWordTimestamps(audioPath, originalText, audioDuration) {
+function getWordTimestamps(audioPath, originalText, audioDuration, spokenText = null) {
   return new Promise((resolve) => {
     const pythonExe = getPythonExecutable();
     const scriptPath = path.join(__dirname, "align.py");
-    
+
     console.log(`[Forced Alignment] Aligning "${originalText.substring(0, 30)}..." with audio: ${path.basename(audioPath)}`);
-    
+
     const absoluteAudioPath = path.resolve(audioPath);
-    
+    const scriptArgs = [scriptPath, absoluteAudioPath, originalText];
+    if (spokenText && spokenText.trim().length > 0) {
+      scriptArgs.push(spokenText);
+    }
+
     execFile(
       pythonExe,
-      [scriptPath, absoluteAudioPath, originalText],
+      scriptArgs,
       {
         timeout: 45000, // 45 seconds timeout
         env: {
@@ -53,7 +57,7 @@ function getWordTimestamps(audioPath, originalText, audioDuration) {
           if (stderr) console.error("[Forced Alignment] stderr:", stderr);
           return resolve(getUniformTimestampsFallback(originalText, audioPath));
         }
-        
+
         try {
           const result = JSON.parse(stdout.trim());
           if (result.error) {
@@ -79,7 +83,7 @@ function getUniformTimestampsFallback(text, audioPath, audioDuration) {
   console.log("[Forced Alignment] Falling back to uniform/linear timestamps.");
   const words = text.split(/\s+/).filter(w => w.trim().length > 0);
   if (words.length === 0) return [];
-  
+
   // Try to estimate duration using ffprobe
   let duration = 6.0;
   try {
@@ -89,18 +93,18 @@ function getUniformTimestampsFallback(text, audioPath, audioDuration) {
     if (!isNaN(parsed) && parsed > 0) {
       duration = parsed;
     }
-  } catch (e) {}
-  
+  } catch (e) { }
+
   const effectiveDuration = audioDuration || duration;
   const startOffset = 0.15;
   const endOffset = 0.15;
   const speakingDuration = Math.max(0.5, effectiveDuration - startOffset - endOffset);
   const timePerWord = speakingDuration / words.length;
-  
+
   const rawWords = words.map((word, index) => ({
     word,
     start: parseFloat((startOffset + index * timePerWord).toFixed(3)),
-    end:   parseFloat((startOffset + (index + 1) * timePerWord).toFixed(3))
+    end: parseFloat((startOffset + (index + 1) * timePerWord).toFixed(3))
   }));
 
   return optimizeTimeline(rawWords, effectiveDuration);

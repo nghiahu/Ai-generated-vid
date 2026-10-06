@@ -55,18 +55,47 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def split_into_sentences(text: str):
+def split_into_sentences(text: str, max_chars: int = 75):
     """
-    Split text at sentence boundaries (? ! . …) to prevent OmniVoice duration
-    predictor & attention drift from dropping clauses.
+    Split text at sentence boundaries (? ! . …) AND clause boundaries (, ;)
+    to prevent OmniVoice duration predictor & attention drift from dropping clauses in long sentences.
     """
     raw_text = text.strip()
-    # Split on whitespace following punctuation: ? ! . …
-    parts = re.split(r'(?<=[.?!…])\s+', raw_text)
-    clean_parts = [p.strip() for p in parts if p.strip()]
-    if not clean_parts:
+    if not raw_text:
+        return []
+
+    # First split on primary sentence boundaries (. ? ! …)
+    primary_parts = re.split(r'(?<=[.?!…])\s+', raw_text)
+    
+    final_chunks = []
+    for part in primary_parts:
+        part = part.strip()
+        if not part:
+            continue
+        
+        # If sentence is long (> max_chars) or contains clause separators, split on commas/semicolons
+        if len(part) > max_chars or ',' in part or ';' in part:
+            sub_parts = re.split(r'(?<=[,;])\s+', part)
+            current = ""
+            for sub in sub_parts:
+                sub = sub.strip()
+                if not sub:
+                    continue
+                if not current:
+                    current = sub
+                elif len(current) + len(sub) + 1 <= max_chars:
+                    current += " " + sub
+                else:
+                    final_chunks.append(current)
+                    current = sub
+            if current:
+                final_chunks.append(current)
+        else:
+            final_chunks.append(part)
+
+    if not final_chunks:
         return [raw_text]
-    return clean_parts
+    return final_chunks
 
 
 def main():
@@ -83,9 +112,9 @@ def main():
 
     sr = model.sampling_rate
     audio_segments = []
-    # 180ms natural pause between sentences
-    pause_samples = int(sr * 0.18)
-    pause = np.zeros(pause_samples, dtype=np.float32)
+    # 180ms natural pause between full sentences, 100ms for clause pauses
+    sentence_pause = np.zeros(int(sr * 0.18), dtype=np.float32)
+    clause_pause = np.zeros(int(sr * 0.10), dtype=np.float32)
 
     for idx, sentence in enumerate(sentences):
         logging.info(f"Generating chunk [{idx+1}/{len(sentences)}]: {sentence}")
@@ -110,7 +139,10 @@ def main():
         audio_segments.append(audio_data)
 
         if idx < len(sentences) - 1:
-            audio_segments.append(pause)
+            if sentence.rstrip().endswith((',', ';')):
+                audio_segments.append(clause_pause)
+            else:
+                audio_segments.append(sentence_pause)
 
     if len(audio_segments) == 1:
         final_audio = audio_segments[0]

@@ -63,3 +63,23 @@ test('TTS Phoneme - strip suggestion text', () => {
   const case3 = "Đâu là thủ đô của VN? Đáp án: Hà Nội";
   assert.strictEqual(getSpokenText(case3), "Đâu là thủ đô của VN?");
 });
+
+test('TTS Phoneme & Normalization - AI models and percentages', async () => {
+  const { generateTTS } = require('../services/tts'); // imports normalizeTextForTTS inside
+  const input = "Claude 3.7 Sonnet dẫn đầu với 70,3%, bám sát là OpenAI o3 với 68,5% và Gemini 3.8 Flash đạt 62,1%";
+  const phonemeOptimized = await optimizeTextForPhonemes(input);
+  
+  // Verify transliteration of model names
+  assert.match(phonemeOptimized, /cờ-lót ba chấm bảy son-nét/i);
+  assert.match(phonemeOptimized, /âu-pơn-ây-ai ô-ba/i);
+  assert.match(phonemeOptimized, /gie-mi-nai ba chấm tám phờ-lát/i);
+
+  const { normalizeTextForTTS } = require('../services/tts');
+  const finalCleanText = normalizeTextForTTS(phonemeOptimized);
+  
+  assert.match(finalCleanText, /bảy mươi fẩy ba phần trăm/);
+  assert.match(finalCleanText, /sáu mươi tám fẩy năm phần trăm/);
+  assert.match(finalCleanText, /sáu mươi hai fẩy một phần trăm/);
+  assert.match(finalCleanText, /cờ lót ba chấm bảy son nét|cờ-lót ba chấm bảy son-nét/i);
+});
+

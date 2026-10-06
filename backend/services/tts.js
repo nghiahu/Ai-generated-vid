@@ -4,15 +4,104 @@ const { execSync, execFile } = require('child_process');
 const { promisify } = require('util');
 const execFileAsync = promisify(execFile);
 
+function readSingleDigit(d) {
+  const digits = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+  return digits[d] !== undefined ? digits[d] : '';
+}
+
+function readIntegerToVietnamese(numStr) {
+  const n = parseInt(numStr, 10);
+  if (isNaN(n)) return numStr;
+  if (n === 0) return 'không';
+
+  if (n < 10) return readSingleDigit(n);
+
+  if (n < 100) {
+    const tens = Math.floor(n / 10);
+    const units = n % 10;
+    let tenStr = tens === 1 ? 'mười' : `${readSingleDigit(tens)} mươi`;
+    if (units === 0) return tenStr;
+    let unitStr = readSingleDigit(units);
+    if (units === 1 && tens > 1) unitStr = 'mốt';
+    if (units === 5) unitStr = 'lăm';
+    return `${tenStr} ${unitStr}`;
+  }
+
+  if (n < 1000) {
+    const hundreds = Math.floor(n / 100);
+    const remainder = n % 100;
+    let hundredStr = `${readSingleDigit(hundreds)} trăm`;
+    if (remainder === 0) return hundredStr;
+    if (remainder < 10) {
+      return `${hundredStr} linh ${readSingleDigit(remainder)}`;
+    }
+    return `${hundredStr} ${readIntegerToVietnamese(remainder.toString())}`;
+  }
+
+  if (n < 1000000) {
+    const thousands = Math.floor(n / 1000);
+    const remainder = n % 1000;
+    let thousandStr = `${readIntegerToVietnamese(thousands.toString())} nghìn`;
+    if (remainder === 0) return thousandStr;
+    if (remainder < 100) {
+      return `${thousandStr} không trăm ${readIntegerToVietnamese(remainder.toString())}`;
+    }
+    return `${thousandStr} ${readIntegerToVietnamese(remainder.toString())}`;
+  }
+
+  return n.toString();
+}
+
+function readDecimalPartToVietnamese(decStr) {
+  if (!decStr) return '';
+  return decStr.split('').map(d => readSingleDigit(parseInt(d, 10))).join(' ');
+}
+
 /**
  * Normalize text before sending to TTS API
  */
 function normalizeTextForTTS(text) {
   if (!text) return "";
 
-  // Chuẩn hóa số có dấu chấm ngăn cách phần nghìn tiếng Việt (vd: 2.048.000 -> 2048000, 1.500 -> 1500)
-  // để tránh TTS đọc nhầm thành dấu chấm câu hoặc số thập phân lẻ
-  let temp = text.replace(/\b(\d+)(?:\.(\d{3}))+\b/g, m => m.replace(/\./g, ''));
+  // 1. Chuẩn hóa số phần trăm thập phân (vd: 70,3% -> bảy mươi fẩy ba phần trăm, 68.5% -> sáu mươi tám fẩy năm phần trăm)
+  let temp = text.replace(/\b(\d+)[,.](?=\d)(\d+)\s*%/g, (match, intPart, decPart) => {
+    return `${readIntegerToVietnamese(intPart)} fẩy ${readDecimalPartToVietnamese(decPart)} phần trăm`;
+  });
+
+  // 2. Chuẩn hóa số phần trăm nguyên (vd: 70% -> bảy mươi phần trăm, 100% -> một trăm phần trăm)
+  temp = temp.replace(/\b(\d+)\s*%/g, (match, intPart) => {
+    return `${readIntegerToVietnamese(intPart)} phần trăm`;
+  });
+  temp = temp.replace(/%/g, ' phần trăm ');
+
+  // 3. Chuẩn hóa số có dấu chấm ngăn cách phần nghìn tiếng Việt (vd: 2.048.000 -> 2048000, 1.500 -> 1500)
+  temp = temp.replace(/\b(\d+)(?:\.(\d{3}))+\b/g, m => m.replace(/\./g, ''));
+
+  // 4. Chuẩn hóa số thập phân đơn lẻ có dấu phẩy (vd: 70,3 -> bảy mươi fẩy ba)
+  temp = temp.replace(/\b(\d+),(\d{1,3})\b/g, (match, intPart, decPart) => {
+    return `${readIntegerToVietnamese(intPart)} fẩy ${readDecimalPartToVietnamese(decPart)}`;
+  });
+
+  // Chuyển bất kỳ chữ "phẩy" nào đứng giữa các số hoặc từ số thành "fẩy" để tránh bị mô hình TTS ép về dấu phẩy ngắt câu
+  temp = temp.replace(/(\b\d+|\b(?:không|một|hai|ba|bốn|năm|sáu|bảy|tám|chín|mười|mươi|trăm|nghìn))\s+phẩy\s+(\d+|\b(?:không|một|hai|ba|bốn|năm|sáu|bảy|tám|chín))/gi, '$1 fẩy $2');
+
+  // 5. Chuẩn hóa số thập phân đơn lẻ có dấu chấm (vd: 3.7 -> ba chấm bảy)
+  temp = temp.replace(/\b(\d+)\.(\d{1,2})\b/g, (match, intPart, decPart) => {
+    return `${readIntegerToVietnamese(intPart)} chấm ${readDecimalPartToVietnamese(decPart)}`;
+  });
+
+  // Chuyển dấu ngoặc đơn thành dấu phẩy nghỉ nhịp tự nhiên, tránh mô hình TTS bị trôi attention hoặc nuốt câu
+  temp = temp.replace(/\(([^)]+)\)/g, ', $1, ');
+  temp = temp.replace(/[()]/g, ', ');
+
+  // Chuyển dấu hai chấm và chấm phẩy thành dấu phẩy nghỉ nhịp
+  temp = temp.replace(/[:;]/g, ', ');
+
+  // Chuẩn hóa đơn vị tần số và kỹ thuật dính liền số (vd: 16MHz -> 16 mê ga hét, 8kHz -> 8 ki lô hét)
+  temp = temp.replace(/\b(\d+)\s*mhz\b/gi, '$1 mê ga hét');
+  temp = temp.replace(/\b(\d+)\s*khz\b/gi, '$1 ki lô hét');
+  temp = temp.replace(/\b(\d+)\s*ghz\b/gi, '$1 ghi ga hét');
+  temp = temp.replace(/\b(\d+)\s*hz\b/gi, '$1 hét');
 
   temp = temp.replace(/["""'']/g, ' ');
   temp = temp.replace(/[—–]/g, ', ');
@@ -21,13 +110,14 @@ function normalizeTextForTTS(text) {
   temp = temp.replace(/</g, ' nhỏ hơn ');
   temp = temp.replace(/=/g, ' bằng ');
   temp = temp.replace(/\.{2,}/g, '. ');
-  
+
   let normalized = temp.toLowerCase();
   normalized = normalized.replace(/\[([^\]]+)\]/g, (match, p1) => {
     return `[${p1.toUpperCase()}]`;
   });
-  
-  return normalized.replace(/\s+/g, ' ').trim();
+
+  // Dọn dẹp khoảng trắng và dấu phẩy liên tiếp
+  return normalized.replace(/\s+/g, ' ').replace(/\s+,/g, ',').replace(/,(\s*,)+/g, ',').trim();
 }
 
 /**
@@ -134,7 +224,7 @@ async function runOmniVoiceSequentially(fn) {
 function runProcessWithLogging(spawnExe, spawnArgs, options) {
   return new Promise((resolve, reject) => {
     const debugLogPath = path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'tts_debug.log');
-    
+
     try {
       fs.appendFileSync(debugLogPath, `\n--- [${new Date().toISOString()}] TTS Run ---\nCommand: "${spawnExe}" ${spawnArgs.join(' ')}\n`);
     } catch (err) {
@@ -153,7 +243,7 @@ function runProcessWithLogging(spawnExe, spawnArgs, options) {
       child.stdout.on('data', (data) => {
         try {
           fs.appendFileSync(debugLogPath, data.toString());
-        } catch (e) {}
+        } catch (e) { }
       });
     }
 
@@ -161,7 +251,7 @@ function runProcessWithLogging(spawnExe, spawnArgs, options) {
       child.stderr.on('data', (data) => {
         try {
           fs.appendFileSync(debugLogPath, data.toString());
-        } catch (e) {}
+        } catch (e) { }
       });
     }
   });
@@ -190,7 +280,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
   } catch (e) { }
 
   let effectiveVoice = voiceKey || "vbee_ngochuyen";
-  
+
   // ─── Off-line/Online Cloud OmniVoice Path ───
   if (effectiveVoice.toLowerCase().startsWith("omnivoice_")) {
     const cloudApiUrl = process.env.OMNIVOICE_CLOUD_API_URL;
@@ -241,7 +331,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
 
         // Decode and write to output path
         fs.writeFileSync(wavOutputPath, Buffer.from(audioBase64, 'base64'));
-        
+
         // Postprocessing
         addSilentPadding(wavOutputPath);
         const duration = getAudioDuration(wavOutputPath);
@@ -255,11 +345,11 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
 
     // --- CASE B: Local Fallback Path ---
     let omnivoiceExe = process.env.OMNIVOICE_INFER_PATH;
-    
+
     // Auto-detect and prefer the bundled offline runtime if it exists
     const defaultBundledPath = path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'Python311', 'Scripts', 'omnivoice-infer.exe');
     const alternativeBundledPath = path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'Scripts', 'omnivoice-infer.exe');
-    
+
     if (fs.existsSync(defaultBundledPath)) {
       omnivoiceExe = defaultBundledPath;
     } else if (fs.existsSync(alternativeBundledPath)) {
@@ -324,7 +414,7 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
         process.env.PYTHON_PATH,
         path.join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'ai-video-app-runtime', 'Python311', 'python.exe')
       ].filter(Boolean);
-      
+
       for (const candidate of pythonCandidates) {
         if (fs.existsSync(candidate)) {
           spawnExe = candidate;
@@ -488,4 +578,4 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
   return { url: `/tts/${fileName}`, duration };
 }
 
-module.exports = { generateTTS };
+module.exports = { generateTTS, normalizeTextForTTS };
