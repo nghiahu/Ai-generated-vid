@@ -382,7 +382,8 @@ async function generateTTS(text, projectId, sceneId, voiceKey = "vbee_ngochuyen"
       "--text", cleanText,
       "--output", relativeWavOutputPath,
       "--language", "Vietnamese",
-      "--speed", speed.toString()
+      "--speed", speed.toString(),
+      "--device", "cuda"
     ];
 
     if (fs.existsSync(refAudioPath)) {

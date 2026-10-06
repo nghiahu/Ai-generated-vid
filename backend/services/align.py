@@ -343,6 +343,10 @@ def main():
         sys.exit(0)
         
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    if torch.cuda.is_available():
+        print(f"[Aligner] Running Whisper on GPU: {torch.cuda.get_device_name(0)}", file=sys.stderr)
+    else:
+        print("[Aligner] Running Whisper on CPU", file=sys.stderr)
     
     try:
         pipe = pipeline(

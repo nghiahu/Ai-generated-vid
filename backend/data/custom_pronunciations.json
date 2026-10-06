@@ -910,6 +910,11 @@
     "phoneme": "ghít-hắp-chen-đinh"
   },
   {
+    "term": "given",
+    "display_term": "Given",
+    "phoneme": "gi-vừn"
+  },
+  {
     "term": "given - when - then",
     "display_term": "GIVEN - WHEN - THEN",
     "phoneme": "ghi-vần - oen - đen"
@@ -2010,6 +2015,11 @@
     "phoneme": "xoát a-na-ly-sít"
   },
   {
+    "term": "sđt",
+    "display_term": "SĐT",
+    "phoneme": "ét-đê-tê"
+  },
+  {
     "term": "tailwind css",
     "display_term": "TAILWIND CSS",
     "phoneme": "tên-uynh c-s-s"
@@ -2058,6 +2068,11 @@
     "term": "the",
     "display_term": "The",
     "phoneme": "dơ"
+  },
+  {
+    "term": "then",
+    "display_term": "Then",
+    "phoneme": "ren"
   },
   {
     "term": "thinking",

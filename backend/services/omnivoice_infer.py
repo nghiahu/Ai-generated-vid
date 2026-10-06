@@ -104,8 +104,16 @@ def main():
 
     args = get_parser().parse_args()
     device = args.device or get_best_device()
-    logging.info(f"Loading OmniVoice model from {args.model} on {device}...")
-    model = OmniVoice.from_pretrained(args.model, device_map=device, dtype=torch.float16)
+    
+    if torch.cuda.is_available():
+        gpu_name = torch.cuda.get_device_name(0)
+        logging.info(f"CUDA GPU Detected: {gpu_name}")
+    else:
+        logging.warning("CUDA is NOT available in this PyTorch environment. Running on CPU/MPS.")
+
+    model_dtype = torch.float32 if str(device).startswith("cpu") else torch.float16
+    logging.info(f"Loading OmniVoice model from {args.model} on device '{device}' with dtype {model_dtype}...")
+    model = OmniVoice.from_pretrained(args.model, device_map=device, dtype=model_dtype)
 
     sentences = split_into_sentences(args.text)
     logging.info(f"Input text has {len(sentences)} sentence chunk(s): {sentences}")
